@@ -1,0 +1,50 @@
+{
+	"name": "number-roll",
+	"version": "0.1.0",
+	"author": "Maxwell Barvian <max@barvian.me>",
+	"description": "A web component to elegantly transition between numbers.",
+	"license": "MIT",
+	"homepage": "https://number-roll.barvian.me/",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/barvian/number-roll",
+		"directory": "packages/number-roll"
+	},
+	"bugs": {
+		"url": "https://github.com/barvian/number-roll/issues"
+	},
+	"keywords": [
+		"accessible"
+	],
+	"type": "module",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.umd.cjs"
+		},
+		"./package.json": "./package.json"
+	},
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite dev",
+		"prepublishOnly": "pnpm run build && pnpm run test",
+		"test": "vitest"
+	},
+	"devDependencies": {
+		"@rollup/plugin-typescript": "^11.1.6",
+		"@testing-library/dom": "^10.3.2",
+		"@vitest/browser": "^2.0.3",
+		"playwright": "^1.45.2",
+		"tslib": "^2.6.3",
+		"typescript": ">=5.5.0",
+		"vite": "^5.3.4",
+		"vitest": "^2.0.3"
+	}
+}
