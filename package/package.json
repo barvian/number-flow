@@ -1,0 +1,58 @@
+{
+	"name": "@number-roll/react",
+	"publishConfig": {
+		"access": "public"
+	},
+	"version": "0.1.0",
+	"author": {
+		"name": "Maxwell Barvian",
+		"email": "max@barvian.me",
+		"url": "https://barvian.me"
+	},
+	"description": "A React component to elegantly transition between numbers.",
+	"license": "MIT",
+	"homepage": "https://number-roll.barvian.me/",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/barvian/number-roll",
+		"directory": "src"
+	},
+	"bugs": {
+		"url": "https://github.com/barvian/number-roll/issues"
+	},
+	"keywords": [
+		"accessible",
+		"react"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "tsup src",
+		"dev": "tsup src --watch",
+		"prepublishOnly": "pnpm run build && pnpm run test"
+	},
+	"peerDependencies": {
+		"framer-motion": "^11.0.0",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0"
+	},
+	"devDependencies": {
+		"@types/react": "^18.0.0",
+		"framer-motion": "^11.0.0",
+		"react": "^18.0.0",
+		"react-dom": "^18.0.0",
+		"tsup": "^8.1.2"
+	}
+}

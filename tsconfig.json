@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "react",
+		"noEmit": true,
+
+		/* Linting */
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"exactOptionalPropertyTypes": true,
+		"noUncheckedIndexedAccess": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"verbatimModuleSyntax": true
+	},
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+	"exclude": ["node_modules", "build", "dist", ".next"]
+}
