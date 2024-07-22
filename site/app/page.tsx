@@ -8,12 +8,22 @@ export default function Home() {
 	const [locale, setLocale] = React.useState('en-US')
 
 	return (
-		<main className="flex min-h-screen flex-col items-center justify-between p-24">
-			<NumberRoll locales={locale}>{value}</NumberRoll>
+		<main className="flex min-h-screen flex-col justify-between p-24">
+			<span className="flex gap-3">
+				<span className="text-3xl/snug">
+					<NumberRoll
+						locales={locale}
+						format={{ style: 'decimal', currency: 'USD', maximumFractionDigits: 3 }}
+					>
+						{value}
+					</NumberRoll>
+				</span>
+				<span>${value}</span>
+			</span>
 			<button onClick={() => setLocale((l) => (l === 'en-US' ? 'fr-FR' : 'en-US'))}>
 				Change locale
 			</button>
-			<button onClick={() => setValue((v) => (v === 123.4 ? 133.4 : 123.4))}>Change value</button>
+			<button onClick={() => setValue((v) => (v === 123.4 ? 1125.4 : 123.4))}>Change value</button>
 		</main>
 	)
 }

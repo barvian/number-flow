@@ -3,8 +3,10 @@ import {
 	AnimatePresence,
 	LayoutGroup,
 	motion,
+	addScaleCorrector,
 	transform,
-	type HTMLMotionProps
+	type HTMLMotionProps,
+	useMotionValue
 } from 'framer-motion'
 
 // Merge the sign types
@@ -22,6 +24,8 @@ export default function NumberRoll({
 	locales?: Intl.LocalesArgument
 	format?: Intl.NumberFormatOptions
 }) {
+	const ref = React.useRef<HTMLSpanElement>(null)
+
 	// Split the number into parts
 	const parts = React.useMemo(() => {
 		const formatter = new Intl.NumberFormat(locales, format)
@@ -63,120 +67,184 @@ export default function NumberRoll({
 	if (!parts) return children
 
 	const id = React.useId()
+	const [mounted, setMounted] = React.useState(false)
+	React.useEffect(() => setMounted(true), [])
 
 	return (
-		<span>
-			<AnimatePresence mode="popLayout" initial={false}>
-				<LayoutGroup>
-					{parts.map(({ type, value, key: _key }) => {
-						const key = `${id}${_key}`
-						return type === 'integer' || type === 'fraction' ? (
-							<Roll
-								key={key}
-								layoutId={key}
-								layout="position"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-							>
-								{value}
-							</Roll>
-						) : (
-							<motion.span
-								// Make sure we re-render if the value changes, to trigger the exit animation:
-								key={`${key}:${value}`}
-								style={{ display: 'inline-block' }}
-								layoutId={key}
-								layout="position"
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-							>
-								{value}
-							</motion.span>
-						)
-					})}
+		<span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
+			{/* Position this absolutely so that the mask-image doesn't cut off the edges: */}
+			<motion.span
+				style={{
+					display: 'block',
+					margin: '0 calc(-1*var(--mask-width,0.5em))',
+					padding: '0 var(--mask-width,0.5em)',
+					maskImage:
+						'linear-gradient(to bottom, transparent 0, #000 calc((100% - 1em) / 2), #000 calc(100% - (100% - 1em) / 2), transparent 100%)',
+					whiteSpace: 'nowrap'
+				}}
+			>
+				<LayoutGroup id={id}>
+					<Section layout style={{ justifyContent: 'end' }}>
+						{parts.map(
+							({ type, value, key }) =>
+								// <AnimatePresence mode="popLayout" initial={false} key={key}>
+								type === 'integer' || type === 'fraction' ? (
+									<Roll
+										key={key}
+										layout="position"
+										transition={{ duration: 3, layout: { bounce: 0 } }}
+										defaultValue={mounted ? 0 : value}
+										value={value}
+									/>
+								) : (
+									<motion.span
+										// Make sure we re-render if the value changes, to trigger the exit animation:
+										key={`${key}:${value}`}
+										style={{
+											display: 'inline-block',
+											whiteSpace: 'pre' /* some symbols are just spaces */
+										}}
+										layoutId={key}
+										layout="position"
+										initial={{ opacity: 0 }}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
+										transition={{ duration: 3, layout: { bounce: 0 } }}
+									>
+										{value}
+									</motion.span>
+								)
+							// </AnimatePresence>
+						)}
+					</Section>
 				</LayoutGroup>
-			</AnimatePresence>
+			</motion.span>
+			<span style={{ position: 'relative', color: 'transparent !important' }}>
+				{parts.map(({ value }, i) => (
+					<span key={i} style={{ whiteSpace: 'pre' }}>
+						{value}
+					</span>
+				))}
+			</span>
 		</span>
 	)
 }
 
+const Section = React.forwardRef<
+	HTMLSpanElement,
+	HTMLMotionProps<'span'> & { children: React.ReactNode }
+>(({ children, style, ...rest }, ref) => {
+	const innerRef = React.useRef<HTMLSpanElement>(null)
+
+	const [width, setWidth] = React.useState<number>()
+	React.useEffect(() => {
+		if (!innerRef.current) return
+
+		// Use a ResizeObserver to listen for changes to the font size
+		const observer = new ResizeObserver(([entry]) => {
+			setWidth(entry?.contentRect.width)
+		})
+
+		observer.observe(innerRef.current)
+		return () => observer.disconnect()
+	}, [])
+
+	return (
+		<motion.span {...rest} ref={ref} style={{ ...style, display: 'inline-flex', width }}>
+			<span ref={innerRef}>{children}</span>
+		</motion.span>
+	)
+})
+
 const valueToY = transform([0, 9], [-90, 0])
 
-// Don't export
-const Roll = React.forwardRef<HTMLSpanElement, HTMLMotionProps<'span'> & { children: number }>(
-	({ children: value, ...rest }, _ref) => {
-		const ref = React.useRef<HTMLSpanElement>(null)
-		const innerRef = React.useRef<HTMLSpanElement>(null)
-		React.useImperativeHandle(_ref, () => ref.current!, [])
+function useFirst<T>(value?: T) {
+	const ref = React.useRef<T | undefined>(undefined)
+	if (value !== undefined && ref.current === undefined) ref.current = value
+	return ref.current
+}
 
-		const numberRefs = React.useRef(
-			Array(10)
-				.fill(null)
-				.map(() => React.createRef<HTMLSpanElement>())
+const Roll = React.forwardRef<
+	HTMLSpanElement,
+	HTMLMotionProps<'span'> & { value: number; defaultValue?: number }
+>(({ value, defaultValue: _default = value, ...rest }, ref) => {
+	const innerRef = React.useRef<HTMLSpanElement>(null)
+	const numberRefs = React.useRef(
+		Array(10)
+			.fill(null)
+			.map(() => React.createRef<HTMLSpanElement>())
+	)
+
+	const defaultValue = useFirst(_default)!
+
+	const above = []
+	for (let i = 9; i > defaultValue; i--) {
+		above.push(
+			<span key={i} aria-hidden="true" style={{ userSelect: 'none' }} ref={numberRefs.current[i]}>
+				{i}
+			</span>
 		)
+	}
+	const below = []
+	for (let i = defaultValue - 1; i >= 0; i--) {
+		below.push(
+			<span key={i} aria-hidden="true" style={{ userSelect: 'none' }} ref={numberRefs.current[i]}>
+				{i}
+			</span>
+		)
+	}
 
-		const above = []
-		for (let i = 9; i > value; i--) {
-			above.push(
-				<span key={i} ref={numberRefs.current[i]} aria-hidden="true" style={{ userSelect: 'none' }}>
-					{i}
-				</span>
-			)
-		}
-		const below = []
-		for (let i = value - 1; i >= 0; i--) {
-			below.push(
-				<span key={i} ref={numberRefs.current[i]} aria-hidden="true" style={{ userSelect: 'none' }}>
-					{i}
-				</span>
-			)
-		}
+	const [width, setWidth] = React.useState<`${number}em`>()
+	React.useEffect(() => {
+		const { width, fontSize } = getComputedStyle(numberRefs.current[value]!.current!)
+		setWidth(`${parseFloat(width) / parseFloat(fontSize)}em`)
+	}, [value])
 
-		const [width, setWidth] = React.useState('auto')
-
-		React.useEffect(() => {
-			// TODO: this doesn't need to re-run every time:
-			const { fontSize: _fontSize } = window.getComputedStyle(innerRef.current!)
-			const fontSize = parseFloat(_fontSize)
-
-			const currentNumberWidth = numberRefs.current[value]!.current!.getBoundingClientRect().width
-			setWidth(`${currentNumberWidth / fontSize}em`)
-		}, [value])
-
-		return (
+	return (
+		<motion.span
+			{...rest}
+			ref={ref}
+			style={{ display: 'inline-flex', justifyContent: 'center', width }}
+		>
 			<motion.span
-				{...rest}
-				ref={ref}
-				style={{ display: 'inline-flex', justifyContent: 'center', width }}
+				ref={innerRef}
+				style={{
+					display: 'flex',
+					flexDirection: 'column',
+					alignItems: 'center'
+				}}
+				initial={{ y: '0%' }}
+				animate={{ y: `${(value - defaultValue) * 100}%` }}
+				transition={{ duration: 3, bounce: 0 }}
 			>
-				<motion.span
-					ref={innerRef}
+				<span
 					style={{
 						display: 'flex',
 						flexDirection: 'column',
-						alignItems: 'center'
-					}}
-					animate={{
-						y: `${valueToY(value)}%`
+						alignItems: 'center',
+						position: 'absolute',
+						bottom: '100%',
+						left: 0,
+						width: '100%'
 					}}
 				>
 					{above}
-					<span ref={numberRefs.current[value]}>{value}</span>
+				</span>
+				<span ref={numberRefs.current[defaultValue]}>{defaultValue}</span>
+				<span
+					style={{
+						display: 'flex',
+						flexDirection: 'column',
+						alignItems: 'center',
+						position: 'absolute',
+						top: '100%',
+						left: 0,
+						width: '100%'
+					}}
+				>
 					{below}
-				</motion.span>
+				</span>
 			</motion.span>
-		)
-	}
-)
-
-function useLazyRef<T>(fn: () => T) {
-	const ref = React.useRef<T>()
-
-	if (ref.current === undefined) {
-		ref.current = fn()
-	}
-
-	return ref as React.MutableRefObject<T>
-}
+		</motion.span>
+	)
+})

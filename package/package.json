@@ -54,8 +54,5 @@
 		"react": "^18.0.0",
 		"react-dom": "^18.0.0",
 		"tsup": "^8.1.2"
-	},
-	"dependencies": {
-		"react-use": "^17.5.0"
 	}
 }
