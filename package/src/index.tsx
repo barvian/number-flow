@@ -6,7 +6,9 @@ import {
 	addScaleCorrector,
 	transform,
 	type HTMLMotionProps,
-	useMotionValue
+	useMotionValue,
+	usePresence,
+	useIsPresent
 } from 'framer-motion'
 
 // Merge the sign types
@@ -85,15 +87,16 @@ export default function NumberRoll({
 			>
 				<LayoutGroup id={id}>
 					<Section layout style={{ justifyContent: 'end' }}>
-						{parts.map(
-							({ type, value, key }) =>
-								// <AnimatePresence mode="popLayout" initial={false} key={key}>
+						<AnimatePresence initial={false} mode="popLayout">
+							{parts.map(({ type, value, key }) =>
 								type === 'integer' || type === 'fraction' ? (
 									<Roll
 										key={key}
-										layout="position"
-										transition={{ duration: 3, layout: { bounce: 0 } }}
+										transition={{ duration: 0.3 }}
 										defaultValue={mounted ? 0 : value}
+										initial={mounted ? { opacity: 0 } : {}}
+										animate={{ opacity: 1 }}
+										exit={{ opacity: 0 }}
 										value={value}
 									/>
 								) : (
@@ -109,13 +112,13 @@ export default function NumberRoll({
 										initial={{ opacity: 0 }}
 										animate={{ opacity: 1 }}
 										exit={{ opacity: 0 }}
-										transition={{ duration: 3, layout: { bounce: 0 } }}
+										transition={{ duration: 3 }}
 									>
 										{value}
 									</motion.span>
 								)
-							// </AnimatePresence>
-						)}
+							)}
+						</AnimatePresence>
 					</Section>
 				</LayoutGroup>
 			</motion.span>
@@ -167,7 +170,7 @@ function useFirst<T>(value?: T) {
 const Roll = React.forwardRef<
 	HTMLSpanElement,
 	HTMLMotionProps<'span'> & { value: number; defaultValue?: number }
->(({ value, defaultValue: _default = value, ...rest }, ref) => {
+>(({ value: _value, defaultValue: _default = _value, ...rest }, ref) => {
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = React.useRef(
 		Array(10)
@@ -176,22 +179,27 @@ const Roll = React.forwardRef<
 	)
 
 	const defaultValue = useFirst(_default)!
+	const present = useIsPresent()
+	const value = present ? _value : 0
+
+	const renderDigit = (i: number) => (
+		<span
+			key={i}
+			aria-hidden={i === value}
+			style={{ userSelect: 'none' }}
+			ref={numberRefs.current[i]}
+		>
+			{i}
+		</span>
+	)
 
 	const above = []
 	for (let i = 9; i > defaultValue; i--) {
-		above.push(
-			<span key={i} aria-hidden="true" style={{ userSelect: 'none' }} ref={numberRefs.current[i]}>
-				{i}
-			</span>
-		)
+		above.push(renderDigit(i))
 	}
 	const below = []
 	for (let i = defaultValue - 1; i >= 0; i--) {
-		below.push(
-			<span key={i} aria-hidden="true" style={{ userSelect: 'none' }} ref={numberRefs.current[i]}>
-				{i}
-			</span>
-		)
+		below.push(renderDigit(i))
 	}
 
 	const [width, setWidth] = React.useState<`${number}em`>()
@@ -204,46 +212,57 @@ const Roll = React.forwardRef<
 		<motion.span
 			{...rest}
 			ref={ref}
+			layout
+			transition={{ duration: 3 }}
 			style={{ display: 'inline-flex', justifyContent: 'center', width }}
 		>
+			{/* Scale correction: */}
 			<motion.span
-				ref={innerRef}
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center'
-				}}
-				initial={{ y: '0%' }}
-				animate={{ y: `${(value - defaultValue) * 100}%` }}
-				transition={{ duration: 3, bounce: 0 }}
+				layout
+				transition={{ duration: 3 }}
+				style={{ display: 'inline-flex', justifyContent: 'center' }}
 			>
-				<span
+				{/* This needs to be separate so the layout animation doesn't affect its y: */}
+				<motion.span
+					ref={innerRef}
 					style={{
-						display: 'flex',
+						display: 'inline-flex',
 						flexDirection: 'column',
 						alignItems: 'center',
-						position: 'absolute',
-						bottom: '100%',
-						left: 0,
-						width: '100%'
+						position: 'relative'
 					}}
+					initial={{ y: '0%' }}
+					animate={{ y: `${(value - defaultValue) * 100}%` }}
+					transition={{ duration: 3 }}
 				>
-					{above}
-				</span>
-				<span ref={numberRefs.current[defaultValue]}>{defaultValue}</span>
-				<span
-					style={{
-						display: 'flex',
-						flexDirection: 'column',
-						alignItems: 'center',
-						position: 'absolute',
-						top: '100%',
-						left: 0,
-						width: '100%'
-					}}
-				>
-					{below}
-				</span>
+					<span
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							position: 'absolute',
+							bottom: '100%',
+							left: 0,
+							width: '100%'
+						}}
+					>
+						{above}
+					</span>
+					{renderDigit(defaultValue)}
+					<span
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							alignItems: 'center',
+							position: 'absolute',
+							top: '100%',
+							left: 0,
+							width: '100%'
+						}}
+					>
+						{below}
+					</span>
+				</motion.span>
 			</motion.span>
 		</motion.span>
 	)
