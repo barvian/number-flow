@@ -8,7 +8,7 @@ export default function Home() {
 	const [locale, setLocale] = React.useState('en-US')
 
 	return (
-		<main className="flex min-h-screen flex-col justify-between p-24">
+		<main className="flex min-h-screen flex-col items-start justify-between p-24">
 			<span className="flex gap-3">
 				<span className="text-3xl/snug">
 					<NumberRoll

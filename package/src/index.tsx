@@ -13,13 +13,95 @@ import {
 
 // Merge the sign types
 type NumberPartType = Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'> | 'sign'
+type DigitPart = { type: NumberPartType & ('integer' | 'fraction'); value: number }
+type SymbolPart = {
+	type: Exclude<NumberPartType, 'integer' | 'fraction'>
+	value: string
+}
+type NumberPart = DigitPart | SymbolPart
+type KeyedNumberPart = NumberPart & { key: string }
 
-// Reverse the layout animations for these number part types:
-const REVERSE_TYPES: Intl.NumberFormatPartTypes[] = ['integer', 'group']
+const formatToParts = (
+	value: number | bigint | string,
+	locales?: Intl.LocalesArgument,
+	format?: Intl.NumberFormatOptions
+) => {
+	const formatter = new Intl.NumberFormat(locales, format)
+	const parts = formatter.formatToParts(value)
+
+	const pre: KeyedNumberPart[] = []
+	const _integer: NumberPart[] = [] // we go back to add the keys in reverse
+	const fraction: KeyedNumberPart[] = []
+	const post: KeyedNumberPart[] = []
+	let exponentSymbol: string | undefined
+	let exponent = ''
+
+	const counts: Partial<Record<NumberPartType, number>> = {}
+	const generateKey = (type: NumberPartType) => {
+		if (!counts[type]) counts[type] = 0
+		return `${type}:${counts[type]++}`
+	}
+
+	let seenInteger = false,
+		seenDecimal = false
+	for (const part of parts) {
+		// Merge plus and minus sign types (doing it this way appeases TypeScript)
+		const type: NumberPartType =
+			part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
+
+		switch (type) {
+			case 'nan':
+			case 'infinity':
+				return null
+			case 'integer':
+				seenInteger = true
+				_integer.push(...part.value.split('').map((d) => ({ type, value: parseInt(d) })))
+				break
+			case 'decimal':
+				seenDecimal = true
+				fraction.push({ type, value: part.value, key: generateKey(type) })
+				break
+			case 'fraction':
+				fraction.push(
+					...part.value.split('').map((d) => ({ type, value: parseInt(d), key: generateKey(type) }))
+				)
+				break
+			case 'exponentSeparator':
+				exponentSymbol = part.value
+				break
+			// Add these as strings because they'll get parsed as numbers later:
+			case 'exponentMinusSign':
+			case 'exponentInteger':
+				exponent += part.value
+				break
+			default:
+				;(seenInteger || seenDecimal ? post : pre).push({
+					type,
+					value: part.value,
+					key: generateKey(type)
+				})
+		}
+	}
+
+	const integer: KeyedNumberPart[] = []
+	// Key the integer parts backwards, for better layout animations
+	for (let i = _integer.length - 1; i >= 0; i--) {
+		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
+	}
+
+	return {
+		pre,
+		integer,
+		fraction,
+		post,
+		exponentSymbol,
+		exponent
+	}
+}
 
 export default function NumberRoll({
 	children,
-	locales = typeof window !== 'undefined' ? window.navigator.language : undefined, // Int.NumberFormat defaults to the runtime's default locale
+	locales,
 	format
 }: {
 	children: number | bigint | string
@@ -29,51 +111,20 @@ export default function NumberRoll({
 	const ref = React.useRef<HTMLSpanElement>(null)
 
 	// Split the number into parts
-	const parts = React.useMemo(() => {
-		const formatter = new Intl.NumberFormat(locales, format)
-		const parts = formatter.formatToParts(children)
-		if (parts.find((part) => part.type === 'nan')) return null
-
-		const counts: Partial<Record<NumberPartType, number>> = {}
-		return parts.flatMap<
-			| { type: NumberPartType & ('integer' | 'fraction'); value: number; key: string }
-			| { type: Exclude<NumberPartType, 'integer' | 'fraction'>; value: string; key: string }
-		>((part) => {
-			// Merge the sign types
-			const type: NumberPartType =
-				part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
-
-			if (counts[type] == null)
-				counts[type] = REVERSE_TYPES.includes(part.type)
-					? type === 'integer'
-						? parts.reduce((acc, p) => (p.type === 'integer' ? acc + p.value.length : acc), 0)
-						: parts.filter((p) => p.type === type).length
-					: 0
-
-			// Split up integers and fractions
-			if (type === 'integer' || type === 'fraction')
-				return part.value.split('').map((char) => ({
-					type,
-					value: parseInt(char),
-					key: `${type}:${REVERSE_TYPES.includes(part.type) ? counts[type]-- : counts[type]++}`
-				}))
-
-			return {
-				type,
-				value: part.value,
-				key: `${type}:${REVERSE_TYPES.includes(part.type) ? counts[type]-- : counts[type]++}`
-			}
-		})
-	}, [children, locales, format])
+	const parts = React.useMemo(
+		() => formatToParts(children, locales, format),
+		[children, locales, format]
+	)
 	// Abort if invalid
 	if (!parts) return children
+	const { pre, integer, fraction, post, exponentSymbol, exponent } = parts
 
 	const id = React.useId()
 	const [mounted, setMounted] = React.useState(false)
 	React.useEffect(() => setMounted(true), [])
 
 	return (
-		<span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
+		<motion.span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
 			{/* Position this absolutely so that the mask-image doesn't cut off the edges: */}
 			<motion.span
 				style={{
@@ -129,7 +180,7 @@ export default function NumberRoll({
 					</span>
 				))}
 			</span>
-		</span>
+		</motion.span>
 	)
 }
 
@@ -153,8 +204,15 @@ const Section = React.forwardRef<
 	}, [])
 
 	return (
-		<motion.span {...rest} ref={ref} style={{ ...style, display: 'inline-flex', width }}>
-			<span ref={innerRef}>{children}</span>
+		<motion.span
+			{...rest}
+			layoutRoot
+			ref={ref}
+			style={{ display: 'inline-flex', justifyContent: 'end', width }}
+		>
+			<span style={{ display: 'inline-flex', justifyContent: 'end' }} ref={innerRef}>
+				{children}
+			</span>
 		</motion.span>
 	)
 })
