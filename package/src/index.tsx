@@ -21,6 +21,19 @@ type SymbolPart = {
 type NumberPart = DigitPart | SymbolPart
 type KeyedNumberPart = NumberPart & { key: string }
 
+function useMemoWithPrevious<T>(
+	factory: (previous: T) => T,
+	deps: React.DependencyList,
+	initial: T
+): T {
+	const prev = React.useRef<T>(initial)
+	const value = React.useMemo(() => factory(prev.current), [...deps])
+	React.useEffect(() => {
+		prev.current = value
+	}, [value])
+	return value
+}
+
 const formatToParts = (
 	value: number | bigint | string,
 	locales?: Intl.LocalesArgument,
@@ -99,6 +112,10 @@ const formatToParts = (
 	}
 }
 
+const NumberRollContext = React.createContext({
+	mounted: false
+})
+
 export default function NumberRoll({
 	children,
 	locales,
@@ -120,74 +137,49 @@ export default function NumberRoll({
 	const { pre, integer, fraction, post, exponentSymbol, exponent } = parts
 
 	const id = React.useId()
+
 	const [mounted, setMounted] = React.useState(false)
 	React.useEffect(() => setMounted(true), [])
 
 	return (
-		<motion.span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
-			{/* Position this absolutely so that the mask-image doesn't cut off the edges: */}
-			<motion.span
-				style={{
-					display: 'block',
-					margin: '0 calc(-1*var(--mask-width,0.5em))',
-					padding: '0 var(--mask-width,0.5em)',
-					maskImage:
-						'linear-gradient(to bottom, transparent 0, #000 calc((100% - 1em) / 2), #000 calc(100% - (100% - 1em) / 2), transparent 100%)',
-					whiteSpace: 'nowrap'
-				}}
-			>
-				<LayoutGroup id={id}>
-					<Section layout style={{ justifyContent: 'end' }}>
-						<AnimatePresence initial={false} mode="popLayout">
-							{parts.map(({ type, value, key }) =>
-								type === 'integer' || type === 'fraction' ? (
-									<Roll
-										key={key}
-										transition={{ duration: 0.3 }}
-										defaultValue={mounted ? 0 : value}
-										initial={mounted ? { opacity: 0 } : {}}
-										animate={{ opacity: 1 }}
-										exit={{ opacity: 0 }}
-										value={value}
-									/>
-								) : (
-									<motion.span
-										// Make sure we re-render if the value changes, to trigger the exit animation:
-										key={`${key}:${value}`}
-										style={{
-											display: 'inline-block',
-											whiteSpace: 'pre' /* some symbols are just spaces */
-										}}
-										layoutId={key}
-										layout="position"
-										initial={{ opacity: 0 }}
-										animate={{ opacity: 1 }}
-										exit={{ opacity: 0 }}
-										transition={{ duration: 3 }}
-									>
-										{value}
-									</motion.span>
-								)
-							)}
-						</AnimatePresence>
-					</Section>
-				</LayoutGroup>
+		<NumberRollContext.Provider value={{ mounted }}>
+			<motion.span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
+				{/* Position this absolutely so that the mask-image doesn't cut off the edges: */}
+				<motion.span
+					style={{
+						display: 'block',
+						margin: '0 calc(-1*var(--mask-width,0.5em))',
+						padding: '0 var(--mask-width,0.5em)',
+						maskImage:
+							'linear-gradient(to bottom, transparent 0, #000 calc((100% - 1em) / 2), #000 calc(100% - (100% - 1em) / 2), transparent 100%)',
+						whiteSpace: 'nowrap'
+					}}
+				>
+					<LayoutGroup id={id}>
+						<Section layout justify="end">
+							{integer}
+						</Section>
+					</LayoutGroup>
+				</motion.span>
+				{/* <span style={{ position: 'relative', color: 'transparent !important' }}>
+					{parts.map(({ value }, i) => (
+						<span key={i} style={{ whiteSpace: 'pre' }}>
+							{value}
+						</span>
+					))}
+				</span> */}
 			</motion.span>
-			<span style={{ position: 'relative', color: 'transparent !important' }}>
-				{parts.map(({ value }, i) => (
-					<span key={i} style={{ whiteSpace: 'pre' }}>
-						{value}
-					</span>
-				))}
-			</span>
-		</motion.span>
+		</NumberRollContext.Provider>
 	)
 }
 
 const Section = React.forwardRef<
 	HTMLSpanElement,
-	HTMLMotionProps<'span'> & { children: React.ReactNode }
->(({ children, style, ...rest }, ref) => {
+	Omit<HTMLMotionProps<'span'>, 'children'> & {
+		children: KeyedNumberPart[]
+		justify: 'start' | 'end'
+	}
+>(({ children, justify, ...rest }, ref) => {
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 
 	const [width, setWidth] = React.useState<number>()
@@ -203,15 +195,48 @@ const Section = React.forwardRef<
 		return () => observer.disconnect()
 	}, [])
 
+	// Keep track of which parts were just removed, so they can animate out but can still be
+	// reclaimed if the animation is interrupted:
+	const prevChildren = React.useRef<KeyedNumberPart[]>()
+	const removed = useMemoWithPrevious(
+		(r) => {
+			const prev = prevChildren.current
+			prevChildren.current = children
+			return !prev
+				? r
+				: [
+						// Add any new ones that were removed
+						...prev.filter((p) => !children.find((part) => part.key === p.key)),
+						// Re-add any that had been marked for removal
+						...r.filter((p) => !children.find((part) => part.key === p.key))
+					]
+		},
+		[children],
+		[] as KeyedNumberPart[]
+	)
+
+	React.useEffect(() => {
+		console.log(removed, children)
+	}, [removed, children])
+
 	return (
 		<motion.span
 			{...rest}
 			layoutRoot
 			ref={ref}
-			style={{ display: 'inline-flex', justifyContent: 'end', width }}
+			style={{ display: 'inline-flex', justifyContent: justify, width }}
 		>
-			<span style={{ display: 'inline-flex', justifyContent: 'end' }} ref={innerRef}>
-				{children}
+			{/* {removed.map((part) => (
+				<Part
+					{...part}
+					partKey={part.key}
+					onAnimationComplete={() => setRemoved((r) => r.filter((p) => p.key !== part.key))}
+				/>
+			))} */}
+			<span style={{ display: 'inline-flex', justifyContent: justify }} ref={innerRef}>
+				{removed.concat(children).map((part) => (
+					<Part {...part} partKey={part.key} />
+				))}
 			</span>
 		</motion.span>
 	)
@@ -325,3 +350,42 @@ const Roll = React.forwardRef<
 		</motion.span>
 	)
 })
+
+function Part({
+	animate,
+	type,
+	partKey,
+	value,
+	...rest
+}: Omit<HTMLMotionProps<'span'>, 'children'> & NumberPart & { partKey: KeyedNumberPart['key'] }) {
+	const { mounted } = React.useContext(NumberRollContext)
+
+	return type === 'integer' || type === 'fraction' ? (
+		<Roll
+			{...rest}
+			layoutId={partKey}
+			transition={{ duration: 0.3 }}
+			defaultValue={mounted ? 0 : value}
+			initial={mounted ? { opacity: 0 } : {}}
+			animate={animate || { opacity: 1 }}
+			value={value}
+		/>
+	) : (
+		<motion.span
+			{...rest}
+			// Make sure we re-render if the value changes, to trigger the exit animation:
+			key={`${partKey}:${value}`}
+			style={{
+				display: 'inline-block',
+				whiteSpace: 'pre' /* some symbols are just spaces */
+			}}
+			layoutId={partKey}
+			layout="position"
+			initial={{ opacity: 0 }}
+			animate={animate || { opacity: 1 }}
+			transition={{ duration: 3 }}
+		>
+			{value}
+		</motion.span>
+	)
+}

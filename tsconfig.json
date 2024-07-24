@@ -15,7 +15,7 @@
 		/* Linting */
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
-		"exactOptionalPropertyTypes": true,
+		// "exactOptionalPropertyTypes": true,
 		"noUncheckedIndexedAccess": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
