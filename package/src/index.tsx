@@ -18,8 +18,21 @@ type SymbolPart = {
 	type: Exclude<NumberPartType, 'integer' | 'fraction'>
 	value: string
 }
+type KeyedPart = { key: string }
 type NumberPart = DigitPart | SymbolPart
 type KeyedNumberPart = NumberPart & { key: string }
+type KeyedSymbolPart = SymbolPart & KeyedPart
+
+const isDigitPart = (part: NumberPart): part is DigitPart =>
+	part.type === 'integer' || part.type === 'fraction'
+
+function usePrevious<T>(value: T, initial: T): T {
+	const ref = React.useRef(initial)
+	React.useEffect(() => {
+		ref.current = value
+	}, [value])
+	return ref.current
+}
 
 function useMemoWithPrevious<T>(
 	factory: (previous: T) => T,
@@ -32,6 +45,14 @@ function useMemoWithPrevious<T>(
 		prev.current = value
 	}, [value])
 	return value
+}
+
+function useRefs<T>(length: number, initial: T | null = null) {
+	const ref = React.useRef<Array<typeof initial>>(new Array(length).fill(initial))
+	React.useEffect(() => {
+		ref.current = ref.current.slice(0, length)
+	}, [length])
+	return ref.current
 }
 
 const formatToParts = (
@@ -97,7 +118,7 @@ const formatToParts = (
 	}
 
 	const integer: KeyedNumberPart[] = []
-	// Key the integer parts backwards, for better layout animations
+	// Key the integer parts backwards, mostly for better layout animations
 	for (let i = _integer.length - 1; i >= 0; i--) {
 		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
 	}
@@ -179,14 +200,17 @@ const Section = React.forwardRef<
 		children: KeyedNumberPart[]
 		justify: 'start' | 'end'
 	}
->(({ children, justify, ...rest }, ref) => {
+>(({ children, justify, ...rest }, _ref) => {
+	const ref = React.useRef<HTMLSpanElement>(null)
+	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const innerRef = React.useRef<HTMLSpanElement>(null)
+
+	const { mounted } = React.useContext(NumberRollContext)
 
 	const [width, setWidth] = React.useState<number>()
 	React.useEffect(() => {
 		if (!innerRef.current) return
 
-		// Use a ResizeObserver to listen for changes to the font size
 		const observer = new ResizeObserver(([entry]) => {
 			setWidth(entry?.contentRect.width)
 		})
@@ -197,27 +221,37 @@ const Section = React.forwardRef<
 
 	// Keep track of which parts were just removed, so they can animate out but can still be
 	// reclaimed if the animation is interrupted:
-	const prevChildren = React.useRef<KeyedNumberPart[]>()
+	const prevChildren = usePrevious(children, [])
 	const removed = useMemoWithPrevious(
-		(r) => {
-			const prev = prevChildren.current
-			prevChildren.current = children
-			return !prev
-				? r
-				: [
-						// Add any new ones that were removed
-						...prev.filter((p) => !children.find((part) => part.key === p.key)),
-						// Re-add any that had been marked for removal
-						...r.filter((p) => !children.find((part) => part.key === p.key))
-					]
-		},
-		[children],
+		(r) => [
+			// Mark any that were removed
+			...prevChildren.filter((p) => !children.find((part) => part.key === p.key)),
+			// Re-add any that had been marked for removal
+			...r.filter((p) => !children.find((part) => part.key === p.key))
+		],
+		[children, prevChildren],
 		[] as KeyedNumberPart[]
 	)
+	const numRemoved = removed.length
+	const isRemoved = (i: number) => i < numRemoved
 
 	React.useEffect(() => {
 		console.log(removed, children)
-	}, [removed, children])
+	}, [children])
+
+	const parts = React.useMemo(() => removed.concat(children), [removed, children])
+	const partRefs = useRefs<HTMLSpanElement>(parts.length)
+
+	// Manually move the removed parts to the beginning of the section (outside the measured area),
+	// so they're still managed by React but don't affect the layout measurements:
+	React.useLayoutEffect(() => {
+		parts.forEach((part, i) => {
+			if (isRemoved(i)) {
+				ref.current?.insertBefore(partRefs[i]!, innerRef.current)
+			}
+			// TODO: re-add/move all children into measured area
+		})
+	}, [parts])
 
 	return (
 		<motion.span
@@ -226,17 +260,25 @@ const Section = React.forwardRef<
 			ref={ref}
 			style={{ display: 'inline-flex', justifyContent: justify, width }}
 		>
-			{/* {removed.map((part) => (
-				<Part
-					{...part}
-					partKey={part.key}
-					onAnimationComplete={() => setRemoved((r) => r.filter((p) => p.key !== part.key))}
-				/>
-			))} */}
 			<span style={{ display: 'inline-flex', justifyContent: justify }} ref={innerRef}>
-				{removed.concat(children).map((part) => (
-					<Part {...part} partKey={part.key} />
-				))}
+				{parts.map((part, i) =>
+					isDigitPart(part) ? (
+						<Roll
+							ref={(r) => void (partRefs[i] = r)}
+							key={part.key}
+							layoutId={part.key}
+							transition={{ duration: 0.3 }}
+							defaultValue={mounted ? 0 : part.value}
+							initial={mounted ? { opacity: 0 } : {}}
+							animate={{ opacity: 1 }}
+							value={isRemoved(i) ? 0 : part.value}
+						/>
+					) : (
+						<Symbol ref={(r) => void (partRefs[i] = r)} partKey={part.key}>
+							{part.value}
+						</Symbol>
+					)
+				)}
 			</span>
 		</motion.span>
 	)
@@ -351,41 +393,30 @@ const Roll = React.forwardRef<
 	)
 })
 
-function Part({
-	animate,
-	type,
-	partKey,
-	value,
-	...rest
-}: Omit<HTMLMotionProps<'span'>, 'children'> & NumberPart & { partKey: KeyedNumberPart['key'] }) {
-	const { mounted } = React.useContext(NumberRollContext)
+type Rename<T, K extends keyof T, N extends string> = Pick<T, Exclude<keyof T, K>> & {
+	[P in N]: T[K]
+}
 
-	return type === 'integer' || type === 'fraction' ? (
-		<Roll
-			{...rest}
-			layoutId={partKey}
-			transition={{ duration: 0.3 }}
-			defaultValue={mounted ? 0 : value}
-			initial={mounted ? { opacity: 0 } : {}}
-			animate={animate || { opacity: 1 }}
-			value={value}
-		/>
-	) : (
+const Symbol = React.forwardRef<
+	HTMLSpanElement,
+	Omit<Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>, 'type'>
+>(({ partKey: key, children: value }, ref) => {
+	return (
 		<motion.span
-			{...rest}
+			ref={ref}
 			// Make sure we re-render if the value changes, to trigger the exit animation:
-			key={`${partKey}:${value}`}
+			key={`${key}:${value}`}
 			style={{
 				display: 'inline-block',
 				whiteSpace: 'pre' /* some symbols are just spaces */
 			}}
-			layoutId={partKey}
+			layoutId={key}
 			layout="position"
 			initial={{ opacity: 0 }}
-			animate={animate || { opacity: 1 }}
+			animate={{ opacity: 1 }}
 			transition={{ duration: 3 }}
 		>
 			{value}
 		</motion.span>
 	)
-}
+})
