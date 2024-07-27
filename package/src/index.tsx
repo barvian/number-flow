@@ -4,26 +4,33 @@ import {
 	LayoutGroup,
 	motion,
 	addScaleCorrector,
-	transform,
 	type HTMLMotionProps,
-	useMotionValue,
-	usePresence,
 	useIsPresent,
-	frame,
 	MotionConfig
 } from 'framer-motion'
 
-// Merge the sign types
+addScaleCorrector({
+	'--number-roll-scale-x-correction': {
+		correct: (latest, node) => {
+			console.log('correcting')
+			if (!node.target) return latest
+			return latest
+		}
+	}
+})
+
+// Merge the plus and minus sign types
 type NumberPartType = Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'> | 'sign'
 type DigitPart = { type: NumberPartType & ('integer' | 'fraction'); value: number }
 type SymbolPart = {
 	type: Exclude<NumberPartType, 'integer' | 'fraction'>
 	value: string
 }
-type KeyedPart = { key: string }
 type NumberPart = DigitPart | SymbolPart
-type KeyedNumberPart = NumberPart & { key: string }
+type KeyedPart = { key: string }
+type KeyedDigitPart = DigitPart & KeyedPart
 type KeyedSymbolPart = SymbolPart & KeyedPart
+type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
 
 const isDigitPart = (part: NumberPart): part is DigitPart =>
 	part.type === 'integer' || part.type === 'fraction'
@@ -84,6 +91,9 @@ const formatToParts = (
 			case 'integer':
 				seenInteger = true
 				_integer.push(...part.value.split('').map((d) => ({ type, value: parseInt(d) })))
+				break
+			case 'group':
+				_integer.push({ type, value: part.value })
 				break
 			case 'decimal':
 				seenDecimal = true
@@ -146,6 +156,7 @@ export default function NumberRoll({
 	)
 	// Abort if invalid
 	if (!parts) return children
+	console.log(parts)
 	const { pre, integer, fraction, post, exponentSymbol, exponent } = parts
 
 	const id = React.useId()
@@ -193,11 +204,14 @@ const Section = React.forwardRef<
 
 	const mounted = useMounted()
 
+	const exitingWidths = React.useRef(new Map<KeyedDigitPart['key'], number>()).current
+
 	const [width, setWidth] = React.useState<number>()
 	const onResize = () => {
 		// NOTE: this should apply on first render, so that initial adds don't affect the layout
 		if (!innerRef.current) return
-		setWidth(getWidthInEm(innerRef.current))
+		const exitingWidth = Array.from(exitingWidths.values()).reduce((all, w) => all + w, 0)
+		setWidth(getWidthInEm(innerRef.current) - exitingWidth)
 	}
 	React.useEffect(() => {
 		onResize()
@@ -209,7 +223,11 @@ const Section = React.forwardRef<
 			ref={ref}
 			layout="position"
 			layoutRoot
-			style={{ display: 'inline-flex', justifyContent: justify, width: width && `${width}em` }}
+			style={{
+				display: 'inline-flex',
+				justifyContent: justify,
+				width: width == null ? 'auto' : `${width}em`
+			}}
 		>
 			<motion.span
 				style={{
@@ -219,10 +237,10 @@ const Section = React.forwardRef<
 				ref={innerRef}
 				data-number-roll-inner
 			>
-				<AnimatePresence>
+				<AnimatePresence onExitComplete={() => exitingWidths.clear()} initial={false}>
 					{children.map((part, i) =>
 						isDigitPart(part) ? (
-							<Roll
+							<SectionRoll
 								// ref={(r) => void (partRefs[i] = r)}
 								key={part.key}
 								layoutId={part.key}
@@ -231,10 +249,28 @@ const Section = React.forwardRef<
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
 								value={part.value}
-								onResize={onResize}
+								onResize={(w, isPresent) => {
+									if (isPresent) exitingWidths.delete(part.key)
+									else exitingWidths.set(part.key, w)
+									onResize()
+								}}
 							/>
 						) : (
-							<Symbol partKey={part.key}>{part.value}</Symbol>
+							<SectionSymbol
+								key={part.key}
+								type={part.type}
+								partKey={part.key}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								onPresenceChange={(isPresent, w) => {
+									if (isPresent) exitingWidths.delete(part.key)
+									else exitingWidths.set(part.key, w)
+									onResize()
+								}}
+							>
+								{part.value}
+							</SectionSymbol>
 						)
 					)}
 				</AnimatePresence>
@@ -243,12 +279,12 @@ const Section = React.forwardRef<
 	)
 })
 
-const Roll = React.forwardRef<
+const SectionRoll = React.forwardRef<
 	HTMLSpanElement,
-	HTMLMotionProps<'span'> & {
+	Omit<HTMLMotionProps<'span'>, 'onResize'> & {
 		value: number
 		initialValue?: number
-		onResize?: (widthInEm: number) => void
+		onResize?: (widthInEm: number, isPresent: boolean) => void
 	}
 >(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
 	const initialValue = React.useRef(_initialValue).current // Non-reactive
@@ -257,7 +293,7 @@ const Roll = React.forwardRef<
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
 
-	// We can't use a normal exit animation for this because we want it to trigger the width effect:
+	// Don't use a normal exit animation for this because we want it to trigger the width effect:
 	const isPresent = useIsPresent()
 	const value = isPresent ? _value : 0
 
@@ -282,22 +318,36 @@ const Roll = React.forwardRef<
 	}
 
 	const [width, setWidth] = React.useState<number>()
+	// Set the width to the width of the current value:
+	const sizeToValue = () => {
+		if (!numberRefs[value]) return
+		const w = getWidthInEm(numberRefs[value])
+		setWidth(w)
+		return w
+	}
 	React.useEffect(() => {
-		// Skip setting the width if this is the first render and it's not going to animate
-		if (!numberRefs[value] || (!mounted && initialValue === value)) return
-		setWidth(getWidthInEm(numberRefs[value]))
+		// Skip setting the width if this is the first render and it's not going to animate:
+		if (!mounted && initialValue === value) return
+		sizeToValue()
 	}, [value])
-
 	React.useEffect(() => {
-		if (width != null) onResize?.(width)
-	}, [width])
+		let w = width
+		// <Section> needs a width if we're exiting, so set one if we haven't already:
+		if (!isPresent && w == null) w = sizeToValue()
+		if (w != null) onResize?.(w, isPresent)
+	}, [isPresent, width])
 
 	return (
 		<motion.span
 			{...rest}
 			ref={ref}
 			layout
-			style={{ display: 'inline-flex', justifyContent: 'center', width: width && `${width}em` }}
+			data-motion-number-digit={value}
+			style={{
+				display: 'inline-flex',
+				justifyContent: 'center',
+				width: width == null ? 'auto' : `${width}em`
+			}}
 		>
 			{/* Scale correction: */}
 			<motion.span layout style={{ display: 'inline-flex', justifyContent: 'center' }}>
@@ -350,15 +400,28 @@ type Rename<T, K extends keyof T, N extends string> = Pick<T, Exclude<keyof T, K
 	[P in N]: T[K]
 }
 
-const Symbol = React.forwardRef<
+const SectionSymbol = React.forwardRef<
 	HTMLSpanElement,
-	Omit<Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>, 'type'>
->(({ partKey: key, children: value }, ref) => {
+	HTMLMotionProps<'span'> & {
+		onPresenceChange: (isPresent: boolean, width: number) => void
+	} & Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
+>(({ partKey: key, type, children: value, onPresenceChange, ...rest }, _ref) => {
+	const ref = React.useRef<HTMLSpanElement>(null)
+	React.useImperativeHandle(_ref, () => ref.current!, [])
+
+	const isPresent = useIsPresent()
+
+	React.useEffect(() => {
+		if (!isPresent && ref.current) onPresenceChange?.(isPresent, getWidthInEm(ref.current))
+	}, [isPresent])
+
 	return (
 		<motion.span
+			{...rest}
 			ref={ref}
 			// Make sure we re-render if the value changes, to trigger the exit animation:
 			key={`${key}:${value}`}
+			{...{ [`data-motion-number-${type}`]: value }}
 			style={{
 				display: 'inline-block',
 				whiteSpace: 'pre' /* some symbols are just spaces */
