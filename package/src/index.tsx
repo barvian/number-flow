@@ -156,18 +156,22 @@ export default function NumberRoll({
 	)
 	// Abort if invalid
 	if (!parts) return children
-	console.log(parts)
 	const { pre, integer, fraction, post, exponentSymbol, exponent } = parts
 
 	const id = React.useId()
 
 	return (
 		<MotionConfig transition={{ duration: 3 }}>
-			<motion.span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
-				{/* Position this absolutely so that the mask-image doesn't cut off the edges: */}
+			<LayoutGroup id={id}>
+				{/* <motion.span
+					layout="position"
+					ref={ref}
+					style={{ display: 'inline-block', position: 'relative' }}
+				> */}
 				<motion.span
+					layout
 					style={{
-						display: 'block',
+						display: 'inline-block',
 						margin: '0 calc(-1*var(--mask-width,0.5em))',
 						padding: '0 var(--mask-width,0.5em)',
 						maskImage:
@@ -175,18 +179,18 @@ export default function NumberRoll({
 						whiteSpace: 'nowrap'
 					}}
 				>
-					<LayoutGroup id={id}>
-						<Section justify="end">{integer}</Section>
-					</LayoutGroup>
+					<Section justify="end">{integer}</Section>
+					{/* <Section justify="start">{fraction}</Section> */}
 				</motion.span>
 				{/* <span style={{ position: 'relative', color: 'transparent !important' }}>
 					{parts.map(({ value }, i) => (
 						<span key={i} style={{ whiteSpace: 'pre' }}>
-							{value}
+						{value}
 						</span>
 					))}
 				</span> */}
-			</motion.span>
+				{/* </motion.span> */}
+			</LayoutGroup>
 		</MotionConfig>
 	)
 }
@@ -221,7 +225,7 @@ const Section = React.forwardRef<
 		<motion.span
 			{...rest}
 			ref={ref}
-			layout="position"
+			layout
 			layoutRoot
 			style={{
 				display: 'inline-flex',
@@ -229,7 +233,7 @@ const Section = React.forwardRef<
 				width: width == null ? 'auto' : `${width}em`
 			}}
 		>
-			<motion.span
+			<span
 				style={{
 					display: 'inline-flex',
 					justifyContent: justify
@@ -274,7 +278,7 @@ const Section = React.forwardRef<
 						)
 					)}
 				</AnimatePresence>
-			</motion.span>
+			</span>
 		</motion.span>
 	)
 })
@@ -323,7 +327,6 @@ const SectionRoll = React.forwardRef<
 		if (!numberRefs[value]) return
 		const w = getWidthInEm(numberRefs[value])
 		setWidth(w)
-		return w
 	}
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
@@ -333,9 +336,13 @@ const SectionRoll = React.forwardRef<
 	React.useEffect(() => {
 		let w = width
 		// <Section> needs a width if we're exiting, so set one if we haven't already:
-		if (!isPresent && w == null) w = sizeToValue()
-		if (w != null) onResize?.(w, isPresent)
+		if (!isPresent && w == null) sizeToValue()
 	}, [isPresent, width])
+
+	// Wait until any width changes have been committed before emitting:
+	React.useEffect(() => {
+		onResize?.(width!, isPresent)
+	}, [width, isPresent])
 
 	return (
 		<motion.span
@@ -349,7 +356,7 @@ const SectionRoll = React.forwardRef<
 				width: width == null ? 'auto' : `${width}em`
 			}}
 		>
-			{/* Scale correction: */}
+			{/* Scale correction, needed because the children are center-aligned within the parent: */}
 			<motion.span layout style={{ display: 'inline-flex', justifyContent: 'center' }}>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
 				<motion.span
@@ -427,7 +434,7 @@ const SectionSymbol = React.forwardRef<
 				whiteSpace: 'pre' /* some symbols are just spaces */
 			}}
 			layoutId={key}
-			layout="position"
+			layout
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 		>
