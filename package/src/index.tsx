@@ -10,11 +10,10 @@ import {
 } from 'framer-motion'
 
 addScaleCorrector({
-	'--number-roll-scale-x-correction': {
-		correct: (latest, node) => {
+	'--motion-number-scale-x-correction': {
+		correct: (_, { treeScale, projectionDelta }) => {
 			console.log('correcting')
-			if (!node.target) return latest
-			return latest
+			return projectionDelta!.x.scale * treeScale!.x
 		}
 	}
 })
@@ -58,8 +57,7 @@ function useRefs<T>(length: number, initial: T | null = null) {
 
 const formatToParts = (
 	value: number | bigint | string,
-	locales?: Intl.LocalesArgument,
-	format?: Intl.NumberFormatOptions
+	{ locales, format }: { locales?: Intl.LocalesArgument; format?: Intl.NumberFormatOptions }
 ) => {
 	const formatter = new Intl.NumberFormat(locales, format)
 	const parts = formatter.formatToParts(value)
@@ -138,11 +136,11 @@ const formatToParts = (
 }
 
 export default function NumberRoll({
-	children,
+	value,
 	locales,
 	format
 }: {
-	children: number | bigint | string
+	value: number | bigint | string
 	locales?: Intl.LocalesArgument
 	format?: Intl.NumberFormatOptions
 }) {
@@ -151,11 +149,11 @@ export default function NumberRoll({
 
 	// Split the number into parts
 	const parts = React.useMemo(
-		() => formatToParts(children, locales, format),
-		[children, locales, format]
+		() => formatToParts(value, { locales, format }),
+		[value, locales, format]
 	)
 	// Abort if invalid
-	if (!parts) return children
+	if (!parts) return value
 	const { pre, integer, fraction, post, exponentSymbol, exponent } = parts
 
 	const id = React.useId()
@@ -226,7 +224,6 @@ const Section = React.forwardRef<
 			{...rest}
 			ref={ref}
 			layout
-			layoutRoot
 			style={{
 				display: 'inline-flex',
 				justifyContent: justify,
@@ -334,9 +331,8 @@ const SectionRoll = React.forwardRef<
 		sizeToValue()
 	}, [value])
 	React.useEffect(() => {
-		let w = width
 		// <Section> needs a width if we're exiting, so set one if we haven't already:
-		if (!isPresent && w == null) sizeToValue()
+		if (!isPresent && width == null) sizeToValue()
 	}, [isPresent, width])
 
 	// Wait until any width changes have been committed before emitting:
