@@ -5,25 +5,25 @@ import NumberRoll from '@number-roll/react'
 
 export default function Home() {
 	const [value, setValue] = React.useState(123.4)
-	const [locale, setLocale] = React.useState('en-US')
+	const [locale, setLocale] = React.useState(true)
 
 	return (
-		<main className="flex min-h-screen flex-col items-start justify-between p-24">
+		<main className="flex min-h-screen flex-col items-center justify-between p-24">
 			<span className="flex gap-3">
 				<span className="text-3xl/snug">
 					<NumberRoll
-						locales={locale}
-						format={{ style: 'decimal', currency: 'USD', maximumFractionDigits: 3 }}
-					>
-						{value}
-					</NumberRoll>
+						value={value}
+						format={{ useGrouping: locale ? 'always' : false }}
+					></NumberRoll>
 				</span>
-				<span>${value}</span>
+				<span>$00{value}</span>
 			</span>
-			<button onClick={() => setLocale((l) => (l === 'en-US' ? 'fr-FR' : 'en-US'))}>
-				Change locale
+			<button onClick={() => setLocale((l) => !l)}>Change locale</button>
+			<button
+				onClick={() => setValue((v) => (v === 123.4 ? 12121.45 : v === 12121.4 ? 1.4 : 123.4))}
+			>
+				Change value
 			</button>
-			<button onClick={() => setValue((v) => (v === 123.4 ? 12121.4 : 123.4))}>Change value</button>
 		</main>
 	)
 }
