@@ -23,7 +23,7 @@ export default function Home() {
 			<button onClick={() => setLocale((l) => (l === 'en-US' ? 'fr-FR' : 'en-US'))}>
 				Change locale
 			</button>
-			<button onClick={() => setValue((v) => (v === 123.4 ? 1121.4 : 123.4))}>Change value</button>
+			<button onClick={() => setValue((v) => (v === 123.4 ? 12121.4 : 123.4))}>Change value</button>
 		</main>
 	)
 }

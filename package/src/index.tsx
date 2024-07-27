@@ -8,7 +8,9 @@ import {
 	type HTMLMotionProps,
 	useMotionValue,
 	usePresence,
-	useIsPresent
+	useIsPresent,
+	frame,
+	MotionConfig
 } from 'framer-motion'
 
 // Merge the sign types
@@ -26,25 +28,17 @@ type KeyedSymbolPart = SymbolPart & KeyedPart
 const isDigitPart = (part: NumberPart): part is DigitPart =>
 	part.type === 'integer' || part.type === 'fraction'
 
-function usePrevious<T>(value: T, initial: T): T {
-	const ref = React.useRef(initial)
-	React.useEffect(() => {
-		ref.current = value
-	}, [value])
-	return ref.current
+function getWidthInEm(element: HTMLElement) {
+	const { width, fontSize } = getComputedStyle(element)
+	return parseFloat(width) / parseFloat(fontSize)
 }
 
-function useMemoWithPrevious<T>(
-	factory: (previous: T) => T,
-	deps: React.DependencyList,
-	initial: T
-): T {
-	const prev = React.useRef<T>(initial)
-	const value = React.useMemo(() => factory(prev.current), [...deps])
+function useMounted() {
+	const mounted = React.useRef(false)
 	React.useEffect(() => {
-		prev.current = value
-	}, [value])
-	return value
+		mounted.current = true
+	}, [])
+	return mounted.current
 }
 
 function useRefs<T>(length: number, initial: T | null = null) {
@@ -133,10 +127,6 @@ const formatToParts = (
 	}
 }
 
-const NumberRollContext = React.createContext({
-	mounted: false
-})
-
 export default function NumberRoll({
 	children,
 	locales,
@@ -147,6 +137,7 @@ export default function NumberRoll({
 	format?: Intl.NumberFormatOptions
 }) {
 	const ref = React.useRef<HTMLSpanElement>(null)
+	const mounted = useMounted()
 
 	// Split the number into parts
 	const parts = React.useMemo(
@@ -159,11 +150,8 @@ export default function NumberRoll({
 
 	const id = React.useId()
 
-	const [mounted, setMounted] = React.useState(false)
-	React.useEffect(() => setMounted(true), [])
-
 	return (
-		<NumberRollContext.Provider value={{ mounted }}>
+		<MotionConfig transition={{ duration: 3 }}>
 			<motion.span ref={ref} style={{ display: 'inline-block', position: 'relative' }}>
 				{/* Position this absolutely so that the mask-image doesn't cut off the edges: */}
 				<motion.span
@@ -177,9 +165,7 @@ export default function NumberRoll({
 					}}
 				>
 					<LayoutGroup id={id}>
-						<Section layout justify="end">
-							{integer}
-						</Section>
+						<Section justify="end">{integer}</Section>
 					</LayoutGroup>
 				</motion.span>
 				{/* <span style={{ position: 'relative', color: 'transparent !important' }}>
@@ -190,7 +176,7 @@ export default function NumberRoll({
 					))}
 				</span> */}
 			</motion.span>
-		</NumberRollContext.Provider>
+		</MotionConfig>
 	)
 }
 
@@ -205,148 +191,116 @@ const Section = React.forwardRef<
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 
-	const { mounted } = React.useContext(NumberRollContext)
+	const mounted = useMounted()
 
 	const [width, setWidth] = React.useState<number>()
-	React.useEffect(() => {
+	const onResize = () => {
+		// NOTE: this should apply on first render, so that initial adds don't affect the layout
 		if (!innerRef.current) return
-
-		const observer = new ResizeObserver(([entry]) => {
-			setWidth(entry?.contentRect.width)
-		})
-
-		observer.observe(innerRef.current)
-		return () => observer.disconnect()
-	}, [])
-
-	// Keep track of which parts were just removed, so they can animate out but can still be
-	// reclaimed if the animation is interrupted:
-	const prevChildren = usePrevious(children, [])
-	const removed = useMemoWithPrevious(
-		(r) => [
-			// Mark any that were removed
-			...prevChildren.filter((p) => !children.find((part) => part.key === p.key)),
-			// Re-add any that had been marked for removal
-			...r.filter((p) => !children.find((part) => part.key === p.key))
-		],
-		[children, prevChildren],
-		[] as KeyedNumberPart[]
-	)
-	const numRemoved = removed.length
-	const isRemoved = (i: number) => i < numRemoved
-
+		setWidth(getWidthInEm(innerRef.current))
+	}
 	React.useEffect(() => {
-		console.log(removed, children)
+		onResize()
 	}, [children])
-
-	const parts = React.useMemo(() => removed.concat(children), [removed, children])
-	const partRefs = useRefs<HTMLSpanElement>(parts.length)
-
-	// Manually move the removed parts to the beginning of the section (outside the measured area),
-	// so they're still managed by React but don't affect the layout measurements:
-	React.useLayoutEffect(() => {
-		parts.forEach((part, i) => {
-			if (isRemoved(i)) {
-				ref.current?.insertBefore(partRefs[i]!, innerRef.current)
-			}
-			// TODO: re-add/move all children into measured area
-		})
-	}, [parts])
 
 	return (
 		<motion.span
 			{...rest}
-			layoutRoot
 			ref={ref}
-			style={{ display: 'inline-flex', justifyContent: justify, width }}
+			layout="position"
+			layoutRoot
+			style={{ display: 'inline-flex', justifyContent: justify, width: width && `${width}em` }}
 		>
-			<span style={{ display: 'inline-flex', justifyContent: justify }} ref={innerRef}>
-				{parts.map((part, i) =>
-					isDigitPart(part) ? (
-						<Roll
-							ref={(r) => void (partRefs[i] = r)}
-							key={part.key}
-							layoutId={part.key}
-							transition={{ duration: 0.3 }}
-							defaultValue={mounted ? 0 : part.value}
-							initial={mounted ? { opacity: 0 } : {}}
-							animate={{ opacity: 1 }}
-							value={isRemoved(i) ? 0 : part.value}
-						/>
-					) : (
-						<Symbol ref={(r) => void (partRefs[i] = r)} partKey={part.key}>
-							{part.value}
-						</Symbol>
-					)
-				)}
-			</span>
+			<motion.span
+				style={{
+					display: 'inline-flex',
+					justifyContent: justify
+				}}
+				ref={innerRef}
+				data-number-roll-inner
+			>
+				<AnimatePresence>
+					{children.map((part, i) =>
+						isDigitPart(part) ? (
+							<Roll
+								// ref={(r) => void (partRefs[i] = r)}
+								key={part.key}
+								layoutId={part.key}
+								initialValue={mounted ? 0 : part.value}
+								initial={mounted ? { opacity: 0 } : {}}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								value={part.value}
+								onResize={onResize}
+							/>
+						) : (
+							<Symbol partKey={part.key}>{part.value}</Symbol>
+						)
+					)}
+				</AnimatePresence>
+			</motion.span>
 		</motion.span>
 	)
 })
 
-const valueToY = transform([0, 9], [-90, 0])
-
-function useFirst<T>(value?: T) {
-	const ref = React.useRef<T | undefined>(undefined)
-	if (value !== undefined && ref.current === undefined) ref.current = value
-	return ref.current
-}
-
 const Roll = React.forwardRef<
 	HTMLSpanElement,
-	HTMLMotionProps<'span'> & { value: number; defaultValue?: number }
->(({ value: _value, defaultValue: _default = _value, ...rest }, ref) => {
-	const innerRef = React.useRef<HTMLSpanElement>(null)
-	const numberRefs = React.useRef(
-		Array(10)
-			.fill(null)
-			.map(() => React.createRef<HTMLSpanElement>())
-	)
+	HTMLMotionProps<'span'> & {
+		value: number
+		initialValue?: number
+		onResize?: (widthInEm: number) => void
+	}
+>(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
+	const initialValue = React.useRef(_initialValue).current // Non-reactive
 
-	const defaultValue = useFirst(_default)!
-	const present = useIsPresent()
-	const value = present ? _value : 0
+	const mounted = useMounted()
+	const innerRef = React.useRef<HTMLSpanElement>(null)
+	const numberRefs = useRefs<HTMLSpanElement>(10)
+
+	// We can't use a normal exit animation for this because we want it to trigger the width effect:
+	const isPresent = useIsPresent()
+	const value = isPresent ? _value : 0
 
 	const renderDigit = (i: number) => (
 		<span
 			key={i}
 			aria-hidden={i === value}
 			style={{ userSelect: 'none' }}
-			ref={numberRefs.current[i]}
+			ref={(r) => void (numberRefs[i] = r)}
 		>
 			{i}
 		</span>
 	)
 
 	const above = []
-	for (let i = 9; i > defaultValue; i--) {
+	for (let i = 9; i > initialValue; i--) {
 		above.push(renderDigit(i))
 	}
 	const below = []
-	for (let i = defaultValue - 1; i >= 0; i--) {
+	for (let i = initialValue - 1; i >= 0; i--) {
 		below.push(renderDigit(i))
 	}
 
-	const [width, setWidth] = React.useState<`${number}em`>()
+	const [width, setWidth] = React.useState<number>()
 	React.useEffect(() => {
-		const { width, fontSize } = getComputedStyle(numberRefs.current[value]!.current!)
-		setWidth(`${parseFloat(width) / parseFloat(fontSize)}em`)
+		// Skip setting the width if this is the first render and it's not going to animate
+		if (!numberRefs[value] || (!mounted && initialValue === value)) return
+		setWidth(getWidthInEm(numberRefs[value]))
 	}, [value])
+
+	React.useEffect(() => {
+		if (width != null) onResize?.(width)
+	}, [width])
 
 	return (
 		<motion.span
 			{...rest}
 			ref={ref}
 			layout
-			transition={{ duration: 3 }}
-			style={{ display: 'inline-flex', justifyContent: 'center', width }}
+			style={{ display: 'inline-flex', justifyContent: 'center', width: width && `${width}em` }}
 		>
 			{/* Scale correction: */}
-			<motion.span
-				layout
-				transition={{ duration: 3 }}
-				style={{ display: 'inline-flex', justifyContent: 'center' }}
-			>
+			<motion.span layout style={{ display: 'inline-flex', justifyContent: 'center' }}>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
 				<motion.span
 					ref={innerRef}
@@ -357,8 +311,7 @@ const Roll = React.forwardRef<
 						position: 'relative'
 					}}
 					initial={{ y: '0%' }}
-					animate={{ y: `${(value - defaultValue) * 100}%` }}
-					transition={{ duration: 3 }}
+					animate={{ y: `${(value - initialValue) * 100}%` }}
 				>
 					<span
 						style={{
@@ -373,7 +326,7 @@ const Roll = React.forwardRef<
 					>
 						{above}
 					</span>
-					{renderDigit(defaultValue)}
+					{renderDigit(initialValue)}
 					<span
 						style={{
 							display: 'flex',
@@ -414,7 +367,6 @@ const Symbol = React.forwardRef<
 			layout="position"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
-			transition={{ duration: 3 }}
 		>
 			{value}
 		</motion.span>
