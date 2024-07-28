@@ -25,8 +25,8 @@ export default function Home() {
 			<button onClick={() => setLocale((l) => !l)}>Change locale</button>
 			<button
 				onClick={
-					() => setValue((v) => (v === 12313.4 ? 1213 : 12313.4))
-					// setValue((v) => (v === 12313.4 ? 1213258921.49 : v === 12121.4 ? 1.4 : 12313.4))
+					// () => setValue((v) => (v === 12313.4 ? 1213 : 12313.4))
+					() => setValue((v) => (v === 12313.4 ? 1213258921.49 : v === 12121.4 ? 1.4 : 12313.4))
 				}
 			>
 				Change value

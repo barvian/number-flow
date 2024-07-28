@@ -263,10 +263,12 @@ const Section = React.forwardRef<
 			style={{
 				display: 'inline-flex',
 				lineHeight: 'var(--digit-line-height, 1.15)',
+				justifyContent: justify,
 				width: width == null ? 'auto' : `${Math.max(width, 0.01)}em` // Framer doesn't seem to like animating to/from 0
 			}}
 		>
 			<SectionMeasured
+				justify={justify}
 				style={{
 					display: 'inline-flex',
 					justifyContent: 'inherit'
