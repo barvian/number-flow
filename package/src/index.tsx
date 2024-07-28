@@ -143,7 +143,6 @@ export default function NumberRoll({
 }) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	const maskedXRef = React.useRef<HTMLSpanElement>(null)
-	const mounted = useMounted()
 
 	// Split the number into parts
 	const parts = React.useMemo(
@@ -171,7 +170,7 @@ export default function NumberRoll({
 
 	// Build the mask
 	// https://expensive.toys/blog/blur-vignette
-	const maskHeight = 'var(--mask-size,0.5em)'
+	const maskHeight = 'min(var(--mask-size,0.5em), (100% - 1em) / 2)'
 	const maskWidth = 'calc(var(--mask-size,0.5em) / var(--motion-number-scale-x-correction, 1))'
 	const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 	const mask =
@@ -196,17 +195,8 @@ export default function NumberRoll({
 		`${maskWidth} ${maskHeight}`
 
 	return (
-		<MotionConfig transition={{ type: 'spring', duration: 1, bounce: 0 }}>
+		<MotionConfig transition={{ type: 'spring', duration: 3, bounce: 0 }}>
 			<LayoutGroup id={id}>
-				{/* <motion.span
-					ref={ref}
-					layout
-					style={{
-						display: 'inline-block',
-						maskImage:
-							'linear-gradient(to bottom, transparent 0, #000 calc((100% - 1em) / 2), #000 calc(100% - (100% - 1em) / 2), transparent 100%)'
-					}}
-				> */}
 				<motion.span
 					layout
 					ref={maskedXRef}
@@ -216,7 +206,6 @@ export default function NumberRoll({
 						'--motion-number-scale-x-correct': 1,
 						margin: '0 calc(-1*var(--mask-width,0.5em))',
 						padding: '0 var(--mask-width,0.5em)',
-						lineHeight: 1,
 						WebkitMaskImage: mask,
 						WebkitMaskSize: maskSize,
 						WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
@@ -224,7 +213,7 @@ export default function NumberRoll({
 						whiteSpace: 'nowrap'
 					}}
 				>
-					<Section style={{ justifyContent: 'end' }}>{integer}</Section>
+					<Section justify="end">{integer}</Section>
 					<Section>{fraction}</Section>
 				</motion.span>
 				{/* <span style={{ position: 'relative', color: 'transparent !important' }}>
@@ -234,7 +223,6 @@ export default function NumberRoll({
 						</span>
 					))}
 				</span> */}
-				{/* </motion.span> */}
 			</LayoutGroup>
 		</MotionConfig>
 	)
@@ -244,8 +232,9 @@ const Section = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & {
 		children: KeyedNumberPart[]
+		justify?: 'start' | 'end'
 	}
->(({ children, style, ...rest }, _ref) => {
+>(({ children, justify = 'start', ...rest }, _ref) => {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const innerRef = React.useRef<HTMLSpanElement>(null)
@@ -259,6 +248,7 @@ const Section = React.forwardRef<
 		// NOTE: this should apply on first render, so that initial adds don't affect the layout
 		if (!innerRef.current) return
 		const exitingWidth = Array.from(exitingWidths.values()).reduce((all, w) => all + w, 0)
+		console.log(getWidthInEm(innerRef.current) - exitingWidth)
 		setWidth(getWidthInEm(innerRef.current) - exitingWidth)
 	}
 	React.useEffect(() => {
@@ -271,19 +261,19 @@ const Section = React.forwardRef<
 			ref={ref}
 			layout
 			style={{
-				...style,
 				display: 'inline-flex',
-				width: width == null ? 'auto' : `${width}em`
+				lineHeight: 'var(--digit-line-height, 1.15)',
+				width: width == null ? 'auto' : `${Math.max(width, 0.01)}em` // Framer doesn't seem to like animating to/from 0
 			}}
 		>
-			<span
+			<SectionMeasured
 				style={{
 					display: 'inline-flex',
 					justifyContent: 'inherit'
 				}}
 				ref={innerRef}
-				data-number-roll-inner
 			>
+				&#8203;{/* Zero-width space to prevent height transitions */}
 				<AnimatePresence onExitComplete={() => exitingWidths.clear()} initial={false}>
 					{children.map((part, i) =>
 						isDigitPart(part) ? (
@@ -321,10 +311,38 @@ const Section = React.forwardRef<
 						)
 					)}
 				</AnimatePresence>
-			</span>
+			</SectionMeasured>
 		</motion.span>
 	)
 })
+
+const SectionMeasured = React.forwardRef<
+	HTMLSpanElement,
+	{ justify?: 'start' | 'end' } & React.HTMLAttributes<'span'>
+>(({ children, justify = 'start', ...rest }, ref) =>
+	justify === 'end' ? (
+		<span
+			ref={ref}
+			style={{
+				display: 'inline-flex',
+				justifyContent: 'inherit'
+			}}
+		>
+			{children}
+		</span>
+	) : (
+		<motion.span
+			ref={ref}
+			layout
+			style={{
+				display: 'inline-flex',
+				justifyContent: 'inherit'
+			}}
+		>
+			{children}
+		</motion.span>
+	)
+)
 
 const SectionRoll = React.forwardRef<
 	HTMLSpanElement,
@@ -383,7 +401,9 @@ const SectionRoll = React.forwardRef<
 
 	// Wait until any width changes have been committed before emitting:
 	React.useEffect(() => {
-		onResize?.(width!, isPresent)
+		if (width == null) return
+		console.log('resize', value, isPresent, width)
+		onResize?.(width, isPresent)
 	}, [width, isPresent])
 
 	return (
