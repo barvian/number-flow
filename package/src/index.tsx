@@ -10,11 +10,8 @@ import {
 } from 'framer-motion'
 
 addScaleCorrector({
-	'--motion-number-scale-x-correction': {
-		correct: (_, { treeScale, projectionDelta }) => {
-			console.log('correcting')
-			return projectionDelta!.x.scale * treeScale!.x
-		}
+	'--motion-number-scale-x-correct': {
+		correct: (_, { treeScale, projectionDelta }) => projectionDelta!.x.scale * treeScale!.x
 	}
 })
 
@@ -145,6 +142,7 @@ export default function NumberRoll({
 	format?: Intl.NumberFormatOptions
 }) {
 	const ref = React.useRef<HTMLSpanElement>(null)
+	const maskedXRef = React.useRef<HTMLSpanElement>(null)
 	const mounted = useMounted()
 
 	// Split the number into parts
@@ -158,27 +156,76 @@ export default function NumberRoll({
 
 	const id = React.useId()
 
+	// Gross hack to apply the scale correction on a custom property:
+	// https://github.com/framer/motion/blob/fe6e3cb2c1d768fafe6adb7715386b57a87f0437/packages/framer-motion/src/render/html/utils/render.ts#L14
+	const appliedScaleSetter = React.useRef(false)
+	React.useEffect(() => {
+		if (appliedScaleSetter.current || !maskedXRef.current?.style) return
+		Object.defineProperty(maskedXRef.current.style, '--motion-number-scale-x-correct', {
+			set(v) {
+				return this.setProperty('--motion-number-scale-x-correction', v)
+			}
+		})
+		appliedScaleSetter.current = true
+	}, [])
+
+	// Build the mask
+	// https://expensive.toys/blog/blur-vignette
+	const maskHeight = 'var(--mask-size,0.5em)'
+	const maskWidth = 'calc(var(--mask-size,0.5em) / var(--motion-number-scale-x-correction, 1))'
+	const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
+	const mask =
+		// Horizontal:
+		`linear-gradient(to right, transparent 0, #000 ${maskWidth}, #000 calc(100% - ${maskWidth}), transparent),` +
+		// Vertical:
+		`linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%),` +
+		// TL corner
+		`radial-gradient(at bottom right, ${cornerGradient}),` +
+		// TR corner
+		`radial-gradient(at bottom left, ${cornerGradient}), ` +
+		// BR corner
+		`radial-gradient(at top left, ${cornerGradient}), ` +
+		// BL corner
+		`radial-gradient(at top right, ${cornerGradient})`
+	const maskSize =
+		`100% calc(100% - ${maskHeight} * 2),` +
+		`calc(100% - ${maskWidth} * 2) 100%,` +
+		`${maskWidth} ${maskHeight},` +
+		`${maskWidth} ${maskHeight},` +
+		`${maskWidth} ${maskHeight},` +
+		`${maskWidth} ${maskHeight}`
+
 	return (
-		<MotionConfig transition={{ duration: 3 }}>
+		<MotionConfig transition={{ type: 'spring', duration: 1, bounce: 0 }}>
 			<LayoutGroup id={id}>
 				{/* <motion.span
-					layout="position"
 					ref={ref}
-					style={{ display: 'inline-block', position: 'relative' }}
-				> */}
-				<motion.span
 					layout
 					style={{
 						display: 'inline-block',
+						maskImage:
+							'linear-gradient(to bottom, transparent 0, #000 calc((100% - 1em) / 2), #000 calc(100% - (100% - 1em) / 2), transparent 100%)'
+					}}
+				> */}
+				<motion.span
+					layout
+					ref={maskedXRef}
+					style={{
+						display: 'inline-block',
+						// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+						'--motion-number-scale-x-correct': 1,
 						margin: '0 calc(-1*var(--mask-width,0.5em))',
 						padding: '0 var(--mask-width,0.5em)',
-						maskImage:
-							'linear-gradient(to bottom, transparent 0, #000 calc((100% - 1em) / 2), #000 calc(100% - (100% - 1em) / 2), transparent 100%)',
+						lineHeight: 1,
+						WebkitMaskImage: mask,
+						WebkitMaskSize: maskSize,
+						WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
+						WebkitMaskRepeat: 'no-repeat',
 						whiteSpace: 'nowrap'
 					}}
 				>
-					<Section justify="end">{integer}</Section>
-					{/* <Section justify="start">{fraction}</Section> */}
+					<Section style={{ justifyContent: 'end' }}>{integer}</Section>
+					<Section>{fraction}</Section>
 				</motion.span>
 				{/* <span style={{ position: 'relative', color: 'transparent !important' }}>
 					{parts.map(({ value }, i) => (
@@ -197,9 +244,8 @@ const Section = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & {
 		children: KeyedNumberPart[]
-		justify: 'start' | 'end'
 	}
->(({ children, justify, ...rest }, _ref) => {
+>(({ children, style, ...rest }, _ref) => {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const innerRef = React.useRef<HTMLSpanElement>(null)
@@ -225,15 +271,15 @@ const Section = React.forwardRef<
 			ref={ref}
 			layout
 			style={{
+				...style,
 				display: 'inline-flex',
-				justifyContent: justify,
 				width: width == null ? 'auto' : `${width}em`
 			}}
 		>
 			<span
 				style={{
 					display: 'inline-flex',
-					justifyContent: justify
+					justifyContent: 'inherit'
 				}}
 				ref={innerRef}
 				data-number-roll-inner
@@ -345,7 +391,6 @@ const SectionRoll = React.forwardRef<
 			{...rest}
 			ref={ref}
 			layout
-			data-motion-number-digit={value}
 			style={{
 				display: 'inline-flex',
 				justifyContent: 'center',
@@ -438,3 +483,21 @@ const SectionSymbol = React.forwardRef<
 		</motion.span>
 	)
 })
+
+const renderSymbol = ({ key, value }: KeyedNumberPart) => (
+	<motion.span
+		// Make sure we re-render if the value changes, to trigger the exit animation:
+		key={`${key}:${value}`}
+		style={{
+			display: 'inline-block',
+			whiteSpace: 'pre' /* some symbols are just spaces */
+		}}
+		layoutId={key}
+		layout="position"
+		initial={{ opacity: 0 }}
+		animate={{ opacity: 1 }}
+		exit={{ opacity: 0 }}
+	>
+		{value}
+	</motion.span>
+)
