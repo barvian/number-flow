@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	:root {
+		@apply antialiased;
+		color: rgb(34, 34, 34);
+		--digit-line-height: 1.125;
+	}
+
+	span {
+		will-change: transform !important;
+		/* color: transparent !important; */
+	}
+}

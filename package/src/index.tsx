@@ -195,8 +195,15 @@ export default function NumberRoll({
 		`${maskWidth} ${maskHeight}`
 
 	return (
-		<MotionConfig transition={{ type: 'spring', duration: 3, bounce: 0 }}>
+		<MotionConfig
+			transition={{
+				duration: 3,
+				layout: { type: 'spring', duration: 3, bounce: 0 },
+				y: { type: 'spring', duration: 3, bounce: 0 }
+			}}
+		>
 			<LayoutGroup id={id}>
+				{pre.map((p) => renderSymbol(p))}
 				<motion.span
 					layout
 					ref={maskedXRef}
@@ -216,13 +223,6 @@ export default function NumberRoll({
 					<Section justify="end">{integer}</Section>
 					<Section>{fraction}</Section>
 				</motion.span>
-				{/* <span style={{ position: 'relative', color: 'transparent !important' }}>
-					{parts.map(({ value }, i) => (
-						<span key={i} style={{ whiteSpace: 'pre' }}>
-						{value}
-						</span>
-					))}
-				</span> */}
 			</LayoutGroup>
 		</MotionConfig>
 	)
