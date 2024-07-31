@@ -17,19 +17,21 @@ addScaleCorrector({
 
 // Merge the plus and minus sign types
 type NumberPartType = Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'> | 'sign'
-type DigitPart = { type: NumberPartType & ('integer' | 'fraction'); value: number }
+// These need to be separated for the discriminated union to work:
+// https://www.typescriptlang.org/play/?target=99&ssl=8&ssc=1&pln=9&pc=1#code/C4TwDgpgBAIglgczsKBeKBvKpIC4oDkcAdsBAhAE4FQA+hAZpQIYDGwcA9sQQNxQA3ZgBsArhHzFRAWwBGVKAF8AsACgc0AMIALZpTSZs4CYVa7q-QSPH4AzsEokEStWoaji7LsSgATTgDKwKIMDAAUYHrA+PBIKPQ6egCUmGpQUHAMUBFRAHQaaKjoRKTkVDS09JGUwPnGhcVMbBzcBCkYaelQ1cCdilAQwrbQHapd3VFQAPRTUAA8ALTY2nC2GbY8KImUADRQwnAA1tAAkgS+AwAekOzZAPxJfWqKQA
+type IntegerPart = { type: NumberPartType & 'integer'; value: number }
+type FractionPart = { type: NumberPartType & 'fraction'; value: number }
+type DigitPart = IntegerPart | FractionPart
 type SymbolPart = {
 	type: Exclude<NumberPartType, 'integer' | 'fraction'>
 	value: string
 }
 type NumberPart = DigitPart | SymbolPart
+
 type KeyedPart = { key: string }
 type KeyedDigitPart = DigitPart & KeyedPart
 type KeyedSymbolPart = SymbolPart & KeyedPart
 type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
-
-const isDigitPart = (part: NumberPart): part is DigitPart =>
-	part.type === 'integer' || part.type === 'fraction'
 
 function getWidthInEm(element: HTMLElement) {
 	const { width, fontSize } = getComputedStyle(element)
@@ -278,7 +280,7 @@ const Section = React.forwardRef<
 				&#8203;{/* Zero-width space to prevent height transitions */}
 				<AnimatePresence onExitComplete={() => exitingWidths.clear()} initial={false}>
 					{children.map((part, i) =>
-						isDigitPart(part) ? (
+						part.type === 'integer' || part.type === 'fraction' ? (
 							<SectionRoll
 								// ref={(r) => void (partRefs[i] = r)}
 								key={part.key}
