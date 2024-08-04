@@ -6,7 +6,8 @@ import {
 	addScaleCorrector,
 	type HTMLMotionProps,
 	useIsPresent,
-	MotionConfig
+	MotionConfig,
+	easeOut
 } from 'framer-motion'
 
 addScaleCorrector({
@@ -39,15 +40,15 @@ function getWidthInEm(element: HTMLElement) {
 }
 
 function useMounted() {
-	const mounted = React.useRef(false)
+	const [mounted, setMounted] = React.useState(false)
 	React.useEffect(() => {
-		mounted.current = true
+		setMounted(true)
 	}, [])
-	return mounted.current
+	return mounted
 }
 
 function useRefs<T>(length: number, initial: T | null = null) {
-	const ref = React.useRef<Array<typeof initial>>(new Array(length).fill(initial))
+	const ref = React.useRef(new Array<typeof initial>(length).fill(initial))
 	React.useEffect(() => {
 		ref.current = ref.current.slice(0, length)
 	}, [length])
@@ -134,17 +135,25 @@ const formatToParts = (
 	}
 }
 
+const DEFAULT_TRANSITION = {
+	duration: 1,
+	ease: easeOut,
+	layout: { type: 'spring', duration: 1, bounce: 0 },
+	y: { type: 'spring', duration: 1, bounce: 0 }
+}
+
 export default function NumberRoll({
 	value,
 	locales,
-	format
+	format,
+	transition = DEFAULT_TRANSITION
 }: {
 	value: number | bigint | string
 	locales?: Intl.LocalesArgument
 	format?: Intl.NumberFormatOptions
+	transition?: React.ComponentProps<typeof MotionConfig>['transition']
 }) {
-	const ref = React.useRef<HTMLSpanElement>(null)
-	const maskedXRef = React.useRef<HTMLSpanElement>(null)
+	const maskedRef = React.useRef<HTMLSpanElement>(null)
 
 	// Split the number into parts
 	const parts = React.useMemo(
@@ -161,8 +170,8 @@ export default function NumberRoll({
 	// https://github.com/framer/motion/blob/fe6e3cb2c1d768fafe6adb7715386b57a87f0437/packages/framer-motion/src/render/html/utils/render.ts#L14
 	const appliedScaleSetter = React.useRef(false)
 	React.useEffect(() => {
-		if (appliedScaleSetter.current || !maskedXRef.current?.style) return
-		Object.defineProperty(maskedXRef.current.style, '--motion-number-scale-x-correct', {
+		if (appliedScaleSetter.current || !maskedRef.current?.style) return
+		Object.defineProperty(maskedRef.current.style, '--motion-number-scale-x-correct', {
 			set(v) {
 				return this.setProperty('--motion-number-scale-x-correction', v)
 			}
@@ -197,34 +206,31 @@ export default function NumberRoll({
 		`${maskWidth} ${maskHeight}`
 
 	return (
-		<MotionConfig
-			transition={{
-				duration: 3,
-				layout: { type: 'spring', duration: 3, bounce: 0 },
-				y: { type: 'spring', duration: 3, bounce: 0 }
-			}}
-		>
+		<MotionConfig transition={transition}>
 			<LayoutGroup id={id}>
-				{pre.map((p) => renderSymbol(p))}
-				<motion.span
-					layout
-					ref={maskedXRef}
-					style={{
-						display: 'inline-block',
-						// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-						'--motion-number-scale-x-correct': 1,
-						margin: '0 calc(-1*var(--mask-width,0.5em))',
-						padding: '0 var(--mask-width,0.5em)',
-						WebkitMaskImage: mask,
-						WebkitMaskSize: maskSize,
-						WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
-						WebkitMaskRepeat: 'no-repeat',
-						whiteSpace: 'nowrap'
-					}}
-				>
-					<Section justify="end">{integer}</Section>
-					<Section>{fraction}</Section>
-				</motion.span>
+				<span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+					{pre.map((p) => renderSymbol(p))}
+					<motion.span
+						layout
+						ref={maskedRef}
+						style={{
+							display: 'inline-block',
+							// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+							'--motion-number-scale-x-correct': 1,
+							margin: '0 calc(-1*var(--mask-width,0.5em))',
+							padding: '0 var(--mask-width,0.5em)',
+							overflow: 'hidden',
+							WebkitMaskImage: mask,
+							WebkitMaskSize: maskSize,
+							WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
+							WebkitMaskRepeat: 'no-repeat'
+						}}
+					>
+						<Section justify="end">{integer}</Section>
+						<Section>{fraction}</Section>
+					</motion.span>
+					{post.map((p) => renderSymbol(p))}
+				</span>
 			</LayoutGroup>
 		</MotionConfig>
 	)
@@ -243,19 +249,18 @@ const Section = React.forwardRef<
 
 	const mounted = useMounted()
 
-	const exitingWidths = React.useRef(new Map<KeyedDigitPart['key'], number>()).current
-
+	// Use a state flag to trigger resize so updates get batched from onResize:
+	const [needsResize, setNeedsResize] = React.useState(false)
 	const [width, setWidth] = React.useState<number>()
-	const onResize = () => {
-		// NOTE: this should apply on first render, so that initial adds don't affect the layout
-		if (!innerRef.current) return
-		const exitingWidth = Array.from(exitingWidths.values()).reduce((all, w) => all + w, 0)
-		console.log(getWidthInEm(innerRef.current) - exitingWidth)
-		setWidth(getWidthInEm(innerRef.current) - exitingWidth)
-	}
 	React.useEffect(() => {
-		onResize()
-	}, [children])
+		if (!needsResize || !innerRef.current) return
+		let exitingWidth = 0
+		for (const el of innerRef.current.querySelectorAll<HTMLSpanElement>('[data-exiting]')) {
+			exitingWidth += el.style.width ? parseFloat(el.style.width) : getWidthInEm(el)
+		}
+		setWidth(getWidthInEm(innerRef.current) - exitingWidth)
+		setNeedsResize(false)
+	}, [needsResize])
 
 	return (
 		<motion.span
@@ -278,7 +283,7 @@ const Section = React.forwardRef<
 				ref={innerRef}
 			>
 				&#8203;{/* Zero-width space to prevent height transitions */}
-				<AnimatePresence onExitComplete={() => exitingWidths.clear()} initial={false}>
+				<AnimatePresence initial={false}>
 					{children.map((part, i) =>
 						part.type === 'integer' || part.type === 'fraction' ? (
 							<SectionRoll
@@ -290,10 +295,8 @@ const Section = React.forwardRef<
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
 								value={part.value}
-								onResize={(w, isPresent) => {
-									if (isPresent) exitingWidths.delete(part.key)
-									else exitingWidths.set(part.key, w)
-									onResize()
+								onResize={() => {
+									setNeedsResize(true)
 								}}
 							/>
 						) : (
@@ -304,11 +307,6 @@ const Section = React.forwardRef<
 								initial={{ opacity: 0 }}
 								animate={{ opacity: 1 }}
 								exit={{ opacity: 0 }}
-								onPresenceChange={(isPresent, w) => {
-									if (isPresent) exitingWidths.delete(part.key)
-									else exitingWidths.set(part.key, w)
-									onResize()
-								}}
 							>
 								{part.value}
 							</SectionSymbol>
@@ -353,7 +351,7 @@ const SectionRoll = React.forwardRef<
 	Omit<HTMLMotionProps<'span'>, 'onResize'> & {
 		value: number
 		initialValue?: number
-		onResize?: (widthInEm: number, isPresent: boolean) => void
+		onResize?: () => void
 	}
 >(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
 	const initialValue = React.useRef(_initialValue).current // Non-reactive
@@ -362,15 +360,29 @@ const SectionRoll = React.forwardRef<
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
 
-	// Don't use a normal exit animation for this because we want it to trigger the width effect:
+	// Don't use a normal exit animation for this because we want it to trigger a resize:
 	const isPresent = useIsPresent()
 	const value = isPresent ? _value : 0
+
+	const [width, setWidth] = React.useState<number>()
+	React.useEffect(() => {
+		// Skip setting the width if this is the first render and it's not going to animate:
+		if (!mounted && initialValue === value) return onResize?.() // make sure to trigger onResize anyway because Section waits for that
+		if (!numberRefs[value]) return
+		const w = getWidthInEm(numberRefs[value])
+		setWidth(w)
+	}, [value])
+
+	// Wait until any width changes have been committed before emitting:
+	React.useEffect(() => {
+		if (mounted && width != null) onResize?.()
+	}, [width, mounted])
 
 	const renderDigit = (i: number) => (
 		<span
 			key={i}
-			aria-hidden={i === value}
-			style={{ userSelect: 'none' }}
+			aria-hidden={i !== value}
+			style={{ userSelect: i === value ? undefined : 'none' }}
 			ref={(r) => void (numberRefs[i] = r)}
 		>
 			{i}
@@ -386,35 +398,13 @@ const SectionRoll = React.forwardRef<
 		below.push(renderDigit(i))
 	}
 
-	const [width, setWidth] = React.useState<number>()
-	// Set the width to the width of the current value:
-	const sizeToValue = () => {
-		if (!numberRefs[value]) return
-		const w = getWidthInEm(numberRefs[value])
-		setWidth(w)
-	}
-	React.useEffect(() => {
-		// Skip setting the width if this is the first render and it's not going to animate:
-		if (!mounted && initialValue === value) return
-		sizeToValue()
-	}, [value])
-	React.useEffect(() => {
-		// <Section> needs a width if we're exiting, so set one if we haven't already:
-		if (!isPresent && width == null) sizeToValue()
-	}, [isPresent, width])
-
-	// Wait until any width changes have been committed before emitting:
-	React.useEffect(() => {
-		if (width == null) return
-		console.log('resize', value, isPresent, width)
-		onResize?.(width, isPresent)
-	}, [width, isPresent])
-
 	return (
 		<motion.span
 			{...rest}
 			ref={ref}
 			layout
+			data-exiting={isPresent ? undefined : ''}
+			data-motion-number-digit={value}
 			style={{
 				display: 'inline-flex',
 				justifyContent: 'center',
@@ -474,18 +464,9 @@ type Rename<T, K extends keyof T, N extends string> = Pick<T, Exclude<keyof T, K
 
 const SectionSymbol = React.forwardRef<
 	HTMLSpanElement,
-	HTMLMotionProps<'span'> & {
-		onPresenceChange: (isPresent: boolean, width: number) => void
-	} & Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
->(({ partKey: key, type, children: value, onPresenceChange, ...rest }, _ref) => {
-	const ref = React.useRef<HTMLSpanElement>(null)
-	React.useImperativeHandle(_ref, () => ref.current!, [])
-
+	HTMLMotionProps<'span'> & Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
+>(({ partKey: key, type, children: value, ...rest }, ref) => {
 	const isPresent = useIsPresent()
-
-	React.useEffect(() => {
-		if (!isPresent && ref.current) onPresenceChange?.(isPresent, getWidthInEm(ref.current))
-	}, [isPresent])
 
 	return (
 		<motion.span
@@ -493,6 +474,7 @@ const SectionSymbol = React.forwardRef<
 			ref={ref}
 			// Make sure we re-render if the value changes, to trigger the exit animation:
 			key={`${key}:${value}`}
+			data-exiting={isPresent ? undefined : ''}
 			{...{ [`data-motion-number-${type}`]: value }}
 			style={{
 				display: 'inline-block',
