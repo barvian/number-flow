@@ -233,7 +233,13 @@ export default function NumberRoll({
 		<NumberRollContext.Provider value={{ mounted, onNumberLayoutAnimationComplete }}>
 			<MotionConfig transition={transition}>
 				<LayoutGroup id={id}>
-					<span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+					<span
+						style={{
+							display: 'inline-block',
+							isolation: 'isolate',
+							whiteSpace: 'nowrap'
+						}}
+					>
 						{pre.map((p) => renderSymbol(p))}
 						<motion.span
 							layout
@@ -246,6 +252,8 @@ export default function NumberRoll({
 								margin: '0 calc(-1*var(--mask-width,0.25em))',
 								padding: '0 var(--mask-width,0.25em)',
 								overflow: 'clip',
+								position: 'relative',
+								zIndex: -1, // should be underneath everything else
 								WebkitMaskImage: mask,
 								WebkitMaskSize: maskSize,
 								WebkitMaskPosition:

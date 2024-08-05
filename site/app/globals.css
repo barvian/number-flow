@@ -20,4 +20,8 @@
 	[data-motion-number-decimal='.']:not([hidden]) + [data-motion-number-digit='1'] {
 		margin-left: -0.05em;
 	}
+
+	/* [data-motion-number-digit] {
+		color: red;
+	} */
 }
