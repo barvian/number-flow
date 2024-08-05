@@ -7,7 +7,8 @@ import {
 	type HTMLMotionProps,
 	useIsPresent,
 	MotionConfig,
-	easeOut
+	easeOut,
+	usePresence
 } from 'framer-motion'
 
 addScaleCorrector({
@@ -52,6 +53,17 @@ function useRefs<T>(length: number, initial: T | null = null) {
 	React.useEffect(() => {
 		ref.current = ref.current.slice(0, length)
 	}, [length])
+	return ref.current
+}
+
+// Stolen from Framer Motion, ensures the value is never re-created (unlike useMemo):
+function useConstant<T>(init: () => T) {
+	const ref = React.useRef<T | null>(null)
+
+	if (ref.current === null) {
+		ref.current = init()
+	}
+
 	return ref.current
 }
 
@@ -136,10 +148,10 @@ const formatToParts = (
 }
 
 const DEFAULT_TRANSITION = {
-	duration: 3,
+	duration: 0.3,
 	ease: easeOut,
-	layout: { type: 'spring', duration: 3, bounce: 0 },
-	y: { type: 'spring', duration: 3, bounce: 0 }
+	layout: { type: 'spring', duration: 1, bounce: 0 },
+	y: { type: 'spring', duration: 1, bounce: 0 }
 }
 
 export default function NumberRoll({
@@ -236,7 +248,10 @@ export default function NumberRoll({
 	)
 }
 
-const SectionContext = React.createContext({
+const SectionContext = React.createContext<{
+	mounted: boolean
+	onLayoutAnimationComplete?: (listener: () => void) => () => void
+}>({
 	mounted: false
 })
 
@@ -279,12 +294,19 @@ const Section = React.forwardRef<
 			ref.current.style.width = getWidthInEm(innerRef.current) + 'em'
 	}, [])
 
+	const layoutEndListeners = useConstant(() => new Set<() => void>())
+	const onLayoutAnimationComplete = (listener: () => void) => {
+		layoutEndListeners.add(listener)
+		return () => layoutEndListeners.delete(listener)
+	}
+
 	return (
-		<SectionContext.Provider value={{ mounted }}>
+		<SectionContext.Provider value={{ mounted, onLayoutAnimationComplete }}>
 			<motion.span
 				{...rest}
 				ref={ref}
 				layout
+				onLayoutAnimationComplete={() => layoutEndListeners.forEach((listener) => listener())}
 				style={{
 					display: 'inline-flex',
 					lineHeight: 'var(--digit-line-height, 1.15)',
@@ -375,12 +397,12 @@ const SectionRoll = React.forwardRef<
 >(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
 	const initialValue = React.useRef(_initialValue).current // Non-reactive
 
-	const { mounted } = React.useContext(SectionContext)
+	const { mounted, onLayoutAnimationComplete } = React.useContext(SectionContext)
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
 
 	// Don't use a normal exit animation for this because we want it to trigger a resize:
-	const isPresent = useIsPresent()
+	const [isPresent, safeToRemove] = usePresence()
 	const value = isPresent ? _value : 0
 
 	const [width, setWidth] = React.useState<number>()
@@ -396,6 +418,11 @@ const SectionRoll = React.forwardRef<
 	React.useEffect(() => {
 		if (width != null) onResize?.()
 	}, [width])
+
+	// Remove when parent layout animation is done
+	React.useEffect(() => {
+		if (!isPresent) return onLayoutAnimationComplete?.(safeToRemove)
+	}, [isPresent, onLayoutAnimationComplete])
 
 	const renderDigit = (i: number) => (
 		<span
@@ -487,7 +514,11 @@ const SectionSymbol = React.forwardRef<
 	HTMLSpanElement,
 	HTMLMotionProps<'span'> & Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
 >(({ partKey: key, type, children: value, ...rest }, ref) => {
-	const isPresent = useIsPresent()
+	const { onLayoutAnimationComplete } = React.useContext(SectionContext)
+	const [isPresent, safeToRemove] = usePresence()
+	React.useEffect(() => {
+		if (!isPresent) return onLayoutAnimationComplete?.(safeToRemove)
+	}, [isPresent, onLayoutAnimationComplete])
 
 	return (
 		<motion.span
