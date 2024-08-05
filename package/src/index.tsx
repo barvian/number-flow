@@ -153,6 +153,13 @@ const DEFAULT_TRANSITION = {
 	y: { type: 'spring', duration: 3, bounce: 0 }
 }
 
+const NumberRollContext = React.createContext<{
+	mounted: boolean
+	onNumberLayoutAnimationComplete?: (listener: () => void) => () => void
+}>({
+	mounted: false
+})
+
 export default function NumberRoll({
 	value,
 	locales,
@@ -164,8 +171,6 @@ export default function NumberRoll({
 	format?: Intl.NumberFormatOptions
 	transition?: React.ComponentProps<typeof MotionConfig>['transition']
 }) {
-	const maskedRef = React.useRef<HTMLSpanElement>(null)
-
 	// Split the number into parts
 	const parts = React.useMemo(
 		() => formatToParts(value, { locales, format }),
@@ -175,6 +180,8 @@ export default function NumberRoll({
 	if (!parts) return value
 	const { pre, integer, fraction, post, exponentSymbol, exponent } = parts
 
+	const maskedRef = React.useRef<HTMLSpanElement>(null)
+	const mounted = useMounted()
 	const id = React.useId()
 
 	// Gross hack to apply the scale correction on a custom property:
@@ -216,47 +223,50 @@ export default function NumberRoll({
 		`${maskWidth} ${maskHeight},` +
 		`${maskWidth} ${maskHeight}`
 
+	const layoutEndListeners = useConstant(() => new Set<() => void>())
+	const onNumberLayoutAnimationComplete = (listener: () => void) => {
+		layoutEndListeners.add(listener)
+		return () => layoutEndListeners.delete(listener)
+	}
+
 	return (
-		<MotionConfig transition={transition}>
-			<LayoutGroup id={id}>
-				<span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-					{pre.map((p) => renderSymbol(p))}
-					<motion.span
-						layout
-						ref={maskedRef}
-						style={{
-							display: 'inline-block',
-							// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-							'--motion-number-scale-x-correct': 1,
-							margin: '0 calc(-1*var(--mask-width,0.25em))',
-							padding: '0 var(--mask-width,0.25em)',
-							overflow: 'clip',
-							WebkitMaskImage: mask,
-							WebkitMaskSize: maskSize,
-							WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
-							WebkitMaskRepeat: 'no-repeat'
-						}}
-					>
-						<Section justify="end">{integer}</Section>
-						<Section>{fraction}</Section>
-					</motion.span>
-					{post.map((p) => renderSymbol(p))}
-				</span>
-			</LayoutGroup>
-		</MotionConfig>
+		<NumberRollContext.Provider value={{ mounted, onNumberLayoutAnimationComplete }}>
+			<MotionConfig transition={transition}>
+				<LayoutGroup id={id}>
+					<span style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+						{pre.map((p) => renderSymbol(p))}
+						<motion.span
+							layout
+							ref={maskedRef}
+							onLayoutAnimationComplete={() => layoutEndListeners.forEach((listener) => listener())}
+							style={{
+								display: 'inline-block',
+								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+								'--motion-number-scale-x-correct': 1,
+								margin: '0 calc(-1*var(--mask-width,0.25em))',
+								padding: '0 var(--mask-width,0.25em)',
+								overflow: 'clip',
+								WebkitMaskImage: mask,
+								WebkitMaskSize: maskSize,
+								WebkitMaskPosition:
+									'center, center, top left, top right, bottom right, bottom left',
+								WebkitMaskRepeat: 'no-repeat'
+							}}
+						>
+							<Section justify="end">{integer}</Section>
+							<Section>{fraction}</Section>
+						</motion.span>
+						{post.map((p) => renderSymbol(p))}
+					</span>
+				</LayoutGroup>
+			</MotionConfig>
+		</NumberRollContext.Provider>
 	)
 }
 
-const SectionContext = React.createContext<{
-	mounted: boolean
-	onLayoutAnimationComplete?: (listener: () => void) => () => void
-}>({
-	mounted: false
-})
-
 const Section = React.forwardRef<
 	HTMLSpanElement,
-	Omit<HTMLMotionProps<'span'>, 'children'> & {
+	Omit<JSX.IntrinsicElements['span'], 'children'> & {
 		children: KeyedNumberPart[]
 		justify?: 'start' | 'end'
 	}
@@ -265,7 +275,7 @@ const Section = React.forwardRef<
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 
-	const mounted = useMounted()
+	const { mounted } = React.useContext(NumberRollContext)
 
 	// Use a state flag to trigger resize so updates get batched:
 	const [needsResize, setNeedsResize] = React.useState(false)
@@ -293,67 +303,57 @@ const Section = React.forwardRef<
 			ref.current.style.width = getWidthInEm(innerRef.current) + 'em'
 	}, [])
 
-	const layoutEndListeners = useConstant(() => new Set<() => void>())
-	const onLayoutAnimationComplete = (listener: () => void) => {
-		layoutEndListeners.add(listener)
-		return () => layoutEndListeners.delete(listener)
-	}
-
 	return (
-		<SectionContext.Provider value={{ mounted, onLayoutAnimationComplete }}>
-			<motion.span
-				{...rest}
-				ref={ref}
-				layout="position"
-				onLayoutAnimationComplete={() => layoutEndListeners.forEach((listener) => listener())}
+		<span
+			{...rest}
+			ref={ref}
+			style={{
+				display: 'inline-flex',
+				lineHeight: 'var(--digit-line-height, 1.15)',
+				justifyContent: justify,
+				width: width == null ? 'auto' : `${width}em`
+			}}
+		>
+			<span
+				ref={innerRef}
 				style={{
 					display: 'inline-flex',
-					lineHeight: 'var(--digit-line-height, 1.15)',
-					justifyContent: justify,
-					width: width == null ? 'auto' : `${width}em`
+					justifyContent: 'inherit'
 				}}
 			>
-				<span
-					ref={innerRef}
-					style={{
-						display: 'inline-flex',
-						justifyContent: 'inherit'
-					}}
-				>
-					&#8203;{/* Zero-width space to prevent height transitions */}
-					<AnimatePresence initial={false}>
-						{children.map((part, i) =>
-							part.type === 'integer' || part.type === 'fraction' ? (
-								<SectionRoll
-									// ref={(r) => void (partRefs[i] = r)}
-									key={part.key}
-									layoutId={part.key}
-									initialValue={mounted ? 0 : part.value}
-									initial={mounted ? { opacity: 0 } : {}}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-									value={part.value}
-									onResize={() => {
-										setNeedsResize(true)
-									}}
-								/>
-							) : (
-								<SectionSymbol
-									key={part.key}
-									type={part.type}
-									partKey={part.key}
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
-								>
-									{part.value}
-								</SectionSymbol>
-							)
-						)}
-					</AnimatePresence>
-				</span>
-			</motion.span>
-		</SectionContext.Provider>
+				&#8203;{/* Zero-width space to prevent height transitions */}
+				<AnimatePresence initial={false}>
+					{children.map((part, i) =>
+						part.type === 'integer' || part.type === 'fraction' ? (
+							<SectionRoll
+								// ref={(r) => void (partRefs[i] = r)}
+								key={part.key}
+								layoutId={part.key}
+								initialValue={mounted ? 0 : part.value}
+								initial={mounted ? { opacity: 0 } : {}}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+								value={part.value}
+								onResize={() => {
+									setNeedsResize(true)
+								}}
+							/>
+						) : (
+							<SectionSymbol
+								key={part.key}
+								type={part.type}
+								partKey={part.key}
+								initial={{ opacity: 0 }}
+								animate={{ opacity: 1 }}
+								exit={{ opacity: 0 }}
+							>
+								{part.value}
+							</SectionSymbol>
+						)
+					)}
+				</AnimatePresence>
+			</span>
+		</span>
 	)
 })
 
@@ -367,7 +367,7 @@ const SectionRoll = React.forwardRef<
 >(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
 	const initialValue = React.useRef(_initialValue).current // Non-reactive
 
-	const { mounted, onLayoutAnimationComplete } = React.useContext(SectionContext)
+	const { mounted, onNumberLayoutAnimationComplete } = React.useContext(NumberRollContext)
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
 
@@ -391,8 +391,8 @@ const SectionRoll = React.forwardRef<
 
 	// Remove when parent layout animation is done
 	React.useEffect(() => {
-		if (!isPresent) return onLayoutAnimationComplete?.(safeToRemove)
-	}, [isPresent, onLayoutAnimationComplete])
+		if (!isPresent) return onNumberLayoutAnimationComplete?.(safeToRemove)
+	}, [isPresent, onNumberLayoutAnimationComplete])
 
 	const renderDigit = (i: number) => (
 		<span
@@ -484,11 +484,11 @@ const SectionSymbol = React.forwardRef<
 	HTMLSpanElement,
 	HTMLMotionProps<'span'> & Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
 >(({ partKey: key, type, children: value, ...rest }, ref) => {
-	const { onLayoutAnimationComplete } = React.useContext(SectionContext)
+	const { onNumberLayoutAnimationComplete } = React.useContext(NumberRollContext)
 	const [isPresent, safeToRemove] = usePresence()
 	React.useEffect(() => {
-		if (!isPresent) return onLayoutAnimationComplete?.(safeToRemove)
-	}, [isPresent, onLayoutAnimationComplete])
+		if (!isPresent) return onNumberLayoutAnimationComplete?.(safeToRemove)
+	}, [isPresent, onNumberLayoutAnimationComplete])
 
 	return (
 		<motion.span
