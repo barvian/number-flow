@@ -149,8 +149,8 @@ const formatToParts = (
 const DEFAULT_TRANSITION = {
 	duration: 0.3,
 	ease: easeOut,
-	layout: { type: 'spring', duration: 3, bounce: 0 },
-	y: { type: 'spring', duration: 3, bounce: 0 }
+	layout: { type: 'spring', duration: 1, bounce: 0 },
+	y: { type: 'spring', duration: 1, bounce: 0 }
 }
 
 const NumberRollContext = React.createContext<{
@@ -240,7 +240,13 @@ export default function NumberRoll({
 							whiteSpace: 'nowrap'
 						}}
 					>
-						{pre.map((p) => renderSymbol(p))}
+						<AnimatePresence mode="popLayout" initial={false}>
+							{pre.map((part) => (
+								<Symbol key={part.key} type={part.type} partKey={part.key}>
+									{part.value}
+								</Symbol>
+							))}
+						</AnimatePresence>
 						<motion.span
 							layout
 							ref={maskedRef}
@@ -261,10 +267,16 @@ export default function NumberRoll({
 								WebkitMaskRepeat: 'no-repeat'
 							}}
 						>
-							<Section justify="end">{integer}</Section>
+							<Section style={{ justifyContent: 'end' }}>{integer}</Section>
 							<Section>{fraction}</Section>
 						</motion.span>
-						{post.map((p) => renderSymbol(p))}
+						<AnimatePresence mode="popLayout" initial={false}>
+							{post.map((part) => (
+								<Symbol key={part.key} type={part.type} partKey={part.key}>
+									{part.value}
+								</Symbol>
+							))}
+						</AnimatePresence>
 					</span>
 				</LayoutGroup>
 			</MotionConfig>
@@ -276,9 +288,8 @@ const Section = React.forwardRef<
 	HTMLSpanElement,
 	Omit<JSX.IntrinsicElements['span'], 'children'> & {
 		children: KeyedNumberPart[]
-		justify?: 'start' | 'end'
 	}
->(({ children, justify = 'start', ...rest }, _ref) => {
+>(({ children, style, ...rest }, _ref) => {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const innerRef = React.useRef<HTMLSpanElement>(null)
@@ -316,9 +327,9 @@ const Section = React.forwardRef<
 			{...rest}
 			ref={ref}
 			style={{
+				...style,
 				display: 'inline-flex',
 				lineHeight: 'var(--digit-line-height, 1.15)',
-				justifyContent: justify,
 				width: width == null ? 'auto' : `${width}em`
 			}}
 		>
@@ -329,7 +340,6 @@ const Section = React.forwardRef<
 					justifyContent: 'inherit'
 				}}
 			>
-				&#8203;{/* Zero-width space to prevent height transitions */}
 				<AnimatePresence initial={false}>
 					{children.map((part, i) =>
 						part.type === 'integer' || part.type === 'fraction' ? (
@@ -347,16 +357,9 @@ const Section = React.forwardRef<
 								}}
 							/>
 						) : (
-							<SectionSymbol
-								key={part.key}
-								type={part.type}
-								partKey={part.key}
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-							>
+							<Symbol key={part.key} type={part.type} partKey={part.key}>
 								{part.value}
-							</SectionSymbol>
+							</Symbol>
 						)
 					)}
 				</AnimatePresence>
@@ -488,9 +491,9 @@ type Rename<T, K extends keyof T, N extends string> = Pick<T, Exclude<keyof T, K
 	[P in N]: T[K]
 }
 
-const SectionSymbol = React.forwardRef<
+const Symbol = React.forwardRef<
 	HTMLSpanElement,
-	HTMLMotionProps<'span'> & Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
+	HTMLMotionProps<'span'> & Rename<Rename<KeyedNumberPart, 'key', 'partKey'>, 'value', 'children'>
 >(({ partKey: key, type, children: value, ...rest }, ref) => {
 	const { onNumberLayoutAnimationComplete } = React.useContext(NumberRollContext)
 	const [isPresent, safeToRemove] = usePresence()
@@ -514,26 +517,9 @@ const SectionSymbol = React.forwardRef<
 			layout="position"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
+			exit={{ opacity: 0 }}
 		>
 			{value}
 		</motion.span>
 	)
 })
-
-const renderSymbol = ({ key, value }: KeyedNumberPart) => (
-	<motion.span
-		// Make sure we re-render if the value changes, to trigger the exit animation:
-		key={`${key}:${value}`}
-		style={{
-			display: 'inline-block',
-			whiteSpace: 'pre' /* some symbols are just spaces */
-		}}
-		layoutId={key}
-		layout="position"
-		initial={{ opacity: 0 }}
-		animate={{ opacity: 1 }}
-		exit={{ opacity: 0 }}
-	>
-		{value}
-	</motion.span>
-)
