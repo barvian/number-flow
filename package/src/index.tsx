@@ -403,6 +403,8 @@ const SectionRoll = React.forwardRef<
 			aria-hidden={i !== value}
 			style={{ userSelect: i === value ? undefined : 'none' }}
 			ref={(r) => void (numberRefs[i] = r)}
+			// @ts-expect-error React doesn't support inert yet
+			inert={i === value ? undefined : ''}
 		>
 			{i}
 		</span>
