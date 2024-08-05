@@ -5,7 +5,6 @@ import {
 	motion,
 	addScaleCorrector,
 	type HTMLMotionProps,
-	useIsPresent,
 	MotionConfig,
 	easeOut,
 	usePresence
@@ -311,16 +310,15 @@ const Section = React.forwardRef<
 					display: 'inline-flex',
 					lineHeight: 'var(--digit-line-height, 1.15)',
 					justifyContent: justify,
-					width: width == null ? 'auto' : `${Math.max(width, 0.01)}em` // Framer doesn't like animating to/from 0
+					width: width == null ? 'auto' : `${Math.max(width, 0.1)}em` // Using a decent size minimum width seems to prevent scaling issues
 				}}
 			>
-				<SectionMeasured
-					justify={justify}
+				<span
+					ref={innerRef}
 					style={{
 						display: 'inline-flex',
 						justifyContent: 'inherit'
 					}}
-					ref={innerRef}
 				>
 					&#8203;{/* Zero-width space to prevent height transitions */}
 					<AnimatePresence initial={false}>
@@ -353,39 +351,11 @@ const Section = React.forwardRef<
 							)
 						)}
 					</AnimatePresence>
-				</SectionMeasured>
+				</span>
 			</motion.span>
 		</SectionContext.Provider>
 	)
 })
-
-const SectionMeasured = React.forwardRef<
-	HTMLSpanElement,
-	{ justify?: 'start' | 'end' } & React.HTMLAttributes<'span'>
->(({ children, justify = 'start', ...rest }, ref) =>
-	justify === 'end' ? (
-		<span
-			ref={ref}
-			style={{
-				display: 'inline-flex',
-				justifyContent: 'inherit'
-			}}
-		>
-			{children}
-		</span>
-	) : (
-		<motion.span
-			ref={ref}
-			layout
-			style={{
-				display: 'inline-flex',
-				justifyContent: 'inherit'
-			}}
-		>
-			{children}
-		</motion.span>
-	)
-)
 
 const SectionRoll = React.forwardRef<
 	HTMLSpanElement,
