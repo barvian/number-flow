@@ -14,10 +14,10 @@
 		/* color: transparent !important; */
 	}
 
-	[data-motion-number-group=','] + [data-motion-number-digit='1'] {
+	[data-motion-number-group=',']:not([hidden]) + [data-motion-number-digit='1'] {
 		margin-left: -0.025em;
 	}
-	[data-motion-number-decimal='.'] + [data-motion-number-digit='1'] {
+	[data-motion-number-decimal='.']:not([hidden]) + [data-motion-number-digit='1'] {
 		margin-left: -0.05em;
 	}
 }

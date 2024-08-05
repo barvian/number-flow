@@ -136,10 +136,10 @@ const formatToParts = (
 }
 
 const DEFAULT_TRANSITION = {
-	duration: 1,
+	duration: 3,
 	ease: easeOut,
-	layout: { type: 'spring', duration: 1, bounce: 0 },
-	y: { type: 'spring', duration: 1, bounce: 0 }
+	layout: { type: 'spring', duration: 3, bounce: 0 },
+	y: { type: 'spring', duration: 3, bounce: 0 }
 }
 
 export default function NumberRoll({
@@ -181,8 +181,8 @@ export default function NumberRoll({
 
 	// Build the mask
 	// https://expensive.toys/blog/blur-vignette
-	const maskHeight = 'min(var(--mask-size,0.5em), (100% - 1em) / 2)'
-	const maskWidth = 'calc(var(--mask-size,0.5em) / var(--motion-number-scale-x-correction, 1))'
+	const maskHeight = 'min(var(--mask-height,0.5em), (100% - 1em) / 2)'
+	const maskWidth = 'calc(var(--mask-width,0.25em) / var(--motion-number-scale-x-correction, 1))'
 	const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 	const mask =
 		// Horizontal:
@@ -217,8 +217,8 @@ export default function NumberRoll({
 							display: 'inline-block',
 							// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
 							'--motion-number-scale-x-correct': 1,
-							margin: '0 calc(-1*var(--mask-width,0.5em))',
-							padding: '0 var(--mask-width,0.5em)',
+							margin: '0 calc(-1*var(--mask-width,0.25em))',
+							padding: '0 var(--mask-width,0.25em)',
 							overflow: 'hidden',
 							WebkitMaskImage: mask,
 							WebkitMaskSize: maskSize,
@@ -236,6 +236,10 @@ export default function NumberRoll({
 	)
 }
 
+const SectionContext = React.createContext({
+	mounted: false
+})
+
 const Section = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & {
@@ -249,72 +253,87 @@ const Section = React.forwardRef<
 
 	const mounted = useMounted()
 
-	// Use a state flag to trigger resize so updates get batched from onResize:
+	// Use a state flag to trigger resize so updates get batched:
 	const [needsResize, setNeedsResize] = React.useState(false)
 	const [width, setWidth] = React.useState<number>()
-	React.useEffect(() => {
+	React.useLayoutEffect(() => {
 		if (!needsResize || !innerRef.current) return
-		let exitingWidth = 0
-		for (const el of innerRef.current.querySelectorAll<HTMLSpanElement>('[data-exiting]')) {
-			exitingWidth += el.style.width ? parseFloat(el.style.width) : getWidthInEm(el)
-		}
-		setWidth(getWidthInEm(innerRef.current) - exitingWidth)
+		// Find the new width by hiding exiting elements and measuring the innerRef
+		// This better handles i.e. negative margins between elements
+		const exiting = innerRef.current.querySelectorAll<HTMLSpanElement>('[data-exiting]')
+		exiting.forEach((el) => {
+			el.style.display = 'none'
+			el.setAttribute('hidden', '') // mostly here as a style flag
+		})
+		setWidth(getWidthInEm(innerRef.current))
+		exiting.forEach((el) => {
+			el.style.display = 'inline-flex'
+			el.removeAttribute('hidden')
+		})
 		setNeedsResize(false)
 	}, [needsResize])
 
+	// Imperatively measure initially after mount to ensure proper layout animations afterwards
+	React.useLayoutEffect(() => {
+		if (ref.current && innerRef.current)
+			ref.current.style.width = getWidthInEm(innerRef.current) + 'em'
+	}, [])
+
 	return (
-		<motion.span
-			{...rest}
-			ref={ref}
-			layout
-			style={{
-				display: 'inline-flex',
-				lineHeight: 'var(--digit-line-height, 1.15)',
-				justifyContent: justify,
-				width: width == null ? 'auto' : `${Math.max(width, 0.01)}em` // Framer doesn't seem to like animating to/from 0
-			}}
-		>
-			<SectionMeasured
-				justify={justify}
+		<SectionContext.Provider value={{ mounted }}>
+			<motion.span
+				{...rest}
+				ref={ref}
+				layout
 				style={{
 					display: 'inline-flex',
-					justifyContent: 'inherit'
+					lineHeight: 'var(--digit-line-height, 1.15)',
+					justifyContent: justify,
+					width: width == null ? 'auto' : `${Math.max(width, 0.01)}em` // Framer doesn't like animating to/from 0
 				}}
-				ref={innerRef}
 			>
-				&#8203;{/* Zero-width space to prevent height transitions */}
-				<AnimatePresence initial={false}>
-					{children.map((part, i) =>
-						part.type === 'integer' || part.type === 'fraction' ? (
-							<SectionRoll
-								// ref={(r) => void (partRefs[i] = r)}
-								key={part.key}
-								layoutId={part.key}
-								initialValue={mounted ? 0 : part.value}
-								initial={mounted ? { opacity: 0 } : {}}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-								value={part.value}
-								onResize={() => {
-									setNeedsResize(true)
-								}}
-							/>
-						) : (
-							<SectionSymbol
-								key={part.key}
-								type={part.type}
-								partKey={part.key}
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								exit={{ opacity: 0 }}
-							>
-								{part.value}
-							</SectionSymbol>
-						)
-					)}
-				</AnimatePresence>
-			</SectionMeasured>
-		</motion.span>
+				<SectionMeasured
+					justify={justify}
+					style={{
+						display: 'inline-flex',
+						justifyContent: 'inherit'
+					}}
+					ref={innerRef}
+				>
+					&#8203;{/* Zero-width space to prevent height transitions */}
+					<AnimatePresence initial={false}>
+						{children.map((part, i) =>
+							part.type === 'integer' || part.type === 'fraction' ? (
+								<SectionRoll
+									// ref={(r) => void (partRefs[i] = r)}
+									key={part.key}
+									layoutId={part.key}
+									initialValue={mounted ? 0 : part.value}
+									initial={mounted ? { opacity: 0 } : {}}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+									value={part.value}
+									onResize={() => {
+										setNeedsResize(true)
+									}}
+								/>
+							) : (
+								<SectionSymbol
+									key={part.key}
+									type={part.type}
+									partKey={part.key}
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
+								>
+									{part.value}
+								</SectionSymbol>
+							)
+						)}
+					</AnimatePresence>
+				</SectionMeasured>
+			</motion.span>
+		</SectionContext.Provider>
 	)
 })
 
@@ -356,7 +375,7 @@ const SectionRoll = React.forwardRef<
 >(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
 	const initialValue = React.useRef(_initialValue).current // Non-reactive
 
-	const mounted = useMounted()
+	const { mounted } = React.useContext(SectionContext)
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
 
@@ -367,7 +386,7 @@ const SectionRoll = React.forwardRef<
 	const [width, setWidth] = React.useState<number>()
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
-		if (!mounted && initialValue === value) return onResize?.() // make sure to trigger onResize anyway because Section waits for that
+		if (!mounted && initialValue === value) return
 		if (!numberRefs[value]) return
 		const w = getWidthInEm(numberRefs[value])
 		setWidth(w)
@@ -375,8 +394,8 @@ const SectionRoll = React.forwardRef<
 
 	// Wait until any width changes have been committed before emitting:
 	React.useEffect(() => {
-		if (mounted && width != null) onResize?.()
-	}, [width, mounted])
+		if (width != null) onResize?.()
+	}, [width])
 
 	const renderDigit = (i: number) => (
 		<span
