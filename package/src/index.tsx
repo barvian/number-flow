@@ -149,8 +149,8 @@ const formatToParts = (
 const DEFAULT_TRANSITION = {
 	duration: 0.3,
 	ease: easeOut,
-	layout: { type: 'spring', duration: 1, bounce: 0 },
-	y: { type: 'spring', duration: 1, bounce: 0 }
+	layout: { type: 'spring', duration: 3, bounce: 0 },
+	y: { type: 'spring', duration: 3, bounce: 0 }
 }
 
 export default function NumberRoll({
@@ -230,7 +230,7 @@ export default function NumberRoll({
 							'--motion-number-scale-x-correct': 1,
 							margin: '0 calc(-1*var(--mask-width,0.25em))',
 							padding: '0 var(--mask-width,0.25em)',
-							overflow: 'hidden',
+							overflow: 'clip',
 							WebkitMaskImage: mask,
 							WebkitMaskSize: maskSize,
 							WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
@@ -304,13 +304,13 @@ const Section = React.forwardRef<
 			<motion.span
 				{...rest}
 				ref={ref}
-				layout
+				layout="position"
 				onLayoutAnimationComplete={() => layoutEndListeners.forEach((listener) => listener())}
 				style={{
 					display: 'inline-flex',
 					lineHeight: 'var(--digit-line-height, 1.15)',
 					justifyContent: justify,
-					width: width == null ? 'auto' : `${Math.max(width, 0.1)}em` // Using a decent size minimum width seems to prevent scaling issues
+					width: width == null ? 'auto' : `${width}em`
 				}}
 			>
 				<span
@@ -420,7 +420,7 @@ const SectionRoll = React.forwardRef<
 		<motion.span
 			{...rest}
 			ref={ref}
-			layout
+			layout="position"
 			data-exiting={isPresent ? undefined : ''}
 			data-motion-number-digit={value}
 			style={{
@@ -429,8 +429,8 @@ const SectionRoll = React.forwardRef<
 				width: width == null ? 'auto' : `${width}em`
 			}}
 		>
-			{/* Scale correction, needed because the children are center-aligned within the parent: */}
-			<motion.span layout style={{ display: 'inline-flex', justifyContent: 'center' }}>
+			{/* Position correction, needed because the children are center-aligned within the parent: */}
+			<motion.span layout="position" style={{ display: 'inline-flex', justifyContent: 'center' }}>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
 				<motion.span
 					ref={innerRef}
@@ -503,7 +503,7 @@ const SectionSymbol = React.forwardRef<
 				whiteSpace: 'pre' /* some symbols are just spaces */
 			}}
 			layoutId={key}
-			layout
+			layout="position"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
 		>
