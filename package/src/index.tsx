@@ -9,6 +9,7 @@ import {
 	easeOut,
 	usePresence
 } from 'framer-motion'
+import PopChildRight from './PopChildRight'
 
 addScaleCorrector({
 	'--motion-number-scale-x-correct': {
@@ -244,11 +245,13 @@ export default function NumberRoll({
 						<motion.span layout="position" style={{ position: 'relative', display: 'inline-flex' }}>
 							{/* Zero-width spaces helps maintain the correct height when all children are removed: */}
 							&#8203;
-							<AnimatePresence mode="popLayout" initial={false}>
+							<AnimatePresence initial={false}>
 								{pre.map((part) => (
-									<Symbol key={part.key} type={part.type} partKey={part.key}>
-										{part.value}
-									</Symbol>
+									<PopChildRight key={part.key}>
+										<Symbol type={part.type} partKey={part.key}>
+											{part.value}
+										</Symbol>
+									</PopChildRight>
 								))}
 							</AnimatePresence>
 						</motion.span>
@@ -307,7 +310,7 @@ const Section = React.forwardRef<
 	// Use a state flag to trigger resize so updates get batched:
 	const [needsResize, setNeedsResize] = React.useState(false)
 	const [width, setWidth] = React.useState<number>()
-	React.useLayoutEffect(() => {
+	React.useEffect(() => {
 		if (!needsResize || !innerRef.current) return
 		// Find the new width by hiding exiting elements and measuring the innerRef
 		// This better handles i.e. negative margins between elements
@@ -325,7 +328,7 @@ const Section = React.forwardRef<
 	}, [needsResize])
 
 	// Imperatively measure initially after mount to ensure proper layout animations afterwards
-	React.useLayoutEffect(() => {
+	React.useEffect(() => {
 		if (ref.current && innerRef.current)
 			ref.current.style.width = getWidthInEm(innerRef.current) + 'em'
 	}, [])
@@ -386,8 +389,9 @@ const SectionRoll = React.forwardRef<
 	}
 >(({ value: _value, initialValue: _initialValue = _value, onResize, ...rest }, ref) => {
 	const initialValue = React.useRef(_initialValue).current // Non-reactive
+	const mounted = useMounted()
 
-	const { mounted, onNumberLayoutAnimationComplete } = React.useContext(NumberRollContext)
+	const { onNumberLayoutAnimationComplete } = React.useContext(NumberRollContext)
 	const innerRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
 
@@ -524,7 +528,7 @@ const Symbol = React.forwardRef<
 				display: 'inline-block',
 				whiteSpace: 'pre' /* some symbols are just spaces */
 			}}
-			layoutId={key}
+			layoutId={type === 'literal' ? `${key}:${value}` : key}
 			layout="position"
 			initial={{ opacity: 0 }}
 			animate={{ opacity: 1 }}
