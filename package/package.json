@@ -53,6 +53,7 @@
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.0",
+		"@types/react-dom": "^18.0.0",
 		"bunchee": "^5.2.2",
 		"framer-motion": "^11.3.19",
 		"react": "^18.0.0",

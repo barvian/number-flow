@@ -240,13 +240,18 @@ export default function NumberRoll({
 							whiteSpace: 'nowrap'
 						}}
 					>
-						<AnimatePresence mode="popLayout" initial={false}>
-							{pre.map((part) => (
-								<Symbol key={part.key} type={part.type} partKey={part.key}>
-									{part.value}
-								</Symbol>
-							))}
-						</AnimatePresence>
+						{/* Using layout animations for pre/post wrappers makes their entrances look better: */}
+						<motion.span layout="position" style={{ position: 'relative', display: 'inline-flex' }}>
+							{/* Zero-width spaces helps maintain the correct height when all children are removed: */}
+							&#8203;
+							<AnimatePresence mode="popLayout" initial={false}>
+								{pre.map((part) => (
+									<Symbol key={part.key} type={part.type} partKey={part.key}>
+										{part.value}
+									</Symbol>
+								))}
+							</AnimatePresence>
+						</motion.span>
 						<motion.span
 							layout
 							ref={maskedRef}
@@ -270,13 +275,16 @@ export default function NumberRoll({
 							<Section style={{ justifyContent: 'end' }}>{integer}</Section>
 							<Section>{fraction}</Section>
 						</motion.span>
-						<AnimatePresence mode="popLayout" initial={false}>
-							{post.map((part) => (
-								<Symbol key={part.key} type={part.type} partKey={part.key}>
-									{part.value}
-								</Symbol>
-							))}
-						</AnimatePresence>
+						<motion.span layout="position" style={{ position: 'relative', display: 'inline-flex' }}>
+							&#8203;
+							<AnimatePresence mode="popLayout" initial={false}>
+								{post.map((part) => (
+									<Symbol key={part.key} type={part.type} partKey={part.key}>
+										{part.value}
+									</Symbol>
+								))}
+							</AnimatePresence>
+						</motion.span>
 					</span>
 				</LayoutGroup>
 			</MotionConfig>
@@ -340,6 +348,7 @@ const Section = React.forwardRef<
 					justifyContent: 'inherit'
 				}}
 			>
+				&#8203;
 				<AnimatePresence initial={false}>
 					{children.map((part, i) =>
 						part.type === 'integer' || part.type === 'fraction' ? (
@@ -500,6 +509,8 @@ const Symbol = React.forwardRef<
 	React.useEffect(() => {
 		if (!isPresent) return onNumberLayoutAnimationComplete?.(safeToRemove)
 	}, [isPresent, onNumberLayoutAnimationComplete])
+
+	const mounted = useMounted()
 
 	return (
 		<motion.span

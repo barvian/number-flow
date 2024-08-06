@@ -3,13 +3,10 @@
 import * as React from 'react'
 import NumberRoll from '@number-roll/react'
 
-function getRandom(min: number, max: number) {
-	return Math.random() * (max - min) + min
-}
+const NUMBERS = [123.4, 230352, -3141.12]
 
 export default function Home() {
-	const [value, setValue] = React.useState(123.4)
-	// const [value, setValue] = React.useState(1.4)
+	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, setLocale] = React.useState(true)
 
 	return (
@@ -18,21 +15,22 @@ export default function Home() {
 				<span className="text-9xl/normal">
 					<NumberRoll
 						value={value}
-						format={{ useGrouping: locale ? 'always' : false }}
+						// locales={'fr-FR'}
+						format={{
+							style: 'unit',
+							unit: 'meter',
+							// signDisplay: 'always',
+							notation: 'compact',
+							useGrouping: locale ? 'always' : false
+						}}
 					></NumberRoll>
 				</span>
-				{/* <span>$00{value}</span> */}
+				{/* <span>{value}</span> */}
 			</span>
 			<button onClick={() => setLocale((l) => !l)}>Change locale</button>
 			<button
 				className="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#F7F8F9] p-2 transition-transform duration-150 ease-[cubic-bezier(.4,0,.2,1)] active:scale-95"
-				onClick={
-					// () => setValue((v) => (v === 12313.4 ? 1213 : 12313.4))
-					() => setValue((v) => (v === 123.4 ? 23352 : v === 3141.12 ? 123.4 : 3141.12))
-					// () => setValue((v) => (v === 123.4 ? 113.4 : 123.4))
-					// () => setValue((v) => (v === 123.4 ? 123456789.4 : 123.4))
-					// () => setValue((v) => (v === 123.4 ? 1323.512 : 123.4))
-				}
+				onClick={cycleValue}
 			>
 				<svg className="size-14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
@@ -45,4 +43,11 @@ export default function Home() {
 			</button>
 		</main>
 	)
+}
+
+function useCycle<T>(options: Array<T>) {
+	const [index, setIndex] = React.useState(0)
+	const next = () => setIndex((i) => (i + 1) % options.length)
+
+	return [options[index], next] as const
 }
