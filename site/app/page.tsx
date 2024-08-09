@@ -3,34 +3,41 @@
 import * as React from 'react'
 import NumberRoll from '@number-roll/react'
 
-const NUMBERS = [123.4, 230352, -3141.12]
+const NUMBERS = [123.4, /*-3141.12,*/ 230352]
+const LOCALES = [/*'fr-FR', */ 'en-US']
+const FORMATS = [
+	/*{
+		style: 'unit',
+		unit: 'meter',
+		notation: 'compact'
+	},*/
+	{
+		// style: 'currency',
+		// currency: 'USD',
+		// currencySign: 'accounting'
+	}
+] as Intl.NumberFormatOptions[]
 
 export default function Home() {
 	const [value, cycleValue] = useCycle(NUMBERS)
-	const [locale, setLocale] = React.useState(true)
+	const [locale, cycleLocale] = useCycle(LOCALES)
+	const [format, cycleFormat] = useCycle(FORMATS)
 
 	return (
 		<main className="flex min-h-screen flex-col items-center justify-around">
 			<span className="flex items-baseline gap-3">
 				<span className="text-9xl/normal">
-					<NumberRoll
-						value={value}
-						// locales={'fr-FR'}
-						format={{
-							style: 'unit',
-							unit: 'meter',
-							// signDisplay: 'always',
-							notation: 'compact',
-							useGrouping: locale ? 'always' : false
-						}}
-					></NumberRoll>
+					<NumberRoll value={value} locales={locale} format={format}></NumberRoll>
 				</span>
 				{/* <span>{value}</span> */}
 			</span>
-			<button onClick={() => setLocale((l) => !l)}>Change locale</button>
 			<button
 				className="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#F7F8F9] p-2 transition-transform duration-150 ease-[cubic-bezier(.4,0,.2,1)] active:scale-95"
-				onClick={cycleValue}
+				onClick={() => {
+					cycleValue()
+					cycleLocale()
+					cycleFormat()
+				}}
 			>
 				<svg className="size-14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path
