@@ -1,3 +1,7 @@
+/**
+ * Copy of Framer Motion's PopChild, except it uses right: instead of left:
+ */
+
 import { MotionConfigContext, useIsPresent } from 'framer-motion'
 import * as React from 'react'
 import { useRef, useInsertionEffect, useId, useContext } from 'react'
