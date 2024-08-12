@@ -1,9 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import NumberRoll from '@number-roll/react'
+import MotionNumber from 'motion-number'
 
-const NUMBERS = [12398.4, -3243.6]
+const NUMBERS = [12398.4, -3243.6, 'sds']
 const LOCALES = ['fr-FR', 'en-US']
 const FORMATS = [
 	{
@@ -16,8 +16,12 @@ const FORMATS = [
 		currency: 'USD',
 		currencySign: 'accounting',
 		signDisplay: 'always'
-	},
-	{}
+	}
+	// {},
+	// {
+	// 	style: 'percent',
+	// 	signDisplay: 'always'
+	// }
 ] as Intl.NumberFormatOptions[]
 
 export default function Home() {
@@ -29,7 +33,7 @@ export default function Home() {
 		<main className="flex min-h-screen flex-col items-center justify-around">
 			<span className="flex items-baseline gap-3">
 				<span className="text-9xl/normal">
-					<NumberRoll value={value} locales={locale} format={format}></NumberRoll>
+					<MotionNumber value={value} locales={locale} format={format} />
 				</span>
 				<span>123.4</span>
 			</span>

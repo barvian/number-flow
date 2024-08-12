@@ -44,12 +44,12 @@ importers:
 
   site:
     dependencies:
-      '@number-roll/react':
-        specifier: workspace:*
-        version: link:../package
       framer-motion:
         specifier: ^11.0.0
         version: 11.3.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      motion-number:
+        specifier: workspace:*
+        version: link:../package
       next:
         specifier: 14.2.5
         version: 14.2.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

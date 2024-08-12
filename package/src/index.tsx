@@ -11,6 +11,9 @@ import {
 	type AnimatePresenceProps
 } from 'framer-motion'
 import PopChildRight from './PopChildRight'
+// IMPORTANT: don't destructure this, it breaks tree-shaking:
+// @ts-ignore during build
+import config from 'motion-number/config'
 
 addScaleCorrector({
 	'--motion-number-scale-x-correct': {
@@ -41,12 +44,12 @@ function getWidthInEm(element: HTMLElement) {
 	return parseFloat(width) / parseFloat(fontSize)
 }
 
-function useMounted() {
-	const [mounted, setMounted] = React.useState(false)
+function useIsInitialRender() {
+	const initialRender = React.useRef(true)
 	React.useEffect(() => {
-		setMounted(true)
+		initialRender.current = false
 	}, [])
-	return mounted
+	return initialRender.current
 }
 
 function useRefs<T>(length: number, initial: T | null = null) {
@@ -96,9 +99,6 @@ const formatToParts = (
 			part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
 
 		switch (type) {
-			case 'nan':
-			case 'infinity':
-				return null
 			case 'integer':
 				seenInteger = true
 				_integer.push(...part.value.split('').map((d) => ({ type, value: parseInt(d) })))
@@ -114,6 +114,12 @@ const formatToParts = (
 				fraction.push(
 					...part.value.split('').map((d) => ({ type, value: parseInt(d), key: generateKey(type) }))
 				)
+				break
+			case 'nan':
+			case 'infinity':
+				if (seenDecimal) fraction.push({ type, value: part.value, key: generateKey(type) })
+				else _integer.push({ type, value: part.value })
+				seenInteger = true
 				break
 			// case 'exponentSeparator':
 			// 	exponentSymbol = part.value
@@ -149,11 +155,8 @@ const DEFAULT_TRANSITION = {
 }
 
 const MotionNumberContext = React.createContext<{
-	mounted: boolean
 	onRootLayoutAnimationComplete?: (listener: () => void) => () => void
-}>({
-	mounted: false
-})
+}>({})
 
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette
@@ -184,7 +187,9 @@ const maskSize =
 export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 	value: number | bigint | string
 	locales?: Intl.LocalesArgument
-	format?: Intl.NumberFormatOptions
+	format?: Omit<Intl.NumberFormatOptions, 'notation'> & {
+		notation?: Exclude<Intl.NumberFormatOptions['notation'], 'scientific' | 'engineering'>
+	}
 	transition?: React.ComponentProps<typeof MotionConfig>['transition']
 }
 
@@ -207,13 +212,12 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(
 			[value, locales, format]
 		)
 		// Abort if invalid
-		if (!parts) return value
+		// if (typeof parts === 'string') return parts
 
 		const keys = parts.flatMap((p) => p.map((p) => p.key)).join('|')
 		const [pre, integer, fraction, post] = parts
 
 		const maskedRef = React.useRef<HTMLSpanElement>(null)
-		const mounted = useMounted()
 		// const id = React.useId()
 
 		// Gross hack to apply the scale correction on a custom property:
@@ -236,7 +240,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(
 		}
 
 		return (
-			<MotionNumberContext.Provider value={{ mounted, onRootLayoutAnimationComplete }}>
+			<MotionNumberContext.Provider value={{ onRootLayoutAnimationComplete }}>
 				<MotionConfig transition={transition}>
 					<LayoutGroup
 					// id={id} // not needed until layoutId works, see note in <Section>
@@ -304,11 +308,11 @@ const Section = React.forwardRef<
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 
 	const measuredRef = React.useRef<HTMLSpanElement>(null)
-	const { mounted } = React.useContext(MotionNumberContext)
+	const isInitialRender = useIsInitialRender()
 
 	const [width, setWidth] = React.useState<`${number}em`>()
 	React.useEffect(() => {
-		if (!measuredRef.current) return
+		if (isInitialRender || !measuredRef.current) return
 		// Find the new width by hiding exiting elements and measuring the measuredRef
 		// This better handles i.e. negative margins between elements
 		const exiting = measuredRef.current.querySelectorAll<HTMLSpanElement>('[data-exiting]')
@@ -333,11 +337,36 @@ const Section = React.forwardRef<
 		})
 	}, [parts.map((p) => p.key).join('|')])
 
-	// Skip the re-render for the initial width measurement:
+	// Skip the re-render & heavier calculation for the initial render:
 	React.useEffect(() => {
 		if (!ref.current || !measuredRef.current) return
 		ref.current.style.width = `${getWidthInEm(measuredRef.current)}em`
 	}, [])
+
+	const renderPart = (part: KeyedNumberPart, key?: string) =>
+		part.type === 'integer' || part.type === 'fraction' ? (
+			<Digit
+				key={key}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				value={part.value}
+				initialValue={isInitialRender ? undefined : 0}
+			/>
+		) : (
+			<Sym
+				key={key} // if layoutId ever works: key={`${key}:${value}`}
+				type={part.type}
+				partKey={part.key}
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				exit={{ opacity: 0 }}
+				// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Symbol> a lot:
+				// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
+			>
+				{part.value}
+			</Sym>
+		)
 
 	return (
 		<span
@@ -373,30 +402,6 @@ const Section = React.forwardRef<
 	)
 })
 
-const renderPart = (part: KeyedNumberPart, key?: string) =>
-	part.type === 'integer' || part.type === 'fraction' ? (
-		<Digit
-			key={key}
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			value={part.value}
-		/>
-	) : (
-		<Symbol
-			key={key} // if layoutId ever works: key={`${key}:${value}`}
-			type={part.type}
-			partKey={part.key}
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Symbol> a lot:
-			// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
-		>
-			{part.value}
-		</Symbol>
-	)
-
 const getReactKey = (part: KeyedNumberPart) =>
 	part.type === 'literal' ? `${part.key}:${part.value}` : part.key
 
@@ -413,16 +418,17 @@ const Digit = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & {
 		value: number
+		initialValue?: number
 	}
->(({ value: _value, ...rest }, _ref) => {
+>(({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) => {
+	const initialValue = React.useRef(_initialValue).current // non-reactive, like React's defaultValue props
+	const isInitialRender = useIsInitialRender()
+
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 
-	const { mounted } = React.useContext(MotionNumberContext)
 	const measuredRef = React.useRef<HTMLSpanElement>(null)
 	const numberRefs = useRefs<HTMLSpanElement>(10)
-
-	const initialValue = React.useRef(mounted ? 0 : _value).current
 
 	// Don't use a normal exit animation for this because we want it to trigger a resize:
 	const isPresent = useRemoveOnRootLayoutAnimationComplete()
@@ -431,7 +437,7 @@ const Digit = React.forwardRef<
 	const [width, setWidth] = React.useState<`${number}em`>()
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
-		if (!mounted && initialValue === value) return
+		if (isInitialRender && initialValue === value) return
 		if (!numberRefs[value]) return
 		const w = `${getWidthInEm(numberRefs[value])}em` as const
 		// Put the target width on the el immediately, so it can be used for the section resize
@@ -531,7 +537,7 @@ type Rename<T, K extends keyof T, N extends string> = Pick<T, Exclude<keyof T, K
 	[P in N]: T[K]
 }
 
-const Symbol = React.forwardRef<
+const Sym = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> &
 		Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
@@ -556,7 +562,7 @@ const Symbol = React.forwardRef<
 				<SymbolValue
 					key={value} // re-create on value change
 					layout="position"
-					// layoutDependency={value} // TODO: investigate why this doesn't work here
+					// layoutDependency isn't relevant here
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}

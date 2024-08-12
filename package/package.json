@@ -1,5 +1,5 @@
 {
-	"name": "@number-roll/react",
+	"name": "motion-number",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -11,14 +11,14 @@
 	},
 	"description": "A React component to elegantly transition between numbers.",
 	"license": "MIT",
-	"homepage": "https://number-roll.barvian.me/",
+	"homepage": "https://motion-number.barvian.me/",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/barvian/number-roll",
+		"url": "https://github.com/barvian/motion-number",
 		"directory": "src"
 	},
 	"bugs": {
-		"url": "https://github.com/barvian/number-roll/issues"
+		"url": "https://github.com/barvian/motion-number/issues"
 	},
 	"keywords": [
 		"accessible",
@@ -32,18 +32,30 @@
 		"README.md"
 	],
 	"exports": {
-		"import": {
-			"types": "./dist/es/index.d.mts",
-			"default": "./dist/es/index.mjs"
+		".": {
+			"import": {
+				"types": "./dist/es/index.d.mts",
+				"default": "./dist/es/index.mjs"
+			},
+			"require": {
+				"types": "./dist/cjs/index.d.ts",
+				"default": "./dist/cjs/index.js"
+			}
 		},
-		"require": {
-			"types": "./dist/cjs/index.d.ts",
-			"default": "./dist/cjs/index.js"
+		"./config": {
+			"import": {
+				"types": "./dist/es/config.d.mts",
+				"default": "./dist/es/config.mjs"
+			},
+			"require": {
+				"types": "./dist/cjs/config.d.ts",
+				"default": "./dist/cjs/config.js"
+			}
 		}
 	},
 	"scripts": {
-		"build": "bunchee",
-		"dev": "bunchee --watch",
+		"build": "bunchee --external motion-number",
+		"dev": "bunchee --external motion-number --watch",
 		"prepublishOnly": "pnpm run build && pnpm run test"
 	},
 	"peerDependencies": {
