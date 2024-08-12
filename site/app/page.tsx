@@ -3,19 +3,21 @@
 import * as React from 'react'
 import NumberRoll from '@number-roll/react'
 
-const NUMBERS = [123.4, /*-3141.12,*/ 230352]
-const LOCALES = [/*'fr-FR', */ 'en-US']
+const NUMBERS = [12398.4, -3243.6]
+const LOCALES = ['fr-FR', 'en-US']
 const FORMATS = [
-	/*{
+	{
 		style: 'unit',
 		unit: 'meter',
 		notation: 'compact'
-	},*/
+	},
 	{
-		// style: 'currency',
-		// currency: 'USD',
-		// currencySign: 'accounting'
-	}
+		style: 'currency',
+		currency: 'USD',
+		currencySign: 'accounting',
+		signDisplay: 'always'
+	},
+	{}
 ] as Intl.NumberFormatOptions[]
 
 export default function Home() {
@@ -29,7 +31,7 @@ export default function Home() {
 				<span className="text-9xl/normal">
 					<NumberRoll value={value} locales={locale} format={format}></NumberRoll>
 				</span>
-				{/* <span>{value}</span> */}
+				<span>123.4</span>
 			</span>
 			<button
 				className="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#F7F8F9] p-2 transition-transform duration-150 ease-[cubic-bezier(.4,0,.2,1)] active:scale-95"
