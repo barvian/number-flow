@@ -4,8 +4,7 @@
 
 @layer base {
 	:root {
-		@apply antialiased;
-		color: rgb(34, 34, 34);
+		@apply bg-gray-950 text-[#f7f8f8] antialiased;
 		--digit-line-height: 1.125;
 	}
 
