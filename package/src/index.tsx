@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {
-	AnimatePresence,
 	LayoutGroup,
 	motion,
 	addScaleCorrector,
@@ -10,10 +9,10 @@ import {
 	usePresence,
 	type AnimatePresenceProps
 } from 'framer-motion'
-import PopChildRight from './PopChildRight'
 // IMPORTANT: don't destructure this, it breaks tree-shaking:
 // @ts-ignore during build
 import config from 'motion-number/config'
+import JustifiedAnimatePresence from './JustifiedAnimatePresence'
 
 addScaleCorrector({
 	'--motion-number-scale-x-correct': {
@@ -78,12 +77,11 @@ const formatToParts = (
 	const formatter = new Intl.NumberFormat(locales, format)
 	const parts = formatter.formatToParts(value)
 
+	const keys: string[] = []
 	const pre: KeyedNumberPart[] = []
 	const _integer: NumberPart[] = [] // we do a second pass to key these from RTL
 	const fraction: KeyedNumberPart[] = []
 	const post: KeyedNumberPart[] = []
-	// let exponentSymbol: string | undefined
-	// let exponent = ''
 
 	const counts: Partial<Record<NumberPartType, number>> = {}
 	const generateKey = (type: NumberPartType) => {
@@ -94,6 +92,8 @@ const formatToParts = (
 	let seenInteger = false,
 		seenDecimal = false
 	for (const part of parts) {
+		keys.push(`${part.type}:${part.value}`)
+
 		// Merge plus and minus sign types (doing it this way appeases TypeScript)
 		const type: NumberPartType =
 			part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
@@ -115,19 +115,14 @@ const formatToParts = (
 					...part.value.split('').map((d) => ({ type, value: parseInt(d), key: generateKey(type) }))
 				)
 				break
-			case 'nan':
-			case 'infinity':
-				if (seenDecimal) fraction.push({ type, value: part.value, key: generateKey(type) })
-				else _integer.push({ type, value: part.value })
-				seenInteger = true
-				break
-			// case 'exponentSeparator':
-			// 	exponentSymbol = part.value
+			// case 'nan':
+			// case 'infinity':
+			// 	// TODO: handle these
 			// 	break
-			// // Add these as strings because they'll get parsed as numbers later:
+			// case 'exponentSeparator':
+			// 	break
 			// case 'exponentMinusSign':
 			// case 'exponentInteger':
-			// 	exponent += part.value
 			// 	break
 			default:
 				;(seenInteger || seenDecimal ? post : pre).push({
@@ -144,7 +139,7 @@ const formatToParts = (
 		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
 	}
 
-	return [pre, integer, fraction, post] as const
+	return { pre, integer, fraction, post, key: keys.join('|') }
 }
 
 const DEFAULT_TRANSITION = {
@@ -154,9 +149,9 @@ const DEFAULT_TRANSITION = {
 	y: { type: 'spring', duration: 1, bounce: 0 }
 }
 
-const MotionNumberContext = React.createContext<{
-	onRootLayoutAnimationComplete?: (listener: () => void) => () => void
-}>({})
+const MotionNumberContext = React.createContext({
+	onRootLayoutAnimationComplete: (listener: () => void) => () => {}
+})
 
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette
@@ -193,117 +188,125 @@ export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 	transition?: React.ComponentProps<typeof MotionConfig>['transition']
 }
 
-const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(
-	(
-		{
-			value,
-			locales,
-			format,
-			onLayoutAnimationComplete,
-			transition = DEFAULT_TRANSITION,
-			style,
-			...rest
-		},
-		ref
-	) => {
-		// Split the number into parts
-		const parts = React.useMemo(
-			() => formatToParts(value, { locales, format }),
-			[value, locales, format]
-		)
-		// Abort if invalid
-		// if (typeof parts === 'string') return parts
+const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(function MotionNumber(
+	{
+		value,
+		locales,
+		format,
+		onLayoutAnimationComplete,
+		transition = DEFAULT_TRANSITION,
+		style,
+		...rest
+	},
+	ref
+) {
+	// Split the number into parts
+	const parts = React.useMemo(
+		() => formatToParts(value, { locales, format }),
+		[value, locales, format]
+	)
+	const { pre, integer, fraction, post, key } = parts
 
-		const keys = parts.flatMap((p) => p.map((p) => p.key)).join('|')
-		const [pre, integer, fraction, post] = parts
+	const maskedRef = React.useRef<HTMLSpanElement>(null)
+	// const id = React.useId()
 
-		const maskedRef = React.useRef<HTMLSpanElement>(null)
-		// const id = React.useId()
+	// Gross hack to apply the scale correction on a custom property:
+	// https://github.com/framer/motion/blob/fe6e3cb2c1d768fafe6adb7715386b57a87f0437/packages/framer-motion/src/render/html/utils/render.ts#L14
+	const appliedScaleSetter = React.useRef(false)
+	React.useEffect(() => {
+		if (appliedScaleSetter.current || !maskedRef.current?.style) return
+		Object.defineProperty(maskedRef.current.style, '--motion-number-scale-x-correct', {
+			set(v) {
+				return this.setProperty('--motion-number-scale-x-correction', v)
+			}
+		})
+		appliedScaleSetter.current = true
+	}, [])
 
-		// Gross hack to apply the scale correction on a custom property:
-		// https://github.com/framer/motion/blob/fe6e3cb2c1d768fafe6adb7715386b57a87f0437/packages/framer-motion/src/render/html/utils/render.ts#L14
-		const appliedScaleSetter = React.useRef(false)
-		React.useEffect(() => {
-			if (appliedScaleSetter.current || !maskedRef.current?.style) return
-			Object.defineProperty(maskedRef.current.style, '--motion-number-scale-x-correct', {
-				set(v) {
-					return this.setProperty('--motion-number-scale-x-correction', v)
-				}
-			})
-			appliedScaleSetter.current = true
-		}, [])
+	const layoutEndListeners = useConstant(() => new Set<() => void>())
 
-		const layoutEndListeners = useConstant(() => new Set<() => void>())
-		const onRootLayoutAnimationComplete = (listener: () => void) => {
-			layoutEndListeners.add(listener)
-			return () => layoutEndListeners.delete(listener)
-		}
+	const context = React.useMemo(
+		() => ({
+			onRootLayoutAnimationComplete: (listener: () => void) => {
+				layoutEndListeners.add(listener)
+				return () => layoutEndListeners.delete(listener)
+			}
+		}),
+		[]
+	)
 
-		return (
-			<MotionNumberContext.Provider value={{ onRootLayoutAnimationComplete }}>
-				<MotionConfig transition={transition}>
-					<LayoutGroup
-					// id={id} // not needed until layoutId works, see note in <Section>
+	const handleLayoutAnimationComplete = React.useCallback(() => {
+		onLayoutAnimationComplete?.()
+		layoutEndListeners.forEach((listener) => listener())
+	}, [])
+
+	return (
+		<MotionNumberContext.Provider value={context}>
+			<MotionConfig transition={transition}>
+				<LayoutGroup
+				// id={id} // not needed until layoutId works, see note in <Section>
+				>
+					<motion.span
+						{...rest}
+						layout // use full layout animation so onLayoutAnimationComplete handles every change
+						layoutDependency={key}
+						onLayoutAnimationComplete={handleLayoutAnimationComplete}
+						style={{
+							...style,
+							display: 'inline-block',
+							isolation: 'isolate', // so number can be underneath pre/post
+							whiteSpace: 'nowrap'
+						}}
 					>
+						<Section data-motion-number-part="pre" justify="end" mode="popLayout" parts={pre} />
 						<motion.span
-							{...rest}
-							layout // use full layout animation so onLayoutAnimationComplete handles every change
-							layoutDependency={keys}
-							onLayoutAnimationComplete={() => {
-								onLayoutAnimationComplete?.()
-								layoutEndListeners.forEach((listener) => listener())
-							}}
+							layout // make sure this one scales
+							layoutDependency={key}
+							ref={maskedRef}
 							style={{
-								...style,
 								display: 'inline-block',
-								isolation: 'isolate', // so number can be underneath pre/post
-								whiteSpace: 'nowrap'
+								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+								'--motion-number-scale-x-correct': 1,
+								margin: '0 calc(-1*var(--mask-width,0.5em))',
+								padding: '0 var(--mask-width,0.5em)',
+								position: 'relative',
+								zIndex: -1, // should be underneath everything else
+								overflow: 'clip', // important so it doesn't affect page layout
+								// Prefixed properties have better support than unprefixed ones:
+								WebkitMaskImage: mask,
+								WebkitMaskSize: maskSize,
+								WebkitMaskPosition:
+									'center, center, top left, top right, bottom right, bottom left',
+								WebkitMaskRepeat: 'no-repeat'
 							}}
 						>
-							<Section data-motion-number-part="pre" justify="end" mode="popLayout" parts={pre} />
-							<motion.span
-								layout // make sure this one scales
-								layoutDependency={keys}
-								ref={maskedRef}
-								style={{
-									display: 'inline-block',
-									// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-									'--motion-number-scale-x-correct': 1,
-									margin: '0 calc(-1*var(--mask-width,0.5em))',
-									padding: '0 var(--mask-width,0.5em)',
-									position: 'relative',
-									zIndex: -1, // should be underneath everything else
-									overflow: 'clip', // important so it doesn't affect page layout
-									// Prefixed properties have better support than unprefixed ones:
-									WebkitMaskImage: mask,
-									WebkitMaskSize: maskSize,
-									WebkitMaskPosition:
-										'center, center, top left, top right, bottom right, bottom left',
-									WebkitMaskRepeat: 'no-repeat'
-								}}
-							>
-								<Section data-motion-number-part="integer" justify="end" parts={integer} />
-								<Section data-motion-number-part="fraction" parts={fraction} />
-							</motion.span>
-							<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+							<Section data-motion-number-part="integer" justify="end" parts={integer} />
+							<Section data-motion-number-part="fraction" parts={fraction} />
 						</motion.span>
-					</LayoutGroup>
-				</MotionConfig>
-			</MotionNumberContext.Provider>
-		)
-	}
-)
+						<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+					</motion.span>
+				</LayoutGroup>
+			</MotionConfig>
+		</MotionNumberContext.Provider>
+	)
+})
 
 export default MotionNumber
+
+export type Justify = 'start' | 'end'
+
+const SectionContext = React.createContext({
+	justify: 'start' as Justify
+})
 
 const Section = React.forwardRef<
 	HTMLSpanElement,
 	Omit<React.ReactHTML['span'], 'children'> & {
 		parts: KeyedNumberPart[]
-		justify?: 'start' | 'end'
+		justify?: Justify
 		mode?: AnimatePresenceProps['mode']
 	}
->(({ parts, justify = 'start', mode, ...rest }, _ref) => {
+>(function Section({ parts, justify = 'start', mode, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 
@@ -343,67 +346,63 @@ const Section = React.forwardRef<
 		ref.current.style.width = `${getWidthInEm(measuredRef.current)}em`
 	}, [])
 
-	const renderPart = (part: KeyedNumberPart, key?: string) =>
-		part.type === 'integer' || part.type === 'fraction' ? (
-			<Digit
-				key={key}
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				exit={{ opacity: 0 }}
-				value={part.value}
-				initialValue={isInitialRender ? undefined : 0}
-			/>
-		) : (
-			<Sym
-				key={key} // if layoutId ever works: key={`${key}:${value}`}
-				type={part.type}
-				partKey={part.key}
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				exit={{ opacity: 0 }}
-				// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Symbol> a lot:
-				// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
-			>
-				{part.value}
-			</Sym>
-		)
+	const context = React.useMemo(() => ({ justify }), [justify])
 
 	return (
-		<span
-			{...rest}
-			ref={ref}
-			style={{
-				display: 'inline-flex',
-				justifyContent: justify,
-				lineHeight: 'var(--digit-line-height, 1.15)',
-				width
-			}}
-		>
+		<SectionContext.Provider value={context}>
 			<span
-				ref={measuredRef}
+				{...rest}
+				ref={ref}
 				style={{
 					display: 'inline-flex',
-					justifyContent: 'inherit'
+					justifyContent: justify,
+					lineHeight: 'var(--digit-line-height, 1.15)',
+					width
 				}}
 			>
-				&#8203;
-				<AnimatePresence
-					mode={mode === 'popLayout' && justify === 'end' ? 'sync' : mode}
-					initial={false}
+				<span
+					ref={measuredRef}
+					style={{
+						display: 'inline-flex',
+						justifyContent: 'inherit'
+					}}
 				>
-					{mode === 'popLayout' && justify === 'end'
-						? parts.map((part) => (
-								<PopChildRight key={getReactKey(part)}>{renderPart(part)}</PopChildRight>
-							))
-						: parts.map((part) => renderPart(part, getReactKey(part)))}
-				</AnimatePresence>
+					&#8203;{/* zero-width space to prevent the height from collapsing */}
+					<JustifiedAnimatePresence mode={mode} justify={justify} initial={false}>
+						{parts.map((part) =>
+							part.type === 'integer' || part.type === 'fraction' ? (
+								<Digit
+									key={part.key}
+									initial={CHAR_REMOVED}
+									animate={CHAR_PRESENT}
+									exit={CHAR_REMOVED}
+									value={part.value}
+									initialValue={isInitialRender ? undefined : 0}
+								/>
+							) : (
+								<Sym
+									key={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
+									type={part.type}
+									partKey={part.key}
+									initial={CHAR_REMOVED}
+									animate={CHAR_PRESENT}
+									exit={CHAR_REMOVED}
+									// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Symbol> a lot:
+									// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
+								>
+									{part.value}
+								</Sym>
+							)
+						)}
+					</JustifiedAnimatePresence>
+				</span>
 			</span>
-		</span>
+		</SectionContext.Provider>
 	)
 })
 
-const getReactKey = (part: KeyedNumberPart) =>
-	part.type === 'literal' ? `${part.key}:${part.value}` : part.key
+const CHAR_REMOVED = { opacity: 0 }
+const CHAR_PRESENT = { opacity: 1 }
 
 function useRemoveOnRootLayoutAnimationComplete() {
 	const { onRootLayoutAnimationComplete } = React.useContext(MotionNumberContext)
@@ -420,7 +419,7 @@ const Digit = React.forwardRef<
 		value: number
 		initialValue?: number
 	}
->(({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) => {
+>(function Digit({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) {
 	const initialValue = React.useRef(_initialValue).current // non-reactive, like React's defaultValue props
 	const isInitialRender = useIsInitialRender()
 
@@ -541,8 +540,9 @@ const Sym = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> &
 		Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
->(({ partKey: key, type, children: value, ...rest }, ref) => {
+>(function Sym({ partKey: key, type, children: value, ...rest }, ref) {
 	const isPresent = useRemoveOnRootLayoutAnimationComplete()
+	const { justify } = React.useContext(SectionContext)
 
 	return (
 		<motion.span
@@ -558,27 +558,27 @@ const Sym = React.forwardRef<
 			layout="position"
 			layoutDependency={value}
 		>
-			<AnimatePresence mode="popLayout" initial={false}>
-				<SymbolValue
+			<JustifiedAnimatePresence mode="popLayout" justify={justify} initial={false}>
+				<SymValue
 					key={value} // re-create on value change
 					layout="position"
-					// layoutDependency isn't relevant here
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
+					// layoutDependency breaks this but I haven't tried to understand why
+					initial={CHAR_REMOVED}
+					animate={CHAR_PRESENT}
+					exit={CHAR_REMOVED}
 				>
 					{value}
-				</SymbolValue>
-			</AnimatePresence>
+				</SymValue>
+			</JustifiedAnimatePresence>
 		</motion.span>
 	)
 })
 
 // We need a separate component for this so we can do the safeToRemove logic:
-const SymbolValue = React.forwardRef<
+const SymValue = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & { children: string }
->(({ children: value, ...rest }, ref) => {
+>(function SymValue({ children: value, ...rest }, ref) {
 	useRemoveOnRootLayoutAnimationComplete()
 	return (
 		<motion.span

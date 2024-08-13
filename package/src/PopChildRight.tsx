@@ -1,5 +1,5 @@
 /**
- * Copy of Framer Motion's PopChild, except it uses right: instead of left:
+ * Copy of Framer Motion's PopChild, except it uses right: x; instead of left: x;
  */
 
 import { MotionConfigContext, useIsPresent } from 'framer-motion'
