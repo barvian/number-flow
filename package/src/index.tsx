@@ -7,7 +7,8 @@ import {
 	MotionConfig,
 	easeOut,
 	usePresence,
-	type AnimatePresenceProps
+	type AnimatePresenceProps,
+	MotionConfigContext
 } from 'framer-motion'
 // IMPORTANT: don't destructure this, it breaks tree-shaking:
 // @ts-ignore during build
@@ -189,15 +190,7 @@ export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 }
 
 const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(function MotionNumber(
-	{
-		value,
-		locales,
-		format,
-		onLayoutAnimationComplete,
-		transition = DEFAULT_TRANSITION,
-		style,
-		...rest
-	},
+	{ value, locales, format, onLayoutAnimationComplete, transition: _transition, style, ...rest },
 	ref
 ) {
 	// Split the number into parts
@@ -240,6 +233,13 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 		layoutEndListeners.forEach((listener) => listener())
 	}, [])
 
+	// Check if they've set MotionConfig already, and if so use that as the default transition instead:
+	const { transition: motionConfigTransition } = React.useContext(MotionConfigContext)
+	const transition = React.useMemo(
+		() => ((_transition ?? motionConfigTransition) ? undefined : DEFAULT_TRANSITION),
+		[motionConfigTransition, _transition]
+	)
+
 	return (
 		<MotionNumberContext.Provider value={context}>
 			<MotionConfig transition={transition}>
@@ -269,7 +269,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 								'--motion-number-scale-x-correct': 1,
 								margin: '0 calc(-1*var(--mask-width,0.5em))',
 								padding: '0 var(--mask-width,0.5em)',
-								position: 'relative',
+								position: 'relative', // for zIndex
 								zIndex: -1, // should be underneath everything else
 								overflow: 'clip', // important so it doesn't affect page layout
 								// Prefixed properties have better support than unprefixed ones:
@@ -364,7 +364,8 @@ const Section = React.forwardRef<
 					ref={measuredRef}
 					style={{
 						display: 'inline-flex',
-						justifyContent: 'inherit'
+						justifyContent: 'inherit',
+						position: 'relative' // needed for AnimatePresent popLayout
 					}}
 				>
 					&#8203;{/* zero-width space to prevent the height from collapsing */}
@@ -387,7 +388,7 @@ const Section = React.forwardRef<
 									initial={CHAR_REMOVED}
 									animate={CHAR_PRESENT}
 									exit={CHAR_REMOVED}
-									// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Symbol> a lot:
+									// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Sym> a lot:
 									// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
 								>
 									{part.value}
@@ -553,7 +554,8 @@ const Sym = React.forwardRef<
 			data-motion-number-part={type}
 			data-motion-number-value={value}
 			style={{
-				display: 'inline-block'
+				display: 'inline-block',
+				position: 'relative' // needed for AnimatePresent popLayout
 			}}
 			layout="position"
 			layoutDependency={value}

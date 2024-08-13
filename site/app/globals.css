@@ -8,11 +8,6 @@
 		--digit-line-height: 1.125;
 	}
 
-	span {
-		will-change: transform !important;
-		/* color: transparent !important; */
-	}
-
 	[data-motion-number-group=',']:not([hidden]) + [data-motion-number-digit='1'] {
 		margin-left: -0.025em;
 	}
