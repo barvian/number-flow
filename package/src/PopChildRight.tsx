@@ -36,7 +36,8 @@ class PopChildMeasure extends React.Component<MeasureProps> {
 			size.width = element.offsetWidth || 0
 			size.top = element.offsetTop
 			size.right =
-				(element.offsetParent?.getBoundingClientRect().width ?? 0) -
+				((element.offsetParent instanceof HTMLElement ? element.offsetParent : null)?.offsetWidth ??
+					0) -
 				element.offsetWidth -
 				element.offsetLeft
 		}
