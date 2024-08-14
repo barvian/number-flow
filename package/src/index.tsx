@@ -151,7 +151,7 @@ const DEFAULT_TRANSITION = {
 }
 
 const MotionNumberContext = React.createContext({
-	onRootLayoutAnimationComplete: (listener: () => void) => () => {}
+	addLayoutAnimationCompleteListener: (listener: () => void) => () => {}
 })
 
 // Build the mask for the numbers. Technique taken from:
@@ -220,7 +220,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 
 	const context = React.useMemo(
 		() => ({
-			onRootLayoutAnimationComplete: (listener: () => void) => {
+			addLayoutAnimationCompleteListener: (listener: () => void) => {
 				layoutEndListeners.add(listener)
 				return () => layoutEndListeners.delete(listener)
 			}
@@ -406,11 +406,11 @@ const CHAR_REMOVED = { opacity: 0 }
 const CHAR_PRESENT = { opacity: 1 }
 
 function useRemoveOnRootLayoutAnimationComplete() {
-	const { onRootLayoutAnimationComplete } = React.useContext(MotionNumberContext)
+	const { addLayoutAnimationCompleteListener } = React.useContext(MotionNumberContext)
 	const [isPresent, safeToRemove] = usePresence()
 	React.useEffect(() => {
-		if (!isPresent) return onRootLayoutAnimationComplete?.(safeToRemove)
-	}, [isPresent, onRootLayoutAnimationComplete])
+		if (!isPresent) return addLayoutAnimationCompleteListener?.(safeToRemove)
+	}, [isPresent, addLayoutAnimationCompleteListener])
 	return isPresent
 }
 
