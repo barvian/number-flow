@@ -258,12 +258,13 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 					onLayoutAnimationComplete={handleLayoutAnimationComplete}
 					style={{
 						...style,
+						direction: 'ltr', // I think this is needed b/c numbers are always LTR?
 						display: 'inline-block',
 						isolation: 'isolate', // so number can be underneath pre/post
 						whiteSpace: 'nowrap'
 					}}
 				>
-					<Section data-motion-number-part="pre" justify="end" mode="popLayout" parts={pre} />
+					<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
 					<motion.span
 						layout // make sure this one scales
 						layoutDependency={layoutDependency}
@@ -284,7 +285,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 							WebkitMaskRepeat: 'no-repeat'
 						}}
 					>
-						<Section data-motion-number-part="integer" justify="end" parts={integer} />
+						<Section data-motion-number-part="integer" justify="right" parts={integer} />
 						<Section data-motion-number-part="fraction" parts={fraction} />
 					</motion.span>
 					<Section data-motion-number-part="post" mode="popLayout" parts={post} />
@@ -296,10 +297,11 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 
 export default MotionNumber
 
-export type Justify = 'start' | 'end'
+// Don't use start/end b/c they flip in RTL languages, and numbers don't
+export type Justify = 'left' | 'right'
 
 const SectionContext = React.createContext({
-	justify: 'start' as Justify
+	justify: 'left' as Justify
 })
 
 const Section = React.forwardRef<
@@ -309,7 +311,7 @@ const Section = React.forwardRef<
 		justify?: Justify
 		mode?: AnimatePresenceProps['mode']
 	}
->(function Section({ parts, justify = 'start', mode, ...rest }, _ref) {
+>(function Section({ parts, justify = 'left', mode, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const { layoutDependency } = React.useContext(MotionNumberContext)
