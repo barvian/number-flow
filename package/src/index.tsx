@@ -151,7 +151,8 @@ const DEFAULT_TRANSITION = {
 }
 
 const MotionNumberContext = React.createContext({
-	addLayoutAnimationCompleteListener: (listener: () => void) => () => {}
+	addLayoutAnimationCompleteListener: (listener: () => void) => () => {},
+	layoutDependency: 0
 })
 
 // Build the mask for the numbers. Technique taken from:
@@ -216,23 +217,6 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 		appliedScaleSetter.current = true
 	}, [])
 
-	const layoutEndListeners = useConstant(() => new Set<() => void>())
-
-	const context = React.useMemo(
-		() => ({
-			addLayoutAnimationCompleteListener: (listener: () => void) => {
-				layoutEndListeners.add(listener)
-				return () => layoutEndListeners.delete(listener)
-			}
-		}),
-		[]
-	)
-
-	const handleLayoutAnimationComplete = React.useCallback(() => {
-		onLayoutAnimationComplete?.()
-		layoutEndListeners.forEach((listener) => listener())
-	}, [])
-
 	// Check if they've set MotionConfig already, and if so use that as the default transition instead:
 	const { transition: motionConfigTransition } = React.useContext(MotionConfigContext)
 	const transition = React.useMemo(
@@ -240,52 +224,75 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 		[motionConfigTransition, _transition]
 	)
 
+	const layoutEndListeners = useConstant(() => new Set<() => void>())
+	const addLayoutAnimationCompleteListener = React.useCallback((listener: () => void) => {
+		layoutEndListeners.add(listener)
+		return () => layoutEndListeners.delete(listener)
+	}, [])
+
+	const handleLayoutAnimationComplete = React.useCallback(() => {
+		onLayoutAnimationComplete?.()
+		layoutEndListeners.forEach((listener) => listener())
+	}, [])
+
+	// Manually increment layoutDependency to trigger a layout animation in all children.
+	// We do this so the first render can add new children before the layout animations occur,
+	// which creates the illusion that new children were already there.
+	// This also ensures there's only one layout animation applied, unlike with <LayoutGroup>
+	const [layoutDependency, setLayoutDependency] = React.useState(0)
+	React.useEffect(() => {
+		setLayoutDependency(layoutDependency + 1)
+	}, [key])
+
+	const context = React.useMemo(
+		() => ({
+			layoutDependency,
+			addLayoutAnimationCompleteListener
+		}),
+		[layoutDependency, addLayoutAnimationCompleteListener]
+	)
+
 	return (
 		<MotionNumberContext.Provider value={context}>
 			<MotionConfig transition={transition}>
-				<LayoutGroup
-				// id={id} // not needed until layoutId works, see note in <Section>
+				<motion.span
+					{...rest}
+					layout // use full layout animation so onLayoutAnimationComplete handles every change
+					layoutDependency={layoutDependency}
+					onLayoutAnimationComplete={handleLayoutAnimationComplete}
+					style={{
+						...style,
+						display: 'inline-block',
+						isolation: 'isolate', // so number can be underneath pre/post
+						whiteSpace: 'nowrap'
+					}}
 				>
+					<Section data-motion-number-part="pre" justify="end" mode="popLayout" parts={pre} />
 					<motion.span
-						{...rest}
-						layout // use full layout animation so onLayoutAnimationComplete handles every change
-						layoutDependency={key}
-						onLayoutAnimationComplete={handleLayoutAnimationComplete}
+						layout // make sure this one scales
+						layoutDependency={layoutDependency}
+						ref={maskedRef}
 						style={{
-							...style,
 							display: 'inline-block',
-							isolation: 'isolate', // so number can be underneath pre/post
-							whiteSpace: 'nowrap'
+							// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+							'--motion-number-scale-x-correct': 1,
+							margin: '0 calc(-1*var(--mask-width,0.5em))',
+							padding: '0 var(--mask-width,0.5em)',
+							position: 'relative', // for zIndex
+							zIndex: -1, // should be underneath everything else
+							overflow: 'clip', // important so it doesn't affect page layout
+							// Prefixed properties have better support than unprefixed ones:
+							WebkitMaskImage: mask,
+							WebkitMaskSize: maskSize,
+							WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
+							WebkitMaskRepeat: 'no-repeat'
 						}}
 					>
-						<Section data-motion-number-part="pre" justify="end" mode="popLayout" parts={pre} />
-						<motion.span
-							layout // make sure this one scales
-							layoutDependency={key}
-							ref={maskedRef}
-							style={{
-								display: 'inline-block',
-								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-								'--motion-number-scale-x-correct': 1,
-								margin: '0 calc(-1*var(--mask-width,0.5em))',
-								padding: '0 var(--mask-width,0.5em)',
-								position: 'relative', // for zIndex
-								zIndex: -1, // should be underneath everything else
-								overflow: 'clip', // important so it doesn't affect page layout
-								// Prefixed properties have better support than unprefixed ones:
-								WebkitMaskImage: mask,
-								WebkitMaskSize: maskSize,
-								WebkitMaskPosition:
-									'center, center, top left, top right, bottom right, bottom left',
-								WebkitMaskRepeat: 'no-repeat'
-							}}
-						>
-							<Section data-motion-number-part="integer" justify="end" parts={integer} />
-							<Section data-motion-number-part="fraction" parts={fraction} />
-						</motion.span>
-						<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+						<Section data-motion-number-part="integer" justify="end" parts={integer} />
+						<Section data-motion-number-part="fraction" parts={fraction} />
 					</motion.span>
-				</LayoutGroup>
+					<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+				</motion.span>
 			</MotionConfig>
 		</MotionNumberContext.Provider>
 	)
@@ -309,11 +316,14 @@ const Section = React.forwardRef<
 >(function Section({ parts, justify = 'start', mode, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
+	const { layoutDependency } = React.useContext(MotionNumberContext)
+
+	const context = React.useMemo(() => ({ justify }), [justify])
 
 	const measuredRef = React.useRef<HTMLSpanElement>(null)
 	const isInitialRender = useIsInitialRender()
 
-	const [width, setWidth] = React.useState<`${number}em`>()
+	const [_width, setWidth] = React.useState<`${number}em`>()
 	React.useEffect(() => {
 		if (isInitialRender || !measuredRef.current) return
 		// Find the new width by hiding exiting elements and measuring the measuredRef
@@ -346,7 +356,8 @@ const Section = React.forwardRef<
 		ref.current.style.width = `${getWidthInEm(measuredRef.current)}em`
 	}, [])
 
-	const context = React.useMemo(() => ({ justify }), [justify])
+	// Make sure layout-related changes happen when layoutDependency updates
+	const width = React.useMemo(() => _width, [layoutDependency])
 
 	return (
 		<SectionContext.Provider value={context}>
@@ -368,7 +379,7 @@ const Section = React.forwardRef<
 						position: 'relative' // needed for AnimatePresent popLayout
 					}}
 				>
-					&#8203;{/* zero-width space to prevent the height from collapsing */}
+					&#8203;{/* zero-width space to prevent the height from collapsing when no chars */}
 					<JustifiedAnimatePresence mode={mode} justify={justify} initial={false}>
 						{parts.map((part) =>
 							part.type === 'integer' || part.type === 'fraction' ? (
@@ -423,6 +434,7 @@ const Digit = React.forwardRef<
 >(function Digit({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) {
 	const initialValue = React.useRef(_initialValue).current // non-reactive, like React's defaultValue props
 	const isInitialRender = useIsInitialRender()
+	const { layoutDependency } = React.useContext(MotionNumberContext)
 
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
@@ -434,7 +446,7 @@ const Digit = React.forwardRef<
 	const isPresent = useRemoveOnRootLayoutAnimationComplete()
 	const value = isPresent ? _value : 0
 
-	const [width, setWidth] = React.useState<`${number}em`>()
+	const [_width, setWidth] = React.useState<`${number}em`>()
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
 		if (isInitialRender && initialValue === value) return
@@ -445,6 +457,10 @@ const Digit = React.forwardRef<
 		// Trigger the actual layout animation by causing another render:
 		setWidth(w)
 	}, [value])
+
+	// Wait to update layout-related things until layoutDependency updates
+	const width = React.useMemo(() => _width, [layoutDependency])
+	const y = React.useMemo(() => `${(initialValue - value) * 100}%`, [layoutDependency])
 
 	const renderNumber = (i: number) => (
 		<span
@@ -473,7 +489,7 @@ const Digit = React.forwardRef<
 			{...rest}
 			ref={ref}
 			layout="position"
-			layoutDependency={width}
+			layoutDependency={layoutDependency}
 			data-exiting={isPresent ? undefined : ''}
 			data-motion-number-digit={value}
 			style={{
@@ -485,7 +501,7 @@ const Digit = React.forwardRef<
 			{/* Position correction, needed because the children are center-aligned within the parent: */}
 			<motion.span
 				layout="position"
-				layoutDependency={width}
+				layoutDependency={layoutDependency}
 				style={{ display: 'inline-flex', justifyContent: 'center' }}
 			>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
@@ -497,8 +513,8 @@ const Digit = React.forwardRef<
 						alignItems: 'center',
 						position: 'relative'
 					}}
-					initial={{ y: '0%' }}
-					animate={{ y: `${(initialValue - value) * 100}%` }}
+					initial={{ y: 0 }}
+					animate={{ y }}
 				>
 					<span
 						style={{
@@ -541,9 +557,13 @@ const Sym = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> &
 		Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
->(function Sym({ partKey: key, type, children: value, ...rest }, ref) {
+>(function Sym({ partKey: key, type, children: _value, ...rest }, ref) {
 	const isPresent = useRemoveOnRootLayoutAnimationComplete()
 	const { justify } = React.useContext(SectionContext)
+
+	const { layoutDependency } = React.useContext(MotionNumberContext)
+	// The value changes the layout, so wait to update it alongside layoutDependency
+	const value = React.useMemo(() => _value, [layoutDependency])
 
 	return (
 		<motion.span
@@ -558,13 +578,13 @@ const Sym = React.forwardRef<
 				position: 'relative' // needed for AnimatePresent popLayout
 			}}
 			layout="position"
-			layoutDependency={value}
+			// layoutDependency={layoutDependency} // TODO: use this somehow
 		>
 			<JustifiedAnimatePresence mode="popLayout" justify={justify} initial={false}>
 				<SymValue
 					key={value} // re-create on value change
 					layout="position"
-					// layoutDependency breaks this but I haven't tried to understand why
+					// layoutDependency={layoutDependency} // TODO: use this somehow
 					initial={CHAR_REMOVED}
 					animate={CHAR_PRESENT}
 					exit={CHAR_REMOVED}
