@@ -557,12 +557,25 @@ const Sym = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> &
 		Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
->(function Sym({ partKey: key, type, children: _value, ...rest }, ref) {
+>(function Sym({ partKey: key, type, children: _value, ...rest }, _ref) {
+	const ref = React.useRef<HTMLSpanElement>(null)
+	React.useImperativeHandle(_ref, () => ref.current!, [])
+
 	const isPresent = useRemoveOnRootLayoutAnimationComplete()
 	const { justify } = React.useContext(SectionContext)
 
+	React.useEffect(() => {
+		// TODO: don't do this on initial render
+		if (!ref.current) return
+		// Remove children, change text content to new upcoming value to get target width, then undo:
+		const children = Array.from(ref.current.childNodes)
+		ref.current.textContent = _value
+		ref.current.dataset.targetWidth = `${getWidthInEm(ref.current)}em`
+		ref.current.replaceChildren(...children)
+	}, [_value])
+
 	const { layoutDependency } = React.useContext(MotionNumberContext)
-	// The value changes the layout, so wait to update it alongside layoutDependency
+	// Wait to update the value until layoutDependency
 	const value = React.useMemo(() => _value, [layoutDependency])
 
 	return (
@@ -578,13 +591,16 @@ const Sym = React.forwardRef<
 				position: 'relative' // needed for AnimatePresent popLayout
 			}}
 			layout="position"
-			// layoutDependency={layoutDependency} // TODO: use this somehow
+			// No layoutDependency={layoutDependency}, b/c the AnimatePresences pop children on
+			// first render, and we need to animate that as well. If we waited to pop them until a layout animation, new
+			// symbols would appear next to old ones, then slide over to replace them during layout animation (like digits do).
+			// That wouldn't look good.
 		>
 			<JustifiedAnimatePresence mode="popLayout" justify={justify} initial={false}>
 				<SymValue
 					key={value} // re-create on value change
 					layout="position"
-					// layoutDependency={layoutDependency} // TODO: use this somehow
+					// See note above about layoutDependency
 					initial={CHAR_REMOVED}
 					animate={CHAR_PRESENT}
 					exit={CHAR_REMOVED}
