@@ -80,14 +80,14 @@ export default function PopChildRight({ children }: Props) {
 		const { width, height, top, right } = size.current
 		if (isPresent || !ref.current || !width || !height) return
 
-		ref.current.dataset.motionPopId = id
+		ref.current.dataset.motionNumberPopId = id
 
 		const style = document.createElement('style')
 		if (nonce) style.nonce = nonce
 		document.head.appendChild(style)
 		if (style.sheet) {
 			style.sheet.insertRule(`
-          [data-motion-pop-id="${id}"] {
+          [data-motion-number-pop-id="${id}"] {
             position: absolute !important;
             width: ${width}px !important;
             height: ${height}px !important;
