@@ -15,11 +15,11 @@ interface Size {
 
 interface Props {
 	children: React.ReactElement
-	isPresent: boolean
 }
 
 interface MeasureProps extends Props {
 	childRef: React.RefObject<HTMLElement>
+	isPresent: boolean
 	sizeRef: React.RefObject<Size>
 }
 
@@ -55,7 +55,8 @@ class PopChildMeasure extends React.Component<MeasureProps> {
 	}
 }
 
-function PopChild({ children, isPresent }: Props & { isPresent: boolean }) {
+export default function PopChildRight({ children }: Props) {
+	const isPresent = useIsPresent()
 	const id = useId()
 	const ref = useRef<HTMLElement>(null)
 	const size = useRef<Size>({
@@ -106,10 +107,4 @@ function PopChild({ children, isPresent }: Props & { isPresent: boolean }) {
 			{React.cloneElement(children, { ref })}
 		</PopChildMeasure>
 	)
-}
-
-export default function PopChildRight({ children }: { children: React.ReactElement }) {
-	// Add a wrapper element because we need to pass isPresent as a prop:
-	const isPresent = useIsPresent()
-	return <PopChild isPresent={isPresent}>{children}</PopChild>
 }
