@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import MotionNumber from 'motion-number'
+import MotionNumber, { type MotionNumberProps } from 'motion-number'
 
 const NUMBERS = [12398.4, -3243.6, 543.2]
 const LOCALES = ['fr-FR', 'en-US']
@@ -22,15 +22,16 @@ const FORMATS = [
 		style: 'percent',
 		signDisplay: 'always'
 	}
-] as Intl.NumberFormatOptions[]
+] as MotionNumberProps['format'][]
 
 export default function Home() {
+	const [justify, cycleJustify] = useCycle(['items-start', 'items-end'])
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
 	const [format, cycleFormat] = useCycle(FORMATS)
 
 	return (
-		<main className="flex min-h-screen flex-col items-center justify-around">
+		<main className={`flex min-h-screen flex-col ${justify} justify-around`}>
 			<span className="flex items-baseline gap-3">
 				<span className="text-9xl/normal font-medium">
 					<MotionNumber value={value} locales={locale} format={format} />
@@ -43,6 +44,7 @@ export default function Home() {
 					cycleValue()
 					cycleLocale()
 					cycleFormat()
+					cycleJustify()
 				}}
 			>
 				<svg className="size-8" strokeLinejoin="round" viewBox="0 0 16 16">
