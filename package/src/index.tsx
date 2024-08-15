@@ -1,6 +1,5 @@
 import * as React from 'react'
 import {
-	LayoutGroup,
 	motion,
 	addScaleCorrector,
 	type HTMLMotionProps,
@@ -10,9 +9,6 @@ import {
 	type AnimatePresenceProps,
 	MotionConfigContext
 } from 'framer-motion'
-// IMPORTANT: don't destructure this, it breaks tree-shaking:
-// @ts-ignore during build
-import config from 'motion-number/config'
 import JustifiedAnimatePresence from './JustifiedAnimatePresence'
 
 addScaleCorrector({
@@ -565,7 +561,7 @@ const Sym = React.forwardRef<
 	const { justify } = React.useContext(SectionContext)
 
 	React.useEffect(() => {
-		// TODO: don't do this on initial render
+		// TODO: skip this on initial render
 		if (!ref.current) return
 		// Remove children, change text content to new upcoming value to get target width, then undo:
 		const children = Array.from(ref.current.childNodes)
@@ -623,10 +619,11 @@ const SymValue = React.forwardRef<
 			{...rest}
 			ref={ref}
 			style={{
-				display: 'inline-block'
+				display: 'inline-block',
+				whiteSpace: 'pre' // some symbols are spaces or thin spaces
 			}}
 		>
-			{value === ' ' ? <>&nbsp;</> : value}
+			{value}
 		</motion.span>
 	)
 })
