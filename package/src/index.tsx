@@ -146,7 +146,7 @@ const DEFAULT_TRANSITION = {
 	y: { type: 'spring', duration: 1, bounce: 0 }
 }
 
-const MotionNumberContext = React.createContext({
+const RootContext = React.createContext({
 	addLayoutAnimationCompleteListener: (listener: () => void) => () => {},
 	layoutDependency: 0
 })
@@ -249,7 +249,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 	)
 
 	return (
-		<MotionNumberContext.Provider value={context}>
+		<RootContext.Provider value={context}>
 			<MotionConfig transition={transition}>
 				<motion.span
 					{...rest}
@@ -291,7 +291,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 					<Section data-motion-number-part="post" mode="popLayout" parts={post} />
 				</motion.span>
 			</MotionConfig>
-		</MotionNumberContext.Provider>
+		</RootContext.Provider>
 	)
 })
 
@@ -314,7 +314,7 @@ const Section = React.forwardRef<
 >(function Section({ parts, justify = 'left', mode, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const { layoutDependency } = React.useContext(MotionNumberContext)
+	const { layoutDependency } = React.useContext(RootContext)
 
 	const context = React.useMemo(() => ({ justify }), [justify])
 
@@ -415,7 +415,7 @@ const CHAR_REMOVED = { opacity: 0 }
 const CHAR_PRESENT = { opacity: 1 }
 
 function useRemoveOnRootLayoutAnimationComplete() {
-	const { addLayoutAnimationCompleteListener } = React.useContext(MotionNumberContext)
+	const { addLayoutAnimationCompleteListener } = React.useContext(RootContext)
 	const [isPresent, safeToRemove] = usePresence()
 	React.useEffect(() => {
 		if (!isPresent) return addLayoutAnimationCompleteListener?.(safeToRemove)
@@ -432,7 +432,7 @@ const Digit = React.forwardRef<
 >(function Digit({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) {
 	const initialValue = React.useRef(_initialValue).current // non-reactive, like React's defaultValue props
 	const isInitialRender = useIsInitialRender()
-	const { layoutDependency } = React.useContext(MotionNumberContext)
+	const { layoutDependency } = React.useContext(RootContext)
 
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
@@ -572,7 +572,7 @@ const Sym = React.forwardRef<
 		ref.current.replaceChildren(...children)
 	}, [_value])
 
-	const { layoutDependency } = React.useContext(MotionNumberContext)
+	const { layoutDependency } = React.useContext(RootContext)
 	// Wait to update the value until layoutDependency
 	const value = React.useMemo(() => _value, [layoutDependency])
 
