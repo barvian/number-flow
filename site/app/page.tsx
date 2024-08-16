@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import MotionNumber, { type MotionNumberProps } from 'motion-number'
+import { LayoutGroup, motion } from 'framer-motion'
 
 const NUMBERS = [12398.4, -3243.6, 543.2]
 const LOCALES = ['fr-FR', 'en-US']
@@ -10,22 +11,22 @@ const FORMATS = [
 		style: 'unit',
 		unit: 'meter',
 		notation: 'compact'
-	},
-	{
-		style: 'currency',
-		currency: 'USD',
-		currencySign: 'accounting',
-		signDisplay: 'always'
-	},
-	{},
-	{
-		style: 'percent',
-		signDisplay: 'always'
 	}
+	// {
+	// 	style: 'currency',
+	// 	currency: 'USD',
+	// 	currencySign: 'accounting',
+	// 	signDisplay: 'always'
+	// },
+	// {},
+	// {
+	// 	style: 'percent',
+	// 	signDisplay: 'always'
+	// }
 ] as MotionNumberProps['format'][]
 
 export default function Home() {
-	const [justify, cycleJustify] = useCycle(['items-start', 'items-end'])
+	const [justify, cycleJustify] = useCycle(['items-start'])
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
 	const [format, cycleFormat] = useCycle(FORMATS)
@@ -33,10 +34,14 @@ export default function Home() {
 	return (
 		<main className={`flex min-h-screen flex-col ${justify} justify-around`}>
 			<span className="flex items-baseline gap-3">
-				<span className="text-9xl/normal font-medium">
-					<MotionNumber value={value} locales={locale} format={format} />
-				</span>
-				{/* <span>123.4</span> */}
+				<LayoutGroup>
+					<span className="text-9xl/normal font-medium">
+						<MotionNumber value={value} locales={locale} format={format} />
+					</span>
+					<motion.span layout style={{ display: 'inline-block' }}>
+						123.4
+					</motion.span>
+				</LayoutGroup>
 			</span>
 			<button
 				className="absolute bottom-1/4 left-1/2 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#232323] p-5 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-95 active:brightness-[98%]"

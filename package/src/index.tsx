@@ -5,9 +5,10 @@ import {
 	type HTMLMotionProps,
 	MotionConfig,
 	easeOut,
-	usePresence,
 	type AnimatePresenceProps,
-	MotionConfigContext
+	MotionConfigContext,
+	useIsPresent,
+	type MotionConfigProps
 } from 'framer-motion'
 import JustifiedAnimatePresence from './JustifiedAnimatePresence'
 
@@ -41,30 +42,11 @@ function getWidthInEm(element: HTMLElement) {
 }
 
 function useIsInitialRender() {
-	const initialRender = React.useRef(true)
+	const [initialRender, setInitialRender] = React.useState(true)
 	React.useEffect(() => {
-		initialRender.current = false
+		setInitialRender(false)
 	}, [])
-	return initialRender.current
-}
-
-function useRefs<T>(length: number, initial: T | null = null) {
-	const ref = React.useRef(new Array<typeof initial>(length).fill(initial))
-	React.useEffect(() => {
-		ref.current = ref.current.slice(0, length)
-	}, [length])
-	return ref.current
-}
-
-// Stolen from Framer Motion, ensures the value is never re-created (unlike useMemo):
-function useConstant<T>(init: () => T) {
-	const ref = React.useRef<T | null>(null)
-
-	if (ref.current === null) {
-		ref.current = init()
-	}
-
-	return ref.current
+	return initialRender
 }
 
 const formatToParts = (
@@ -74,7 +56,6 @@ const formatToParts = (
 	const formatter = new Intl.NumberFormat(locales, format)
 	const parts = formatter.formatToParts(value)
 
-	const keys: string[] = []
 	const pre: KeyedNumberPart[] = []
 	const _integer: NumberPart[] = [] // we do a second pass to key these from RTL
 	const fraction: KeyedNumberPart[] = []
@@ -89,8 +70,6 @@ const formatToParts = (
 	let seenInteger = false,
 		seenDecimal = false
 	for (const part of parts) {
-		keys.push(`${part.type}:${part.value}`)
-
 		// Merge plus and minus sign types (doing it this way appeases TypeScript)
 		const type: NumberPartType =
 			part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
@@ -136,20 +115,15 @@ const formatToParts = (
 		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
 	}
 
-	return { pre, integer, fraction, post, key: keys.join('|') }
+	return { pre, integer, fraction, post }
 }
 
-const DEFAULT_TRANSITION = {
+export const DEFAULT_TRANSITION: MotionConfigProps['transition'] = {
 	duration: 0.5,
 	ease: easeOut,
 	layout: { type: 'spring', duration: 1, bounce: 0 },
 	y: { type: 'spring', duration: 1, bounce: 0 }
 }
-
-const RootContext = React.createContext({
-	addLayoutAnimationCompleteListener: (listener: () => void) => () => {},
-	layoutDependency: 0
-})
 
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette
@@ -177,9 +151,14 @@ const maskSize =
 	`${maskWidth} ${maskHeight},` +
 	`${maskWidth} ${maskHeight}`
 
+const RootContext = React.createContext({
+	forceUpdate: () => {}
+})
+
 export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 	value: number | bigint | string
 	locales?: Intl.LocalesArgument
+	// Scientific and engineering notation are not supported atm:
 	format?: Omit<Intl.NumberFormatOptions, 'notation'> & {
 		notation?: Exclude<Intl.NumberFormatOptions['notation'], 'scientific' | 'engineering'>
 	}
@@ -187,18 +166,17 @@ export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 }
 
 const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(function MotionNumber(
-	{ value, locales, format, onLayoutAnimationComplete, transition: _transition, style, ...rest },
+	{ value, locales, format, transition: _transition, style, ...rest },
 	ref
 ) {
 	// Split the number into parts
 	const parts = React.useMemo(
 		() => formatToParts(value, { locales, format }),
-		[value, locales, format]
+		[value /*, locales, format*/]
 	)
-	const { pre, integer, fraction, post, key } = parts
+	const { pre, integer, fraction, post } = parts
 
 	const maskedRef = React.useRef<HTMLSpanElement>(null)
-	// const id = React.useId()
 
 	// Gross hack to apply the scale correction on a custom property:
 	// https://github.com/framer/motion/blob/fe6e3cb2c1d768fafe6adb7715386b57a87f0437/packages/framer-motion/src/render/html/utils/render.ts#L14
@@ -220,32 +198,18 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 		[motionConfigTransition, _transition]
 	)
 
-	const layoutEndListeners = useConstant(() => new Set<() => void>())
-	const addLayoutAnimationCompleteListener = React.useCallback((listener: () => void) => {
-		layoutEndListeners.add(listener)
-		return () => layoutEndListeners.delete(listener)
-	}, [])
-
-	const handleLayoutAnimationComplete = React.useCallback(() => {
-		onLayoutAnimationComplete?.()
-		layoutEndListeners.forEach((listener) => listener())
-	}, [])
-
-	// Manually increment layoutDependency to trigger a layout animation in all children.
-	// We do this so the first render can add new children before the layout animations occur,
-	// which creates the illusion that new children were already there.
-	// This also ensures there's only one layout animation applied, unlike with <LayoutGroup>
-	const [layoutDependency, setLayoutDependency] = React.useState(0)
-	React.useEffect(() => {
-		setLayoutDependency(layoutDependency + 1)
-	}, [key])
+	// This is essentially what <LayoutGroup> does, except <LayoutGroup> gave worse performance:
+	const [_updateCount, setUpdateCount] = React.useState(0)
+	// These should be batched in React 18+:
+	const forceUpdate = React.useCallback(() => {
+		setUpdateCount(_updateCount + 1)
+	}, [_updateCount])
 
 	const context = React.useMemo(
 		() => ({
-			layoutDependency,
-			addLayoutAnimationCompleteListener
+			forceUpdate
 		}),
-		[layoutDependency, addLayoutAnimationCompleteListener]
+		[forceUpdate]
 	)
 
 	return (
@@ -253,9 +217,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 			<MotionConfig transition={transition}>
 				<motion.span
 					{...rest}
-					layout // use full layout animation so onLayoutAnimationComplete handles every change
-					layoutDependency={layoutDependency}
-					onLayoutAnimationComplete={handleLayoutAnimationComplete}
+					layout // This is basically implied b/c of all the characters, and needed because Section doesn't use one
 					style={{
 						...style,
 						direction: 'ltr', // I think this is needed b/c numbers are always LTR?
@@ -267,7 +229,6 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 					<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
 					<motion.span
 						layout // make sure this one scales
-						layoutDependency={layoutDependency}
 						ref={maskedRef}
 						style={{
 							display: 'inline-block',
@@ -297,7 +258,6 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 
 export default MotionNumber
 
-// Don't use start/end b/c they flip in RTL languages, and numbers don't
 export type Justify = 'left' | 'right'
 
 const SectionContext = React.createContext({
@@ -314,18 +274,26 @@ const Section = React.forwardRef<
 >(function Section({ parts, justify = 'left', mode, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const { layoutDependency } = React.useContext(RootContext)
+	const { forceUpdate } = React.useContext(RootContext)
 
 	const context = React.useMemo(() => ({ justify }), [justify])
 
 	const measuredRef = React.useRef<HTMLSpanElement>(null)
 	const isInitialRender = useIsInitialRender()
 
-	const [_width, setWidth] = React.useState<`${number}em`>()
+	// Keep a fixed width for the section, so that new characters get added to the end before the layout
+	// animation starts, which makes them look like they were there already:
+	const [width, setWidth] = React.useState<`${number}em`>()
 	React.useEffect(() => {
-		if (isInitialRender || !measuredRef.current) return
+		if (!measuredRef.current) return
+		if (isInitialRender) {
+			if (ref.current) ref.current.style.width = `${getWidthInEm(measuredRef.current)}em`
+			return
+		}
+
 		// Find the new width by hiding exiting elements and measuring the measuredRef
 		// This better handles i.e. negative margins between elements
+		// We query the DOM because AnimatePresence overwrites ref props if the mode=popLayout.
 		const exiting = measuredRef.current.querySelectorAll<HTMLSpanElement>('[data-exiting]')
 		exiting.forEach((el) => {
 			el.style.display = 'none'
@@ -339,6 +307,7 @@ const Section = React.forwardRef<
 			el.style.width = el.dataset.targetWidth!
 		})
 		setWidth(`${getWidthInEm(measuredRef.current)}em`)
+		forceUpdate()
 		targetingWidths.forEach((el, i) => {
 			el.style.width = prevWidths[i]
 		})
@@ -346,16 +315,7 @@ const Section = React.forwardRef<
 			el.style.display = 'inline-flex'
 			el.removeAttribute('hidden')
 		})
-	}, [parts.map((p) => p.key).join('|')])
-
-	// Skip the re-render & heavier calculation for the initial render:
-	React.useEffect(() => {
-		if (!ref.current || !measuredRef.current) return
-		ref.current.style.width = `${getWidthInEm(measuredRef.current)}em`
-	}, [])
-
-	// Make sure layout-related changes happen when layoutDependency updates
-	const width = React.useMemo(() => _width, [layoutDependency])
+	}, [parts.map((p) => p.value).join('')])
 
 	return (
 		<SectionContext.Provider value={context}>
@@ -383,9 +343,9 @@ const Section = React.forwardRef<
 							part.type === 'integer' || part.type === 'fraction' ? (
 								<Digit
 									key={part.key}
-									initial={CHAR_REMOVED}
-									animate={CHAR_PRESENT}
-									exit={CHAR_REMOVED}
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
 									value={part.value}
 									initialValue={isInitialRender ? undefined : 0}
 								/>
@@ -394,9 +354,9 @@ const Section = React.forwardRef<
 									key={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
 									type={part.type}
 									partKey={part.key}
-									initial={CHAR_REMOVED}
-									animate={CHAR_PRESENT}
-									exit={CHAR_REMOVED}
+									initial={{ opacity: 0 }}
+									animate={{ opacity: 1 }}
+									exit={{ opacity: 0 }}
 									// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Sym> a lot:
 									// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
 								>
@@ -411,18 +371,6 @@ const Section = React.forwardRef<
 	)
 })
 
-const CHAR_REMOVED = { opacity: 0 }
-const CHAR_PRESENT = { opacity: 1 }
-
-function useRemoveOnRootLayoutAnimationComplete() {
-	const { addLayoutAnimationCompleteListener } = React.useContext(RootContext)
-	const [isPresent, safeToRemove] = usePresence()
-	React.useEffect(() => {
-		if (!isPresent) return addLayoutAnimationCompleteListener?.(safeToRemove)
-	}, [isPresent, addLayoutAnimationCompleteListener])
-	return isPresent
-}
-
 const Digit = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & {
@@ -432,40 +380,37 @@ const Digit = React.forwardRef<
 >(function Digit({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) {
 	const initialValue = React.useRef(_initialValue).current // non-reactive, like React's defaultValue props
 	const isInitialRender = useIsInitialRender()
-	const { layoutDependency } = React.useContext(RootContext)
 
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 
 	const measuredRef = React.useRef<HTMLSpanElement>(null)
-	const numberRefs = useRefs<HTMLSpanElement>(10)
+	const numberRefs = React.useRef(new Array<HTMLSpanElement | null>(10))
 
 	// Don't use a normal exit animation for this because we want it to trigger a resize:
-	const isPresent = useRemoveOnRootLayoutAnimationComplete()
+	const isPresent = useIsPresent()
 	const value = isPresent ? _value : 0
 
-	const [_width, setWidth] = React.useState<`${number}em`>()
+	const { forceUpdate } = React.useContext(RootContext)
+	const [width, setWidth] = React.useState<`${number}em`>()
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
 		if (isInitialRender && initialValue === value) return
-		if (!numberRefs[value]) return
-		const w = `${getWidthInEm(numberRefs[value])}em` as const
+		if (!numberRefs.current[value]) return
+		const w = `${getWidthInEm(numberRefs.current[value])}em` as const
 		// Put the target width on the el immediately, so it can be used for the section resize
 		if (ref.current) ref.current.dataset.targetWidth = w
 		// Trigger the actual layout animation by causing another render:
 		setWidth(w)
+		forceUpdate()
 	}, [value])
-
-	// Wait to update layout-related things until layoutDependency updates
-	const width = React.useMemo(() => _width, [layoutDependency])
-	const y = React.useMemo(() => `${(initialValue - value) * 100}%`, [layoutDependency])
 
 	const renderNumber = (i: number) => (
 		<span
 			key={i}
 			aria-hidden={i !== value}
 			style={{ userSelect: i === value ? undefined : 'none' }}
-			ref={(r) => void (numberRefs[i] = r)}
+			ref={(r) => void (numberRefs.current[i] = r)}
 			// @ts-expect-error React doesn't support inert yet
 			inert={i === value ? undefined : ''}
 		>
@@ -482,12 +427,13 @@ const Digit = React.forwardRef<
 		below.push(renderNumber(i))
 	}
 
+	const { justify } = React.useContext(SectionContext)
+
 	return (
 		<motion.span
 			{...rest}
 			ref={ref}
 			layout="position"
-			layoutDependency={layoutDependency}
 			data-exiting={isPresent ? undefined : ''}
 			data-motion-number-digit={value}
 			style={{
@@ -498,8 +444,7 @@ const Digit = React.forwardRef<
 		>
 			{/* Position correction, needed because the children are center-aligned within the parent: */}
 			<motion.span
-				layout="position"
-				layoutDependency={layoutDependency}
+				layout={justify === 'right' ? 'position' : false}
 				style={{ display: 'inline-flex', justifyContent: 'center' }}
 			>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
@@ -512,7 +457,7 @@ const Digit = React.forwardRef<
 						position: 'relative'
 					}}
 					initial={{ y: 0 }}
-					animate={{ y }}
+					animate={{ y: `${(initialValue - value) * 100}%` }}
 				>
 					<span
 						style={{
@@ -555,77 +500,40 @@ const Sym = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> &
 		Rename<Rename<KeyedSymbolPart, 'key', 'partKey'>, 'value', 'children'>
->(function Sym({ partKey: key, type, children: _value, ...rest }, _ref) {
-	const ref = React.useRef<HTMLSpanElement>(null)
-	React.useImperativeHandle(_ref, () => ref.current!, [])
-
-	const isPresent = useRemoveOnRootLayoutAnimationComplete()
+>(function Sym({ partKey: key, type, children: value, ...rest }, ref) {
+	const isPresent = useIsPresent()
 	const { justify } = React.useContext(SectionContext)
-
-	React.useEffect(() => {
-		// TODO: skip this on initial render
-		if (!ref.current) return
-		// Remove children, change text content to new upcoming value to get target width, then undo:
-		const children = Array.from(ref.current.childNodes)
-		ref.current.textContent = _value
-		ref.current.dataset.targetWidth = `${getWidthInEm(ref.current)}em`
-		ref.current.replaceChildren(...children)
-	}, [_value])
-
-	const { layoutDependency } = React.useContext(RootContext)
-	// Wait to update the value until layoutDependency
-	const value = React.useMemo(() => _value, [layoutDependency])
 
 	return (
 		<motion.span
 			{...rest}
 			ref={ref}
-			// Make sure we re-render if the value changes, to trigger any exit animation:
 			data-exiting={isPresent ? undefined : ''}
 			data-motion-number-part={type}
 			data-motion-number-value={value}
 			style={{
-				display: 'inline-block',
+				display: 'inline-flex',
+				justifyContent: justify,
 				position: 'relative' // needed for AnimatePresent popLayout
 			}}
 			layout="position"
-			// No layoutDependency={layoutDependency}, b/c the AnimatePresences pop children on
-			// first render, and we need to animate that as well. If we waited to pop them until a layout animation, new
-			// symbols would appear next to old ones, then slide over to replace them during layout animation (like digits do).
-			// That wouldn't look good.
 		>
 			<JustifiedAnimatePresence mode="popLayout" justify={justify} initial={false}>
-				<SymValue
+				<motion.span
 					key={value} // re-create on value change
-					layout="position"
-					// See note above about layoutDependency
-					initial={CHAR_REMOVED}
-					animate={CHAR_PRESENT}
-					exit={CHAR_REMOVED}
+					layout={justify === 'right' ? 'position' : false} // we only need to correct for right-aligned ones
+					ref={ref}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					style={{
+						display: 'inline-block',
+						whiteSpace: 'pre' // some symbols are spaces or thin spaces
+					}}
 				>
 					{value}
-				</SymValue>
+				</motion.span>
 			</JustifiedAnimatePresence>
-		</motion.span>
-	)
-})
-
-// We need a separate component for this so we can do the safeToRemove logic:
-const SymValue = React.forwardRef<
-	HTMLSpanElement,
-	Omit<HTMLMotionProps<'span'>, 'children'> & { children: string }
->(function SymValue({ children: value, ...rest }, ref) {
-	useRemoveOnRootLayoutAnimationComplete()
-	return (
-		<motion.span
-			{...rest}
-			ref={ref}
-			style={{
-				display: 'inline-block',
-				whiteSpace: 'pre' // some symbols are spaces or thin spaces
-			}}
-		>
-			{value}
 		</motion.span>
 	)
 })
