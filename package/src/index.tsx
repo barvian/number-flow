@@ -397,7 +397,7 @@ const Section = React.forwardRef<
 					}}
 				>
 					{/* zero width space to prevent the height from collapsing when there's no children: */}
-					&#8288;
+					&#8203;
 					<JustifiedAnimatePresence mode={mode} justify={justify} initial={false}>
 						{parts.map((part) =>
 							part.type === 'integer' || part.type === 'fraction' ? (
