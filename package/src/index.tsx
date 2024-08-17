@@ -217,7 +217,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 				<motion.span
 					{...rest}
 					layout // This is basically implied b/c of all the characters, and needed because Section doesn't use one
-					data-motion-number
+					data-motion-number="" // otherwise React will add =true
 					style={{
 						...style,
 						direction: 'ltr', // I think this is needed b/c numbers are always LTR?
