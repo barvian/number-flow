@@ -76,9 +76,12 @@ const formatToParts = (
 		return `${type}:${counts[type]++}`
 	}
 
+	let formatted = ''
 	let seenInteger = false,
 		seenDecimal = false
 	for (const part of parts) {
+		formatted += part.value
+
 		// Merge plus and minus sign types (doing it this way appeases TypeScript)
 		const type: NumberPartType =
 			part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
@@ -124,7 +127,7 @@ const formatToParts = (
 		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
 	}
 
-	return { pre, integer, fraction, post }
+	return { pre, integer, fraction, post, formatted }
 }
 
 export const DEFAULT_TRANSITION: MotionConfigProps['transition'] = {
@@ -184,7 +187,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 		() => formatToParts(value, { locales, format }),
 		[value, locales, format]
 	)
-	const { pre, integer, fraction, post } = parts
+	const { pre, integer, fraction, post, formatted } = parts
 
 	const maskedRef = React.useRef<HTMLSpanElement>(null)
 
@@ -232,35 +235,55 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 						display: 'inline-flex',
 						alignItems: 'baseline',
 						isolation: 'isolate', // so number can be underneath pre/post
-						whiteSpace: 'nowrap'
+						position: 'relative',
+						whiteSpace: 'nowrap',
+						userSelect: 'none', // I think adding this to the parent then undoing it on the selectable one might work a little better
+						pointerEvents: 'none'
 					}}
 				>
-					<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
-					<motion.span
-						layout // make sure this one scales
-						ref={maskedRef}
+					<span
 						style={{
-							display: 'inline-flex',
-							alignItems: 'baseline',
-
-							// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-							'--motion-number-scale-x-correct': 1,
-							margin: `0 calc(-1*${maskWidth})`,
-							padding: `0 ${maskWidth}`,
-							position: 'relative', // for zIndex
-							zIndex: -1, // should be underneath everything else
-							overflow: 'clip', // important so it doesn't affect page layout
-							// Prefixed properties have better support than unprefixed ones:
-							WebkitMaskImage: mask,
-							WebkitMaskSize: maskSize,
-							WebkitMaskPosition: 'center, center, top left, top right, bottom right, bottom left',
-							WebkitMaskRepeat: 'no-repeat'
+							position: 'absolute',
+							left: 0,
+							top: maskHeight,
+							pointerEvents: 'all',
+							fontKerning: 'none', // to match the rendered number
+							userSelect: 'text',
+							color: 'transparent !important',
+							zIndex: -50
 						}}
 					>
-						<Section data-motion-number-part="integer" justify="right" parts={integer} />
-						<Section data-motion-number-part="fraction" parts={fraction} />
-					</motion.span>
-					<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+						{formatted}
+					</span>
+					<span aria-hidden={true} inert>
+						<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
+						<motion.span
+							layout // make sure this one scales
+							ref={maskedRef}
+							style={{
+								display: 'inline-flex',
+								alignItems: 'baseline',
+
+								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+								'--motion-number-scale-x-correct': 1,
+								margin: `0 calc(-1*${maskWidth})`,
+								padding: `0 ${maskWidth}`,
+								position: 'relative', // for zIndex
+								zIndex: -1, // should be underneath everything else
+								overflow: 'clip', // important so it doesn't affect page layout
+								// Prefixed properties have better support than unprefixed ones:
+								WebkitMaskImage: mask,
+								WebkitMaskSize: maskSize,
+								WebkitMaskPosition:
+									'center, center, top left, top right, bottom right, bottom left',
+								WebkitMaskRepeat: 'no-repeat'
+							}}
+						>
+							<Section data-motion-number-part="integer" justify="right" parts={integer} />
+							<Section data-motion-number-part="fraction" parts={fraction} />
+						</motion.span>
+						<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+					</span>
 				</motion.span>
 			</MotionConfig>
 		</RootContext.Provider>
@@ -430,15 +453,12 @@ const Digit = React.forwardRef<
 			key={i}
 			aria-hidden={i !== value}
 			style={{
-				display: 'inline-flex',
+				display: 'inline-block',
 				// We put the mask height on here, so that it's easier to compute the y.
 				// It should be safe, because there's guaranteed to be a number visible at all times.
-				padding: `calc(${maskHeight}/2) 0`,
-				userSelect: i === value ? undefined : 'none'
-			}} // inline-flex on this helps with copying the text
+				padding: `calc(${maskHeight}/2) 0`
+			}}
 			ref={(r) => void (numberRefs.current[i] = r)}
-			// @ts-expect-error React doesn't support inert yet
-			inert={i === value ? undefined : ''}
 		>
 			{i}
 		</span>
@@ -554,7 +574,7 @@ const Sym = React.forwardRef<
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					style={{
-						display: 'inline-flex', // helps when copying the text
+						display: 'inline-block',
 						whiteSpace: 'pre' // some symbols are spaces or thin spaces
 					}}
 				>
