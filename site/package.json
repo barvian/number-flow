@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"motion-number": "workspace:*",
-		"framer-motion": "^11.0.0",
+		"framer-motion": "^11.3.19",
 		"next": "14.2.5",
 		"react": "^18",
 		"react-dom": "^18"

@@ -195,10 +195,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 
 	// Check if they've set MotionConfig already, and if so use that as the default transition instead:
 	const { transition: motionConfigTransition } = React.useContext(MotionConfigContext)
-	const transition = React.useMemo(
-		() => ((_transition ?? motionConfigTransition) ? undefined : DEFAULT_TRANSITION),
-		[motionConfigTransition, _transition]
-	)
+	const transition = (_transition ?? motionConfigTransition) ? undefined : DEFAULT_TRANSITION
 
 	// This is essentially what <LayoutGroup> does, except <LayoutGroup> gave worse performance:
 	const [_updateCount, setUpdateCount] = React.useState(0)
