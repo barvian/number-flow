@@ -208,7 +208,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 
 	// This is essentially what <LayoutGroup> does, except <LayoutGroup> gave worse performance:
 	const [_updateCount, setUpdateCount] = React.useState(0)
-	// These should be batched in React 18+:
+	// These batch in React 18+:
 	const forceUpdate = React.useCallback(() => {
 		setUpdateCount(_updateCount + 1)
 	}, [_updateCount])
@@ -228,7 +228,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 				{before?.()}
 				<motion.span
 					{...rest}
-					layout // This is basically implied b/c of all the characters, and needed because Section doesn't use one
+					layout // For convenience, b/c it's basically implied
 					data-motion-number="" // otherwise React will add =true
 					style={{
 						lineHeight: 1, // make this one easy to override
@@ -247,7 +247,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 							direction: 'ltr', // I think this is needed b/c numbers are always LTR?
 							isolation: 'isolate', // so number can be underneath pre/post
 							position: 'relative',
-							zIndex: -1, // so the whole number is under any pre/post
+							zIndex: -1, // so the whole number is under any first/last
 							userSelect: 'none', // I think adding this to the parent then undoing it on the selectable one might work a little better
 							pointerEvents: 'none'
 						}}
@@ -489,8 +489,6 @@ const Digit = React.forwardRef<
 		initialValue === 9
 			? null
 			: new Array(9 - initialValue).fill(null).map((_, i) => renderNumber(initialValue + i + 1))
-
-	const { justify } = React.useContext(SectionContext)
 
 	return (
 		<motion.span
