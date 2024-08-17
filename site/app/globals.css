@@ -8,10 +8,10 @@
 		--digit-line-height: 1.125;
 	}
 
-	[data-motion-number-group=',']:not([hidden]) + [data-motion-number-digit='1'] {
-		margin-left: -0.025em;
+	[data-motion-number-value=','] + [data-motion-number-value='1'] {
+		margin-left: -0.05em;
 	}
-	[data-motion-number-decimal='.']:not([hidden]) + [data-motion-number-digit='1'] {
+	[data-motion-number-value='.'] + [data-motion-number-value='1'] {
 		margin-left: -0.05em;
 	}
 

@@ -36,9 +36,11 @@ type KeyedDigitPart = DigitPart & KeyedPart
 type KeyedSymbolPart = SymbolPart & KeyedPart
 type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
 
-function getWidthInEm(element: HTMLElement) {
+type Em = `${number}em`
+
+function getWidthInEm(element: HTMLElement): Em {
 	const { width, fontSize } = getComputedStyle(element)
-	return parseFloat(width) / parseFloat(fontSize)
+	return `${parseFloat(width) / parseFloat(fontSize)}em`
 }
 
 function useIsInitialRender() {
@@ -283,38 +285,42 @@ const Section = React.forwardRef<
 
 	// Keep a fixed width for the section, so that new characters get added to the end before the layout
 	// animation starts, which makes them look like they were there already:
-	const [width, setWidth] = React.useState<`${number}em`>()
+	const [width, setWidth] = React.useState<Em>()
 	React.useEffect(() => {
 		if (!measuredRef.current) return
 		if (isInitialRender) {
-			if (ref.current) ref.current.style.width = `${getWidthInEm(measuredRef.current)}em`
+			if (ref.current) ref.current.style.width = getWidthInEm(measuredRef.current)
 			return
 		}
 
-		// Find the new width by hiding exiting elements and measuring the measuredRef
-		// This better handles i.e. negative margins between elements
-		// We query the DOM because AnimatePresence overwrites ref props if the mode=popLayout.
-		const exiting = measuredRef.current.querySelectorAll<HTMLSpanElement>('[data-exiting]')
-		exiting.forEach((el) => {
-			el.style.display = 'none'
-			el.setAttribute('hidden', '') // mostly here as a style flag
+		// Find the new width by removing exiting elements, measuring the measuredRef, and re-adding them
+		// This better handles i.e. negative margins between elements.
+		// We query the DOM because AnimatePresence overwrites ref props if the mode=popLayout
+
+		const undos = Array.from(measuredRef.current.children).map((child) => {
+			if (!(child instanceof HTMLElement)) return
+			if (child.dataset.motionNumberState === 'exiting') {
+				const next = child.nextSibling
+				child.remove()
+				return () => {
+					measuredRef.current?.insertBefore(child, next)
+				}
+			}
+
+			const newWidth = targetWidths.get(child)
+			if (!newWidth) return
+			const oldWidth = child.style.width
+			child.style.width = newWidth
+			return () => {
+				child.style.width = oldWidth
+			}
 		})
-		const targetingWidths =
-			measuredRef.current.querySelectorAll<HTMLSpanElement>('[data-target-width]')
-		const prevWidths = new Array(targetingWidths.length)
-		targetingWidths.forEach((el, i) => {
-			prevWidths[i] = el.style.width
-			el.style.width = el.dataset.targetWidth!
-		})
-		setWidth(`${getWidthInEm(measuredRef.current)}em`)
+		// Measure the resulting width:
+		setWidth(getWidthInEm(measuredRef.current))
+		// Then undo immediately:
+		for (let i = undos.length - 1; i >= 0; i--) undos[i]?.()
+		// Trigger a parent render/layout:
 		forceUpdate()
-		targetingWidths.forEach((el, i) => {
-			el.style.width = prevWidths[i]
-		})
-		exiting.forEach((el) => {
-			el.style.display = 'inline-flex'
-			el.removeAttribute('hidden')
-		})
 	}, [parts.map((p) => p.value).join('')])
 
 	return (
@@ -371,6 +377,8 @@ const Section = React.forwardRef<
 	)
 })
 
+const targetWidths = new WeakMap<HTMLElement, Em>()
+
 const Digit = React.forwardRef<
 	HTMLSpanElement,
 	Omit<HTMLMotionProps<'span'>, 'children'> & {
@@ -392,14 +400,14 @@ const Digit = React.forwardRef<
 	const value = isPresent ? _value : 0
 
 	const { forceUpdate } = React.useContext(RootContext)
-	const [width, setWidth] = React.useState<`${number}em`>()
+	const [width, setWidth] = React.useState<Em>()
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
 		if (isInitialRender && initialValue === value) return
 		if (!numberRefs.current[value]) return
-		const w = `${getWidthInEm(numberRefs.current[value])}em` as const
-		// Put the target width on the el immediately, so it can be used for the section resize
-		if (ref.current) ref.current.dataset.targetWidth = w
+		const w = getWidthInEm(numberRefs.current[value])
+		// Store the target width immediately, so it can be used for the section resize:
+		if (ref.current) targetWidths.set(ref.current, w)
 		// Trigger the actual layout animation by causing another render:
 		setWidth(w)
 		forceUpdate()
@@ -434,8 +442,9 @@ const Digit = React.forwardRef<
 			{...rest}
 			ref={ref}
 			layout="position"
-			data-exiting={isPresent ? undefined : ''}
-			data-motion-number-digit={value}
+			data-motion-number-state={isPresent ? undefined : 'exiting'}
+			data-motion-number-part="digit"
+			data-motion-number-value={value}
 			style={{
 				display: 'inline-flex',
 				justifyContent: 'center',
@@ -508,7 +517,7 @@ const Sym = React.forwardRef<
 		<motion.span
 			{...rest}
 			ref={ref}
-			data-exiting={isPresent ? undefined : ''}
+			data-motion-number-state={isPresent ? undefined : 'exiting'}
 			data-motion-number-part={type}
 			data-motion-number-value={value}
 			style={{
