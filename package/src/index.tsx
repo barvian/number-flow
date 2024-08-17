@@ -450,10 +450,7 @@ const Digit = React.forwardRef<
 			}}
 		>
 			{/* Position correction, needed because the children are center-aligned within the parent: */}
-			<motion.span
-				layout={justify === 'right' ? 'position' : false}
-				style={{ display: 'inline-flex', justifyContent: 'center' }}
-			>
+			<motion.span layout="position" style={{ display: 'inline-flex', justifyContent: 'center' }}>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
 				<motion.span
 					ref={measuredRef}
