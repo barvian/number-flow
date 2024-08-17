@@ -5,7 +5,6 @@
 @layer base {
 	:root {
 		@apply bg-gray-950 text-[#f7f8f8] antialiased;
-		--digit-line-height: 1.125;
 	}
 
 	[data-motion-number-value=','] + [data-motion-number-value='1'] {

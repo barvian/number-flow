@@ -18,6 +18,13 @@ addScaleCorrector({
 	}
 })
 
+// Don't use Bunchee's styles for this, because they append to head which makes them harder to override:
+if (typeof document !== 'undefined')
+	document.head.insertAdjacentHTML(
+		'afterbegin', // prepend
+		`<style>[data-motion-number]{line-height:1}</style>`
+	)
+
 // Merge the plus and minus sign types
 type NumberPartType = Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'> | 'sign'
 // These need to be separated for the discriminated union to work:
@@ -129,8 +136,9 @@ export const DEFAULT_TRANSITION: MotionConfigProps['transition'] = {
 
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette
-const maskHeight = 'min(var(--mask-height,0.5em), (100% - 1em) / 2)'
-const maskWidth = 'calc(var(--mask-width,0.5em) / var(--motion-number-scale-x-correction, 1))'
+const maskHeight = 'var(--mask-height, 0.25em)'
+const maskWidth = 'var(--mask-width, 0.5em)'
+const correctedMaskWidth = `calc(${maskWidth} / var(--motion-number-scale-x-correction, 1))`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 const mask =
 	// Horizontal:
@@ -147,11 +155,11 @@ const mask =
 	`radial-gradient(at top right, ${cornerGradient})`
 const maskSize =
 	`100% calc(100% - ${maskHeight} * 2),` +
-	`calc(100% - ${maskWidth} * 2) 100%,` +
-	`${maskWidth} ${maskHeight},` +
-	`${maskWidth} ${maskHeight},` +
-	`${maskWidth} ${maskHeight},` +
-	`${maskWidth} ${maskHeight}`
+	`calc(100% - ${correctedMaskWidth} * 2) 100%,` +
+	`${correctedMaskWidth} ${maskHeight},` +
+	`${correctedMaskWidth} ${maskHeight},` +
+	`${correctedMaskWidth} ${maskHeight},` +
+	`${correctedMaskWidth} ${maskHeight}`
 
 const RootContext = React.createContext({
 	forceUpdate: () => {}
@@ -221,7 +229,8 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 					style={{
 						...style,
 						direction: 'ltr', // I think this is needed b/c numbers are always LTR?
-						display: 'inline-block',
+						display: 'inline-flex',
+						alignItems: 'baseline',
 						isolation: 'isolate', // so number can be underneath pre/post
 						whiteSpace: 'nowrap'
 					}}
@@ -231,11 +240,13 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 						layout // make sure this one scales
 						ref={maskedRef}
 						style={{
-							display: 'inline-block',
+							display: 'inline-flex',
+							alignItems: 'baseline',
+
 							// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
 							'--motion-number-scale-x-correct': 1,
-							margin: '0 calc(-1*var(--mask-width,0.5em))',
-							padding: '0 var(--mask-width,0.5em)',
+							margin: `0 calc(-1*${maskWidth})`,
+							padding: `0 ${maskWidth}`,
 							position: 'relative', // for zIndex
 							zIndex: -1, // should be underneath everything else
 							overflow: 'clip', // important so it doesn't affect page layout
@@ -328,8 +339,9 @@ const Section = React.forwardRef<
 				ref={ref}
 				style={{
 					display: 'inline-flex',
+					alignItems: 'baseline',
+
 					justifyContent: justify,
-					lineHeight: 'var(--digit-line-height, 1.15)',
 					width
 				}}
 			>
@@ -337,11 +349,13 @@ const Section = React.forwardRef<
 					ref={measuredRef}
 					style={{
 						display: 'inline-flex',
+						alignItems: 'baseline',
 						justifyContent: 'inherit',
 						position: 'relative' // needed for AnimatePresent popLayout
 					}}
 				>
-					&#8203;{/* zero-width space to prevent the height from collapsing when no chars */}
+					{/* zero width space to prevent the height from collapsing when there's no children: */}
+					&#8288;
 					<JustifiedAnimatePresence mode={mode} justify={justify} initial={false}>
 						{parts.map((part) =>
 							part.type === 'integer' || part.type === 'fraction' ? (
@@ -415,7 +429,13 @@ const Digit = React.forwardRef<
 		<span
 			key={i}
 			aria-hidden={i !== value}
-			style={{ userSelect: i === value ? undefined : 'none' }}
+			style={{
+				display: 'inline-flex',
+				// We put the mask height on here, so that it's easier to compute the y.
+				// It should be safe, because there's guaranteed to be a number visible at all times.
+				padding: `calc(${maskHeight}/2) 0`,
+				userSelect: i === value ? undefined : 'none'
+			}} // inline-flex on this helps with copying the text
 			ref={(r) => void (numberRefs.current[i] = r)}
 			// @ts-expect-error React doesn't support inert yet
 			inert={i === value ? undefined : ''}
@@ -444,6 +464,7 @@ const Digit = React.forwardRef<
 			style={{
 				display: 'inline-flex',
 				justifyContent: 'center',
+				padding: `calc(${maskHeight}/2) 0`,
 				width
 			}}
 		>
@@ -533,7 +554,7 @@ const Sym = React.forwardRef<
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					style={{
-						display: 'inline-block',
+						display: 'inline-flex', // helps when copying the text
 						whiteSpace: 'pre' // some symbols are spaces or thin spaces
 					}}
 				>
