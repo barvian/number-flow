@@ -255,7 +255,12 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 					>
 						{formatted}
 					</span>
-					<span aria-hidden={true} inert>
+
+					<span
+						aria-hidden={true}
+						// @ts-expect-error React doesn't support inert
+						inert=""
+					>
 						<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
 						<motion.span
 							layout // make sure this one scales
