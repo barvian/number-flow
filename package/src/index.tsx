@@ -18,13 +18,6 @@ addScaleCorrector({
 	}
 })
 
-// Don't use Bunchee's styles for this, because they append to head which makes them harder to override:
-if (typeof document !== 'undefined')
-	document.head.insertAdjacentHTML(
-		'afterbegin', // prepend
-		`<style>[data-motion-number]{line-height:1}</style>`
-	)
-
 // Merge the plus and minus sign types
 type NumberPartType = Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'> | 'sign'
 // These need to be separated for the discriminated union to work:
@@ -139,7 +132,7 @@ export const DEFAULT_TRANSITION: MotionConfigProps['transition'] = {
 
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette
-const maskHeight = 'var(--mask-height, 0.25em)'
+const maskHeight = 'var(--mask-height, 0.15em)'
 const maskWidth = 'var(--mask-width, 0.5em)'
 const correctedMaskWidth = `calc(${maskWidth} / var(--motion-number-scale-x-correction, 1))`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
@@ -164,9 +157,9 @@ const maskSize =
 	`${correctedMaskWidth} ${maskHeight},` +
 	`${correctedMaskWidth} ${maskHeight}`
 
-const RootContext = React.createContext({
-	forceUpdate: () => {}
-})
+export const MotionNumberContext = React.createContext<{
+	forceUpdate?: () => void
+}>({})
 
 export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 	value: number | bigint | string
@@ -176,10 +169,15 @@ export type MotionNumberProps = Omit<HTMLMotionProps<'span'>, 'children'> & {
 		notation?: Exclude<Intl.NumberFormatOptions['notation'], 'scientific' | 'engineering'>
 	}
 	transition?: React.ComponentProps<typeof MotionConfig>['transition']
+	// These have to be render props for them to re-render correctly when the root state changes (ensuring proper layout animations)
+	before?: () => React.ReactNode
+	first?: () => React.ReactNode
+	last?: () => React.ReactNode
+	after?: () => React.ReactNode
 }
 
 const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(function MotionNumber(
-	{ value, locales, format, transition: _transition, style, ...rest },
+	{ value, locales, format, transition: _transition, before, first, last, after, style, ...rest },
 	ref
 ) {
 	// Split the number into parts
@@ -206,7 +204,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 
 	// Check if they've set MotionConfig already, and if so use that as the default transition instead:
 	const { transition: motionConfigTransition } = React.useContext(MotionConfigContext)
-	const transition = (_transition ?? motionConfigTransition) ? undefined : DEFAULT_TRANSITION
+	const transition = _transition ?? motionConfigTransition ?? DEFAULT_TRANSITION
 
 	// This is essentially what <LayoutGroup> does, except <LayoutGroup> gave worse performance:
 	const [_updateCount, setUpdateCount] = React.useState(0)
@@ -215,84 +213,99 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 		setUpdateCount(_updateCount + 1)
 	}, [_updateCount])
 
+	// Use a more toplevel forceUpdate if it exists:
+	const parent = React.useContext(MotionNumberContext)
 	const context = React.useMemo(
 		() => ({
-			forceUpdate
+			forceUpdate: parent.forceUpdate ?? forceUpdate
 		}),
-		[forceUpdate]
+		[parent, forceUpdate]
 	)
 
 	return (
-		<RootContext.Provider value={context}>
+		<MotionNumberContext.Provider value={context}>
 			<MotionConfig transition={transition}>
+				{before?.()}
 				<motion.span
 					{...rest}
 					layout // This is basically implied b/c of all the characters, and needed because Section doesn't use one
 					data-motion-number="" // otherwise React will add =true
 					style={{
+						lineHeight: 1, // make this one easy to override
 						...style,
-						direction: 'ltr', // I think this is needed b/c numbers are always LTR?
 						display: 'inline-flex',
 						alignItems: 'baseline',
-						isolation: 'isolate', // so number can be underneath pre/post
-						position: 'relative',
-						whiteSpace: 'nowrap',
-						userSelect: 'none', // I think adding this to the parent then undoing it on the selectable one might work a little better
-						pointerEvents: 'none'
+						isolation: 'isolate', // so number can be underneath first/last
+						whiteSpace: 'nowrap'
 					}}
 				>
-					{/* Aria-label is invalid on span tags, so include this for screen readers and also use it to improve copying: */}
-					<span
+					{first?.()}
+					<motion.span
+						layout
 						style={{
-							position: 'absolute',
-							left: 0,
-							top: maskHeight,
-							pointerEvents: 'all',
-							fontKerning: 'none', // to match the rendered number
-							userSelect: 'text',
-							color: 'transparent',
-							zIndex: -50
+							alignItems: 'baseline',
+							direction: 'ltr', // I think this is needed b/c numbers are always LTR?
+							isolation: 'isolate', // so number can be underneath pre/post
+							position: 'relative',
+							zIndex: -1, // so the whole number is under any pre/post
+							userSelect: 'none', // I think adding this to the parent then undoing it on the selectable one might work a little better
+							pointerEvents: 'none'
 						}}
 					>
-						{formatted}
-					</span>
-
-					<span
-						aria-hidden={true}
-						// @ts-expect-error React doesn't support inert
-						inert=""
-					>
-						<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
-						<motion.span
-							layout // make sure this one scales
-							ref={maskedRef}
+						{/* Aria-label is invalid on span tags, so include this for screen readers and also use it to improve copying: */}
+						<span
 							style={{
-								display: 'inline-flex',
-								alignItems: 'baseline',
-
-								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-								'--motion-number-scale-x-correct': 1,
-								margin: `0 calc(-1*${maskWidth})`,
-								padding: `0 ${maskWidth}`,
-								position: 'relative', // for zIndex
-								zIndex: -1, // should be underneath everything else
-								overflow: 'clip', // important so it doesn't affect page layout
-								// Prefixed properties have better support than unprefixed ones:
-								WebkitMaskImage: mask,
-								WebkitMaskSize: maskSize,
-								WebkitMaskPosition:
-									'center, center, top left, top right, bottom right, bottom left',
-								WebkitMaskRepeat: 'no-repeat'
+								position: 'absolute',
+								left: 0,
+								top: maskHeight,
+								pointerEvents: 'all',
+								fontKerning: 'none', // to match the rendered number
+								userSelect: 'text',
+								color: 'transparent',
+								zIndex: -50
 							}}
 						>
-							<Section data-motion-number-part="integer" justify="right" parts={integer} />
-							<Section data-motion-number-part="fraction" parts={fraction} />
-						</motion.span>
-						<Section data-motion-number-part="post" mode="popLayout" parts={post} />
-					</span>
+							{formatted}
+						</span>
+						<span
+							aria-hidden={true}
+							// @ts-expect-error React doesn't support inert
+							inert=""
+						>
+							<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
+							<motion.span
+								layout // make sure this one scales
+								ref={maskedRef}
+								style={{
+									display: 'inline-flex',
+									alignItems: 'baseline',
+
+									// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+									'--motion-number-scale-x-correct': 1,
+									margin: `0 calc(-1*${maskWidth})`,
+									padding: `0 ${maskWidth}`,
+									position: 'relative', // for zIndex
+									zIndex: -1, // should be underneath everything else
+									overflow: 'clip', // important so it doesn't affect page layout
+									// Prefixed properties have better support than unprefixed ones:
+									WebkitMaskImage: mask,
+									WebkitMaskSize: maskSize,
+									WebkitMaskPosition:
+										'center, center, top left, top right, bottom right, bottom left',
+									WebkitMaskRepeat: 'no-repeat'
+								}}
+							>
+								<Section data-motion-number-part="integer" justify="right" parts={integer} />
+								<Section data-motion-number-part="fraction" parts={fraction} />
+							</motion.span>
+							<Section data-motion-number-part="post" mode="popLayout" parts={post} />
+						</span>
+					</motion.span>
+					{last?.()}
 				</motion.span>
+				{after?.()}
 			</MotionConfig>
-		</RootContext.Provider>
+		</MotionNumberContext.Provider>
 	)
 })
 
@@ -314,7 +327,7 @@ const Section = React.forwardRef<
 >(function Section({ parts, justify = 'left', mode, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const { forceUpdate } = React.useContext(RootContext)
+	const { forceUpdate } = React.useContext(MotionNumberContext)
 
 	const context = React.useMemo(() => ({ justify }), [justify])
 
@@ -358,7 +371,7 @@ const Section = React.forwardRef<
 		// Then undo immediately:
 		for (let i = undos.length - 1; i >= 0; i--) undos[i]?.()
 		// Trigger a parent render/layout:
-		forceUpdate()
+		forceUpdate?.()
 	}, [parts.map((p) => p.value).join('')])
 
 	return (
@@ -440,7 +453,7 @@ const Digit = React.forwardRef<
 	const isPresent = useIsPresent()
 	const value = isPresent ? _value : 0
 
-	const { forceUpdate } = React.useContext(RootContext)
+	const { forceUpdate } = React.useContext(MotionNumberContext)
 	const [width, setWidth] = React.useState<Em>()
 	React.useEffect(() => {
 		// Skip setting the width if this is the first render and it's not going to animate:
@@ -451,7 +464,7 @@ const Digit = React.forwardRef<
 		if (ref.current) targetWidths.set(ref.current, w)
 		// Trigger the actual layout animation by causing another render:
 		setWidth(w)
-		forceUpdate()
+		forceUpdate?.()
 	}, [value])
 
 	const renderNumber = (i: number) => (
