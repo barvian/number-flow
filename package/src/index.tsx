@@ -241,6 +241,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 						pointerEvents: 'none'
 					}}
 				>
+					{/* Aria-label is invalid on span tags, so include this for screen readers and also use it to improve copying: */}
 					<span
 						style={{
 							position: 'absolute',
