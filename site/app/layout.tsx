@@ -1,19 +1,8 @@
 import type { Metadata } from 'next'
-import localFont from 'next/font/local'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
-
-const runde = localFont({
-	src: [
-		{
-			path: './fonts/OpenRunde-Medium.woff2',
-			weight: '500'
-		}
-	],
-	variable: '--font-runde'
-})
 
 export const metadata: Metadata = {
 	title: 'Create Next App',

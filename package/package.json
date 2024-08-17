@@ -54,8 +54,8 @@
 		}
 	},
 	"scripts": {
-		"build": "bunchee --external motion-number",
-		"dev": "bunchee --external motion-number --watch",
+		"build": "bunchee",
+		"dev": "bunchee --watch",
 		"prepublishOnly": "pnpm run build && pnpm run test"
 	},
 	"peerDependencies": {
