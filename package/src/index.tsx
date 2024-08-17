@@ -250,7 +250,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 							pointerEvents: 'all',
 							fontKerning: 'none', // to match the rendered number
 							userSelect: 'text',
-							color: 'transparent !important',
+							color: 'transparent',
 							zIndex: -50
 						}}
 					>
