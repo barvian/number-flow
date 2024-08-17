@@ -174,7 +174,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 	// Split the number into parts
 	const parts = React.useMemo(
 		() => formatToParts(value, { locales, format }),
-		[value /*, locales, format*/]
+		[value, locales, format]
 	)
 	const { pre, integer, fraction, post } = parts
 
@@ -217,6 +217,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 				<motion.span
 					{...rest}
 					layout // This is basically implied b/c of all the characters, and needed because Section doesn't use one
+					data-motion-number
 					style={{
 						...style,
 						direction: 'ltr', // I think this is needed b/c numbers are always LTR?
