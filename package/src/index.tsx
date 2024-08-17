@@ -424,14 +424,12 @@ const Digit = React.forwardRef<
 		</span>
 	)
 
-	const above = []
-	for (let i = 0; i < initialValue; i++) {
-		above.push(renderNumber(i))
-	}
-	const below = []
-	for (let i = initialValue + 1; i <= 9; i++) {
-		below.push(renderNumber(i))
-	}
+	const below =
+		initialValue === 0 ? null : new Array(initialValue).fill(null).map((_, i) => renderNumber(i))
+	const above =
+		initialValue === 9
+			? null
+			: new Array(9 - initialValue).fill(null).map((_, i) => renderNumber(initialValue + i + 1))
 
 	const { justify } = React.useContext(SectionContext)
 
@@ -463,33 +461,37 @@ const Digit = React.forwardRef<
 					initial={{ y: 0 }}
 					animate={{ y: `${(initialValue - value) * 100}%` }}
 				>
-					<span
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							position: 'absolute',
-							bottom: '100%',
-							left: 0,
-							width: '100%'
-						}}
-					>
-						{above}
-					</span>
+					{below && (
+						<span
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								position: 'absolute',
+								bottom: '100%',
+								left: 0,
+								width: '100%'
+							}}
+						>
+							{below}
+						</span>
+					)}
 					{renderNumber(initialValue)}
-					<span
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							position: 'absolute',
-							top: '100%',
-							left: 0,
-							width: '100%'
-						}}
-					>
-						{below}
-					</span>
+					{above && (
+						<span
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								position: 'absolute',
+								top: '100%',
+								left: 0,
+								width: '100%'
+							}}
+						>
+							{above}
+						</span>
+					)}
 				</motion.span>
 			</motion.span>
 		</motion.span>
