@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	@font-face {
+		font-family: 'Inter var';
+		font-weight: 100 900;
+		font-display: block;
+		font-style: normal;
+		src: url('./fonts/Inter-roman-latin.var.woff2') format('woff2');
+	}
+}
+
+@layer components {
+	.container {
+		@apply ~px-5/10 mx-auto w-full max-w-2xl;
+	}
+}

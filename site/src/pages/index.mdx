@@ -1,0 +1,123 @@
+---
+layout: ./_Layout.astro
+title: MotionNumber for Framer Motion
+description: Transition, format, and localize numbers with a ~3kb Framer Motion component. Accessible and customizable.
+---
+import Pre from '../components/Pre.astro';
+export const components = {pre: Pre}
+
+## Installation
+
+```sh
+npm install motion-number
+```
+
+## Usage
+
+```jsx
+import MotionNumber from 'motion-number'
+
+<MotionNumber
+    value={value}
+    format={{ notation: 'compact' }}
+    locales="en-US"
+/>
+```
+
+These props get passed directly to an underlying `Intl.NumberFormat` instance, which handles the formatting and localization.
+MDN has a full list of [formatting options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options).
+
+## Grouping
+
+MotionNumber has four render props that can be used to synchronize other content with the number transitions:
+
+* `before` adds elements before MotionNumber
+* `first` prepends elements within MotionNumber
+* `last` appends elements within MotionNumber
+* `after` adds elements after MotionNumber
+
+These can be combined to create interesting effects:
+
+| INDICATOR EXAMPLE |
+
+```jsx
+<MotionNumber
+    value={value}
+    before={() => (
+        <MotionNumber
+            value={diff}
+            style={{ borderRadius: 999 }}
+            first={() => (
+                <Arrow />
+            )}
+        />
+    )}
+/>
+```
+
+(In case you're wondering why we don't just use [LayoutGroup](https://www.framer.com/motion/layout-group/) for this, see the note in [limitations](#limitations).)
+
+## Customizing
+
+There's a few CSS properties that are useful when customizing MotionDisplay:
+
+### `--mask-height`/`--mask-width`
+
+These adjust the height and width of the gradient fade-out masks on the sides of the number.
+`--mask-height` also gets used as the vertical padding for the number.
+
+### `line-height`
+
+In my opinion, the number transitions look best with small vertical gaps between numbers, because it reduces
+the overall distance travelled.
+I recommend finding the smallest `line-height` that fits all your component's characters:
+
+```jsx
+<MotionNumber style={{ lineHeight: 0.8 }} /* ... */>
+```
+
+The exact value will depend on your font and formatting options. MotionNumber uses a safe default `line-height` of 1, 
+set through an inline style for simplicity. This means to override it globally you'll have to use `!important` (sorry about that; React 19 should clean this up):
+
+```css
+[data-motion-number] {
+    line-height: 0.8 !important;
+}
+```
+
+### Transitions
+
+MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
+the transitions. This lets you fully customize the timings used:
+
+| BOUNCY EXAMPLE |
+
+```jsx
+import { easeOut } from 'framer-motion'
+
+<MotionNumber
+    transition={{
+        // Applied to i.e. fade in/out animations:
+        duration: 0.5,
+        ease: easeOut,
+        // Applied to layout animations on individual characters
+        layout: { type: 'spring', duration: 1, bounce: 0 },
+        // Used for the stack of digits' animation
+        y: { type: 'spring', duration: 1, bounce: 0.5 }
+    }}
+>
+```
+
+If MotionNumber is within a [MotionConfig](https://www.framer.com/motion/motion-config/), it'll use that transition
+instead of its default. 
+
+## Limitations
+
+* [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't currently supported
+* Selected text inside the number will not respect color changes from `::selection`, if any
+* `<LayoutGroup>` doesn't work well with MotionNumber and causes noticeable jitters in the number animations.
+This is likely due to MotionNumber's unusual two-step rendering process, where new digits are added before the layout animations occur.
+
+## Credits
+
+Built by [Max Barvian](https://x.com/mbarvian). Heavily inspired by the [Family](https://family.co) iOS app.

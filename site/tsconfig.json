@@ -1,27 +1,10 @@
 {
+	"extends": "astro/tsconfigs/strictest",
 	"compilerOptions": {
-		"lib": ["dom", "dom.iterable", "esnext"],
-		"allowJs": true,
-		"skipLibCheck": true,
-		"strict": true,
-		"noEmit": true,
-		"esModuleInterop": true,
-		"module": "esnext",
-		"moduleResolution": "bundler",
-		"resolveJsonModule": true,
-		"isolatedModules": true,
-		"jsx": "preserve",
-		"incremental": true,
-		"plugins": [
-			{
-				"name": "next"
-			}
-		],
+		"jsx": "react-jsx",
+		"jsxImportSource": "react",
 		"paths": {
-			"@/*": ["./*"],
-			"motion-number/config": ["./motion-number.config"]
+			"/*": ["./*"]
 		}
-	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-	"exclude": ["node_modules"]
+	}
 }

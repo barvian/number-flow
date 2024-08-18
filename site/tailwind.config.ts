@@ -1,22 +1,41 @@
 import type { Config } from 'tailwindcss'
+import reset from 'tw-reset'
+import fluid, { extract, fontSize, type FluidThemeConfig } from 'fluid-tailwind'
+import defaultTheme from 'tailwindcss/defaultTheme'
+import typography from '@tailwindcss/typography'
 
-const config: Config = {
-	experimental: {
-		optimizeUniversalDefaults: true
+export default {
+	presets: [reset()],
+	content: {
+		files: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+		transform: {
+			mdx: (src) =>
+				src
+					// Ignore classes in code blocks
+					.replaceAll(/```.*?```/gs, '')
+					// Only return stuff in <component>s
+					.match(/<[^/].*?>/g)
+					?.join() ?? ''
+		},
+		extract
 	},
-	content: [
-		'./pages/**/*.{js,ts,jsx,tsx,mdx}',
-		'./components/**/*.{js,ts,jsx,tsx,mdx}',
-		'./app/**/*.{js,ts,jsx,tsx,mdx}'
-	],
+	corePlugins: {
+		container: false
+	},
 	theme: {
+		fontSize,
+		fluid: (({ theme }) => ({
+			defaultScreens: [, theme('screens.xl')]
+		})) satisfies FluidThemeConfig,
 		extend: {
-			backgroundImage: {
-				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))'
+			spacing: {
+				11: '2.75rem'
 			}
 		}
 	},
-	plugins: []
-}
-export default config
+	fontFamily: {
+		sans: ['"Inter var"', ...defaultTheme.fontFamily.sans],
+		mono: ['"Fira Code VF"', ...defaultTheme.fontFamily.mono]
+	},
+	plugins: [fluid, typography]
+} satisfies Config

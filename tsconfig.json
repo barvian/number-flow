@@ -15,12 +15,11 @@
 		/* Linting */
 		"strict": true,
 		"forceConsistentCasingInFileNames": true,
-		// "exactOptionalPropertyTypes": true,
-		"noUncheckedIndexedAccess": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
-		"verbatimModuleSyntax": true
+		"verbatimModuleSyntax": true,
+		"noUncheckedIndexedAccess": true
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
+	"include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
 	"exclude": ["node_modules", "build", "dist", ".next"]
 }

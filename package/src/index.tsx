@@ -228,6 +228,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 				{before?.()}
 				<motion.span
 					{...rest}
+					ref={ref}
 					layout // For convenience, b/c it's basically implied
 					data-motion-number="" // otherwise React will add =true
 					style={{

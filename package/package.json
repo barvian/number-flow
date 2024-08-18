@@ -54,7 +54,7 @@
 		}
 	},
 	"scripts": {
-		"build": "bunchee",
+		"build": "bunchee --tsconfig tsconfig.build.json",
 		"dev": "bunchee --watch",
 		"prepublishOnly": "pnpm run build && pnpm run test"
 	},
