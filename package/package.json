@@ -22,7 +22,12 @@
 	},
 	"keywords": [
 		"accessible",
-		"react"
+		"react",
+		"odometer",
+		"react animation",
+		"framer motion",
+		"animation",
+		"number-format"
 	],
 	"main": "./dist/cjs/index.js",
 	"module": "./dist/es/index.mjs",
@@ -40,16 +45,6 @@
 			"require": {
 				"types": "./dist/cjs/index.d.ts",
 				"default": "./dist/cjs/index.js"
-			}
-		},
-		"./config": {
-			"import": {
-				"types": "./dist/es/config.d.mts",
-				"default": "./dist/es/config.mjs"
-			},
-			"require": {
-				"types": "./dist/cjs/config.d.ts",
-				"default": "./dist/cjs/config.js"
 			}
 		}
 	},
