@@ -2,10 +2,14 @@ import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 import { atom, useAtom } from 'jotai'
 import { clsx } from 'clsx'
+import { motion, MotionConfig } from 'framer-motion'
+import { useId } from 'react'
+
+type TabValue = 'preview' | 'code'
 
 export type DemoProps = {
 	children: React.ReactNode
-	defaultValue: 'preview' | 'code'
+	defaultValue: TabValue
 	code: React.ReactNode
 }
 
@@ -18,6 +22,9 @@ export default function Demo({
 	onClick
 }: DemoProps & { onClick?: () => void }) {
 	const [knowsToClick, setKnowsToClick] = useAtom(knowsToClickAtom)
+	const [active, setActive] = React.useState(defaultValue)
+
+	const id = useId()
 
 	function onPointerDown() {
 		setKnowsToClick(true)
@@ -32,21 +39,43 @@ export default function Demo({
 	}
 
 	return (
-		<Tabs.Root className="not-prose relative isolate" defaultValue={defaultValue}>
-			<Tabs.List className="absolute right-4 top-4 z-10 flex gap-1 rounded-full bg-black/25 p-1 backdrop-blur-sm">
-				<Tabs.Trigger
-					value="preview"
-					className="rounded-full px-2 py-1 text-xs/4 font-medium text-white hover:bg-white/5 aria-selected:bg-white/10"
-				>
-					Preview
-				</Tabs.Trigger>
-				<Tabs.Trigger
-					value="code"
-					className="rounded-full px-2 py-1 text-xs/4 font-medium text-white hover:bg-white/5 aria-selected:bg-white/10"
-				>
-					Code
-				</Tabs.Trigger>
-			</Tabs.List>
+		<Tabs.Root
+			className="not-prose relative isolate"
+			value={active}
+			onValueChange={(val) => setActive(val as TabValue)}
+		>
+			<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
+				<Tabs.List className="absolute right-4 top-4 z-10 flex gap-1 rounded-full bg-black/25 p-1 backdrop-blur-sm">
+					<Tabs.Trigger
+						value="preview"
+						className="relative px-2 py-1 text-xs/4 font-medium text-zinc-200 transition-[color] hover:text-white aria-selected:text-white"
+					>
+						{active === 'preview' && (
+							<motion.div
+								className="absolute inset-0 size-full bg-white/10"
+								style={{ borderRadius: 999 }}
+								layout
+								layoutId={`${id}active`}
+							></motion.div>
+						)}
+						Preview
+					</Tabs.Trigger>
+					<Tabs.Trigger
+						value="code"
+						className="relative px-2 py-1 text-xs/4 font-medium text-zinc-200 transition-[color] hover:text-white aria-selected:text-white"
+					>
+						{active === 'code' && (
+							<motion.div
+								className="absolute inset-0 size-full bg-white/10"
+								style={{ borderRadius: 999 }}
+								layout
+								layoutId={`${id}active`}
+							></motion.div>
+						)}
+						Code
+					</Tabs.Trigger>
+				</Tabs.List>
+			</MotionConfig>
 			<Tabs.Content
 				forceMount
 				value="preview"

@@ -10,16 +10,17 @@ import DemoTransition from './_DemoTransition'
 import DemoIndicator from './_DemoIndicator'
 
 ```jsx
+// Basic usage:
 import MotionNumber from 'motion-number'
 
 <MotionNumber
     value={value}
-    format={{ notation: 'compact' }} // Intl.NumberFormat() options parameter
-    locales="en-US"
+    format={{ notation: 'compact' }} // Intl.NumberFormat() options
+    locales="en-US" // Intl.NumberFormat() locales
 />
 ```
 
-For a full list of `locales` and `format` options, [see MDN's reference for `Intl.NumberFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters).
+[See MDN's `Intl.NumberFormat()` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
 ## Customizing
 
@@ -32,11 +33,11 @@ import { easeOut } from 'framer-motion'
 
 <MotionNumber
     transition={{
-        // Applied to i.e. fade in/out animations:
+        // Applied to fade in/out animations:
         duration: 0.3,
-        // Applied to layout animations on individual characters
+        // Applied to layout animations on individual characters:
         layout: { type: 'spring', duration: 0.7, bounce: 0 },
-        // Used for the stack of digits' animation
+        // Used for the digit animations:
         y: { type: 'spring', duration: 0.7, bounce: 0.25 }
     }}
 />
