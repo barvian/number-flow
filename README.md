@@ -1,6 +1,6 @@
 # MotionNumber
 
-Transition, format, and localize numbers with a ~3kb Framer Motion component.
+Transition, format, and localize numbers with a ~4kB Framer Motion component.
 
 ---
 
