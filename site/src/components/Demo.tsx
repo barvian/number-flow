@@ -26,11 +26,11 @@ export default function Demo({
 
 	const id = useId()
 
-	function onPointerDown() {
+	function handleClick() {
 		setKnowsToClick(true)
 		onClick?.()
 	}
-	function onMouseDown(event: React.MouseEvent<HTMLElement>) {
+	function handleMouseDown(event: React.MouseEvent<HTMLElement>) {
 		// Prevent selection of text:
 		// https://stackoverflow.com/a/43321596
 		if (event.detail > 1) {
@@ -80,8 +80,8 @@ export default function Demo({
 				forceMount
 				value="preview"
 				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-4 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
-				onPointerDown={onPointerDown}
-				onMouseDown={onMouseDown}
+				onClick={handleClick}
+				onMouseDown={handleMouseDown}
 			>
 				{children}
 				<span
