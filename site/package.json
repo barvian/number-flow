@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "astro dev",
 		"start": "astro dev",
-		"build": "astro check && astro build",
+		"build": "astro check && astro build && sharp -i ./src/assets/preview.png -o ./.vercel/output/static/preview.webp -f webp",
 		"preview": "astro preview",
 		"astro": "astro"
 	},
@@ -28,9 +28,11 @@
 		"typescript": "^5.5.4"
 	},
 	"devDependencies": {
+		"@astrojs/vercel": "^7.7.2",
 		"@tailwindcss/typography": "^0.5.14",
 		"fluid-tailwind": "^1.0.3",
 		"sharp": "^0.33.5",
+		"sharp-cli": "^5.0.0",
 		"tw-reset": "^0.0.5"
 	}
 }
