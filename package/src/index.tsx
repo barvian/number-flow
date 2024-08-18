@@ -123,12 +123,12 @@ const formatToParts = (
 	return { pre, integer, fraction, post, formatted }
 }
 
-export const DEFAULT_TRANSITION: MotionConfigProps['transition'] = {
+export const DEFAULT_TRANSITION = {
 	duration: 0.5,
 	ease: easeOut,
 	layout: { type: 'spring', duration: 1, bounce: 0 },
 	y: { type: 'spring', duration: 1, bounce: 0 }
-}
+} as const satisfies MotionConfigProps['transition']
 
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette

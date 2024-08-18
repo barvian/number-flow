@@ -1,25 +1,26 @@
 import MotionNumber, { type MotionNumberProps } from 'motion-number'
 import useCycle from '../hooks/useCycle'
 import { useEffect, useRef } from 'react'
+import { useInView } from 'framer-motion'
 
-const NUMBERS = [12398.4, -3243.6, 543.2]
-const LOCALES = ['zh-CN', 'en-US', 'fr-FR']
+const NUMBERS = [3243.6, -543.2, 12398.4]
+const LOCALES = ['en-US', 'zh-CN', 'en-US', 'fr-FR']
 const FORMATS = [
-	{
-		style: 'unit',
-		unit: 'meter',
-		notation: 'compact'
-	},
-	{
-		style: 'currency',
-		currency: 'USD'
-		// currencySign: 'accounting',
-		// signDisplay: 'always'
-	},
 	{},
 	{
-		style: 'percent',
+		style: 'unit',
+		unit: 'meter'
+		// notation: 'compact'
+	},
+	{
+		// Make sure this is always displays in en-US or else it takes too much space:
+		style: 'currency',
+		currency: 'USD',
 		signDisplay: 'always'
+	},
+	{
+		style: 'percent',
+		notation: 'compact'
 	}
 ] as MotionNumberProps['format'][]
 
@@ -32,62 +33,53 @@ export default function Hero({
 	version: string
 	repo: string
 }) {
-	const [value, cycleValue] = useCycle(NUMBERS, 43110)
+	const [value, cycleValue] = useCycle(NUMBERS, 431.1)
 	const [locale, cycleLocale] = useCycle(LOCALES, 'en-US')
-	const [format, cycleFormat] = useCycle(FORMATS, { maximumFractionDigits: 4 })
+	const [format, cycleFormat] = useCycle(FORMATS, { minimumFractionDigits: 2 })
 
+	const ref = useRef<HTMLElement>(null)
+	const inView = useInView(ref, { once: true })
 	const timeoutRef = useRef<NodeJS.Timeout>()
-	const intervalRef = useRef<NodeJS.Timeout>()
-	const startAutoplay = () => {
-		intervalRef.current = setInterval(() => {
-			cycleValue()
-			cycleLocale()
-			cycleFormat()
-		}, 2500)
-	}
 	useEffect(() => {
+		if (!inView) return
 		timeoutRef.current = setTimeout(() => {
 			// Get off the initial "hello" easter egg:
 			cycleValue()
 			cycleLocale()
 			cycleFormat()
-			startAutoplay()
 		}, 750)
 		return () => {
 			clearTimeout(timeoutRef.current)
-			clearInterval(intervalRef.current)
 		}
-	}, [])
+	}, [inView])
 
 	return (
-		<header className="~mb-12/24 flex flex-col items-center gap-2 text-center">
+		<header
+			ref={ref}
+			className="~mb-12/24 container flex w-full flex-col items-center gap-2 overflow-x-clip text-center"
+		>
 			<h1 className="text-sm font-medium">
 				MotionNumber <span className="text-zinc-500 dark:text-zinc-400">v{version}</span>
 			</h1>
-			<div>
-				<div className="mb-6 mt-4">
-					<MotionNumber
-						className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
-						style={{ lineHeight: 0.85 }}
-						value={value}
-						locales={locale}
-						format={format}
-					/>
-				</div>
+			<div className="~mb-4/6 ~mt-2/4">
+				<MotionNumber
+					className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
+					style={{ lineHeight: 0.85 }}
+					value={value}
+					locales={locale}
+					format={format}
+				/>
 			</div>
 			<p className="~text-lg/xl text-balance text-zinc-500 dark:text-zinc-400">{description}</p>
-			<div className="mt-4 flex w-full items-stretch justify-center gap-x-4">
+			<div className="mt-4 flex w-full items-stretch justify-center gap-x-3">
 				<button
 					className="flex h-11 items-center gap-2 rounded-full bg-zinc-900 px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms]"
 					onClick={() => {
 						clearTimeout(timeoutRef.current)
-						clearInterval(intervalRef.current)
 
 						cycleValue()
 						cycleLocale()
 						cycleFormat()
-
-						startAutoplay()
 					}}
 				>
 					<svg className="size-4" strokeLinejoin="round" viewBox="0 0 16 16">

@@ -5,72 +5,55 @@ description: Transition, format, and localize numbers with a ~3kb Framer Motion 
 ---
 import Pre from '../components/Pre.astro';
 export const components = {pre: Pre}
-
-## Installation
-
-```sh
-npm install motion-number
-```
-
-## Usage
+import Demo from '../components/Demo'
+import DemoTransition from './_DemoTransition'
+import DemoIndicator from './_DemoIndicator'
 
 ```jsx
 import MotionNumber from 'motion-number'
 
 <MotionNumber
     value={value}
-    format={{ notation: 'compact' }}
+    format={{ notation: 'compact' }} // Intl.NumberFormat() options parameter
     locales="en-US"
 />
 ```
 
-These props get passed directly to an underlying `Intl.NumberFormat` instance, which handles the formatting and localization.
-MDN has a full list of [formatting options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options).
-
-## Grouping
-
-MotionNumber has four render props that can be used to synchronize other content with the number transitions:
-
-* `before` adds elements before MotionNumber
-* `first` prepends elements within MotionNumber
-* `last` appends elements within MotionNumber
-* `after` adds elements after MotionNumber
-
-These can be combined to create interesting effects:
-
-| INDICATOR EXAMPLE |
-
-```jsx
-<MotionNumber
-    value={value}
-    before={() => (
-        <MotionNumber
-            value={diff}
-            style={{ borderRadius: 999 }}
-            first={() => (
-                <Arrow />
-            )}
-        />
-    )}
-/>
-```
-
-(In case you're wondering why we don't just use [LayoutGroup](https://www.framer.com/motion/layout-group/) for this, see the note in [limitations](#limitations).)
+For a full list of `locales` and `format` options, [see MDN's reference for `Intl.NumberFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters).
 
 ## Customizing
 
-There's a few CSS properties that are useful when customizing MotionDisplay:
+MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
+the transitions:
+
+<DemoTransition client:load>
+```jsx
+import { easeOut } from 'framer-motion'
+
+<MotionNumber
+    transition={{
+        // Applied to i.e. fade in/out animations:
+        duration: 0.3,
+        // Applied to layout animations on individual characters
+        layout: { type: 'spring', duration: 0.7, bounce: 0 },
+        // Used for the stack of digits' animation
+        y: { type: 'spring', duration: 0.7, bounce: 0.25 }
+    }}
+/>
+```
+</DemoTransition>
+
+There's also some CSS properties you can use to customize the display:
 
 ### `--mask-height`/`--mask-width`
 
-These adjust the height and width of the gradient fade-out masks on the sides of the number.
+These adjust the height and width of the gradient fade-out masks on the edges of the number.
 `--mask-height` also gets used as the vertical padding for the number.
 
 ### `line-height`
 
-In my opinion, the number transitions look best with small vertical gaps between numbers, because it reduces
-the overall distance travelled.
-I recommend finding the smallest `line-height` that fits all your component's characters:
+In my opinion, the number transitions look best with short gaps between numbers to reduce
+the distance they travel. I recommend using the smallest `line-height` that fits all your component's characters:
 
 ```jsx
 <MotionNumber style={{ lineHeight: 0.8 }} /* ... */>
@@ -85,37 +68,45 @@ set through an inline style for simplicity. This means to override it globally y
 }
 ```
 
-### Transitions
+## Grouping
 
-MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
-the transitions. This lets you fully customize the timings used:
+MotionNumber has four render props that can be used to synchronize other content with the number transitions:
 
-| BOUNCY EXAMPLE |
+* `before` adds elements before MotionNumber
+* `first` prepends elements to MotionNumber
+* `last` appends elements to MotionNumber
+* `after` adds elements after MotionNumber
 
+These can be combined to create interesting effects:
+
+<DemoIndicator client:load>
 ```jsx
-import { easeOut } from 'framer-motion'
-
 <MotionNumber
-    transition={{
-        // Applied to i.e. fade in/out animations:
-        duration: 0.5,
-        ease: easeOut,
-        // Applied to layout animations on individual characters
-        layout: { type: 'spring', duration: 1, bounce: 0 },
-        // Used for the stack of digits' animation
-        y: { type: 'spring', duration: 1, bounce: 0.5 }
-    }}
->
+    value={value}
+    format={{ style: 'currency', currency: 'USD' }}
+    after={() => (
+        <MotionNumber
+            value={diff}
+            format={{ style: 'percent', maximumFractionDigits: 2 }}
+            animate={{ backgroundColor: diff > 0 ? '#34d399' : '#ef4444' }}
+            style={{ borderRadius: 999 }}
+            first={() => (
+                <Arrow />
+            )}
+        />
+    )}
+/>
 ```
+</DemoIndicator>
 
-If MotionNumber is within a [MotionConfig](https://www.framer.com/motion/motion-config/), it'll use that transition
-instead of its default. 
+These are also helpful because [LayoutGroup](https://www.framer.com/motion/layout-group/) doesn't currently
+work with MotionNumber; see the note below.
 
 ## Limitations
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't currently supported
 * Selected text inside the number will not respect color changes from `::selection`, if any
-* `<LayoutGroup>` doesn't work well with MotionNumber and causes noticeable jitters in the number animations.
+* `<LayoutGroup>` doesn't currently work with MotionNumber and causes noticeable jitters in the number animations.
 This is likely due to MotionNumber's unusual two-step rendering process, where new digits are added before the layout animations occur.
 
 ## Credits

@@ -4,7 +4,7 @@ import type { MDXLayoutProps } from 'astro'
 import preview from '../assets/preview.png'
 import { getImage } from 'astro:assets'
 import pkg from '/../package/package.json'
-import Hero from './Hero'
+import Hero from './_Hero'
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
@@ -20,6 +20,14 @@ type Props = MDXLayoutProps<{
 }>
 
 const { frontmatter } = Astro.props
+
+const app = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: 'MotionNumber for Framer Motion',
+	alternateName: ['motion-number'],
+	url: Astro.site
+}
 ---
 
 <html
@@ -44,20 +52,9 @@ const { frontmatter } = Astro.props
 		<meta name="description" content={frontmatter.description} />
 		<meta property="og:description" content={frontmatter.description} />
 		<meta name="twitter:description" content={frontmatter.description} />
-		<script type="application/ld+json">
-			{
-				"@context": "https://schema.org",
-				"@type": "WebSite",
-				"name": "MotionNumber for Framer Motion",
-				"alternateName": ["motion-number"],
-				"url": "https://motion-number.barvian.me/"
-			}
-		</script>
+		<script type="application/ld+json" set:html={JSON.stringify(app)} />
 	</head>
-	<header class="">
-		<nav></nav>
-	</header>
-	<main class="~py-12/28 container">
+	<main class="~py-12/28">
 		<Hero
 			client:load
 			version={pkg.version}
@@ -65,7 +62,7 @@ const { frontmatter } = Astro.props
 			description={frontmatter.description}
 		/>
 		<div
-			class="prose prose-zinc dark:prose-invert prose-headings:font-semibold prose-h2:text-xl prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none prose-a:font-medium prose-a:underline prose-a:underline-offset-4 leading-[1.7]"
+			class="prose prose-zinc dark:prose-invert prose-headings:font-semibold prose-h2:text-xl prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none prose-a:font-medium prose-a:underline prose-a:underline-offset-4 container leading-[1.7]"
 		>
 			<slot />
 		</div>
