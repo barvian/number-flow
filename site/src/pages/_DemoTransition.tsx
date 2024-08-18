@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Demo, { type DemoProps } from '../components/Demo'
 import useCycle from '../hooks/useCycle'
 import MotionNumber from 'motion-number'

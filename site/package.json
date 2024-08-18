@@ -30,6 +30,7 @@
 	"devDependencies": {
 		"@tailwindcss/typography": "^0.5.14",
 		"fluid-tailwind": "^1.0.3",
+		"sharp": "^0.33.5",
 		"tw-reset": "^0.0.5"
 	}
 }
