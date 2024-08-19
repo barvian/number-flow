@@ -61,7 +61,7 @@ export default function Hero({
 			<h1 className="text-sm font-medium">
 				MotionNumber <span className="text-zinc-500 dark:text-zinc-400">v{version}</span>
 			</h1>
-			<div className="~my-2/4">
+			<div className="~mt-1.5/3 ~mb-2/4">
 				<MotionNumber
 					className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
 					style={{ lineHeight: 0.85 }}
