@@ -54,7 +54,7 @@ const app = {
 		<meta name="twitter:description" content={frontmatter.description} />
 		<script type="application/ld+json" set:html={JSON.stringify(app)} />
 	</head>
-	<main class="~pt-16/32 ~pb-12/24">
+	<main class="~py-16/32">
 		<Hero
 			client:load
 			version={pkg.version}
@@ -62,7 +62,7 @@ const app = {
 			description={frontmatter.description}
 		/>
 		<div
-			class="prose prose-zinc dark:prose-invert prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:mt-[3em] prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none prose-a:font-medium prose-a:underline prose-a:underline-offset-4 container leading-[1.7]"
+			class="prose prose-zinc dark:prose-invert prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none prose-a:font-medium prose-a:underline prose-a:underline-offset-4 container leading-[1.7]"
 		>
 			<slot />
 		</div>
