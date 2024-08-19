@@ -45,7 +45,7 @@ export default function Demo({
 			onValueChange={(val) => setActive(val as TabValue)}
 		>
 			<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
-				<Tabs.List className="absolute right-4 top-4 z-10 flex gap-1 rounded-full bg-black/25 p-1 backdrop-blur-sm">
+				<Tabs.List className="absolute right-2 top-2 z-10 flex gap-1 rounded-full bg-black/25 p-1 backdrop-blur-sm">
 					<Tabs.Trigger
 						value="preview"
 						className="relative px-2 py-1 text-xs/4 font-medium text-zinc-200 transition-[color] hover:text-white aria-selected:text-white"
@@ -79,14 +79,14 @@ export default function Demo({
 			<Tabs.Content
 				forceMount
 				value="preview"
-				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-4 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
+				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-4 pb-6 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
 				onClick={handleClick}
 				onMouseDown={handleMouseDown}
 			>
 				{children}
 				<span
 					className={clsx(
-						'absolute bottom-6 left-0 w-full text-center text-sm text-zinc-400 transition-opacity duration-200 ease-out dark:text-zinc-500',
+						'absolute bottom-4 left-0 w-full text-center text-sm text-zinc-400 transition-opacity duration-200 ease-out dark:text-zinc-500',
 						knowsToClick && 'opacity-0'
 					)}
 				>
