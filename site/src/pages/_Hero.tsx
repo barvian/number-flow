@@ -56,7 +56,7 @@ export default function Hero({
 	return (
 		<header
 			ref={ref}
-			className="~mb-12/24 container flex w-full flex-col items-center gap-2 overflow-x-clip text-center"
+			className="~mb-11/22 container flex w-full flex-col items-center gap-2 overflow-x-clip text-center"
 		>
 			<h1 className="text-sm font-medium">
 				MotionNumber <span className="text-zinc-500 dark:text-zinc-400">v{version}</span>
