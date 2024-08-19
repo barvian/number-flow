@@ -1,10 +1,10 @@
 import Demo, { type DemoProps } from '../components/Demo'
 import useCycle from '../hooks/useCycle'
-import MotionNumber, { DEFAULT_TRANSITION } from 'motion-number'
+import MotionNumber from 'motion-number'
 import { motion } from 'framer-motion'
 
 const NUMBERS = [124.23, 41.75, 2125.95]
-const DIFFS = [0.0564, -0.00114, 0.0029]
+const DIFFS = [0.0564, -0.114, 0.0029]
 
 export default function DemoIndicator({ children, ...rest }: DemoProps) {
 	const [value, cycleValue] = useCycle(NUMBERS)
@@ -26,7 +26,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 					after={() => (
 						<MotionNumber
 							value={diff}
-							className="~text-base/2xl px-2 font-semibold [--mask-height:0.35em]"
+							className="~text-base/2xl px-[0.3em] font-semibold [--mask-height:0.3em]"
 							format={{ style: 'percent', maximumFractionDigits: 2 }}
 							animate={{ backgroundColor: diff > 0 ? '#34d399' : '#ef4444' }}
 							style={{ borderRadius: 999, lineHeight: 0.85 }}
