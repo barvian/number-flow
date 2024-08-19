@@ -1,7 +1,6 @@
 import type { Config } from 'tailwindcss'
 import reset from 'tw-reset'
 import fluid, { extract, fontSize, type FluidThemeConfig } from 'fluid-tailwind'
-import defaultTheme from 'tailwindcss/defaultTheme'
 import typography from '@tailwindcss/typography'
 
 export default {
@@ -34,10 +33,6 @@ export default {
 				22: '5.5rem'
 			}
 		}
-	},
-	fontFamily: {
-		sans: ['"Inter var"', ...defaultTheme.fontFamily.sans],
-		mono: ['"Fira Code VF"', ...defaultTheme.fontFamily.mono]
 	},
 	plugins: [fluid, typography]
 } satisfies Config
