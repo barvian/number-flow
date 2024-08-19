@@ -1,6 +1,6 @@
 # MotionNumber
 
-https://github.com/user-attachments/assets/54588453-f4db-4411-90ac-5f565e29eb3a
+https://github.com/user-attachments/assets/ca3d788b-6fa7-46f9-8805-f295cb270fb2
 
 A Framer Motion component that transitions, formats, and localizes numbers.
 
