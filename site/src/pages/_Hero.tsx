@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 
 const NUMBERS = [3243.6, -543.2, 12398.4]
-const LOCALES = ['en-US', 'zh-CN', 'en-US', 'fr-FR']
+const LOCALES = ['en-US', 'zh-CN', 'en-US', 'en-US']
 const FORMATS = [
 	{},
 	{
