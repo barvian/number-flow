@@ -51,8 +51,8 @@ This improves animation performance by ensuring Framer Motion doesn't remove exi
 until the layout animation ends. If you want the opacity transition to look shorter than the layout animation,
 you can use the [`times` array](https://www.framer.com/motion/animation/##keyframes) with the format `[0, perceptualDuration]`,
 as shown above. Also, make sure to use an [easing function](https://www.framer.com/motion/easing-functions/) rather than strings like `'linear'` or `'easeIn'`,
-as they seem to work better. Also, if you're using [`<MotionConfig>`](https://www.framer.com/motion/motion-config/) to set a transition, make sure to check the
-opacity settings there.
+as they seem to work better. If you're using [`<MotionConfig>`](https://www.framer.com/motion/motion-config/) to set a transition, make sure to check the
+opacity settings there as well.
 
 ---
 

@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Not the best way to do this, but it works for now: */
+span[style*='transform:'] {
+	will-change: transform !important;
+}
+
 @layer base {
 	@font-face {
 		font-family: 'Inter var';
