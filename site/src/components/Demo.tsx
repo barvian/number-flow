@@ -79,7 +79,7 @@ export default function Demo({
 			<Tabs.Content
 				forceMount
 				value="preview"
-				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-4 pb-6 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
+				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-5 pb-6 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
 				onClick={handleClick}
 				onMouseDown={handleMouseDown}
 			>
