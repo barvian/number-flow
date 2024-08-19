@@ -26,12 +26,7 @@ export default {
 		fluid: (({ theme }) => ({
 			defaultScreens: [, theme('screens.xl')]
 		})) satisfies FluidThemeConfig,
-		extend: {
-			spacing: {
-				11: '2.75rem',
-				22: '5.5rem'
-			}
-		}
+		extend: {}
 	},
 	plugins: [fluid, typography]
 } satisfies Config
