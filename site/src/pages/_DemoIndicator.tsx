@@ -33,7 +33,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 							initial={false}
 							first={() => (
 								<motion.svg
-									className="mr-0.5 size-[0.75em]"
+									className="mr-0.5 size-[0.75em] self-center"
 									viewBox="0 0 24 24"
 									strokeWidth="3"
 									vectorEffect="non-scaling-stroke"
