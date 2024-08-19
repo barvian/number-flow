@@ -38,7 +38,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 									strokeWidth="3"
 									vectorEffect="non-scaling-stroke"
 									stroke="currentColor"
-									transition={{ rotate: DEFAULT_TRANSITION.y }}
+									transition={{ rotate: { type: 'spring', duration: 0.5, bounce: 0 } }}
 									animate={{ rotate: diff > 0 ? 0 : -180 }}
 								>
 									<path
