@@ -310,6 +310,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 	)
 })
 
+// Exporting a named const as default is better for IntelliSense:
 export default MotionNumber
 
 export type Justify = 'left' | 'right'
