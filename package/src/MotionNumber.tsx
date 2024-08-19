@@ -141,7 +141,7 @@ const correctedMaskWidth = `calc(${maskWidth} / var(--motion-number-scale-x-corr
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 const mask =
 	// Horizontal:
-	`linear-gradient(to right, transparent 0, #000 ${maskWidth}, #000 calc(100% - ${maskWidth}), transparent),` +
+	`linear-gradient(to right, transparent 0, #000 ${correctedMaskWidth}, #000 calc(100% - ${correctedMaskWidth}), transparent),` +
 	// Vertical:
 	`linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%),` +
 	// TL corner
@@ -391,6 +391,7 @@ const Section = React.forwardRef<
 				const next = child.nextSibling
 				child.remove()
 				return () => {
+					// insertBefore() appends if next is null:
 					measuredRef.current?.insertBefore(child, next)
 				}
 			}
