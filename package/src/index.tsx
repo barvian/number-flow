@@ -238,7 +238,6 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 						lineHeight: 1, // make this one easy to override
 						...style,
 						display: 'inline-flex',
-						alignItems: 'baseline',
 						isolation: 'isolate', // so number can be underneath first/last
 						whiteSpace: 'nowrap'
 					}}
@@ -247,7 +246,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 					<motion.span
 						layout
 						style={{
-							alignItems: 'baseline',
+							display: 'inline-flex',
 							direction: 'ltr', // I think this is needed b/c numbers are always LTR?
 							isolation: 'isolate', // so number can be underneath pre/post
 							position: 'relative',
@@ -261,7 +260,7 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 							style={{
 								position: 'absolute',
 								left: 0,
-								top: maskHeight,
+								padding: `${maskHeight} 0`,
 								pointerEvents: 'all',
 								fontKerning: 'none', // to match the rendered number
 								userSelect: 'text',
@@ -271,39 +270,52 @@ const MotionNumber = React.forwardRef<HTMLSpanElement, MotionNumberProps>(functi
 						>
 							{formatted}
 						</span>
-						<span
+						<Section
+							data-motion-number-part="pre"
+							style={{ padding: `${maskHeight} 0` }}
 							aria-hidden={true}
 							// @ts-expect-error React doesn't support inert
 							inert=""
-						>
-							<Section data-motion-number-part="pre" justify="right" mode="popLayout" parts={pre} />
-							<motion.span
-								layout // make sure this one scales
-								ref={maskedRef}
-								style={{
-									display: 'inline-flex',
-									alignItems: 'baseline',
+							justify="right"
+							mode="popLayout"
+							parts={pre}
+						/>
+						<motion.span
+							layout // make sure this one scales
+							ref={maskedRef}
+							aria-hidden={true}
+							// @ts-expect-error React doesn't support inert
+							inert=""
+							style={{
+								display: 'inline-flex',
 
-									// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
-									'--motion-number-scale-x-correct': 1,
-									margin: `0 calc(-1*${maskWidth})`,
-									padding: `0 ${maskWidth}`,
-									position: 'relative', // for zIndex
-									zIndex: -1, // should be underneath everything else
-									overflow: 'clip', // important so it doesn't affect page layout
-									// Prefixed properties have better support than unprefixed ones:
-									WebkitMaskImage: mask,
-									WebkitMaskSize: maskSize,
-									WebkitMaskPosition:
-										'center, center, top left, top right, bottom right, bottom left',
-									WebkitMaskRepeat: 'no-repeat'
-								}}
-							>
-								<Section data-motion-number-part="integer" justify="right" parts={integer} />
-								<Section data-motion-number-part="fraction" parts={fraction} />
-							</motion.span>
-							<Section data-motion-number-part="post" mode="popLayout" parts={post} />
-						</span>
+								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
+								'--motion-number-scale-x-correct': 1,
+								margin: `0 calc(-1*${maskWidth})`,
+								padding: `${maskHeight} ${maskWidth}`,
+								position: 'relative', // for zIndex
+								zIndex: -1, // should be underneath everything else
+								overflow: 'clip', // important so it doesn't affect page layout
+								// Prefixed properties have better support than unprefixed ones:
+								WebkitMaskImage: mask,
+								WebkitMaskSize: maskSize,
+								WebkitMaskPosition:
+									'center, center, top left, top right, bottom right, bottom left',
+								WebkitMaskRepeat: 'no-repeat'
+							}}
+						>
+							<Section data-motion-number-part="integer" justify="right" parts={integer} />
+							<Section data-motion-number-part="fraction" parts={fraction} />
+						</motion.span>
+						<Section
+							data-motion-number-part="post"
+							style={{ padding: `${maskHeight} 0` }}
+							aria-hidden={true}
+							// @ts-expect-error React doesn't support inert
+							inert=""
+							mode="popLayout"
+							parts={post}
+						/>
 					</motion.span>
 					{last?.()}
 				</motion.span>
@@ -324,12 +336,12 @@ const SectionContext = React.createContext({
 
 const Section = React.forwardRef<
 	HTMLSpanElement,
-	Omit<React.ReactHTML['span'], 'children'> & {
+	Omit<JSX.IntrinsicElements['span'], 'children'> & {
 		parts: KeyedNumberPart[]
 		justify?: Justify
 		mode?: AnimatePresenceProps['mode']
 	}
->(function Section({ parts, justify = 'left', mode, ...rest }, _ref) {
+>(function Section({ parts, justify = 'left', mode, style, ...rest }, _ref) {
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const { forceUpdate } = React.useContext(MotionNumberContext)
@@ -385,9 +397,8 @@ const Section = React.forwardRef<
 				{...rest}
 				ref={ref}
 				style={{
+					...style,
 					display: 'inline-flex',
-					alignItems: 'baseline',
-
 					justifyContent: justify,
 					width
 				}}
@@ -396,7 +407,6 @@ const Section = React.forwardRef<
 					ref={measuredRef}
 					style={{
 						display: 'inline-flex',
-						alignItems: 'baseline',
 						justifyContent: 'inherit',
 						position: 'relative' // needed for AnimatePresent popLayout
 					}}
@@ -475,12 +485,8 @@ const Digit = React.forwardRef<
 	const renderNumber = (i: number) => (
 		<span
 			key={i}
-			aria-hidden={i !== value}
 			style={{
-				display: 'inline-block',
-				// We put the mask height on here, so that it's easier to compute the y.
-				// It should be safe, because there's guaranteed to be a number visible at all times.
-				padding: `calc(${maskHeight}/2) 0`
+				display: 'inline-block'
 			}}
 			ref={(r) => void (numberRefs.current[i] = r)}
 		>
@@ -506,7 +512,6 @@ const Digit = React.forwardRef<
 			style={{
 				display: 'inline-flex',
 				justifyContent: 'center',
-				padding: `calc(${maskHeight}/2) 0`,
 				width
 			}}
 		>
@@ -522,7 +527,7 @@ const Digit = React.forwardRef<
 						position: 'relative'
 					}}
 					initial={{ y: 0 }}
-					animate={{ y: `${(initialValue - value) * 100}%` }}
+					animate={{ y: `calc(${initialValue - value} * (100% + ${maskHeight})` }}
 				>
 					{below && (
 						<span
@@ -531,7 +536,8 @@ const Digit = React.forwardRef<
 								flexDirection: 'column',
 								alignItems: 'center',
 								position: 'absolute',
-								bottom: '100%',
+								bottom: `calc(100% + ${maskHeight})`,
+								gap: maskHeight,
 								left: 0,
 								width: '100%'
 							}}
@@ -547,7 +553,8 @@ const Digit = React.forwardRef<
 								flexDirection: 'column',
 								alignItems: 'center',
 								position: 'absolute',
-								top: '100%',
+								gap: maskHeight,
+								top: `calc(100% + ${maskHeight})`,
 								left: 0,
 								width: '100%'
 							}}
