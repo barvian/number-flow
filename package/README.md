@@ -1,8 +1,12 @@
 # MotionNumber
 
+A Framer Motion component that transitions, formats, and localizes numbers.
+
 [![MotionNumber for Framer Motion](https://motion-number.barvian.me/preview.webp)](https://motion-number.barvian.me)
 
-A Framer Motion component that transitions, formats, and localizes numbers.
+[![NPM Version](https://img.shields.io/npm/v/motion-number.svg)](https://npmjs.com/package/motion-number)
+[![Bundle size](https://badgen.net/bundlephobia/minzip/motion-number@latest)](https://bundlephobia.com/package/motion-number@0.1.1)
+[![Follow @mbarvian](https://img.shields.io/twitter/follow/mbarvian.svg?style=social&label=Follow)](https://x.com/mbarvian)
 
 ---
 
