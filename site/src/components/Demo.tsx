@@ -86,7 +86,7 @@ export default function Demo({
 				{children}
 				<span
 					className={clsx(
-						'absolute bottom-5 left-0 w-full text-center text-sm text-zinc-400 transition-opacity duration-200 ease-out dark:text-zinc-500',
+						'absolute bottom-6 left-0 w-full text-center text-sm text-zinc-400 transition-opacity duration-200 ease-out dark:text-zinc-500',
 						knowsToClick && 'opacity-0'
 					)}
 				>
