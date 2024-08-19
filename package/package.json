@@ -9,7 +9,7 @@
 		"email": "max@barvian.me",
 		"url": "https://barvian.me"
 	},
-	"description": "A React component to elegantly transition between numbers.",
+	"description": "A Framer Motion component that transitions, formats, and localizes numbers.",
 	"license": "MIT",
 	"homepage": "https://motion-number.barvian.me/",
 	"repository": {
