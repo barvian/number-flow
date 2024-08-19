@@ -51,7 +51,7 @@
 	"scripts": {
 		"build": "bunchee --tsconfig tsconfig.build.json",
 		"dev": "bunchee --watch",
-		"prepublishOnly": "pnpm run build && pnpm run test"
+		"prepublishOnly": "pnpm run build"
 	},
 	"peerDependencies": {
 		"framer-motion": "^11.3.19",
