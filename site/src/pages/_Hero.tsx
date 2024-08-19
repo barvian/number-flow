@@ -19,8 +19,8 @@ const FORMATS = [
 		signDisplay: 'always'
 	},
 	{
-		style: 'percent',
-		notation: 'compact'
+		style: 'percent'
+		// notation: 'compact'
 	}
 ] as MotionNumberProps['format'][]
 

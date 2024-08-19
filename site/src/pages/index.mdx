@@ -47,13 +47,11 @@ import { easeOut } from 'framer-motion'
 </DemoTransition>
 
 One important note: **if you override `opacity`, make sure to give it the same duration as the layout animation**.
-This improves the animation performance, because Framer Motion won't remove exiting children
-until the layout animation ends. If you want the opacity transition to look like it's shorter than the layout animation,
+This improves animation performance by ensuring Framer Motion doesn't remove exiting children
+until the layout animation ends. If you want the opacity transition to look shorter than the layout animation,
 you can use the [`times` array](https://www.framer.com/motion/animation/##keyframes) with the format `[0, perceptualDuration]`,
-as shown above. Also, make sure to use an [easing function](https://www.framer.com/motion/easing-functions/) rather than a strings like `'linear'` or `'easeIn'`,
-as they seem work better.
-
-If you're using [`<MotionConfig>`](https://www.framer.com/motion/motion-config/) to set a transition, make sure to check the
+as shown above. Also, make sure to use an [easing function](https://www.framer.com/motion/easing-functions/) rather than strings like `'linear'` or `'easeIn'`,
+as they seem to work better. Also, if you're using [`<MotionConfig>`](https://www.framer.com/motion/motion-config/) to set a transition, make sure to check the
 opacity settings there.
 
 ---
@@ -62,7 +60,7 @@ Beyond the transitions, there's some CSS properties you can use to customize the
 
 ### `--mask-height`/`--mask-width`
 
-These adjust the height and width of the gradient fade-out masks on the edges of the number.
+These adjust the height and width of the gradient fade-out masks at the edges of the number.
 `--mask-height` also gets used as the vertical padding for the number.
 
 ### `line-height`
