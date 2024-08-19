@@ -1,3 +1,4 @@
+import { easeOut } from 'framer-motion'
 import Demo, { type DemoProps } from '../components/Demo'
 import useCycle from '../hooks/useCycle'
 import MotionNumber from 'motion-number'
@@ -13,7 +14,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 				value={value}
 				className="~text-3xl/5xl font-medium"
 				transition={{
-					duration: 0.3,
+					opacity: { duration: 0.7, ease: easeOut, times: [0, 0.3] },
 					y: { type: 'spring', duration: 0.7, bounce: 0.25 },
 					layout: { type: 'spring', duration: 0.7, bounce: 0 }
 				}}

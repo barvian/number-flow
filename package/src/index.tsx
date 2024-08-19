@@ -124,8 +124,11 @@ const formatToParts = (
 }
 
 export const DEFAULT_TRANSITION = {
-	duration: 0.5,
-	ease: easeOut,
+	// We use keyframes and times so the opacity/exit animations can last
+	// as long as the layout animation, so Framer Motion doesn't have to
+	// remove exiting elements until the layout animation is done.
+	// This worked better in testing than safeToRemove() from usePresence()
+	opacity: { duration: 1, ease: easeOut, times: [0, 0.5] }, // perceptual duration of 0.5s
 	layout: { type: 'spring', duration: 1, bounce: 0 },
 	y: { type: 'spring', duration: 1, bounce: 0 }
 } as const satisfies MotionConfigProps['transition']
@@ -406,8 +409,8 @@ const Section = React.forwardRef<
 								<Digit
 									key={part.key}
 									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
+									animate={{ opacity: [null, 1] }}
+									exit={{ opacity: [null, 0] }}
 									value={part.value}
 									initialValue={isInitialRender ? undefined : 0}
 								/>
@@ -417,8 +420,8 @@ const Section = React.forwardRef<
 									type={part.type}
 									partKey={part.key}
 									initial={{ opacity: 0 }}
-									animate={{ opacity: 1 }}
-									exit={{ opacity: 0 }}
+									animate={{ opacity: [null, 1] }}
+									exit={{ opacity: [null, 0] }}
 									// unfortunately this is too buggy, probably b/c AnimatePresence wraps everything, but it'd simplify <Sym> a lot:
 									// layoutId={part.type === 'literal' ? `${part.key}:${part.value}` : part.key}
 								>
@@ -590,8 +593,8 @@ const Sym = React.forwardRef<
 					layout={justify === 'right' ? 'position' : false} // we only need to correct for right-aligned ones
 					ref={ref}
 					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
+					animate={{ opacity: [null, 1] }}
+					exit={{ opacity: [null, 0] }}
 					style={{
 						display: 'inline-block',
 						whiteSpace: 'pre' // some symbols are spaces or thin spaces

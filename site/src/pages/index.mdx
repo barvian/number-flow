@@ -27,24 +27,38 @@ import MotionNumber from 'motion-number'
 MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
 the transitions:
 
-<DemoTransition client:load>
+<DemoTransition client:load defaultValue="code">
 ```jsx
 import { easeOut } from 'framer-motion'
 
 <MotionNumber
     transition={{
-        // Applied to fade in/out animations:
-        duration: 0.3,
         // Applied to layout animations on individual characters:
         layout: { type: 'spring', duration: 0.7, bounce: 0 },
         // Used for the digit animations:
-        y: { type: 'spring', duration: 0.7, bounce: 0.25 }
+        y: { type: 'spring', duration: 0.7, bounce: 0.25 },
+
+        // Opacity applies to entering/exiting characters.
+        // Note the use of the times array, explained below:
+        opacity: { duration: 0.7, ease: easeOut, times: [0, 0.3] } // 0.3s perceptual duration
     }}
 />
 ```
 </DemoTransition>
 
-There's also some CSS properties you can use to customize the display:
+One important note: **if you override `opacity`, make sure to give it the same duration as the layout animation**.
+This improves the animation performance, because Framer Motion won't remove exiting children
+until the layout animation ends. If you want the opacity transition to look like it's shorter than the layout animation,
+you can use the [`times` array](https://www.framer.com/motion/animation/##keyframes) with the format `[0, perceptualDuration]`,
+as shown above. Also, make sure to use an [easing function](https://www.framer.com/motion/easing-functions/) rather than a strings like `'linear'` or `'easeIn'`,
+as they seem work better.
+
+If you're using [`<MotionConfig>`](https://www.framer.com/motion/motion-config/) to set a transition, make sure to check the
+opacity settings there.
+
+---
+
+Beyond the transitions, there's some CSS properties you can use to customize the display:
 
 ### `--mask-height`/`--mask-width`
 
