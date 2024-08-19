@@ -61,7 +61,7 @@ export default function Hero({
 			<h1 className="text-sm font-medium">
 				MotionNumber <span className="text-zinc-500 dark:text-zinc-400">v{version}</span>
 			</h1>
-			<div className="~mt-1.5/3 ~mb-2/4">
+			<div className="~mt-0/0.5 ~mb-0.5/1">
 				<MotionNumber
 					className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
 					style={{ lineHeight: 0.85 }}
@@ -71,7 +71,7 @@ export default function Hero({
 				/>
 			</div>
 			<p className="~text-lg/xl text-balance text-zinc-500 dark:text-zinc-400">{description}</p>
-			<div className="mt-4 flex w-full items-stretch justify-center gap-x-3">
+			<div className="~mt-3/5 flex w-full items-stretch justify-center gap-x-3">
 				<button
 					className="flex h-11 items-center gap-2 rounded-full bg-zinc-900 px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms]"
 					onClick={() => {
