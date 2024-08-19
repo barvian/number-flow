@@ -22,6 +22,8 @@ import MotionNumber from 'motion-number'
 
 [See MDN's `Intl.NumberFormat()` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
+If you're using 
+
 ## Customizing
 
 MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
@@ -114,7 +116,18 @@ These can be combined to create interesting effects:
 </DemoIndicator>
 
 These are also helpful because [LayoutGroup](https://www.framer.com/motion/layout-group/) doesn't currently
-work with MotionNumber; see the note below.
+work with MotionNumber; see the note in [limitations](#limitations).
+
+## LazyMotion
+
+If you're using [`<LazyMotion>`](https://www.framer.com/motion/lazy-motion/), you can import the lazy version of
+MotionNumber from:
+
+```js
+import MotionNumber from 'motion-number/lazy'
+```
+
+The API is the same.
 
 ## Limitations
 

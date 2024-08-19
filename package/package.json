@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"author": {
 		"name": "Maxwell Barvian",
 		"email": "max@barvian.me",
@@ -45,6 +45,16 @@
 			"require": {
 				"types": "./dist/cjs/index.d.ts",
 				"default": "./dist/cjs/index.js"
+			}
+		},
+		"./lazy": {
+			"import": {
+				"types": "./dist/es/lazy.d.mts",
+				"default": "./dist/es/lazy.mjs"
+			},
+			"require": {
+				"types": "./dist/cjs/lazy.d.ts",
+				"default": "./dist/cjs/lazy.js"
 			}
 		}
 	},

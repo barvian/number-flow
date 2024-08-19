@@ -1,7 +1,8 @@
 import * as React from 'react'
 import { AnimatePresence, type AnimatePresenceProps } from 'framer-motion'
 import PopChildRight from './PopChildRight'
-import type { Justify } from '.'
+
+export type Justify = 'left' | 'right'
 
 const getChildKey = (child: React.ReactElement) => child.key ?? ''
 
