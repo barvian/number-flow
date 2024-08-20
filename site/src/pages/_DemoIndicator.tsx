@@ -20,7 +20,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 			<span className="flex items-center gap-2">
 				<MotionNumber
 					value={value}
-					className="~text-xl/4xl font-medium [--mask-height:0.25em]"
+					className="~text-xl/4xl font-semibold [--mask-height:0.25em]"
 					format={{ style: 'currency', currency: 'USD' }}
 					style={{ lineHeight: 0.85 }}
 					after={() => (

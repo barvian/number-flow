@@ -3,35 +3,24 @@ import useCycle from '../hooks/useCycle'
 import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 
-const NUMBERS = [431.1, 315921.2, 853.2007, 379, 239398, -23.007]
-const LOCALES = ['en-US', 'en-US', 'zh-CN', 'zh-CN', 'en-US', 'en-US']
+const NUMBERS = [12398.4, -3243.6, 543.2]
+const LOCALES = ['fr-FR', 'en-US']
 const FORMATS = [
 	{
-		minimumFractionDigits: 2
+		style: 'unit',
+		unit: 'meter',
+		notation: 'compact'
+	},
+	{
+		style: 'currency',
+		currency: 'USD',
+		currencySign: 'accounting',
+		signDisplay: 'always'
 	},
 	{},
 	{
-		style: 'unit',
-		unit: 'meter'
-	},
-	{
-		style: 'unit',
-		unit: 'meter'
-	},
-	{
-		// Make sure this is always displays in en-US or else it takes too much space:
-		style: 'currency',
-		currency: 'USD',
-		notation: 'compact',
-		minimumFractionDigits: 1,
-		maximumFractionDigits: 1
-	},
-	{
-		style: 'currency',
-		currency: 'USD',
-		notation: 'compact',
-		signDisplay: 'always',
-		minimumFractionDigits: 3
+		style: 'percent',
+		signDisplay: 'always'
 	}
 ] as MotionNumberProps['format'][]
 
