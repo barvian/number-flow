@@ -327,7 +327,8 @@ const MotionNumber = React.forwardRef<
 							}}
 						>
 							<Section data-motion-number-part="integer" justify="right" parts={integer} />
-							<Section data-motion-number-part="fraction" parts={fraction} />
+							{/* These last two sections need to have layout animations so that if new characters are added in-flight they know where to go: */}
+							<Section data-motion-number-part="fraction" layout="position" parts={fraction} />
 						</motion.span>
 						<Section
 							data-motion-number-part="post"
