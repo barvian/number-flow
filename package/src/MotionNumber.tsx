@@ -333,6 +333,7 @@ const MotionNumber = React.forwardRef<
 							data-motion-number-part="post"
 							style={{ padding: `${maskHeight} 0` }}
 							aria-hidden={true}
+							layout="position"
 							// @ts-expect-error React doesn't support inert
 							inert=""
 							mode="popLayout"
@@ -356,7 +357,7 @@ const SectionContext = React.createContext({
 
 const Section = React.forwardRef<
 	HTMLSpanElement,
-	Omit<JSX.IntrinsicElements['span'], 'children'> & {
+	Omit<HTMLMotionProps<'span'>, 'children'> & {
 		parts: KeyedNumberPart[]
 		justify?: Justify
 		mode?: AnimatePresenceProps['mode']
@@ -365,6 +366,7 @@ const Section = React.forwardRef<
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 	const { forceUpdate } = React.useContext(MotionNumberContext)
+	const motion = useMotion()
 
 	const context = React.useMemo(() => ({ justify }), [justify])
 
@@ -414,7 +416,7 @@ const Section = React.forwardRef<
 
 	return (
 		<SectionContext.Provider value={context}>
-			<span
+			<motion.span
 				{...rest}
 				ref={ref}
 				style={{
@@ -462,7 +464,7 @@ const Section = React.forwardRef<
 						)}
 					</JustifiedAnimatePresence>
 				</span>
-			</span>
+			</motion.span>
 		</SectionContext.Provider>
 	)
 })
