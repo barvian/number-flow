@@ -1,11 +1,3 @@
-/* @font-face {
-	font-family: 'Inter var';
-	font-weight: 100 900;
-	font-display: block;
-	font-style: normal;
-	src: url('./fonts/Inter-roman-latin.var.woff2') format('woff2');
-} */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
