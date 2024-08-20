@@ -3,24 +3,35 @@ import useCycle from '../hooks/useCycle'
 import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 
-const NUMBERS = [3243.6, -543.2, 12398.4]
-const LOCALES = ['en-US', 'zh-CN', 'en-US', 'en-US']
+const NUMBERS = [431.1, 315921.2, 853.2007, 379, 239398, -23.007]
+const LOCALES = ['en-US', 'en-US', 'zh-CN', 'zh-CN', 'en-US', 'en-US']
 const FORMATS = [
+	{
+		minimumFractionDigits: 2
+	},
 	{},
 	{
 		style: 'unit',
 		unit: 'meter'
-		// notation: 'compact'
+	},
+	{
+		style: 'unit',
+		unit: 'meter'
 	},
 	{
 		// Make sure this is always displays in en-US or else it takes too much space:
 		style: 'currency',
 		currency: 'USD',
-		signDisplay: 'always'
+		notation: 'compact',
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
 	},
 	{
-		style: 'percent'
-		// notation: 'compact'
+		style: 'currency',
+		currency: 'USD',
+		notation: 'compact',
+		signDisplay: 'always',
+		minimumFractionDigits: 3
 	}
 ] as MotionNumberProps['format'][]
 
@@ -33,9 +44,9 @@ export default function Hero({
 	version: string
 	repo: string
 }) {
-	const [value, cycleValue] = useCycle(NUMBERS, 431.1)
-	const [locale, cycleLocale] = useCycle(LOCALES, 'en-US')
-	const [format, cycleFormat] = useCycle(FORMATS, { minimumFractionDigits: 2 })
+	const [value, cycleValue] = useCycle(NUMBERS)
+	const [locale, cycleLocale] = useCycle(LOCALES)
+	const [format, cycleFormat] = useCycle(FORMATS)
 
 	const ref = useRef<HTMLElement>(null)
 	const inView = useInView(ref, { once: true })
