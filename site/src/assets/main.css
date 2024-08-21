@@ -2,9 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Not the best way to do this, but it works for now: */
-span[style*='transform:'] {
-	will-change: transform !important;
+@layer base {
+	body {
+		::-webkit-scrollbar {
+			width: 8px;
+			height: 8px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 999px;
+		}
+
+		::-webkit-scrollbar-thumb:hover {
+			background: rgba(255, 255, 255, 0.2);
+		}
+	}
+
+	/* Not the best way to do this, but it works for now: */
+	span[style*='transform:'] {
+		will-change: transform !important;
+	}
 }
 
 @layer components {
