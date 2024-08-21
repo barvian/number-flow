@@ -3,11 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-	body * {
-		scrollbar-width: thin;
-		@apply [scrollbar-color:theme(colors.zinc.400/0.5)_transparent] dark:[scrollbar-color:theme(colors.white/0.1)_transparent];
-	}
-
 	/* Not the best way to do this, but it works for now: */
 	span[style*='transform:'] {
 		will-change: transform !important;
