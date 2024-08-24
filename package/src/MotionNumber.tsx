@@ -284,9 +284,11 @@ const MotionNumber = React.forwardRef<
 								left: 0,
 								padding: `${maskHeight} 0`,
 								pointerEvents: 'all',
-								fontKerning: 'none', // to match the rendered number
 								userSelect: 'text',
 								color: 'transparent',
+								overflow: 'clip',
+								width: '100%',
+								top: 0,
 								zIndex: -50
 							}}
 						>
