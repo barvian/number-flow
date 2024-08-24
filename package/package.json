@@ -29,9 +29,9 @@
 		"animation",
 		"number-format"
 	],
-	"main": "./dist/cjs/index.js",
-	"module": "./dist/es/index.mjs",
-	"types": "./dist/cjs/index.d.ts",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"files": [
 		"dist",
 		"README.md"
@@ -39,28 +39,29 @@
 	"exports": {
 		".": {
 			"import": {
-				"types": "./dist/es/index.d.mts",
-				"default": "./dist/es/index.mjs"
+				"types": "./dist/index.d.mts",
+				"default": "./dist/index.mjs"
 			},
 			"require": {
-				"types": "./dist/cjs/index.d.ts",
-				"default": "./dist/cjs/index.js"
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
 			}
 		},
 		"./lazy": {
 			"import": {
-				"types": "./dist/es/lazy.d.mts",
-				"default": "./dist/es/lazy.mjs"
+				"types": "./dist/lazy.d.mts",
+				"default": "./dist/lazy.mjs"
 			},
 			"require": {
-				"types": "./dist/cjs/lazy.d.ts",
-				"default": "./dist/cjs/lazy.js"
+				"types": "./dist/lazy.d.ts",
+				"default": "./dist/lazy.js"
 			}
-		}
+		},
+		"./styles.css": "./dist/styles.css"
 	},
 	"scripts": {
-		"build": "bunchee --tsconfig tsconfig.build.json",
-		"dev": "bunchee --watch",
+		"build": "tsup --tsconfig tsconfig.build.json",
+		"dev": "tsup --watch",
 		"prepublishOnly": "pnpm run build"
 	},
 	"peerDependencies": {
@@ -71,9 +72,9 @@
 	"devDependencies": {
 		"@types/react": "^18.0.0",
 		"@types/react-dom": "^18.0.0",
-		"bunchee": "^5.2.2",
 		"framer-motion": "^11.3.19",
 		"react": "^18.0.0",
-		"react-dom": "^18.0.0"
+		"react-dom": "^18.0.0",
+		"tsup": "^8.2.4"
 	}
 }

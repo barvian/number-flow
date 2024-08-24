@@ -6,6 +6,7 @@
 		"noUnusedParameters": true,
 		// "exactOptionalPropertyTypes": true,
 		"allowUnreachableCode": false,
-		"allowUnusedLabels": false
+		"allowUnusedLabels": false,
+		"stripInternal": true
 	}
 }
