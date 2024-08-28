@@ -160,14 +160,11 @@ const maskSize =
 	`${correctedMaskWidth} ${maskHeight},` +
 	`${correctedMaskWidth} ${maskHeight}`
 
-// This needed to be separate for @internal to get stripped:
-type MotionNumberContext = {
+export const MotionNumberContext = React.createContext<{
 	forceUpdate?: () => void
 	/** @internal */
 	motion?: typeof motion
-}
-
-export const MotionNumberContext = React.createContext<MotionNumberContext>({})
+}>({})
 
 const useMotion = () => {
 	const { motion } = React.useContext(MotionNumberContext)
