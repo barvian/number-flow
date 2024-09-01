@@ -514,7 +514,9 @@ const Digit = React.forwardRef<
 			scope.current,
 			{
 				// Using a number seems to ensure Framr Motion ends with "none", which we want:
-				y: [box.height * (value - prevValue.current) + (box.top - (refBox?.top ?? 0)), 0]
+				// Add the offset between the top of the inner and outer elements to account for
+				// any current animation state:
+				y: [box.height * (value - prevValue.current) + (box.top - (refBox?.top ?? box.top)), 0]
 			},
 			{
 				type: 'spring',
