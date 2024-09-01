@@ -8,7 +8,8 @@ import {
 	type AnimatePresenceProps,
 	MotionConfigContext,
 	useIsPresent,
-	type MotionConfigProps
+	type MotionConfigProps,
+	useAnimate
 } from 'framer-motion'
 import JustifiedAnimatePresence, { type Justify } from './JustifiedAnimatePresence'
 
@@ -297,7 +298,7 @@ const MotionNumber = React.forwardRef<
 						</span>
 						<Section
 							data-motion-number-part="pre"
-							style={{ padding: `${maskHeight} 0` }}
+							style={{ padding: `calc(${maskHeight}/2) 0` }}
 							aria-hidden={true}
 							// @ts-expect-error React doesn't support inert
 							inert=""
@@ -317,7 +318,7 @@ const MotionNumber = React.forwardRef<
 								// Activates the scale correction, which gets stored in --motion-number-scale-x-correction
 								'--motion-number-scale-x-correct': 1,
 								margin: `0 calc(-1*${maskWidth})`,
-								padding: `${maskHeight} ${maskWidth}`,
+								padding: `calc(${maskHeight}/2) ${maskWidth}`,
 								position: 'relative', // for zIndex
 								zIndex: -1, // should be underneath everything else
 								overflow: 'clip', // important so it doesn't affect page layout
@@ -335,7 +336,7 @@ const MotionNumber = React.forwardRef<
 						</motion.span>
 						<Section
 							data-motion-number-part="post"
-							style={{ padding: `${maskHeight} 0` }}
+							style={{ padding: `calc(${maskHeight}/2) 0` }}
 							aria-hidden={true}
 							layout="position"
 							// @ts-expect-error React doesn't support inert
@@ -490,12 +491,42 @@ const Digit = React.forwardRef<
 	const ref = React.useRef<HTMLSpanElement>(null)
 	React.useImperativeHandle(_ref, () => ref.current!, [])
 
-	const measuredRef = React.useRef<HTMLSpanElement>(null)
+	const [scope, animate] = useAnimate<HTMLSpanElement>()
 	const numberRefs = React.useRef(new Array<HTMLSpanElement | null>(10))
 
 	// Don't use a normal exit animation for this because we want it to trigger a resize:
 	const isPresent = useIsPresent()
 	const value = isPresent ? _value : 0
+
+	// Set the width to the width of the initial value immediately, so on the next render we animate from that:
+	React.useLayoutEffect(() => {
+		if (numberRefs.current[initialValue])
+			scope.current.style.width = getWidthInEm(numberRefs.current[initialValue])
+	}, [])
+
+	// Animate the y in a layout effect, because it's a FLIP
+	const prevValue = React.useRef(_initialValue)
+	React.useLayoutEffect(() => {
+		if (value === prevValue.current) return
+		const box = scope.current.getBoundingClientRect()
+		const refBox = ref.current?.getBoundingClientRect()
+		animate(
+			scope.current,
+			{
+				// Using a number seems to ensure Framr Motion ends with "none", which we want:
+				y: [box.height * (value - prevValue.current) + (box.top - (refBox?.top ?? 0)), 0]
+			},
+			{
+				type: 'spring',
+				duration: 1,
+				bounce: 0
+			}
+		)
+
+		return () => {
+			prevValue.current = value
+		}
+	}, [value])
 
 	const { forceUpdate } = React.useContext(MotionNumberContext)
 	const [width, setWidth] = React.useState<Em>()
@@ -515,20 +546,14 @@ const Digit = React.forwardRef<
 		<span
 			key={i}
 			style={{
-				display: 'inline-block'
+				display: 'inline-block',
+				padding: `calc(${maskHeight}/2) 0`
 			}}
 			ref={(r) => void (numberRefs.current[i] = r)}
 		>
 			{i}
 		</span>
 	)
-
-	const below =
-		initialValue === 0 ? null : new Array(initialValue).fill(null).map((_, i) => renderNumber(i))
-	const above =
-		initialValue === 9
-			? null
-			: new Array(9 - initialValue).fill(null).map((_, i) => renderNumber(initialValue + i + 1))
 
 	return (
 		<motion.span
@@ -548,47 +573,43 @@ const Digit = React.forwardRef<
 			<motion.span layout="position" style={{ display: 'inline-flex', justifyContent: 'center' }}>
 				{/* This needs to be separate so the layout animation doesn't affect its y: */}
 				<motion.span
-					ref={measuredRef}
+					ref={scope}
 					style={{
 						display: 'inline-flex',
 						flexDirection: 'column',
 						alignItems: 'center',
 						position: 'relative'
 					}}
-					initial={{ y: 0 }}
-					animate={{ y: `calc(${initialValue - value} * (100% + ${maskHeight})` }}
 				>
-					{below && (
+					{value !== 0 && (
 						<span
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
 								alignItems: 'center',
 								position: 'absolute',
-								bottom: `calc(100% + ${maskHeight})`,
-								gap: maskHeight,
+								bottom: `100%`,
 								left: 0,
 								width: '100%'
 							}}
 						>
-							{below}
+							{new Array(value).fill(null).map((_, i) => renderNumber(i))}
 						</span>
 					)}
-					{renderNumber(initialValue)}
-					{above && (
+					{renderNumber(value)}
+					{value !== 9 && (
 						<span
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
 								alignItems: 'center',
 								position: 'absolute',
-								gap: maskHeight,
-								top: `calc(100% + ${maskHeight})`,
+								top: `100%`,
 								left: 0,
 								width: '100%'
 							}}
 						>
-							{above}
+							{new Array(9 - value).fill(null).map((_, i) => renderNumber(value + i + 1))}
 						</span>
 					)}
 				</motion.span>
@@ -621,6 +642,7 @@ const Sym = React.forwardRef<
 			style={{
 				display: 'inline-flex',
 				justifyContent: justify,
+				padding: `calc(${maskHeight}/2) 0`, // match digits
 				position: 'relative' // needed for AnimatePresent popLayout
 			}}
 			layout="position"
