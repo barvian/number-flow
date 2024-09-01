@@ -4,8 +4,10 @@
 
 @layer base {
 	/* Not the best way to do this, but it works for now: */
-	span[style*='transform:'] {
-		will-change: transform !important;
+	@media screen and (min-resolution: 1.75x) {
+		span[style*='transform:'] {
+			will-change: transform !important;
+		}
 	}
 }
 
