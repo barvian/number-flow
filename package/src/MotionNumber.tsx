@@ -9,7 +9,8 @@ import {
 	MotionConfigContext,
 	useIsPresent,
 	type MotionConfigProps,
-	useAnimate
+	useAnimate,
+	type DynamicAnimationOptions
 } from 'framer-motion'
 import JustifiedAnimatePresence, { type Justify } from './JustifiedAnimatePresence'
 
@@ -165,7 +166,10 @@ export const MotionNumberContext = React.createContext<{
 	forceUpdate?: () => void
 	/** @internal */
 	motion?: typeof motion
-}>({})
+	transition: React.ComponentProps<typeof MotionConfig>['transition']
+}>({
+	transition: DEFAULT_TRANSITION
+})
 
 const useMotion = () => {
 	const { motion } = React.useContext(MotionNumberContext)
@@ -244,9 +248,10 @@ const MotionNumber = React.forwardRef<
 	const context = React.useMemo(
 		() => ({
 			forceUpdate: parent.forceUpdate ?? forceUpdate,
-			motion
+			motion,
+			transition
 		}),
-		[parent, forceUpdate, motion]
+		[parent, forceUpdate, motion, transition]
 	)
 
 	return (
@@ -484,6 +489,7 @@ const Digit = React.forwardRef<
 	}
 >(function Digit({ value: _value, initialValue: _initialValue = _value, ...rest }, _ref) {
 	const motion = useMotion()
+	const { transition } = React.useContext(MotionNumberContext)
 
 	const initialValue = React.useRef(_initialValue).current // non-reactive, like React's defaultValue props
 	const isInitialRender = useIsInitialRender()
@@ -518,11 +524,7 @@ const Digit = React.forwardRef<
 				// any current animation state:
 				y: [box.height * (value - prevValue.current) + (box.top - (refBox?.top ?? box.top)), 0]
 			},
-			{
-				type: 'spring',
-				duration: 1,
-				bounce: 0
-			}
+			transition as DynamicAnimationOptions
 		)
 
 		return () => {
