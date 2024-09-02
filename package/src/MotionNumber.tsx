@@ -294,7 +294,7 @@ const MotionNumber = React.forwardRef<
 								userSelect: 'text',
 								color: 'transparent',
 								overflow: 'clip',
-								width: '100%',
+								minWidth: '100%',
 								top: 0,
 								zIndex: -50
 							}}
