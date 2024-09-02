@@ -1,0 +1,12 @@
+.DS_Store
+node_modules
+.turbo
+dist/
+.env
+build/
+.astro/
+.env.*
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+.vercel

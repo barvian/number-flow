@@ -1,0 +1,72 @@
+---
+import '../assets/main.css'
+import type { MDXLayoutProps } from 'astro'
+import preview from '../assets/preview.png'
+import { getImage } from 'astro:assets'
+import pkg from '/../package/package.json'
+import Hero from './_Hero'
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+
+const previewOptimized = await getImage({ src: preview, format: 'png' })
+const image = import.meta.env.URL
+	? new URL(previewOptimized.src, import.meta.env.URL)
+	: previewOptimized.src
+
+type Props = MDXLayoutProps<{
+	title: string
+	headline: string
+	description: string
+}>
+
+const { frontmatter } = Astro.props
+
+const app = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: 'MotionNumber for Framer Motion',
+	alternateName: ['motion-number'],
+	url: Astro.site
+}
+---
+
+<html
+	lang="en"
+	class="min-h-screen scroll-pt-10 overflow-x-hidden bg-white text-zinc-950 antialiased motion-safe:scroll-smooth dark:bg-zinc-950 dark:text-zinc-50"
+>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<meta name="twitter:creator" content="@mbarvian" />
+		<meta property="og:type" content="article" />
+		<meta property="og:image" content={image} />
+		<meta property="og:site_name" content="MotionNumber for Framer Motion" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta property="twitter:image" content={image} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{frontmatter.title}</title>
+		<link rel="canonical" href={canonicalURL} />
+		<meta property="og:title" content={frontmatter.title} />
+		<meta name="twitter:title" content={frontmatter.title} />
+		<meta name="description" content={frontmatter.description} />
+		<meta property="og:description" content={frontmatter.description} />
+		<meta name="twitter:description" content={frontmatter.description} />
+		<script type="application/ld+json" set:html={JSON.stringify(app)} />
+	</head>
+	<main class="~py-16/32">
+		<Hero
+			client:load
+			version={pkg.version}
+			repo={pkg.repository.url}
+			description={frontmatter.description}
+		/>
+		<div
+			class="prose prose-zinc dark:prose-invert prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none prose-a:font-medium prose-a:underline prose-a:underline-offset-4 container leading-[1.7]"
+		>
+			<slot />
+		</div>
+	</main>
+
+
+</html>
