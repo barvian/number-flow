@@ -15,24 +15,25 @@ class NumberFlow extends ServerSafeHTMLElement {
 
 	transition = DEFAULT_TRANSITION
 	#formatted?: string
-	#value?: Args
 
 	attributeChangedCallback(attr: ObservedAttribute, _: string, newValue: string) {
 		this[attr] = JSON.parse(newValue)
 	}
 
-	get value() {
-		return this.#value
+	get value(): string | undefined {
+		return this.#formatted
 	}
 
 	set value(newVal: Args | undefined) {
 		if (newVal == null) {
-			this.#value = newVal
+			this.#formatted = undefined
 			return
 		}
 		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
 			? formatToParts(...newVal)
 			: formatToParts(newVal)
+
+		this.#formatted = formatted
 	}
 
 	constructor() {
@@ -51,7 +52,7 @@ class Section {
 	readonly el: HTMLDivElement
 
 	constructor(private flow: NumberFlow) {
-		this.el = createElement('div')
+		this.el = createElement('div', { part: 'pre' })
 	}
 }
 

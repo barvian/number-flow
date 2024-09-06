@@ -15,7 +15,9 @@ export function getWidthInEm(element: HTMLElement): Em {
 
 export const createElement = <K extends keyof HTMLElementTagNameMap>(
 	tagName: K,
-	optionsOrChildren?: Partial<ExcludeReadonly<HTMLElementTagNameMap[K]>> | Node[],
+	optionsOrChildren?:
+		| Partial<ExcludeReadonly<HTMLElementTagNameMap[K]> & { part: string }>
+		| Node[],
 	_children?: Node[]
 ): HTMLElementTagNameMap[K] => {
 	const element = document.createElement(tagName)
