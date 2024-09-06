@@ -21,22 +21,29 @@ importers:
         specifier: '>=5.5'
         version: 5.5.3
 
-  package:
+  packages/number-flow:
+    devDependencies:
+      tsup:
+        specifier: ^8.2.4
+        version: 8.2.4(@swc/core@1.7.3)(jiti@1.21.6)(postcss@8.4.41)(typescript@5.5.4)(yaml@2.5.0)
+
+  packages/react:
+    dependencies:
+      number-flow:
+        specifier: workspace:*
+        version: link:../number-flow
     devDependencies:
       '@types/react':
-        specifier: ^18.0.0
+        specifier: ^18.3.3
         version: 18.3.3
       '@types/react-dom':
-        specifier: ^18.0.0
+        specifier: ^18.3.0
         version: 18.3.0
-      framer-motion:
-        specifier: ^11.3.19
-        version: 11.3.19(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
-        specifier: ^18.0.0
+        specifier: ^18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.0.0
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       tsup:
         specifier: ^8.2.4
@@ -56,6 +63,9 @@ importers:
       '@astrojs/tailwind':
         specifier: ^5.1.0
         version: 5.1.0(astro@4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4))(tailwindcss@3.4.10)
+      '@number-flow/react':
+        specifier: workspace:*
+        version: link:../packages/react
       '@radix-ui/react-tabs':
         specifier: ^1.1.0
         version: 1.1.0(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -77,9 +87,6 @@ importers:
       jotai:
         specifier: ^2.9.3
         version: 2.9.3(@types/react@18.3.3)(react@18.3.1)
-      motion-number:
-        specifier: workspace:*
-        version: link:../package
       react:
         specifier: ^18.3.1
         version: 18.3.1
