@@ -24,3 +24,8 @@ const maskSize =
 	`${correctedMaskWidth} ${maskHeight},` +
 	`${correctedMaskWidth} ${maskHeight},` +
 	`${correctedMaskWidth} ${maskHeight}`
+
+const styles = `
+`
+
+export default styles

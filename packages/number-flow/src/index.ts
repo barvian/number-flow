@@ -1,5 +1,6 @@
 import { createElement, ServerSafeHTMLElement } from './dom'
 import { formatToParts, type NumberFormatOptions, type Value } from './formatter'
+import styles from './styles'
 
 const OBSERVED_ATTRIBUTES = ['value', 'transition'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
@@ -9,6 +10,8 @@ const DEFAULT_TRANSITION: KeyframeAnimationOptions = {
 }
 
 type Args = Value | [Value, locales?: Intl.LocalesArgument, format?: NumberFormatOptions]
+
+let styleSheet: CSSStyleSheet | undefined
 
 class NumberFlow extends ServerSafeHTMLElement {
 	static observedAttributes = OBSERVED_ATTRIBUTES
@@ -42,9 +45,31 @@ class NumberFlow extends ServerSafeHTMLElement {
 		this.attachShadow({ mode: 'open' })
 	}
 
+	#pre?: Section
+	#integer?: Section
+	#fraction?: Section
+	#post?: Section
 	connectedCallback() {
-		const pre = new Section(this)
-		this.shadowRoot!.appendChild(pre.el)
+		if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
+			if (!styleSheet) {
+				styleSheet = new CSSStyleSheet()
+				styleSheet.replaceSync(styles)
+			}
+			this.shadowRoot!.adoptedStyleSheets = [styleSheet]
+		} else {
+			const style = document.createElement('style')
+			style.textContent = styles
+			this.shadowRoot!.appendChild(style)
+		}
+
+		this.#pre = new Section(this)
+		this.shadowRoot!.appendChild(this.#pre.el)
+		this.#integer = new Section(this)
+		this.shadowRoot!.appendChild(this.#integer.el)
+		this.#fraction = new Section(this)
+		this.shadowRoot!.appendChild(this.#fraction.el)
+		this.#post = new Section(this)
+		this.shadowRoot!.appendChild(this.#post.el)
 	}
 }
 
