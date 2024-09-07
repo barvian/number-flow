@@ -25,7 +25,7 @@ let styleSheet: CSSStyleSheet | undefined
 class NumberFlow extends ServerSafeHTMLElement {
 	static observedAttributes = OBSERVED_ATTRIBUTES
 
-	#internals: ElementInternals
+	readonly internals: ElementInternals
 	transition = DEFAULT_TRANSITION
 	#formatted?: string
 
@@ -40,7 +40,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 	set value(newVal: Args | undefined) {
 		if (newVal == null) {
 			this.#formatted = undefined
-			this.#internals.ariaLabel = null
+			this.internals.ariaLabel = null
 			return
 		}
 		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
@@ -48,14 +48,14 @@ class NumberFlow extends ServerSafeHTMLElement {
 			: formatToParts(newVal)
 
 		this.#formatted = formatted
-		this.#internals.ariaLabel = formatted
+		this.internals.ariaLabel = formatted
 	}
 
 	constructor() {
 		super()
 		// Don't check for declarative shadow DOM because we'll recreate it anyway:
 		this.attachShadow({ mode: 'open' })
-		this.#internals = this.attachInternals()
+		this.internals = this.attachInternals()
 	}
 
 	#pre?: Section
