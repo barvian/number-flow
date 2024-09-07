@@ -2,11 +2,6 @@ type ExcludeReadonly<T> = {
 	-readonly [K in keyof T as T[K] extends Readonly<any> ? never : K]: T[K]
 }
 
-export const ServerSafeHTMLElement =
-	typeof window === 'undefined' || typeof HTMLElement === 'undefined'
-		? (class {} as unknown as typeof HTMLElement)
-		: HTMLElement
-
 export type Em = `${number}em`
 export function getWidthInEm(element: HTMLElement): Em {
 	const { width, fontSize } = getComputedStyle(element)

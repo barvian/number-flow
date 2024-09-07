@@ -1,4 +1,4 @@
-import { createElement, ServerSafeHTMLElement } from './dom'
+import { createElement } from './dom'
 import {
 	formatToParts,
 	type KeyedDigitPart,
@@ -7,11 +7,12 @@ import {
 	type Format,
 	type Value
 } from './formatter'
+import { ServerSafeHTMLElement } from './ssr'
 import styles from './styles'
-
+export { renderInnerHTML } from './ssr'
 export type * from './formatter'
 
-const OBSERVED_ATTRIBUTES = ['transition'] as const
+const OBSERVED_ATTRIBUTES = ['value', 'transition'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 
 const DEFAULT_TRANSITION: KeyframeAnimationOptions = {
@@ -79,7 +80,6 @@ class NumberFlow extends ServerSafeHTMLElement {
 		this.shadowRoot!.appendChild(this.#fraction.el)
 		this.#post = new Section(this, 'post')
 		this.shadowRoot!.appendChild(this.#post.el)
-		this.shadowRoot!.appendChild(document.createTextNode('55'))
 	}
 }
 
