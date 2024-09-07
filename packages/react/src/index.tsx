@@ -10,24 +10,34 @@ function useConstant<T>(init: () => T) {
 }
 
 const NumberFlow = React.forwardRef<
-	typeof _NumberFlow,
-	React.HTMLAttributes<typeof _NumberFlow> & {
+	_NumberFlow,
+	React.HTMLAttributes<_NumberFlow> & {
 		value: Value
 		locales?: Intl.LocalesArgument
 		format?: Format
 	}
->(function NumberFlow({ value, locales, format, ...rest }, ref) {
-	const templateHTML = 'hi'
+>(function NumberFlow({ value, className, locales, format, ...rest }, _ref) {
+	const ref = React.useRef<_NumberFlow>(null)
+	React.useImperativeHandle(_ref, () => ref.current!, [])
+
+	React.useInsertionEffect(() => {
+		if (ref.current == null) return
+		ref.current.value = [value, locales, format]
+	}, [value, locales, format])
+
+	const templateHTML = typeof window === 'undefined' ? 'hi' : null
 
 	return (
 		// @ts-expect-error
-		<number-flow ref={ref} {...rest}>
-			<template
-				// @ts-expect-error non-standard Chrome API for backwards compatibility
-				shadowroot="open"
-				shadowrootmode="open"
-				dangerouslySetInnerHTML={{ __html: templateHTML }}
-			></template>
+		<number-flow ref={ref} class={className} {...rest} suppressHydrationWarning>
+			{templateHTML && (
+				<template
+					// @ts-expect-error non-standard Chrome API for backwards compatibility
+					shadowroot="open"
+					shadowrootmode="open"
+					dangerouslySetInnerHTML={{ __html: templateHTML }}
+				></template>
+			)}
 			{/* @ts-expect-error */}
 		</number-flow>
 	)
