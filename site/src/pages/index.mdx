@@ -6,8 +6,8 @@ description: Transition, format, and localize numbers with a ~3kB Framer Motion 
 import Pre from '../components/Pre.astro';
 export const components = {pre: Pre}
 import Demo from '../components/Demo'
-import DemoTransition from './_DemoTransition'
-import DemoIndicator from './_DemoIndicator'
+// import DemoTransition from './_DemoTransition'
+// import DemoIndicator from './_DemoIndicator'
 
 ```jsx
 // Basic usage
@@ -27,7 +27,7 @@ See [MDN's `Intl.NumberFormat()` reference](https://developer.mozilla.org/en-US/
 MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
 the transitions:
 
-<DemoTransition client:load defaultValue="code">
+{/* <DemoTransition client:load defaultValue="code"> */}
 ```jsx
 import { easeOut } from 'framer-motion'
 
@@ -44,7 +44,7 @@ import { easeOut } from 'framer-motion'
     }}
 />
 ```
-</DemoTransition>
+{/* </DemoTransition> */}
 
 One important note: **if you override `opacity`, make sure to give it the same duration as the layout animation**.
 This improves animation performance by ensuring Framer Motion doesn't remove exiting children
@@ -93,7 +93,7 @@ MotionNumber has four render props that can be used to synchronize other content
 
 These can be combined to create interesting effects:
 
-<DemoIndicator client:load>
+{/* <DemoIndicator client:load> */}
 ```jsx
 <MotionNumber
     value={value}
@@ -111,7 +111,7 @@ These can be combined to create interesting effects:
     )}
 />
 ```
-</DemoIndicator>
+{/* </DemoIndicator> */}
 
 These are also helpful because [LayoutGroup](https://www.framer.com/motion/layout-group/) doesn't currently
 work with MotionNumber; see the note in [limitations](#limitations).

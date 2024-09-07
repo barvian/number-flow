@@ -1,6 +1,15 @@
 import { createElement, ServerSafeHTMLElement } from './dom'
-import { formatToParts, type NumberFormatOptions, type Value } from './formatter'
+import {
+	formatToParts,
+	type KeyedDigitPart,
+	type KeyedNumberPart,
+	type KeyedSymbolPart,
+	type Format,
+	type Value
+} from './formatter'
 import styles from './styles'
+
+export type * from './formatter'
 
 const OBSERVED_ATTRIBUTES = ['value', 'transition'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
@@ -9,7 +18,7 @@ const DEFAULT_TRANSITION: KeyframeAnimationOptions = {
 	duration: 1
 }
 
-type Args = Value | [Value, locales?: Intl.LocalesArgument, format?: NumberFormatOptions]
+type Args = Value | [Value, locales?: Intl.LocalesArgument, format?: Format]
 
 let styleSheet: CSSStyleSheet | undefined
 
@@ -19,7 +28,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 	transition = DEFAULT_TRANSITION
 	#formatted?: string
 
-	attributeChangedCallback(attr: ObservedAttribute, _: string, newValue: string) {
+	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
 		this[attr] = JSON.parse(newValue)
 	}
 
@@ -62,13 +71,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.shadowRoot!.appendChild(style)
 		}
 
-		this.#pre = new Section(this)
+		this.#pre = new Section(this, 'pre')
 		this.shadowRoot!.appendChild(this.#pre.el)
-		this.#integer = new Section(this)
+		this.#integer = new Section(this, 'integer')
 		this.shadowRoot!.appendChild(this.#integer.el)
-		this.#fraction = new Section(this)
+		this.#fraction = new Section(this, 'fraction')
 		this.shadowRoot!.appendChild(this.#fraction.el)
-		this.#post = new Section(this)
+		this.#post = new Section(this, 'post')
 		this.shadowRoot!.appendChild(this.#post.el)
 	}
 }
@@ -76,9 +85,49 @@ class NumberFlow extends ServerSafeHTMLElement {
 class Section {
 	readonly el: HTMLDivElement
 
-	constructor(private flow: NumberFlow) {
-		this.el = createElement('div', { part: 'pre' })
+	constructor(
+		private flow: NumberFlow,
+		part: string
+	) {
+		this.el = createElement('div', { part })
 	}
+
+	#children: Map<string, Digit | Sym> = new Map()
+	set value(value: KeyedNumberPart[]) {
+		// Mark all existing children as exiting:
+		// this.#children.forEach((char) => (char.exiting = true))
+		value.forEach((char) => {
+			if (this.#children.has(char.key)) {
+				// this.#children.get(char.key)!.value = char.value
+			}
+		})
+	}
+}
+
+class Digit {
+	readonly el: HTMLSpanElement
+
+	constructor(
+		private flow: NumberFlow,
+		private section: Section
+	) {
+		this.el = createElement('span', { part: 'digit' })
+	}
+
+	set value(value: KeyedDigitPart) {}
+}
+
+class Sym {
+	readonly el: HTMLSpanElement
+
+	constructor(
+		private flow: NumberFlow,
+		private section: Section
+	) {
+		this.el = createElement('span', { part: 'symbol' })
+	}
+
+	set value(value: KeyedSymbolPart) {}
 }
 
 export default NumberFlow

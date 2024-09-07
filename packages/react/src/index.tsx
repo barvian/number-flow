@@ -1,13 +1,6 @@
 import * as React from 'react'
-import _NumberFlow, {
-	renderTemplateToString,
-	type Value,
-	type Locales,
-	type Format
-} from 'number-flow'
-
-const useIsomorphicLayoutEffect =
-	typeof window === 'undefined' ? React.useEffect : React.useLayoutEffect
+import _NumberFlow, { type Value, type Format } from 'number-flow'
+export type * from 'number-flow'
 
 function useConstant<T>(init: () => T) {
 	const ref = React.useRef<T | null>(null)
@@ -16,38 +9,28 @@ function useConstant<T>(init: () => T) {
 	return ref.current
 }
 
-export default function NumberFlow({
-	value,
-	locales,
-	format
-}: {
-	value: Value
-	locales?: Locales
-	format?: Format
-}) {
-	const ref = React.useRef<HTMLSpanElement>(null)
-	const templateHTML = useConstant(() => renderTemplateToString(value))
-
-	const flow = React.useRef<_NumberFlow>()
-	useIsomorphicLayoutEffect(() => {
-		if (!flow.current && ref.current) flow.current = new _NumberFlow(ref.current)
-	}, [])
-	useIsomorphicLayoutEffect(() => {
-		flow.current?.update((flow) => {
-			flow.value = value
-			flow.format = format
-			flow.locales = locales
-		})
-	}, [value, format, locales])
+const NumberFlow = React.forwardRef<
+	typeof _NumberFlow,
+	React.HTMLAttributes<typeof _NumberFlow> & {
+		value: Value
+		locales?: Intl.LocalesArgument
+		format?: Format
+	}
+>(function NumberFlow({ value, locales, format, ...rest }, ref) {
+	const templateHTML = 'hi'
 
 	return (
-		<span ref={ref}>
+		// @ts-expect-error
+		<number-flow ref={ref} {...rest}>
 			<template
 				// @ts-expect-error non-standard Chrome API for backwards compatibility
 				shadowroot="open"
 				shadowrootmode="open"
 				dangerouslySetInnerHTML={{ __html: templateHTML }}
 			></template>
-		</span>
+			{/* @ts-expect-error */}
+		</number-flow>
 	)
-}
+})
+
+export default NumberFlow

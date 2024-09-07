@@ -9,24 +9,20 @@ type SymbolPart = {
 	type: Exclude<NumberPartType, 'integer' | 'fraction'>
 	value: string
 }
-type NumberPart = DigitPart | SymbolPart
+export type NumberPart = DigitPart | SymbolPart
 
 type KeyedPart = { key: string }
-type KeyedDigitPart = DigitPart & KeyedPart
-type KeyedSymbolPart = SymbolPart & KeyedPart
-type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
+export type KeyedDigitPart = DigitPart & KeyedPart
+export type KeyedSymbolPart = SymbolPart & KeyedPart
+export type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
 
-export type NumberFormatOptions = Omit<Intl.NumberFormatOptions, 'notation'> & {
+export type Format = Omit<Intl.NumberFormatOptions, 'notation'> & {
 	notation?: Exclude<Intl.NumberFormatOptions['notation'], 'scientific' | 'engineering'>
 }
 
 export type Value = Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0]
 
-export function formatToParts(
-	value: Value,
-	locales?: Intl.LocalesArgument,
-	format?: NumberFormatOptions
-) {
+export function formatToParts(value: Value, locales?: Intl.LocalesArgument, format?: Format) {
 	const formatter = new Intl.NumberFormat(locales, format)
 	const parts = formatter.formatToParts(value)
 

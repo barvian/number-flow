@@ -1,4 +1,4 @@
-import MotionNumber, { type MotionNumberProps } from 'motion-number'
+import NumberFlow, { type Format } from '@number-flow/react'
 import useCycle from '../hooks/useCycle'
 import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
@@ -41,7 +41,7 @@ const FORMATS = [
 		// style: "percent",
 		signDisplay: 'always'
 	}
-] as MotionNumberProps['format'][]
+] as Format[]
 
 export default function Hero({
 	description,
@@ -78,10 +78,10 @@ export default function Hero({
 			className="~mb-16/24 container flex w-full flex-col items-center gap-2 overflow-x-clip text-center"
 		>
 			<h1 className="text-sm font-medium">
-				MotionNumber <span className="text-zinc-500 dark:text-zinc-400">v{version}</span>
+				NumberFlow <span className="text-zinc-500 dark:text-zinc-400">v{version}</span>
 			</h1>
 			<div className="~mt-0/0.5 ~mb-0.5/1">
-				<MotionNumber
+				<NumberFlow
 					className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
 					style={{ lineHeight: 0.85 }}
 					value={value}

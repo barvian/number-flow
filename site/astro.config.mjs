@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config'
 import { readFileSync } from 'node:fs'
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
-import pkg from '/../package/package.json'
+import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/static'
 
