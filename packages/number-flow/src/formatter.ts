@@ -22,8 +22,14 @@ export type Format = Omit<Intl.NumberFormatOptions, 'notation'> & {
 
 export type Value = Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0]
 
+// You're supposed to cache these between uses:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
+const formatters: Record<string, Intl.NumberFormat> = {}
+
 export function formatToParts(value: Value, locales?: Intl.LocalesArgument, format?: Format) {
-	const formatter = new Intl.NumberFormat(locales, format)
+	const formatter = (formatters[
+		`${locales ? JSON.stringify(locales) : ''}:${format ? JSON.stringify(format) : ''}`
+	] ??= new Intl.NumberFormat(locales, format))
 	const parts = formatter.formatToParts(value)
 
 	const pre: KeyedNumberPart[] = []
