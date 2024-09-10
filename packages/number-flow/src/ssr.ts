@@ -12,7 +12,7 @@ export const renderInnerHTML = (value: Value, locales?: Intl.LocalesArgument, fo
         shadowroot="open"
         shadowrootmode="open"
     >
-    <style>:host { display: inline-block; }</style>
+    <style>:host { display: inline-flex; }</style>
     ${formatted}
     </template>`
 }

@@ -25,23 +25,43 @@ const maskSize =
 	`${correctedMaskWidth} ${maskHeight},` +
 	`${correctedMaskWidth} ${maskHeight}`
 
-export const host = `
+const styles = `
 :host {
 	display: inline-flex;
+	direction: ltr;
 	position: relative;
+	isolation: isolate;
+	user-select: none;
+	pointer-events: none;
 }
-`
-
-const styles = `
-${host}
 
 .label {
 	position: absolute;
 	left: 0;
 	top: 0;
-	min-width: 100%;
-	min-height: 100%;
+	font-kerning: none;
 	color: transparent !important;
+	z-index: -1;
+	user-select: text;
+	pointer-events: auto;
+}
+
+.section {
+	display: inline-flex;
+	user-select: none;
+}
+
+.section--justify-left {
+	justify-content: left;
+}
+
+.section--justify-right {
+	justify-content: right;
+}
+
+.section__inner {
+	display: inline-flex;
+	justify-content: inherit;
 }
 `
 

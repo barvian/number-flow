@@ -11,7 +11,6 @@ import { ServerSafeHTMLElement } from './ssr'
 import styles from './styles'
 export { renderInnerHTML } from './ssr'
 export type * from './formatter'
-import clsx from 'clsx/lite'
 
 const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
@@ -70,13 +69,37 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#label = createElement('span', { className: 'label' })
 			this.shadowRoot!.appendChild(this.#label)
 
-			this.#pre = new Section(this, { part: 'pre', justify: 'right', exitMode: 'pop' })
+			this.#pre = new Section(this, {
+				part: 'pre',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'right',
+				exitMode: 'pop'
+			})
 			this.shadowRoot!.appendChild(this.#pre.el)
-			this.#integer = new Section(this, { part: 'integer', justify: 'right', exitMode: 'sync' })
+			this.#integer = new Section(this, {
+				part: 'integer',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'right',
+				exitMode: 'sync'
+			})
 			this.shadowRoot!.appendChild(this.#integer.el)
-			this.#fraction = new Section(this, { part: 'fraction', justify: 'left', exitMode: 'sync' })
+			this.#fraction = new Section(this, {
+				part: 'fraction',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'left',
+				exitMode: 'sync'
+			})
 			this.shadowRoot!.appendChild(this.#fraction.el)
-			this.#post = new Section(this, { part: 'post', justify: 'left', exitMode: 'pop' })
+			this.#post = new Section(this, {
+				part: 'post',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'left',
+				exitMode: 'pop'
+			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		}
 
@@ -84,8 +107,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 			? formatToParts(...newVal)
 			: formatToParts(newVal)
 
-		this.#label!.textContent = this.#formatted = formatted
+		this.#label!.textContent = formatted
+		this.#pre!.parts = pre
+		this.#integer!.parts = integer
+		this.#fraction!.parts = fraction
+		this.#post!.parts = post
 
+		this.#formatted = formatted
 		this.#created = true
 	}
 }
@@ -100,61 +128,65 @@ class Section {
 	readonly exitMode: ExitMode
 
 	constructor(
-		private flow: NumberFlow,
-		{
-			justify,
-			exitMode,
-			className,
-			...opts
-		}: { justify: Justify; exitMode: ExitMode } & HTMLProps<'section'>
+		readonly flow: NumberFlow,
+		{ justify, exitMode, ...opts }: { justify: Justify; exitMode: ExitMode } & HTMLProps<'section'>
 	) {
 		this.justify = justify
 		this.exitMode = exitMode
 
-		this.#inner = createElement('div', { className: 'section__inner' })
-		this.el = createElement(
-			'div',
-			{ ...opts, className: clsx(className, `section section--justify-${justify}`) },
-			[this.#inner]
-		)
+		// Zero width space prevents the height from collapsing when no chars:
+		this.#inner = createElement('div', { className: 'section__inner', innerHTML: '&#8203;' })
+		this.el = createElement('div', { ...opts, className: `section section--justify-${justify}` }, [
+			this.#inner
+		])
 	}
 
 	#children: Map<string, Digit | Sym> = new Map()
-	set value(value: KeyedNumberPart[]) {
-		// Mark all existing children as exiting:
-		// this.#children.forEach((char) => (char.exiting = true))
-		value.forEach((char) => {
-			if (this.#children.has(char.key)) {
-				// this.#children.get(char.key)!.value = char.value
+	set parts(parts: KeyedNumberPart[]) {
+		const len = parts.length
+		const right = this.justify === 'right'
+		for (let i = right ? len - 1 : 0; right ? i >= 0 : i < len; right ? i-- : i++) {
+			const part = parts[i]!
+
+			// If this child already exists, update it:
+			if (this.#children.has(part.key)) {
+				const comp = this.#children.get(part.key)!
+				comp.part = part
+			} else {
+				// Otherwise, create a new one:
+				const comp =
+					part.type === 'integer' || part.type === 'fraction' ? new Digit(this) : new Sym(this)
+				comp.part = part
+				this.#children.set(part.key, comp)
+
+				this.#inner[right ? 'prepend' : 'append'](comp.el)
 			}
-		})
+		}
 	}
 }
 
 class Digit {
 	readonly el: HTMLSpanElement
 
-	constructor(
-		private flow: NumberFlow,
-		private section: Section
-	) {
+	constructor(readonly section: Section) {
 		this.el = createElement('span', { part: 'digit' })
 	}
 
-	set value(value: KeyedDigitPart) {}
+	set part(part: KeyedDigitPart) {
+		this.el.textContent = part.value + ''
+	}
 }
 
 class Sym {
 	readonly el: HTMLSpanElement
 
-	constructor(
-		private flow: NumberFlow,
-		private section: Section
-	) {
+	constructor(readonly section: Section) {
 		this.el = createElement('span', { part: 'symbol' })
 	}
 
-	set value(value: KeyedSymbolPart) {}
+	set part(part: KeyedSymbolPart) {
+		this.el.textContent = part.value
+	}
 }
 
 export default NumberFlow

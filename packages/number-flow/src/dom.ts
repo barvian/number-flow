@@ -7,7 +7,7 @@ export type HTMLProps<K extends keyof HTMLElementTagNameMap> = Partial<
 >
 
 export type Em = `${number}em`
-export function getWidthInEm(element: HTMLElement): Em {
+export function getEmWidth(element: HTMLElement): Em {
 	const { width, fontSize } = getComputedStyle(element)
 	return `${parseFloat(width) / parseFloat(fontSize)}em`
 }
