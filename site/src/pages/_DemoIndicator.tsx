@@ -1,7 +1,7 @@
 import Demo, { type DemoProps } from '../components/Demo'
 import useCycle from '../hooks/useCycle'
-import MotionNumber from 'motion-number'
-import { motion } from 'framer-motion'
+// import MotionNumber from 'motion-number'
+// import { motion } from 'framer-motion'
 
 const NUMBERS = [124.23, 41.75, 2125.95]
 const DIFFS = [0.0564, -0.114, 0.0029]
@@ -18,7 +18,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 	return (
 		<Demo {...rest} code={children} onClick={onClick}>
 			<span className="flex items-center gap-2">
-				<MotionNumber
+				{/* <MotionNumber
 					value={value}
 					className="~text-xl/4xl font-semibold [--mask-height:0.25em]"
 					format={{ style: 'currency', currency: 'USD' }}
@@ -50,7 +50,7 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 							)}
 						/>
 					)}
-				/>
+				/> */}
 			</span>
 		</Demo>
 	)

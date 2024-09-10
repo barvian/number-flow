@@ -1,4 +1,4 @@
-import { createElement } from './dom'
+import { createElement, type HTMLProps } from './dom'
 import {
 	formatToParts,
 	type KeyedDigitPart,
@@ -11,11 +11,12 @@ import { ServerSafeHTMLElement } from './ssr'
 import styles from './styles'
 export { renderInnerHTML } from './ssr'
 export type * from './formatter'
+import clsx from 'clsx/lite'
 
-const OBSERVED_ATTRIBUTES = ['value', 'transition'] as const
+const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 
-const DEFAULT_TRANSITION: KeyframeAnimationOptions = {
+const DEFAULT_TIMING: EffectTiming = {
 	duration: 1
 }
 
@@ -26,7 +27,7 @@ let styleSheet: CSSStyleSheet | undefined
 class NumberFlow extends ServerSafeHTMLElement {
 	static observedAttributes = OBSERVED_ATTRIBUTES
 
-	transition = DEFAULT_TRANSITION
+	timing = DEFAULT_TIMING
 	#formatted?: string
 
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
@@ -37,60 +38,85 @@ class NumberFlow extends ServerSafeHTMLElement {
 		return this.#formatted
 	}
 
+	#created = false
+	#pre?: Section
+	#integer?: Section
+	#fraction?: Section
+	#post?: Section
+	#label?: HTMLSpanElement
+
 	set value(newVal: Args | undefined) {
 		if (newVal == null) {
 			this.#formatted = undefined
 			return
 		}
+
+		if (!this.#created) {
+			// Don't check for declarative shadow DOM because we'll recreate it anyway:
+			this.attachShadow({ mode: 'open' })
+
+			if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
+				if (!styleSheet) {
+					styleSheet = new CSSStyleSheet()
+					styleSheet.replaceSync(styles)
+				}
+				this.shadowRoot!.adoptedStyleSheets = [styleSheet]
+			} else {
+				const style = document.createElement('style')
+				style.textContent = styles
+				this.shadowRoot!.appendChild(style)
+			}
+
+			this.#label = createElement('span', { className: 'label' })
+			this.shadowRoot!.appendChild(this.#label)
+
+			this.#pre = new Section(this, { part: 'pre', justify: 'right', exitMode: 'pop' })
+			this.shadowRoot!.appendChild(this.#pre.el)
+			this.#integer = new Section(this, { part: 'integer', justify: 'right', exitMode: 'sync' })
+			this.shadowRoot!.appendChild(this.#integer.el)
+			this.#fraction = new Section(this, { part: 'fraction', justify: 'left', exitMode: 'sync' })
+			this.shadowRoot!.appendChild(this.#fraction.el)
+			this.#post = new Section(this, { part: 'post', justify: 'left', exitMode: 'pop' })
+			this.shadowRoot!.appendChild(this.#post.el)
+		}
+
 		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
 			? formatToParts(...newVal)
 			: formatToParts(newVal)
 
-		this.#formatted = formatted
-	}
+		this.#label!.textContent = this.#formatted = formatted
 
-	constructor() {
-		super()
-		// Don't check for declarative shadow DOM because we'll recreate it anyway:
-		this.attachShadow({ mode: 'open' })
-	}
-
-	#pre?: Section
-	#integer?: Section
-	#fraction?: Section
-	#post?: Section
-	connectedCallback() {
-		if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
-			if (!styleSheet) {
-				styleSheet = new CSSStyleSheet()
-				styleSheet.replaceSync(styles)
-			}
-			this.shadowRoot!.adoptedStyleSheets = [styleSheet]
-		} else {
-			const style = document.createElement('style')
-			style.textContent = styles
-			this.shadowRoot!.appendChild(style)
-		}
-
-		this.#pre = new Section(this, 'pre')
-		this.shadowRoot!.appendChild(this.#pre.el)
-		this.#integer = new Section(this, 'integer')
-		this.shadowRoot!.appendChild(this.#integer.el)
-		this.#fraction = new Section(this, 'fraction')
-		this.shadowRoot!.appendChild(this.#fraction.el)
-		this.#post = new Section(this, 'post')
-		this.shadowRoot!.appendChild(this.#post.el)
+		this.#created = true
 	}
 }
 
+type Justify = 'left' | 'right'
+type ExitMode = 'sync' | 'pop'
+
 class Section {
 	readonly el: HTMLDivElement
+	#inner: HTMLDivElement
+	readonly justify: Justify
+	readonly exitMode: ExitMode
 
 	constructor(
 		private flow: NumberFlow,
-		part: string
+		{
+			justify,
+			exitMode,
+			className,
+			...opts
+		}: { justify: Justify; exitMode: ExitMode } & HTMLProps<'section'>
 	) {
-		this.el = createElement('div', { part })
+		this.justify = justify
+		this.exitMode = exitMode
+
+		this.#inner = createElement('div', { className: 'section__inner' })
+		this.el = createElement(
+			'div',
+			{ ...opts, className: clsx(className, `section section--justify-${justify}`) },
+			[this.#inner]
+		)
 	}
 
 	#children: Map<string, Digit | Sym> = new Map()

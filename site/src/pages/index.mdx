@@ -1,19 +1,17 @@
 ---
 layout: ./_Layout.astro
-title: MotionNumber for Framer Motion
-description: Transition, format, and localize numbers with a ~3kB Framer Motion component. Accessible and customizable.
+title: Number Flow
+description: Transition, format, and localize numbers. Accessible and customizable.
 ---
 import Pre from '../components/Pre.astro';
 export const components = {pre: Pre}
 import Demo from '../components/Demo'
-// import DemoTransition from './_DemoTransition'
-// import DemoIndicator from './_DemoIndicator'
 
 ```jsx
 // Basic usage
-import MotionNumber from 'motion-number'
+import NumberFlow from '@number-flow/react'
 
-<MotionNumber
+<NumberFlow
     value={value}
     format={{ notation: 'compact' }} // Intl.NumberFormat() options
     locales="en-US" // Intl.NumberFormat() locales
@@ -24,39 +22,27 @@ See [MDN's `Intl.NumberFormat()` reference](https://developer.mozilla.org/en-US/
 
 ## Customizing
 
-MotionNumber is a [Motion component](https://www.framer.com/motion/component/), so it accepts a `transition` prop to customize
-the transitions:
+Number Flow accepts a `timings` prop to customize the transitions. See [MDN's `KeyframeEffect` reference](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) for a full list of options.
 
 {/* <DemoTransition client:load defaultValue="code"> */}
 ```jsx
 import { easeOut } from 'framer-motion'
 
-<MotionNumber
-    transition={{
-        // Applied to layout animations on individual characters:
-        layout: { type: 'spring', duration: 0.7, bounce: 0 },
-        // Used for the digit animations:
-        y: { type: 'spring', duration: 0.7, bounce: 0.25 },
-
-        // Opacity applies to entering/exiting characters.
-        // Note the use of the times array, explained below:
-        opacity: { duration: 0.7, ease: easeOut, times: [0, 0.3] } // 0.3s perceptual duration
+<NumberFlow
+    timings={{
+        x: { duration: 700, easing: 'ease-out' },
+        y: { duration: 700, easing: 'ease-out' },
+        opacity: { duration: 300, easing: 'ease' }
     }}
 />
 ```
 {/* </DemoTransition> */}
 
-One important note: **if you override `opacity`, make sure to give it the same duration as the layout animation**.
-This improves animation performance by ensuring Framer Motion doesn't remove exiting children
-until the layout animation ends. If you want the opacity transitions to look shorter than the layout animations,
-you can use the [`times` array](https://www.framer.com/motion/animation/##keyframes) with the format `[0, perceptualDuration]`,
-as shown above. Also, make sure to use an [easing function](https://www.framer.com/motion/easing-functions/) rather than strings like `'linear'` or `'easeIn'`,
-as they seem to work better. If you're using [`<MotionConfig>`](https://www.framer.com/motion/motion-config/) to set a `transition`, make sure to check the
-opacity settings there as well.
+For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs).
 
 ---
 
-Beyond the transitions, there's some CSS properties you can use to customize the display:
+There's also some CSS properties you can use to customize the component:
 
 ### `--mask-height`/`--mask-width`
 
@@ -67,72 +53,12 @@ These adjust the height and width of the gradient fade-out masks at the edges of
 
 In my opinion, the transitions look better with small vertical gaps between numbers, because it reduces the distance
 they travel.
-I recommend using the smallest `line-height` that fits all your component's characters:
-
-```jsx
-<MotionNumber style={{ lineHeight: 0.8 }} /* ... */>
-```
-
-The exact value will depend on your font and formatting options. MotionNumber uses a safe default `line-height` of 1, 
-set through an inline style for simplicity. This means to override it globally you'll have to use `!important` (sorry about that; React 19 should clean this up):
-
-```css
-[data-motion-number] {
-    line-height: 0.8 !important;
-}
-```
-
-## Grouping
-
-MotionNumber has four render props that can be used to synchronize other content with the number transitions:
-
-* `before` adds elements before MotionNumber
-* `first` prepends elements to MotionNumber
-* `last` appends elements to MotionNumber
-* `after` adds elements after MotionNumber
-
-These can be combined to create interesting effects:
-
-{/* <DemoIndicator client:load> */}
-```jsx
-<MotionNumber
-    value={value}
-    format={{ style: 'currency', currency: 'USD' }}
-    after={() => (
-        <MotionNumber
-            value={diff}
-            format={{ style: 'percent', maximumFractionDigits: 2 }}
-            animate={{ backgroundColor: diff > 0 ? '#34d399' : '#ef4444' }}
-            style={{ borderRadius: 999 }}
-            first={() => (
-                <Arrow />
-            )}
-        />
-    )}
-/>
-```
-{/* </DemoIndicator> */}
-
-These are also helpful because [LayoutGroup](https://www.framer.com/motion/layout-group/) doesn't currently
-work with MotionNumber; see the note in [limitations](#limitations).
-
-## LazyMotion
-
-If you're using [`<LazyMotion>`](https://www.framer.com/motion/lazy-motion/), you can import the lazy version of
-MotionNumber with:
-
-```js
-import MotionNumber from 'motion-number/lazy'
-```
-
-The API is the same.
+I recommend using the smallest `line-height` that fits all your component's characters (i.e. `0.8`).
 
 ## Limitations
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't currently supported
 * Selected text inside the number will not respect color changes from `::selection`, if any
-* `<LayoutGroup>` doesn't currently work with MotionNumber and causes noticeable jitters in the number animations.
-This is likely due to MotionNumber's unusual two-step rendering process, where new digits are added before the layout animations occur.
 
 ## Credits
 

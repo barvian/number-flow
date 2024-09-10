@@ -2,6 +2,10 @@ type ExcludeReadonly<T> = {
 	-readonly [K in keyof T as T[K] extends Readonly<any> ? never : K]: T[K]
 }
 
+export type HTMLProps<K extends keyof HTMLElementTagNameMap> = Partial<
+	ExcludeReadonly<HTMLElementTagNameMap[K]> & { part: string }
+>
+
 export type Em = `${number}em`
 export function getWidthInEm(element: HTMLElement): Em {
 	const { width, fontSize } = getComputedStyle(element)
@@ -10,9 +14,7 @@ export function getWidthInEm(element: HTMLElement): Em {
 
 export const createElement = <K extends keyof HTMLElementTagNameMap>(
 	tagName: K,
-	optionsOrChildren?:
-		| Partial<ExcludeReadonly<HTMLElementTagNameMap[K]> & { part: string }>
-		| Node[],
+	optionsOrChildren?: HTMLProps<K> | Node[],
 	_children?: Node[]
 ): HTMLElementTagNameMap[K] => {
 	const element = document.createElement(tagName)

@@ -2,7 +2,7 @@
 
 Smooth transitions for `Intl.NumberFormat`.
 
-[![Number Flow](https://motion-number.barvian.me/preview.webp)](https://motion-number.barvian.me)
+[![MotionNumber for Framer Motion](https://motion-number.barvian.me/preview.webp)](https://motion-number.barvian.me)
 
 [![NPM Version](https://img.shields.io/npm/v/motion-number.svg)](https://npmjs.com/package/motion-number)
 [![Bundle size](https://badgen.net/bundlephobia/minzip/motion-number@latest)](https://bundlephobia.com/package/motion-number@latest)

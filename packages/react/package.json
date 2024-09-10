@@ -11,7 +11,7 @@
 	},
 	"description": "Smooth transitions for Intl.NumberFormat.",
 	"license": "MIT",
-	"homepage": "https://number-flow.barvian.me/",
+	"homepage": "https://number-flow.barvian.me/react",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/barvian/number-flow",
@@ -51,7 +51,7 @@
 		"prepublishOnly": "pnpm run build"
 	},
 	"dependencies": {
-		"number-flow": "workspace:*"
+		"number-flow": "workspace:^"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.3",

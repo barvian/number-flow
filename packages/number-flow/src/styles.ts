@@ -25,9 +25,23 @@ const maskSize =
 	`${correctedMaskWidth} ${maskHeight},` +
 	`${correctedMaskWidth} ${maskHeight}`
 
-const styles = `
+export const host = `
 :host {
-	display: inline-block;
+	display: inline-flex;
+	position: relative;
+}
+`
+
+const styles = `
+${host}
+
+.label {
+	position: absolute;
+	left: 0;
+	top: 0;
+	min-width: 100%;
+	min-height: 100%;
+	color: transparent !important;
 }
 `
 

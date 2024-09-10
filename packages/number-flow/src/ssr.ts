@@ -7,6 +7,7 @@ export const ServerSafeHTMLElement =
 
 export const renderInnerHTML = (value: Value, locales?: Intl.LocalesArgument, format?: Format) => {
 	const { formatted } = formatToParts(value, locales, format)
+	// shadowroot= for older Chrome, shadowrootmode = standard
 	return `<template
         shadowroot="open"
         shadowrootmode="open"
