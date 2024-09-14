@@ -50,10 +50,12 @@ class NumberFlow extends ServerSafeHTMLElement {
 			return
 		}
 
+		// Initialize if needed
 		if (!this.#created) {
 			// Don't check for declarative shadow DOM because we'll recreate it anyway:
 			this.attachShadow({ mode: 'open' })
 
+			// Add stylesheet
 			if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
 				if (!styleSheet) {
 					styleSheet = new CSSStyleSheet()
@@ -135,14 +137,32 @@ class Section {
 		this.exitMode = exitMode
 
 		// Zero width space prevents the height from collapsing when no chars:
-		this.#inner = createElement('div', { className: 'section__inner', innerHTML: '&#8203;' })
-		this.el = createElement('div', { ...opts, className: `section section--justify-${justify}` }, [
-			this.#inner
-		])
+		this.#inner = createElement('div', {
+			className: 'section__inner',
+			innerHTML: '&#8203;'
+		})
+		this.el = createElement(
+			'div',
+			{
+				...opts,
+				className: `section section--justify-${justify}`
+			},
+			[this.#inner]
+		)
 	}
 
+	// All children in the DOM:
 	#children: Map<string, Digit | Sym> = new Map()
 	set parts(parts: KeyedNumberPart[]) {
+		// Find removed children
+		this.#children.forEach((comp) => {
+			if (!parts.find((p) => p.key === comp.part?.key)) {
+				comp.el.remove()
+				this.#children.delete(comp.part!.key)
+			}
+		})
+
+		// Add or update other parts:
 		const len = parts.length
 		const right = this.justify === 'right'
 		for (let i = right ? len - 1 : 0; right ? i >= 0 : i < len; right ? i-- : i++) {
@@ -167,25 +187,45 @@ class Section {
 
 class Digit {
 	readonly el: HTMLSpanElement
+	#part?: KeyedDigitPart
 
 	constructor(readonly section: Section) {
 		this.el = createElement('span', { part: 'digit' })
 	}
 
+	get part(): KeyedDigitPart | undefined {
+		return this.#part
+	}
+
+	#created = false
 	set part(part: KeyedDigitPart) {
+		// @ts-expect-error wrong types
+		this.el.part = `digit ${part.type} ${part.value}`
+		if (!this.#created) {
+			this.el.textContent = part.value + ''
+			this.#created = true
+		}
 		this.el.textContent = part.value + ''
+
+		this.#part = part
 	}
 }
 
 class Sym {
 	readonly el: HTMLSpanElement
+	#part?: KeyedSymbolPart
 
 	constructor(readonly section: Section) {
 		this.el = createElement('span', { part: 'symbol' })
 	}
 
+	get part(): KeyedSymbolPart | undefined {
+		return this.#part
+	}
+
 	set part(part: KeyedSymbolPart) {
 		this.el.textContent = part.value
+		this.#part = part
 	}
 }
 
