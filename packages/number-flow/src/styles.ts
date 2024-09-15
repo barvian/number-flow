@@ -1,6 +1,6 @@
 // Build the mask for the numbers. Technique taken from:
 // https://expensive.toys/blog/blur-vignette
-const maskHeight = 'var(--mask-height, 0.15em)'
+export const maskHeight = 'var(--mask-height, 0.15em)'
 const maskWidth = 'var(--mask-width, 0.5em)'
 const correctedMaskWidth = `calc(${maskWidth} / var(--scale-x-correction, 1))`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
@@ -51,6 +51,10 @@ const styles = `
 	user-select: none;
 }
 
+.section--masked {
+	overflow: clip;
+}
+
 .section--justify-left {
 	justify-content: left;
 }
@@ -62,11 +66,14 @@ const styles = `
 .section__inner {
 	display: inline-flex;
 	justify-content: inherit;
-	position: relative; /* for .section__exiting */
+	/* for .section__exiting: */
+	position: relative; 
+	isolation: isolate;
 }
 
 .section__exiting {
 	position: absolute !important;
+	z-index: -1;
 	top: 0;
 	opacity: 0;
 }

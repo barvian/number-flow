@@ -11,7 +11,7 @@ const raf = (fn: FrameRequestCallback) => {
 
 export default raf
 
-export const useRafContext = (c: WeakKey, fn: () => void) => {
+export const scopeRaf = (c: WeakKey, fn: () => void) => {
 	if (c && !rafs.has(c)) rafs.set(c, [])
 	ctx = c
 	fn()

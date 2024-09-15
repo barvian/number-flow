@@ -17,6 +17,7 @@ const NumberFlow = React.forwardRef<
 			ref={ref}
 			class={className}
 			{...rest}
+			// Should be able to do value={[value,...]} in React 19:
 			value={typeof window === 'undefined' ? undefined : JSON.stringify([value, locales, format])}
 			suppressHydrationWarning
 			dangerouslySetInnerHTML={

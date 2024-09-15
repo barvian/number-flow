@@ -6,12 +6,6 @@ export type HTMLProps<K extends keyof HTMLElementTagNameMap> = Partial<
 	ExcludeReadonly<HTMLElementTagNameMap[K]> & { part: string }
 >
 
-export type Em = `${number}em`
-export function getEmWidth(element: HTMLElement): Em {
-	const { width, fontSize } = getComputedStyle(element)
-	return `${parseFloat(width) / parseFloat(fontSize)}em`
-}
-
 export const createElement = <K extends keyof HTMLElementTagNameMap>(
 	tagName: K,
 	optionsOrChildren?: HTMLProps<K> | Node[],

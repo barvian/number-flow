@@ -9,9 +9,9 @@ import {
 	type Value
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles from './styles'
+import styles, { maskHeight } from './styles'
 export { renderInnerHTML } from './ssr'
-import raf, { getRafs, useRafContext } from './util/raf'
+import raf, { getRafs, scopeRaf } from './util/raf'
 export type * from './formatter'
 
 const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
@@ -88,6 +88,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#integer = new Section(this, integer, {
 				part: 'integer',
 				inert: true,
+				masked: true,
 				ariaHidden: 'true',
 				justify: 'right',
 				exitMode: 'sync'
@@ -96,6 +97,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#fraction = new Section(this, fraction, {
 				part: 'fraction',
 				inert: true,
+				masked: true,
 				ariaHidden: 'true',
 				justify: 'left',
 				exitMode: 'sync'
@@ -110,7 +112,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
-			useRafContext(this, () => {
+			scopeRaf(this, () => {
 				// Update otherwise:
 				const sectionFlips: ReturnType<(typeof Section)['prototype']['update']>[] = []
 				sectionFlips.push(this.#pre!.update(pre))
@@ -141,6 +143,7 @@ class Section {
 	#inner: HTMLDivElement
 	readonly justify: Justify
 	readonly exitMode: ExitMode
+	readonly masked: boolean
 
 	// All children in the DOM:
 	#children: Map<string, Char>
@@ -148,10 +151,16 @@ class Section {
 	constructor(
 		readonly flow: NumberFlow,
 		parts: KeyedNumberPart[],
-		{ justify, exitMode, ...opts }: { justify: Justify; exitMode: ExitMode } & HTMLProps<'section'>
+		{
+			justify,
+			exitMode,
+			masked = false,
+			...opts
+		}: { justify: Justify; exitMode: ExitMode; masked?: boolean } & HTMLProps<'section'>
 	) {
 		this.justify = justify
 		this.exitMode = exitMode
+		this.masked = masked
 
 		this.#children = new Map()
 
@@ -176,7 +185,7 @@ class Section {
 			'div',
 			{
 				...opts,
-				className: `section section--justify-${justify}`
+				className: `section section--justify-${justify}${masked ? ' section--masked' : ''}`
 			},
 			[this.#inner]
 		)
@@ -228,10 +237,9 @@ class Section {
 }
 
 abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
-	protected _value?: P['value']
-
 	constructor(
 		readonly section: Section,
+		protected _value: P['value'],
 		readonly el: HTMLSpanElement
 	) {}
 
@@ -246,11 +254,13 @@ class Digit extends Char<KeyedDigitPart> {
 	) {
 		super(
 			section,
+			value,
 			createElement('span', { className: 'digit', part: `digit ${type}`, textContent: value + '' })
 		)
 	}
 
 	#updated = false
+	#yAnimation?: Animation
 
 	update(value: KeyedDigitPart['value']) {
 		const prevVal = this._value
@@ -292,8 +302,33 @@ class Digit extends Char<KeyedDigitPart> {
 		}
 
 		this._value = value
+		const prevRect = this.el.getBoundingClientRect()
 
-		return (parentRect: DOMRect) => {}
+		return (parentRect: DOMRect) => {
+			// Cancel the previous animation if it exists before getting the new rect:
+			this.#yAnimation?.cancel()
+			const rect = this.el.getBoundingClientRect()
+
+			// Animate y if value updated
+			if (prevVal !== value) {
+				raf(() => {
+					this.#yAnimation = this.el.animate(
+						{
+							// Add the offset between the prev top and current parent top to account for interruptions:
+							transform: [
+								`translateY(calc((100% + ${maskHeight}) * ${value - prevVal} + ${prevRect.y - parentRect.y}px))`,
+								'none'
+							]
+						},
+						{
+							duration: 1660,
+							easing:
+								'linear(0, 0.001 0.44%, 0.0045 0.94%, 0.0195 2.03%, 0.0446 3.19%, 0.0811 4.5%, 0.1598 6.82%, 0.3685 12.34%, 0.4693 15.17%, 0.5663, 0.6498 21.27%, 0.7215 24.39%, 0.7532 25.98%, 0.7829 27.65%, 0.8105, 0.8349 31.14%, 0.8573 32.95%, 0.8776 34.84%, 0.8964 36.87%, 0.9136 39.05%, 0.929 41.37%, 0.9421 43.77%, 0.9537 46.38%, 0.9636 49.14%, 0.9789 55.31%, 0.9888 62.35%, 0.9949 71.06%, 0.9982 82.52%, 0.9997 99.94%)'
+						}
+					)
+				})
+			}
+		}
 	}
 }
 
@@ -303,7 +338,7 @@ class Sym extends Char<KeyedSymbolPart> {
 		private type: KeyedSymbolPart['type'],
 		value: KeyedSymbolPart['value']
 	) {
-		super(section, createElement('span', { part: `symbol ${type}`, textContent: value }))
+		super(section, value, createElement('span', { part: `symbol ${type}`, textContent: value }))
 	}
 
 	update(value: KeyedSymbolPart['value']) {
