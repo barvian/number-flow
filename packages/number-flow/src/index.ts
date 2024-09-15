@@ -1,4 +1,4 @@
-import { createElement, type HTMLProps } from './util/dom'
+import { createElement, replaceChildren, type HTMLProps } from './util/dom'
 import { forEach } from './util/iterable'
 import {
 	formatToParts,
@@ -244,18 +244,47 @@ class Digit extends Char<KeyedDigitPart> {
 		private type: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value']
 	) {
-		super(section, createElement('span', { part: `digit ${type}`, textContent: value + '' }))
+		super(
+			section,
+			createElement('span', { className: 'digit', part: `digit ${type}`, textContent: value + '' })
+		)
 	}
 
-	#created = false
+	#updated = false
 
 	update(value: KeyedDigitPart['value']) {
 		// @ts-expect-error wrong built-in DOM types
 		this.el.part = `digit ${this.type} ${value}`
-		if (!this.#created) {
-			this.#created = true
-		}
-		this.el.textContent = value + ''
+		replaceChildren(this.el, [
+			...(value === 0
+				? []
+				: [
+						createElement(
+							'span',
+							{ className: 'digit__stack digit__lt' },
+							new Array(value)
+								.fill(null)
+								.map((_, i) =>
+									createElement('span', { className: 'digit__digit', textContent: i + '' })
+								)
+						)
+					]),
+			document.createTextNode(value + ''),
+			...(value === 9
+				? []
+				: [
+						createElement(
+							'span',
+							{ className: 'digit__stack digit__gt' },
+							new Array(9 - value).fill(null).map((_, i) =>
+								createElement('span', {
+									className: 'digit__digit',
+									textContent: value + i + 1 + ''
+								})
+							)
+						)
+					])
+		])
 
 		const prevVal = this._value
 		this._value = value

@@ -25,3 +25,12 @@ export const createElement = <K extends keyof HTMLElementTagNameMap>(
 	children?.forEach((child) => element.appendChild(child))
 	return element
 }
+
+export const replaceChildren = (el: HTMLElement, children: Node[]) => {
+	if (typeof Element.prototype.replaceChildren === 'undefined') {
+		el.innerHTML = ''
+		children.forEach((child) => el.appendChild(child))
+	} else {
+		el.replaceChildren(...children)
+	}
+}

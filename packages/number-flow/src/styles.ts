@@ -66,9 +66,35 @@ const styles = `
 }
 
 .section__exiting {
-	position: absolute;
+	position: absolute !important;
 	top: 0;
 	opacity: 0;
+}
+
+.digit {
+	display: inline-block;
+	position: relative;
+}
+
+.digit__stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: ${maskHeight};
+	position: absolute;
+	width: 100%;
+}
+
+.digit__stack > * {
+	display: inline-block;
+}
+
+.digit__lt {
+	bottom: calc(100% + ${maskHeight});
+}
+
+.digit__gt {
+	top: calc(100% + ${maskHeight});
 }
 `
 
