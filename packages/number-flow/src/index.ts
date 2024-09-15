@@ -11,6 +11,7 @@ import {
 import { ServerSafeHTMLElement } from './ssr'
 import styles from './styles'
 export { renderInnerHTML } from './ssr'
+import raf, { getRafs, useRafContext } from './util/raf'
 export type * from './formatter'
 
 const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
@@ -54,8 +55,6 @@ class NumberFlow extends ServerSafeHTMLElement {
 		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
 			? formatToParts(...newVal)
 			: formatToParts(newVal)
-
-		this.#label!.textContent = formatted
 
 		// Initialize if needed
 		if (!this.#created) {
@@ -111,17 +110,26 @@ class NumberFlow extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
-			// Update otherwise:
-			const sectionFlips: ReturnType<(typeof Section)['prototype']['update']>[] = []
-			sectionFlips.push(this.#pre!.update(pre))
-			sectionFlips.push(this.#integer!.update(integer))
-			sectionFlips.push(this.#fraction!.update(fraction))
-			sectionFlips.push(this.#post!.update(post))
-			sectionFlips.forEach((flip) => flip())
+			useRafContext(this, () => {
+				// Update otherwise:
+				const sectionFlips: ReturnType<(typeof Section)['prototype']['update']>[] = []
+				sectionFlips.push(this.#pre!.update(pre))
+				sectionFlips.push(this.#integer!.update(integer))
+				sectionFlips.push(this.#fraction!.update(fraction))
+				sectionFlips.push(this.#post!.update(post))
+				sectionFlips.forEach((flip) => flip())
+			})
 		}
+
+		this.#label!.textContent = formatted
 
 		this.#formatted = formatted
 		this.#created = true
+	}
+
+	disconnectedCallback() {
+		// Cancel any requested animation frames:
+		getRafs(this)?.forEach((id) => cancelAnimationFrame(id))
 	}
 }
 
@@ -156,7 +164,9 @@ class Section {
 			},
 			parts.map((part) => {
 				const comp =
-					part.type === 'integer' || part.type === 'fraction' ? new Digit(this) : new Sym(this)
+					part.type === 'integer' || part.type === 'fraction'
+						? new Digit(this, part.type, part.value)
+						: new Sym(this, part.type, part.value)
 				this.#children.set(part.key, comp)
 				return comp.el
 			})
@@ -176,29 +186,32 @@ class Section {
 		const rect = this.el.getBoundingClientRect()
 		const innerRect = this.#inner.getBoundingClientRect()
 
+		const charFlips: ReturnType<(typeof Char)['prototype']['update']>[] = []
+
 		// Find removed children
 		this.#children.forEach((comp, key) => {
 			if (!parts.find((p) => p.key === key)) {
-				comp.el.remove()
-				this.#children.delete(key)
+				comp.el.classList.add('section__exiting')
+				// Exiting digits should always be set to 0 for mathematical correctness:
+				if (comp instanceof Digit) charFlips.push(comp.update(0))
 			}
 		})
 
 		// Add or update other parts:
 		const reverse = this.justify === 'right'
 		const addOp = reverse ? 'prepend' : 'append'
-		const charFlips: ReturnType<(typeof Char)['prototype']['update']>[] = []
 		forEach(parts, reverse, (part) => {
 			// If this child already exists, update it:
 			if (this.#children.has(part.key)) {
 				const comp = this.#children.get(part.key)!
+				comp.el.classList.remove('section__exiting')
 				charFlips.push(comp.update(part.value))
 			} else {
 				// Otherwise, create a new one:
 				const comp: Char =
 					part.type === 'integer' || part.type === 'fraction'
-						? new Digit(this, part.type)
-						: new Sym(this, part.type)
+						? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
+						: new Sym(this, part.type, part.value)
 				charFlips.push(comp.update(part.value))
 				this.#children.set(part.key, comp)
 
@@ -228,9 +241,10 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
 class Digit extends Char<KeyedDigitPart> {
 	constructor(
 		section: Section,
-		private type: KeyedDigitPart['type']
+		private type: KeyedDigitPart['type'],
+		value: KeyedDigitPart['value']
 	) {
-		super(section, createElement('span', { part: `digit ${type}` }))
+		super(section, createElement('span', { part: `digit ${type}`, textContent: value + '' }))
 	}
 
 	#created = false
@@ -253,9 +267,10 @@ class Digit extends Char<KeyedDigitPart> {
 class Sym extends Char<KeyedSymbolPart> {
 	constructor(
 		section: Section,
-		private type: KeyedSymbolPart['type']
+		private type: KeyedSymbolPart['type'],
+		value: KeyedSymbolPart['value']
 	) {
-		super(section, createElement('span', { part: `symbol ${type}` }))
+		super(section, createElement('span', { part: `symbol ${type}`, textContent: value }))
 	}
 
 	update(value: KeyedSymbolPart['value']) {

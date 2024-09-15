@@ -2,7 +2,7 @@ import { formatToParts, type Format, type Value } from './formatter'
 
 export const ServerSafeHTMLElement =
 	typeof window === 'undefined' || typeof HTMLElement === 'undefined'
-		? (class {} as unknown as typeof HTMLElement)
+		? (class {} as unknown as typeof HTMLElement) // for types
 		: HTMLElement
 
 export const renderInnerHTML = (value: Value, locales?: Intl.LocalesArgument, format?: Format) => {

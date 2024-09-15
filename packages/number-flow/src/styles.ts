@@ -62,6 +62,13 @@ const styles = `
 .section__inner {
 	display: inline-flex;
 	justify-content: inherit;
+	position: relative; /* for .section__exiting */
+}
+
+.section__exiting {
+	position: absolute;
+	top: 0;
+	opacity: 0;
 }
 `
 
