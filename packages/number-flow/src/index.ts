@@ -177,10 +177,10 @@ class Section {
 		const innerRect = this.#inner.getBoundingClientRect()
 
 		// Find removed children
-		this.#children.forEach((comp) => {
-			if (!parts.find((p) => p.key === comp.part?.key)) {
+		this.#children.forEach((comp, key) => {
+			if (!parts.find((p) => p.key === key)) {
 				comp.el.remove()
-				this.#children.delete(comp.part!.key)
+				this.#children.delete(key)
 			}
 		})
 
@@ -192,12 +192,14 @@ class Section {
 			// If this child already exists, update it:
 			if (this.#children.has(part.key)) {
 				const comp = this.#children.get(part.key)!
-				charFlips.push(comp.update(part))
+				charFlips.push(comp.update(part.value))
 			} else {
 				// Otherwise, create a new one:
 				const comp: Char =
-					part.type === 'integer' || part.type === 'fraction' ? new Digit(this) : new Sym(this)
-				charFlips.push(comp.update(part))
+					part.type === 'integer' || part.type === 'fraction'
+						? new Digit(this, part.type)
+						: new Sym(this, part.type)
+				charFlips.push(comp.update(part.value))
 				this.#children.set(part.key, comp)
 
 				this.#inner[addOp](comp.el)
@@ -213,54 +215,55 @@ class Section {
 }
 
 abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
-	protected _part?: P
+	protected _value?: P['value']
 
 	constructor(
 		readonly section: Section,
 		readonly el: HTMLSpanElement
 	) {}
 
-	get part(): P | undefined {
-		return this._part
-	}
-
-	abstract update(part: P): (parentRect: DOMRect) => void
+	abstract update(value: P['value']): (parentRect: DOMRect) => void
 }
 
 class Digit extends Char<KeyedDigitPart> {
-	constructor(section: Section) {
-		super(section, createElement('span', { part: 'digit' }))
+	constructor(
+		section: Section,
+		private type: KeyedDigitPart['type']
+	) {
+		super(section, createElement('span', { part: `digit ${type}` }))
 	}
 
 	#created = false
 
-	update(part: KeyedDigitPart) {
-		const prevVal = this._part?.value
-
+	update(value: KeyedDigitPart['value']) {
 		// @ts-expect-error wrong built-in DOM types
-		this.el.part = `digit ${part.type} ${part.value}`
+		this.el.part = `digit ${this.type} ${value}`
 		if (!this.#created) {
-			this.el.textContent = part.value + ''
 			this.#created = true
 		}
-		this.el.textContent = part.value + ''
+		this.el.textContent = value + ''
 
-		this._part = part
+		const prevVal = this._value
+		this._value = value
 
-		return (parentRect: DOMRect) => {
-			const val = this._part!.value
-		}
+		return (parentRect: DOMRect) => {}
 	}
 }
 
 class Sym extends Char<KeyedSymbolPart> {
-	constructor(section: Section) {
-		super(section, createElement('span', { part: 'symbol' }))
+	constructor(
+		section: Section,
+		private type: KeyedSymbolPart['type']
+	) {
+		super(section, createElement('span', { part: `symbol ${type}` }))
 	}
 
-	update(part: KeyedSymbolPart) {
-		this.el.textContent = part.value
-		this._part = part
+	update(value: KeyedSymbolPart['value']) {
+		this.el.textContent = value
+		this._value = value
+
+		// @ts-expect-error wrong built-in DOM types
+		this.el.part = `symbol ${this.type} ${value}`
 
 		return (parentRect: DOMRect) => {}
 	}
