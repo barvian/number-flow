@@ -253,40 +253,44 @@ class Digit extends Char<KeyedDigitPart> {
 	#updated = false
 
 	update(value: KeyedDigitPart['value']) {
-		// @ts-expect-error wrong built-in DOM types
-		this.el.part = `digit ${this.type} ${value}`
-		replaceChildren(this.el, [
-			...(value === 0
-				? []
-				: [
-						createElement(
-							'span',
-							{ className: 'digit__stack digit__lt' },
-							new Array(value)
-								.fill(null)
-								.map((_, i) =>
-									createElement('span', { className: 'digit__digit', textContent: i + '' })
-								)
-						)
-					]),
-			document.createTextNode(value + ''),
-			...(value === 9
-				? []
-				: [
-						createElement(
-							'span',
-							{ className: 'digit__stack digit__gt' },
-							new Array(9 - value).fill(null).map((_, i) =>
-								createElement('span', {
-									className: 'digit__digit',
-									textContent: value + i + 1 + ''
-								})
-							)
-						)
-					])
-		])
-
 		const prevVal = this._value
+
+		if (prevVal !== value) {
+			// @ts-expect-error wrong built-in DOM types
+			this.el.part = `digit ${this.type} ${value}`
+
+			replaceChildren(this.el, [
+				...(value === 0
+					? []
+					: [
+							createElement(
+								'span',
+								{ className: 'digit__stack digit__lt' },
+								new Array(value)
+									.fill(null)
+									.map((_, i) =>
+										createElement('span', { className: 'digit__digit', textContent: i + '' })
+									)
+							)
+						]),
+				document.createTextNode(value + ''),
+				...(value === 9
+					? []
+					: [
+							createElement(
+								'span',
+								{ className: 'digit__stack digit__gt' },
+								new Array(9 - value).fill(null).map((_, i) =>
+									createElement('span', {
+										className: 'digit__digit',
+										textContent: value + i + 1 + ''
+									})
+								)
+							)
+						])
+			])
+		}
+
 		this._value = value
 
 		return (parentRect: DOMRect) => {}

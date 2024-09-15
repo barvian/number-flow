@@ -5,14 +5,27 @@ export const ServerSafeHTMLElement =
 		? (class {} as unknown as typeof HTMLElement) // for types
 		: HTMLElement
 
-export const renderInnerHTML = (value: Value, locales?: Intl.LocalesArgument, format?: Format) => {
-	const { formatted } = formatToParts(value, locales, format)
+const renderDSD = (formatted: string) =>
 	// shadowroot= for older Chrome, shadowrootmode = standard
-	return `<template
-        shadowroot="open"
-        shadowrootmode="open"
-    >
-    <style>:host { display: inline-flex; }</style>
-    ${formatted}
-    </template>`
+	`<template shadowroot="open" shadowrootmode="open">
+${formatted}
+</template>`
+
+const render = (formatted: string) => `${formatted}`
+
+export const renderInnerHTML = (
+	value: Value,
+	{
+		locales,
+		format,
+		dsd
+	}: {
+		locales?: Intl.LocalesArgument
+		format?: Format
+		dsd?: boolean
+	}
+) => {
+	const { formatted } = formatToParts(value, locales, format)
+
+	return dsd ? renderDSD(formatted) : render(formatted)
 }

@@ -3,24 +3,25 @@ import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'num
 export type * from 'number-flow'
 
 const NumberFlow = React.forwardRef<
-	NumberFlowElement,
-	React.HTMLAttributes<NumberFlowElement> & {
+	typeof NumberFlowElement,
+	React.HTMLAttributes<typeof NumberFlowElement> & {
 		value: Value
 		locales?: Intl.LocalesArgument
 		format?: Format
+		dsd?: boolean
 	}
->(function NumberFlow({ value, className, locales, format, ...rest }, ref) {
+>(function NumberFlow({ value, className, locales, format, dsd, ...rest }, ref) {
 	return (
 		// @ts-expect-error
 		<number-flow
 			ref={ref}
 			class={className}
 			{...rest}
-			value={JSON.stringify([value, locales, format])}
+			value={typeof window === 'undefined' ? undefined : JSON.stringify([value, locales, format])}
 			suppressHydrationWarning
 			dangerouslySetInnerHTML={
 				typeof window === 'undefined'
-					? { __html: renderInnerHTML(value, locales, format) }
+					? { __html: renderInnerHTML(value, { locales, format, dsd }) }
 					: undefined
 			}
 		/>
