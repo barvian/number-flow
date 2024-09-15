@@ -1,4 +1,5 @@
-import { createElement, type HTMLProps } from './dom'
+import { createElement, type HTMLProps } from './util/dom'
+import { forEach } from './util/iterable'
 import {
 	formatToParts,
 	type KeyedDigitPart,
@@ -50,6 +51,12 @@ class NumberFlow extends ServerSafeHTMLElement {
 			return
 		}
 
+		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
+			? formatToParts(...newVal)
+			: formatToParts(newVal)
+
+		this.#label!.textContent = formatted
+
 		// Initialize if needed
 		if (!this.#created) {
 			// Don't check for declarative shadow DOM because we'll recreate it anyway:
@@ -71,7 +78,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#label = createElement('span', { className: 'label' })
 			this.shadowRoot!.appendChild(this.#label)
 
-			this.#pre = new Section(this, {
+			this.#pre = new Section(this, pre, {
 				part: 'pre',
 				inert: true,
 				ariaHidden: 'true',
@@ -79,7 +86,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				exitMode: 'pop'
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
-			this.#integer = new Section(this, {
+			this.#integer = new Section(this, integer, {
 				part: 'integer',
 				inert: true,
 				ariaHidden: 'true',
@@ -87,7 +94,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				exitMode: 'sync'
 			})
 			this.shadowRoot!.appendChild(this.#integer.el)
-			this.#fraction = new Section(this, {
+			this.#fraction = new Section(this, fraction, {
 				part: 'fraction',
 				inert: true,
 				ariaHidden: 'true',
@@ -95,7 +102,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				exitMode: 'sync'
 			})
 			this.shadowRoot!.appendChild(this.#fraction.el)
-			this.#post = new Section(this, {
+			this.#post = new Section(this, post, {
 				part: 'post',
 				inert: true,
 				ariaHidden: 'true',
@@ -103,17 +110,15 @@ class NumberFlow extends ServerSafeHTMLElement {
 				exitMode: 'pop'
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
+		} else {
+			// Update otherwise:
+			const sectionFlips: ReturnType<(typeof Section)['prototype']['update']>[] = []
+			sectionFlips.push(this.#pre!.update(pre))
+			sectionFlips.push(this.#integer!.update(integer))
+			sectionFlips.push(this.#fraction!.update(fraction))
+			sectionFlips.push(this.#post!.update(post))
+			sectionFlips.forEach((flip) => flip())
 		}
-
-		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
-			? formatToParts(...newVal)
-			: formatToParts(newVal)
-
-		this.#label!.textContent = formatted
-		this.#pre!.parts = pre
-		this.#integer!.parts = integer
-		this.#fraction!.parts = fraction
-		this.#post!.parts = post
 
 		this.#formatted = formatted
 		this.#created = true
@@ -129,18 +134,34 @@ class Section {
 	readonly justify: Justify
 	readonly exitMode: ExitMode
 
+	// All children in the DOM:
+	#children: Map<string, Char>
+
 	constructor(
 		readonly flow: NumberFlow,
+		parts: KeyedNumberPart[],
 		{ justify, exitMode, ...opts }: { justify: Justify; exitMode: ExitMode } & HTMLProps<'section'>
 	) {
 		this.justify = justify
 		this.exitMode = exitMode
 
-		// Zero width space prevents the height from collapsing when no chars:
-		this.#inner = createElement('div', {
-			className: 'section__inner',
-			innerHTML: '&#8203;'
-		})
+		this.#children = new Map()
+
+		this.#inner = createElement(
+			'div',
+			{
+				className: 'section__inner',
+				// Zero width space prevents the height from collapsing when no chars:
+				innerHTML: '&#8203;'
+			},
+			parts.map((part) => {
+				const comp =
+					part.type === 'integer' || part.type === 'fraction' ? new Digit(this) : new Sym(this)
+				this.#children.set(part.key, comp)
+				return comp.el
+			})
+		)
+
 		this.el = createElement(
 			'div',
 			{
@@ -151,9 +172,10 @@ class Section {
 		)
 	}
 
-	// All children in the DOM:
-	#children: Map<string, Digit | Sym> = new Map()
-	set parts(parts: KeyedNumberPart[]) {
+	update(parts: KeyedNumberPart[]) {
+		const rect = this.el.getBoundingClientRect()
+		const innerRect = this.#inner.getBoundingClientRect()
+
 		// Find removed children
 		this.#children.forEach((comp) => {
 			if (!parts.find((p) => p.key === comp.part?.key)) {
@@ -163,43 +185,59 @@ class Section {
 		})
 
 		// Add or update other parts:
-		const len = parts.length
-		const right = this.justify === 'right'
-		for (let i = right ? len - 1 : 0; right ? i >= 0 : i < len; right ? i-- : i++) {
-			const part = parts[i]!
-
+		const reverse = this.justify === 'right'
+		const addOp = reverse ? 'prepend' : 'append'
+		const charFlips: ReturnType<(typeof Char)['prototype']['update']>[] = []
+		forEach(parts, reverse, (part) => {
 			// If this child already exists, update it:
 			if (this.#children.has(part.key)) {
 				const comp = this.#children.get(part.key)!
-				comp.part = part
+				charFlips.push(comp.update(part))
 			} else {
 				// Otherwise, create a new one:
-				const comp =
+				const comp: Char =
 					part.type === 'integer' || part.type === 'fraction' ? new Digit(this) : new Sym(this)
-				comp.part = part
+				charFlips.push(comp.update(part))
 				this.#children.set(part.key, comp)
 
-				this.#inner[right ? 'prepend' : 'append'](comp.el)
+				this.#inner[addOp](comp.el)
 			}
+		})
+
+		return () => {
+			const newInnerRect = this.#inner.getBoundingClientRect()
+
+			charFlips.forEach((flip) => flip(newInnerRect))
 		}
 	}
 }
 
-class Digit {
-	readonly el: HTMLSpanElement
-	#part?: KeyedDigitPart
+abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
+	protected _part?: P
 
-	constructor(readonly section: Section) {
-		this.el = createElement('span', { part: 'digit' })
+	constructor(
+		readonly section: Section,
+		readonly el: HTMLSpanElement
+	) {}
+
+	get part(): P | undefined {
+		return this._part
 	}
 
-	get part(): KeyedDigitPart | undefined {
-		return this.#part
+	abstract update(part: P): (parentRect: DOMRect) => void
+}
+
+class Digit extends Char<KeyedDigitPart> {
+	constructor(section: Section) {
+		super(section, createElement('span', { part: 'digit' }))
 	}
 
 	#created = false
-	set part(part: KeyedDigitPart) {
-		// @ts-expect-error wrong types
+
+	update(part: KeyedDigitPart) {
+		const prevVal = this._part?.value
+
+		// @ts-expect-error wrong built-in DOM types
 		this.el.part = `digit ${part.type} ${part.value}`
 		if (!this.#created) {
 			this.el.textContent = part.value + ''
@@ -207,25 +245,24 @@ class Digit {
 		}
 		this.el.textContent = part.value + ''
 
-		this.#part = part
+		this._part = part
+
+		return (parentRect: DOMRect) => {
+			const val = this._part!.value
+		}
 	}
 }
 
-class Sym {
-	readonly el: HTMLSpanElement
-	#part?: KeyedSymbolPart
-
-	constructor(readonly section: Section) {
-		this.el = createElement('span', { part: 'symbol' })
+class Sym extends Char<KeyedSymbolPart> {
+	constructor(section: Section) {
+		super(section, createElement('span', { part: 'symbol' }))
 	}
 
-	get part(): KeyedSymbolPart | undefined {
-		return this.#part
-	}
-
-	set part(part: KeyedSymbolPart) {
+	update(part: KeyedSymbolPart) {
 		this.el.textContent = part.value
-		this.#part = part
+		this._part = part
+
+		return (parentRect: DOMRect) => {}
 	}
 }
 
