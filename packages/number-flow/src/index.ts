@@ -181,7 +181,8 @@ class Section {
 			'div',
 			{
 				className: 'section__inner',
-				// Zero width space prevents the height from collapsing when no chars:
+				// Zero width space prevents the height from collapsing when no chars
+				// TODO: replace this with height: 1lh when it's better supported:
 				innerHTML: '&#8203;'
 			},
 			parts.map((part) => {
@@ -204,63 +205,96 @@ class Section {
 		)
 	}
 
-	rect?: DOMRect
-	innerRect?: DOMRect
+	#prevRect?: DOMRect
+	#prevInnerRect?: DOMRect
 
 	willUpdate() {
-		this.rect = this.el.getBoundingClientRect()
-		this.innerRect = this.#inner.getBoundingClientRect()
+		this.#prevRect = this.el.getBoundingClientRect()
+		this.#prevInnerRect = this.#inner.getBoundingClientRect()
+
+		this.#children.forEach((comp) => comp.willUpdate(this.#prevInnerRect!))
 	}
 
 	update(parts: KeyedNumberPart[]) {
 		const updates: (() => void)[] = []
 
-		// Mark removed children before updates
-		this.#children.forEach((comp, key) => {
-			if (!parts.find((p) => p.key === key)) {
-				comp.el.classList.add('section__exiting')
-				// Exiting digits should always be set to 0 for mathematical correctness:
-				if (comp instanceof Digit) updates.push(() => comp.update(0))
-			}
-		})
-
-		// Add new parts before updates
+		// Add new parts before any other updates, so we can save their position correctly:
 		const reverse = this.justify === 'right'
 		const addOp = reverse ? 'prepend' : 'append'
 		forEach(parts, reverse, (part) => {
-			// If this child already exists, update it:
+			// This child already exists, so mark it for update:
 			if (this.#children.has(part.key)) {
 				const comp = this.#children.get(part.key)!
-				comp.el.classList.remove('section__exiting')
-				// TODO: I think this is wrong:
-				updates.push(() => comp.update(part.value))
+				updates.push(() => {
+					comp.el.classList.remove('section__exiting')
+					comp.update(part.value)
+				})
 			} else {
 				// Otherwise, create a new one:
 				const comp: Char =
 					part.type === 'integer' || part.type === 'fraction'
 						? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
 						: new Sym(this, part.type, part.value)
-				updates.push(() => comp.update(part.value))
+				comp.willUpdate(this.#prevInnerRect!)
+				comp.update(part.value) // then set it to the correct value
 				this.#children.set(part.key, comp)
 
 				this.#inner[addOp](comp.el)
 			}
 		})
 
-		// Mark all for update
-		this.#children.forEach((comp) => comp.willUpdate())
-
-		// And finally update everything
+		// Run queued updates from ^
 		updates.forEach((fn) => fn())
+
+		// And mark any removed children
+		this.#children.forEach((comp, key) => {
+			if (!parts.find((p) => p.key === key)) {
+				comp.el.classList.add('section__exiting')
+				// Exiting digits should always be set to 0 for mathematical correctness:
+				if (comp instanceof Digit) comp.update(0)
+			}
+		})
 	}
 
+	#animation?: Animation
+	#innerAnimation?: Animation
+
 	didUpdate() {
-		const newRect = this.el.getBoundingClientRect()
-		const newInnerRect = this.#inner.getBoundingClientRect()
+		if (this.#children.size <= 0) return
 
-		raf(() => {})
+		// Cancel any previous animations before getting the new rects:
+		this.#animation?.cancel()
+		this.#innerAnimation?.cancel()
 
-		this.#children.forEach((comp) => comp.didUpdate())
+		const rect = this.el.getBoundingClientRect()
+		const scale = this.#prevRect!.width / (rect.width || 0.01)
+
+		raf(() => {
+			this.#animation = this.el.animate(
+				{
+					transform: [`scaleX(${scale})`, 'none'],
+					'--scale-correction': [1 / scale, 1]
+				},
+				{
+					duration: 1000,
+					easing:
+						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+				}
+			)
+
+			this.#innerAnimation = this.#inner.animate(
+				{
+					transform: [`scaleX(${1 / scale})`, 'none']
+				},
+				{
+					duration: 1000,
+					easing:
+						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+				}
+			)
+		})
+
+		this.#children.forEach((comp) => comp.didUpdate(this.#inner.getBoundingClientRect()))
 	}
 }
 
@@ -271,9 +305,9 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
 		readonly el: HTMLSpanElement
 	) {}
 
-	abstract willUpdate(): void
+	abstract willUpdate(parentRect: DOMRect): void
 	abstract update(value: P['value']): void
-	abstract didUpdate(): void
+	abstract didUpdate(parentRect: DOMRect): void
 }
 
 class Digit extends Char<KeyedDigitPart> {
@@ -293,12 +327,12 @@ class Digit extends Char<KeyedDigitPart> {
 	#prevRect: DOMRect | undefined
 
 	willUpdate() {
-		// TODO: might be able to optimize this b/c it's relative i.e. if (!this.#prevRect)
+		this.#prevValue = this._value
+		// TODO: might be able to optimize this b/c it's relative i.e. if (!this.#prevRect) and set it in didupdate
 		this.#prevRect = this.el.getBoundingClientRect()
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		this.#prevValue = this._value
 		this._value = value
 
 		if (this.#prevValue !== value) {
@@ -341,13 +375,12 @@ class Digit extends Char<KeyedDigitPart> {
 	#xAnimation?: Animation
 	#yAnimation?: Animation
 
-	didUpdate() {
+	didUpdate(parentRect: DOMRect) {
 		raf(() => {
 			// Cancel any previous animations before getting the new rect:
 			this.#xAnimation?.cancel()
 			this.#yAnimation?.cancel()
 			const rect = this.el.getBoundingClientRect()
-			const parentRect = this.section.innerRect!
 
 			// Animate y if value updated
 			if (this.#prevValue !== this._value) {
@@ -380,9 +413,6 @@ class Digit extends Char<KeyedDigitPart> {
 						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
 				}
 			)
-
-			// TODO: might help optimize slightly
-			// this.#prevRect = rect
 		})
 	}
 }
