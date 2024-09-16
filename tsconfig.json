@@ -20,5 +20,5 @@
 		"noUncheckedIndexedAccess": true
 	},
 	"include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-	"exclude": ["node_modules", "build", "dist", ".next"]
+	"exclude": ["node_modules", "build", "dist", ".astro"]
 }
