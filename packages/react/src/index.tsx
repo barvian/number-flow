@@ -17,14 +17,16 @@ const NumberFlow = React.forwardRef<
 			ref={ref}
 			class={className}
 			{...rest}
-			// Should be able to do value={[value,...]} in React 19:
-			value={typeof window === 'undefined' ? undefined : JSON.stringify([value, locales, format])}
 			suppressHydrationWarning
 			dangerouslySetInnerHTML={
 				typeof window === 'undefined'
 					? { __html: renderInnerHTML(value, { locales, format, dsd }) }
 					: undefined
 			}
+			// Make sure value is set last, so timings can be updated beforehand.
+			// window check ensures no double update in React 18.
+			// Should be able to do value={[value,...]} in React 19:
+			value={typeof window === 'undefined' ? undefined : JSON.stringify([value, locales, format])}
 		/>
 	)
 })

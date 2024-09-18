@@ -1,4 +1,5 @@
 import { formatToParts, type Format, type Value } from './formatter'
+import { maskHeight } from './styles'
 
 export const ServerSafeHTMLElement =
 	typeof window === 'undefined' || typeof HTMLElement === 'undefined'
@@ -11,7 +12,8 @@ const renderDSD = (formatted: string) =>
 ${formatted}
 </template>`
 
-const render = (formatted: string) => `${formatted}`
+const render = (formatted: string) =>
+	`<span style="font-kerning: none; display: inline-block; padding: ${maskHeight} 0;">${formatted}</span>`
 
 export const renderInnerHTML = (
 	value: Value,

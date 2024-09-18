@@ -1,29 +1,23 @@
-// Build the mask for the numbers. Technique taken from:
+// Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
+
 export const maskHeight = 'var(--mask-height, 0.15em)'
 const maskWidth = 'var(--mask-width, 0.5em)'
-const correctedMaskWidth = `calc(${maskWidth} / var(--scale-x-correction, 1))`
+
+const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
-const mask =
-	// Horizontal:
-	`linear-gradient(to right, transparent 0, #000 ${correctedMaskWidth}, #000 calc(100% - ${correctedMaskWidth}), transparent),` +
-	// Vertical:
-	`linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%),` +
-	// TL corner
-	`radial-gradient(at bottom right, ${cornerGradient}),` +
-	// TR corner
-	`radial-gradient(at bottom left, ${cornerGradient}), ` +
-	// BR corner
-	`radial-gradient(at top left, ${cornerGradient}), ` +
-	// BL corner
-	`radial-gradient(at top right, ${cornerGradient})`
-const maskSize =
-	`100% calc(100% - ${maskHeight} * 2),` +
-	`calc(100% - ${correctedMaskWidth} * 2) 100%,` +
-	`${correctedMaskWidth} ${maskHeight},` +
-	`${correctedMaskWidth} ${maskHeight},` +
-	`${correctedMaskWidth} ${maskHeight},` +
-	`${correctedMaskWidth} ${maskHeight}`
+
+export const maskSize = (scaleX = 1) => {
+	let scaledMaskWidth: string, calcScaledMaskWidth: string
+	if (scaleX === 1) {
+		scaledMaskWidth = calcScaledMaskWidth = maskWidth
+	} else {
+		scaledMaskWidth = `${scaleX}*${maskWidth}`
+		calcScaledMaskWidth = `calc(${scaledMaskWidth})`
+	}
+	return `calc(100% - ${scaledMaskWidth}) 100%, ${calcScaledMaskWidth} calc(100% - ${maskHeight} * 2), ${calcScaledMaskWidth} ${maskHeight}, ${calcScaledMaskWidth} ${maskHeight}`
+	//      ^ vertical                                ^ horizontal                                       ^ corners
+}
 
 const styles = `
 :host {
@@ -38,7 +32,7 @@ const styles = `
 .label {
 	position: absolute;
 	left: 0;
-	top: 0;
+	top: ${maskHeight};
 	font-kerning: none;
 	color: transparent !important;
 	z-index: -1;
@@ -79,16 +73,41 @@ const styles = `
 
 .section--masked {
 	overflow: clip;
+	padding-bottom: ${maskHeight};
+	padding-top: ${maskHeight};
+	position: relative; /* for z-index */
+	z-index: -1; /* display underneath other sections */
+	/* -webkit prefixed versions have universally better support than non-prefixed */
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-size: ${maskSize()};
 }
 
 	.section--masked.section--justify-left {
 		padding-right: ${maskWidth};
 		margin-right: calc(-1 * ${maskWidth});
+		-webkit-mask-image:
+			${verticalMask},
+			linear-gradient(to right, #000, transparent),
+			/* TR corner */
+			radial-gradient(at bottom left, ${cornerGradient}),
+			/* BR corner */
+			radial-gradient(at top left, ${cornerGradient})
+		;
+		-webkit-mask-position: left, right center, right top, right bottom;
 	}
 
 	.section--masked.section--justify-right {
 		padding-left: ${maskWidth};
 		margin-left: calc(-1 * ${maskWidth});
+		-webkit-mask-image:
+			${verticalMask},
+			linear-gradient(to right, transparent, #000),
+			/* TL corner */
+			radial-gradient(at bottom right, ${cornerGradient}),
+			/* BL corner */
+			radial-gradient(at top right, ${cornerGradient})
+		;
+		-webkit-mask-position: right, left center, left top, left bottom;
 	}
 
 .section__exiting {

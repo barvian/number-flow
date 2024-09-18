@@ -9,9 +9,9 @@ import {
 	type Value
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { maskHeight } from './styles'
+import styles, { maskHeight, maskSize } from './styles'
+import { frames, lerp } from './util/animate'
 export { renderInnerHTML } from './ssr'
-import raf, { getRafs, scopeRaf } from './util/raf'
 export type * from './formatter'
 
 const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
@@ -46,9 +46,6 @@ class NumberFlow extends ServerSafeHTMLElement {
 	#post?: Section
 	#label?: HTMLSpanElement
 
-	// Convenience for updating all sections:
-	#sections: Section[] = []
-
 	set value(newVal: Args | undefined) {
 		if (newVal == null) {
 			this.#formatted = undefined
@@ -80,60 +77,56 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#label = createElement('span', { className: 'label' })
 			this.shadowRoot!.appendChild(this.#label)
 
-			this.#sections.push(
-				(this.#pre = new Section(this, pre, {
-					part: 'pre',
-					inert: true,
-					ariaHidden: 'true',
-					justify: 'right',
-					exitMode: 'pop'
-				}))
-			)
+			this.#pre = new Section(this, pre, {
+				part: 'pre',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'right',
+				exitMode: 'pop'
+			})
 			this.shadowRoot!.appendChild(this.#pre.el)
-			this.#sections.push(
-				(this.#integer = new Section(this, integer, {
-					part: 'integer',
-					inert: true,
-					masked: true,
-					ariaHidden: 'true',
-					justify: 'right',
-					exitMode: 'sync'
-				}))
-			)
+			this.#integer = new Section(this, integer, {
+				part: 'integer',
+				inert: true,
+				masked: true,
+				ariaHidden: 'true',
+				justify: 'right',
+				exitMode: 'sync'
+			})
 			this.shadowRoot!.appendChild(this.#integer.el)
-			this.#sections.push(
-				(this.#fraction = new Section(this, fraction, {
-					part: 'fraction',
-					inert: true,
-					masked: true,
-					ariaHidden: 'true',
-					justify: 'left',
-					exitMode: 'sync'
-				}))
-			)
+			this.#fraction = new Section(this, fraction, {
+				part: 'fraction',
+				inert: true,
+				masked: true,
+				ariaHidden: 'true',
+				justify: 'left',
+				exitMode: 'sync'
+			})
 			this.shadowRoot!.appendChild(this.#fraction.el)
-			this.#sections.push(
-				(this.#post = new Section(this, post, {
-					part: 'post',
-					inert: true,
-					ariaHidden: 'true',
-					justify: 'left',
-					exitMode: 'pop'
-				}))
-			)
+			this.#post = new Section(this, post, {
+				part: 'post',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'left',
+				exitMode: 'pop'
+			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
 			// Update otherwise
-			scopeRaf(this, () => {
-				this.#sections.forEach((section) => section.willUpdate())
+			this.#pre!.willUpdate()
+			this.#integer!.willUpdate()
+			this.#fraction!.willUpdate()
+			this.#post!.willUpdate()
 
-				this.#pre!.update(pre)
-				this.#integer!.update(integer)
-				this.#fraction!.update(fraction)
-				this.#post!.update(post)
+			this.#pre!.update(pre)
+			this.#integer!.update(integer)
+			this.#fraction!.update(fraction)
+			this.#post!.update(post)
 
-				this.#sections.forEach((section) => section.didUpdate())
-			})
+			this.#pre!.didUpdate()
+			this.#integer!.didUpdate()
+			this.#fraction!.didUpdate()
+			this.#post!.didUpdate()
 		}
 
 		this.#label!.textContent = formatted
@@ -141,22 +134,20 @@ class NumberFlow extends ServerSafeHTMLElement {
 		this.#formatted = formatted
 		this.#created = true
 	}
-
-	disconnectedCallback() {
-		// Cancel any pending animation frames:
-		getRafs(this)?.forEach((id) => cancelAnimationFrame(id))
-	}
 }
 
 type Justify = 'left' | 'right'
 type ExitMode = 'sync' | 'pop'
 
 class Section {
-	readonly el: HTMLDivElement
-	readonly #inner: HTMLDivElement
+	readonly el: HTMLSpanElement
+	readonly #inner?: HTMLSpanElement
 	readonly justify: Justify
 	readonly exitMode: ExitMode
 	readonly masked: boolean
+
+	// A shortcut to #inner or el:
+	readonly #wrapper: HTMLSpanElement
 
 	// All children in the DOM:
 	#children: Map<string, Char>
@@ -177,74 +168,78 @@ class Section {
 
 		this.#children = new Map()
 
-		this.#inner = createElement(
-			'div',
-			{
-				className: 'section__inner',
-				// Zero width space prevents the height from collapsing when no chars
-				// TODO: replace this with height: 1lh when it's better supported:
-				innerHTML: '&#8203;'
-			},
-			parts.map((part) => {
-				const comp =
-					part.type === 'integer' || part.type === 'fraction'
-						? new Digit(this, part.type, part.value)
-						: new Sym(this, part.type, part.value)
-				this.#children.set(part.key, comp)
-				return comp.el
-			})
-		)
+		// Zero width space prevents the height from collapsing when no chars
+		// TODO: replace this with height: 1lh when it's better supported:
+		const innerHTML = '&#8203;'
+
+		if (masked)
+			this.#inner = createElement(
+				'span',
+				{
+					className: 'section__inner',
+					innerHTML
+				},
+				parts.map((part) => {
+					const comp =
+						part.type === 'integer' || part.type === 'fraction'
+							? new Digit(this, part.type, part.value)
+							: new Sym(this, part.type, part.value)
+					this.#children.set(part.key, comp)
+					return comp.el
+				})
+			)
 
 		this.el = createElement(
-			'div',
+			'span',
 			{
 				...opts,
-				className: `section section--justify-${justify}${masked ? ' section--masked' : ''}`
+				className: `section section--justify-${justify}${masked ? ' section--masked' : ''}`,
+				...(this.#inner ? {} : { innerHTML })
 			},
-			[this.#inner]
+			this.#inner && [this.#inner]
 		)
+		this.#wrapper = this.#inner ?? this.el
 	}
 
 	#prevRect?: DOMRect
-	#prevInnerRect?: DOMRect
+	#prevWrapperRect?: DOMRect
 
 	willUpdate() {
-		this.#prevRect = this.el.getBoundingClientRect()
-		this.#prevInnerRect = this.#inner.getBoundingClientRect()
+		const rect = this.el.getBoundingClientRect()
+		this.#prevRect = rect
+		const wrapperRect = this.#inner?.getBoundingClientRect() ?? rect
+		this.#prevWrapperRect = wrapperRect
 
-		this.#children.forEach((comp) => comp.willUpdate(this.#prevInnerRect!))
+		this.#children.forEach((comp) => comp.willUpdate(wrapperRect))
 	}
 
 	update(parts: KeyedNumberPart[]) {
-		const updates: (() => void)[] = []
+		const updated = new Map<KeyedNumberPart, Char>()
 
 		// Add new parts before any other updates, so we can save their position correctly:
 		const reverse = this.justify === 'right'
+		const parent = this.#inner ?? this.el
 		const addOp = reverse ? 'prepend' : 'append'
 		forEach(parts, reverse, (part) => {
-			// This child already exists, so mark it for update:
-			if (this.#children.has(part.key)) {
-				const comp = this.#children.get(part.key)!
-				updates.push(() => {
-					comp.el.classList.remove('section__exiting')
-					comp.update(part.value)
-				})
-			} else {
-				// Otherwise, create a new one:
-				const comp: Char =
-					part.type === 'integer' || part.type === 'fraction'
-						? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
-						: new Sym(this, part.type, part.value)
-				comp.willUpdate(this.#prevInnerRect!)
-				comp.update(part.value) // then set it to the correct value
-				this.#children.set(part.key, comp)
+			// Filter out updated children:
+			if (this.#children.has(part.key)) return updated.set(part, this.#children.get(part.key)!)
 
-				this.#inner[addOp](comp.el)
-			}
+			const comp: Char =
+				part.type === 'integer' || part.type === 'fraction'
+					? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
+					: new Sym(this, part.type, part.value)
+			comp.willUpdate(this.#prevWrapperRect!)
+			comp.update(part.value) // then set it to the correct value
+			this.#children.set(part.key, comp)
+
+			this.#wrapper[addOp](comp.el)
 		})
 
-		// Run queued updates from ^
-		updates.forEach((fn) => fn())
+		// Update any updated children
+		updated.forEach((comp, part) => {
+			comp.el.classList.remove('section__exiting')
+			comp.update(part.value)
+		})
 
 		// And mark any removed children
 		this.#children.forEach((comp, key) => {
@@ -257,6 +252,7 @@ class Section {
 	}
 
 	#animation?: Animation
+	#maskAnimation?: Animation
 	#innerAnimation?: Animation
 
 	didUpdate() {
@@ -264,16 +260,32 @@ class Section {
 
 		// Cancel any previous animations before getting the new rects:
 		this.#animation?.cancel()
+		this.#maskAnimation?.cancel()
 		this.#innerAnimation?.cancel()
 
 		const rect = this.el.getBoundingClientRect()
-		const scale = this.#prevRect!.width / (rect.width || 0.01)
+		const scale = this.#prevRect!.width / Math.max(rect.width, 0.01) // avoid divide by zero
 
-		raf(() => {
+		if (scale !== 1) {
 			this.#animation = this.el.animate(
 				{
-					transform: [`scaleX(${scale})`, 'none'],
-					'--scale-correction': [1 / scale, 1]
+					// We need frames for this to be in perfect sync with the inverted one on #inner:
+					transform: this.#inner ? frames(1000, (t) => `scaleX(${lerp(scale, 1, t)})`) : undefined
+				},
+				{
+					duration: 1000,
+					easing:
+						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+				}
+			)
+			// The mask animation needed to be separated, or it slowed down the transform
+			// one then get out of sync with the invert scale one below:
+			this.#maskAnimation = this.el.animate(
+				{
+					webkitMaskSize: frames(1000, (t) => maskSize(1 / lerp(scale, 1, t))),
+					// Needed for Chrome when using WAAPI:
+					// https://stackoverflow.com/questions/74082152/do-i-include-vendor-prefixes-when-animating-with-waapi-animate#comment131145099_74091451
+					maskSize: frames(1000, (t) => maskSize(1 / lerp(scale, 1, t)))
 				},
 				{
 					duration: 1000,
@@ -282,9 +294,9 @@ class Section {
 				}
 			)
 
-			this.#innerAnimation = this.#inner.animate(
+			this.#innerAnimation = this.#inner?.animate(
 				{
-					transform: [`scaleX(${1 / scale})`, 'none']
+					transform: frames(1000, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
 				},
 				{
 					duration: 1000,
@@ -292,18 +304,22 @@ class Section {
 						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
 				}
 			)
-		})
+		}
 
-		this.#children.forEach((comp) => comp.didUpdate(this.#inner.getBoundingClientRect()))
+		this.#children.forEach((comp) => comp.didUpdate(this.#wrapper.getBoundingClientRect()))
 	}
 }
 
 abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
 	constructor(
 		readonly section: Section,
-		protected _value: P['value'],
+		protected value: P['value'],
 		readonly el: HTMLSpanElement
 	) {}
+
+	get flow() {
+		return this.section.flow
+	}
 
 	abstract willUpdate(parentRect: DOMRect): void
 	abstract update(value: P['value']): void
@@ -327,13 +343,13 @@ class Digit extends Char<KeyedDigitPart> {
 	#prevRect: DOMRect | undefined
 
 	willUpdate() {
-		this.#prevValue = this._value
+		this.#prevValue = this.value
 		// TODO: might be able to optimize this b/c it's relative i.e. if (!this.#prevRect) and set it in didupdate
 		this.#prevRect = this.el.getBoundingClientRect()
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		this._value = value
+		this.value = value
 
 		if (this.#prevValue !== value) {
 			// @ts-expect-error wrong built-in DOM types
@@ -346,11 +362,9 @@ class Digit extends Char<KeyedDigitPart> {
 							createElement(
 								'span',
 								{ className: 'digit__stack digit__lt' },
-								new Array(value)
-									.fill(null)
-									.map((_, i) =>
-										createElement('span', { className: 'digit__digit', textContent: i + '' })
-									)
+								Array.from({ length: value }, (_, i) =>
+									createElement('span', { className: 'digit__digit', textContent: i + '' })
+								)
 							)
 						]),
 				document.createTextNode(value + ''),
@@ -360,7 +374,7 @@ class Digit extends Char<KeyedDigitPart> {
 							createElement(
 								'span',
 								{ className: 'digit__stack digit__gt' },
-								new Array(9 - value).fill(null).map((_, i) =>
+								Array.from({ length: 9 - value }, (_, i) =>
 									createElement('span', {
 										className: 'digit__digit',
 										textContent: value + i + 1 + ''
@@ -376,44 +390,42 @@ class Digit extends Char<KeyedDigitPart> {
 	#yAnimation?: Animation
 
 	didUpdate(parentRect: DOMRect) {
-		raf(() => {
-			// Cancel any previous animations before getting the new rect:
-			this.#xAnimation?.cancel()
-			this.#yAnimation?.cancel()
-			const rect = this.el.getBoundingClientRect()
+		// Cancel any previous animations before getting the new rect:
+		this.#xAnimation?.cancel()
+		this.#yAnimation?.cancel()
+		const rect = this.el.getBoundingClientRect()
 
-			// Animate y if value updated
-			if (this.#prevValue !== this._value) {
-				this.#yAnimation = this.el.animate(
-					{
-						// Add the offset between the prev top and current parent top to account for interruptions:
-						transform: [
-							`translateY(calc((100% + ${maskHeight}) * ${this._value - this.#prevValue!} + ${this.#prevRect!.y - parentRect.y}px))`,
-							'none'
-						]
-					},
-					{
-						duration: 1000,
-						easing:
-							'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
-					}
-				)
-			}
-			this.#xAnimation = this.el.animate(
-				{
-					transform: [
-						`translateX(${this.#prevRect!.x + this.#prevRect!.width / 2 - (rect.x + rect.width / 2)}px)`,
-						'none'
-					]
-				},
-				{
-					duration: 1000,
-					composite: 'accumulate',
-					easing:
-						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
-				}
-			)
-		})
+		// Animate y if value updated
+		// if (this.#prevValue !== this.value) {
+		// 	this.#yAnimation = this.el.animate(
+		// 		{
+		// 			// Add the offset between the prev top and current parent top to account for interruptions:
+		// 			transform: [
+		// 				`translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevRect!.y - parentRect.y}px))`,
+		// 				'none'
+		// 			]
+		// 		},
+		// 		{
+		// 			duration: 1000,
+		// 			easing:
+		// 				'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+		// 		}
+		// 	)
+		// }
+		// this.#xAnimation = this.el.animate(
+		// 	{
+		// 		transform: [
+		// 			`translateX(${this.#prevRect!.x + this.#prevRect!.width / 2 - (rect.x + rect.width / 2)}px)`,
+		// 			'none'
+		// 		]
+		// 	},
+		// 	{
+		// 		duration: 1000,
+		// 		composite: 'accumulate',
+		// 		easing:
+		// 			'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+		// 	}
+		// )
 	}
 }
 
@@ -430,7 +442,7 @@ class Sym extends Char<KeyedSymbolPart> {
 
 	update(value: KeyedSymbolPart['value']) {
 		this.el.textContent = value
-		this._value = value
+		this.value = value
 
 		// @ts-expect-error wrong built-in DOM types
 		this.el.part = `symbol ${this.type} ${value}`
