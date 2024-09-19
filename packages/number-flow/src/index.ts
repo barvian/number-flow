@@ -13,7 +13,7 @@ import styles from './styles'
 import { frames, lerp, discreteFrames, type DiscreteKeyframeProps } from './util/animate'
 import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
-export type * from './formatter'
+export type { Format, Value } from './formatter'
 
 const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
