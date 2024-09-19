@@ -257,7 +257,6 @@ class Section {
 	#innerAnimation?: Animation
 
 	didUpdate() {
-		if (this.#children.size <= 0) return
 		this.#children.forEach((comp) => comp.didUpdate(this.#wrapper.getBoundingClientRect()))
 
 		// Cancel any previous animations before getting the new rects:
@@ -266,19 +265,25 @@ class Section {
 		this.#maskAnimation?.cancel()
 
 		const rect = this.el.getBoundingClientRect()
-		const scale = this.#prevRect!.width / Math.max(rect.width, 0.01) // avoid divide by zero
+		const scale = Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
+		const dx = this.#prevRect![this.justify] - rect[this.justify]
 
+		this.#animation = this.el.animate(
+			{
+				transform: frames(
+					1000,
+					scale === 1
+						? (t) => `translateX(${lerp(dx, 0, t)}px)`
+						: (t) => `translateX(${lerp(dx, 0, t)}px) scaleX(${lerp(scale, 1, t)})`
+				)
+			},
+			{
+				duration: 1000,
+				easing:
+					'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+			}
+		)
 		if (scale !== 1) {
-			this.#animation = this.el.animate(
-				{
-					transform: frames(1000, (t) => `scaleX(${lerp(scale, 1, t)})`)
-				},
-				{
-					duration: 1000,
-					easing:
-						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
-				}
-			)
 			// Invert the scale on the inner element:
 			this.#innerAnimation = this.#inner?.animate(
 				{
@@ -291,7 +296,7 @@ class Section {
 				}
 			)
 
-			if (this.masked)
+			if (this.masked) {
 				this.#maskAnimation = this.el.animate(
 					discreteFrames(
 						1000,
@@ -305,6 +310,7 @@ class Section {
 							'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
 					}
 				)
+			}
 		}
 	}
 }
