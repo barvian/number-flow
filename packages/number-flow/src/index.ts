@@ -9,8 +9,9 @@ import {
 	type Value
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { maskHeight, maskSize } from './styles'
-import { frames, lerp } from './util/animate'
+import styles from './styles'
+import { frames, lerp, discreteFrames, type DiscreteKeyframeProps } from './util/animate'
+import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
 export type * from './formatter'
 
@@ -257,11 +258,12 @@ class Section {
 
 	didUpdate() {
 		if (this.#children.size <= 0) return
+		this.#children.forEach((comp) => comp.didUpdate(this.#wrapper.getBoundingClientRect()))
 
 		// Cancel any previous animations before getting the new rects:
 		this.#animation?.cancel()
-		this.#maskAnimation?.cancel()
 		this.#innerAnimation?.cancel()
+		this.#maskAnimation?.cancel()
 
 		const rect = this.el.getBoundingClientRect()
 		const scale = this.#prevRect!.width / Math.max(rect.width, 0.01) // avoid divide by zero
@@ -269,8 +271,7 @@ class Section {
 		if (scale !== 1) {
 			this.#animation = this.el.animate(
 				{
-					// We need frames for this to be in perfect sync with the inverted one on #inner:
-					transform: this.#inner ? frames(1000, (t) => `scaleX(${lerp(scale, 1, t)})`) : undefined
+					transform: frames(1000, (t) => `scaleX(${lerp(scale, 1, t)})`)
 				},
 				{
 					duration: 1000,
@@ -278,22 +279,7 @@ class Section {
 						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
 				}
 			)
-			// The mask animation needed to be separated, or it slowed down the transform
-			// one then get out of sync with the invert scale one below:
-			this.#maskAnimation = this.el.animate(
-				{
-					webkitMaskSize: frames(1000, (t) => maskSize(1 / lerp(scale, 1, t))),
-					// Needed for Chrome when using WAAPI:
-					// https://stackoverflow.com/questions/74082152/do-i-include-vendor-prefixes-when-animating-with-waapi-animate#comment131145099_74091451
-					maskSize: frames(1000, (t) => maskSize(1 / lerp(scale, 1, t)))
-				},
-				{
-					duration: 1000,
-					easing:
-						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
-				}
-			)
-
+			// Invert the scale on the inner element:
 			this.#innerAnimation = this.#inner?.animate(
 				{
 					transform: frames(1000, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
@@ -304,9 +290,22 @@ class Section {
 						'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
 				}
 			)
-		}
 
-		this.#children.forEach((comp) => comp.didUpdate(this.#wrapper.getBoundingClientRect()))
+			if (this.masked)
+				this.#maskAnimation = this.el.animate(
+					discreteFrames(
+						1000,
+						(t): DiscreteKeyframeProps => ({
+							'--_number-flow-scale-x': lerp(scale, 1, t)
+						})
+					),
+					{
+						duration: 1000,
+						easing:
+							'linear(0, 0.005, 0.02 2.3%, 0.082, 0.16 7.7%, 0.462 16.9%, 0.557, 0.637, 0.707,0.767 30.2%, 0.818, 0.861 37.5%, 0.899 42%, 0.93 46.9%, 0.954 52.4%,0.972 58.7%, 0.984 65.7%, 0.992 74.3%, 0.997 85%, 0.999)'
+					}
+				)
+		}
 	}
 }
 
@@ -453,6 +452,6 @@ class Sym extends Char<KeyedSymbolPart> {
 
 export default NumberFlow
 
-if (NumberFlow && typeof window !== 'undefined' && !window.customElements.get('number-flow')) {
+if (BROWSER && !customElements.get('number-flow')) {
 	customElements.define('number-flow', NumberFlow)
 }

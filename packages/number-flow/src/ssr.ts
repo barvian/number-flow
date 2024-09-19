@@ -1,10 +1,10 @@
+import { BROWSER } from 'esm-env'
 import { formatToParts, type Format, type Value } from './formatter'
 import { maskHeight } from './styles'
 
-export const ServerSafeHTMLElement =
-	typeof window === 'undefined' || typeof HTMLElement === 'undefined'
-		? (class {} as unknown as typeof HTMLElement) // for types
-		: HTMLElement
+export const ServerSafeHTMLElement = BROWSER
+	? HTMLElement
+	: (class {} as unknown as typeof HTMLElement) // for types
 
 const renderDSD = (formatted: string) =>
 	// shadowroot= for older Chrome, shadowrootmode = standard

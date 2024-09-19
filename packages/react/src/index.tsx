@@ -1,5 +1,6 @@
 import * as React from 'react'
 import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'number-flow'
+import { BROWSER } from 'esm-env'
 export type * from 'number-flow'
 
 const NumberFlow = React.forwardRef<
@@ -19,14 +20,12 @@ const NumberFlow = React.forwardRef<
 			{...rest}
 			suppressHydrationWarning
 			dangerouslySetInnerHTML={
-				typeof window === 'undefined'
-					? { __html: renderInnerHTML(value, { locales, format, dsd }) }
-					: undefined
+				BROWSER ? undefined : { __html: renderInnerHTML(value, { locales, format, dsd }) }
 			}
 			// Make sure value is set last, so timings can be updated beforehand.
 			// window check ensures no double update in React 18.
 			// Should be able to do value={[value,...]} in React 19:
-			value={typeof window === 'undefined' ? undefined : JSON.stringify([value, locales, format])}
+			value={BROWSER ? JSON.stringify([value, locales, format]) : undefined}
 		/>
 	)
 })

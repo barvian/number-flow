@@ -1,23 +1,25 @@
+import { BROWSER } from 'esm-env'
+
+if (BROWSER && typeof CSS?.registerProperty !== 'undefined') {
+	CSS.registerProperty({
+		name: '--_number-flow-scale-x',
+		syntax: '<number>',
+		inherits: false,
+		initialValue: '1'
+	})
+}
+
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 
 export const maskHeight = 'var(--mask-height, 0.15em)'
 const maskWidth = 'var(--mask-width, 0.5em)'
 
+const scaledMaskWidth = `${maskWidth} * 1/var(--_number-flow-scale-x)`
+const calcScaledMaskWidth = `calc(${scaledMaskWidth})`
+
 const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
-
-export const maskSize = (scaleX = 1) => {
-	let scaledMaskWidth: string, calcScaledMaskWidth: string
-	if (scaleX === 1) {
-		scaledMaskWidth = calcScaledMaskWidth = maskWidth
-	} else {
-		scaledMaskWidth = `${scaleX}*${maskWidth}`
-		calcScaledMaskWidth = `calc(${scaledMaskWidth})`
-	}
-	return `calc(100% - ${scaledMaskWidth}) 100%, ${calcScaledMaskWidth} calc(100% - ${maskHeight} * 2), ${calcScaledMaskWidth} ${maskHeight}, ${calcScaledMaskWidth} ${maskHeight}`
-	//      ^ vertical                                ^ horizontal                                       ^ corners
-}
 
 const styles = `
 :host {
@@ -27,6 +29,7 @@ const styles = `
 	isolation: isolate;
 	user-select: none;
 	pointer-events: none;
+	white-space: nowrap;
 }
 
 .label {
@@ -41,13 +44,14 @@ const styles = `
 }
 
 .section {
-	display: inline-flex;
+	display: inline-block; /* inline-flex broke with absolute positioned children in Safari */
 	user-select: none;
 }
 
 .section__inner {
-	display: inline-flex;
+	display: inline-block;
 	justify-content: inherit;
+	transform-origin: inherit;
 	/* for .section__exiting: */
 	position: relative; 
 	isolation: isolate;
@@ -58,18 +62,10 @@ const styles = `
 	transform-origin: center left;
 }
 
-	.section--justify-left .section__inner {
-		transform-origin: center left;
-	}
-
 .section--justify-right {
 	justify-content: right;
 	transform-origin: center right;
 }
-
-	.section--justify-right .section__inner {
-		transform-origin: center right;
-	}
 
 .section--masked {
 	overflow: clip;
@@ -77,9 +73,11 @@ const styles = `
 	padding-top: ${maskHeight};
 	position: relative; /* for z-index */
 	z-index: -1; /* display underneath other sections */
+	--_number-flow-scale-x: 1;
 	/* -webkit prefixed versions have universally better support than non-prefixed */
 	-webkit-mask-repeat: no-repeat;
-	-webkit-mask-size: ${maskSize()};
+	-webkit-mask-size:
+		calc(100% - ${scaledMaskWidth}) 100%, 100% calc(100% - ${maskHeight} * 2), ${calcScaledMaskWidth} ${maskHeight}, ${calcScaledMaskWidth} ${maskHeight};
 }
 
 	.section--masked.section--justify-left {
@@ -87,13 +85,13 @@ const styles = `
 		margin-right: calc(-1 * ${maskWidth});
 		-webkit-mask-image:
 			${verticalMask},
-			linear-gradient(to right, #000, transparent),
+			linear-gradient(to right, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%), 
 			/* TR corner */
 			radial-gradient(at bottom left, ${cornerGradient}),
 			/* BR corner */
 			radial-gradient(at top left, ${cornerGradient})
 		;
-		-webkit-mask-position: left, right center, right top, right bottom;
+		-webkit-mask-position: left, center, right top, right bottom;
 	}
 
 	.section--masked.section--justify-right {
@@ -101,13 +99,13 @@ const styles = `
 		margin-left: calc(-1 * ${maskWidth});
 		-webkit-mask-image:
 			${verticalMask},
-			linear-gradient(to right, transparent, #000),
+			linear-gradient(to left, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%),
 			/* TL corner */
 			radial-gradient(at bottom right, ${cornerGradient}),
 			/* BL corner */
 			radial-gradient(at top right, ${cornerGradient})
 		;
-		-webkit-mask-position: right, left center, left top, left bottom;
+		-webkit-mask-position: right, center, left top, left bottom;
 	}
 
 .section__exiting {
