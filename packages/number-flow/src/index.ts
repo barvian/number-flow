@@ -368,7 +368,7 @@ class Digit extends Char<KeyedDigitPart> {
 								'span',
 								{ className: 'digit__stack digit__lt' },
 								Array.from({ length: value }, (_, i) =>
-									createElement('span', { className: 'digit__digit', textContent: i + '' })
+									createElement('span', { textContent: i + '' })
 								)
 							)
 						]),
@@ -380,10 +380,7 @@ class Digit extends Char<KeyedDigitPart> {
 								'span',
 								{ className: 'digit__stack digit__gt' },
 								Array.from({ length: 9 - value }, (_, i) =>
-									createElement('span', {
-										className: 'digit__digit',
-										textContent: value + i + 1 + ''
-									})
+									createElement('span', { textContent: value + i + 1 + '' })
 								)
 							)
 						])

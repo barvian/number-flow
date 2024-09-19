@@ -40,4 +40,4 @@ export function discreteFrames(durationMs: number, frame: (t: number) => Discret
 	return frames
 }
 
-export const lerp = (min: number, max: number, fac: number) => min + (max - min) * fac
+export const lerp = (min: number, max: number, weight: number) => min + (max - min) * weight
