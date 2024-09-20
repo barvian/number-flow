@@ -9,7 +9,7 @@ import {
 	type Value
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles from './styles'
+import styles, { maskHeight } from './styles'
 import { frames, lerp, discreteFrames, type DiscreteKeyframeProps } from './util/animate'
 import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
@@ -213,14 +213,12 @@ class Section {
 	}
 
 	#prevRect?: DOMRect
-	#prevWrapperRect?: DOMRect
 
 	willUpdate() {
 		const rect = this.el.getBoundingClientRect()
 		this.#prevRect = rect
-		const wrapperRect = this.#inner?.getBoundingClientRect() ?? rect
-		this.#prevWrapperRect = wrapperRect
 
+		const wrapperRect = this.#inner?.getBoundingClientRect() ?? rect
 		this.#children.forEach((comp) => comp.willUpdate(wrapperRect))
 	}
 
@@ -251,8 +249,11 @@ class Section {
 		})
 
 		// Finish updating any added children
+		const rect = this.#wrapper.getBoundingClientRect()
+		added.forEach((comp) => {
+			comp.willUpdate(rect)
+		})
 		added.forEach((comp, part) => {
-			comp.willUpdate(this.#prevWrapperRect!)
 			comp.update(part.value)
 		})
 
@@ -286,11 +287,11 @@ class Section {
 
 		const rect = this.el.getBoundingClientRect()
 		const scale = Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
-		const dx = this.#prevRect![this.justify] - rect[this.justify]
+		const x = this.#prevRect![this.justify] - rect[this.justify]
 
 		this.#animation = this.el.animate(
 			{
-				transform: [`translateX(${dx}px) scaleX(${scale})`, 'none']
+				transform: [`translateX(${x}px) scaleX(${scale})`, 'none']
 			},
 			{
 				duration: 1000,
@@ -360,12 +361,19 @@ class Digit extends Char<KeyedDigitPart> {
 		)
 	}
 
-	#prevValue: KeyedDigitPart['value'] | undefined
-	#prevRect: DOMRect | undefined
+	#prevValue?: KeyedDigitPart['value']
+	// Relative to parent:
+	#prevY?: number
+	#prevCenter?: number
 
-	willUpdate() {
+	willUpdate(parentRect: DOMRect) {
 		this.#prevValue = this.value
-		this.#prevRect = this.el.getBoundingClientRect()
+		const rect = this.el.getBoundingClientRect()
+		this.#prevY = rect.y - parentRect.y
+		const prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
+		const halfWidth = rect.width / 2
+		this.#prevCenter =
+			this.section.justify === 'left' ? prevOffset + halfWidth : prevOffset - halfWidth
 	}
 
 	update(value: KeyedDigitPart['value']) {
@@ -411,38 +419,38 @@ class Digit extends Char<KeyedDigitPart> {
 		this.#xAnimation?.cancel()
 		this.#yAnimation?.cancel()
 		const rect = this.el.getBoundingClientRect()
+		const offset = rect[this.section.justify] - parentRect[this.section.justify]
+		const halfWidth = rect.width / 2
+		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
 
 		// Animate y if value updated
-		// if (this.#prevValue !== this.value) {
-		// 	this.#yAnimation = this.el.animate(
-		// 		{
-		// 			// Add the offset between the prev top and current parent top to account for interruptions:
-		// 			transform: [
-		// 				`translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevRect!.y - parentRect.y}px))`,
-		// 				'none'
-		// 			]
-		// 		},
-		// 		{
-		// 			duration: 1000,
-		// 			easing:
-		// 				'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-		// 		}
-		// 	)
-		// }
-		// this.#xAnimation = this.el.animate(
-		// 	{
-		// 		transform: [
-		// 			`translateX(${this.#prevRect!.x + this.#prevRect!.width / 2 - (rect.x + rect.width / 2)}px)`,
-		// 			'none'
-		// 		]
-		// 	},
-		// 	{
-		// 		duration: 1000,
-		// 		composite: 'accumulate',
-		// 		easing:
-		// 			'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-		// 	}
-		// )
+		if (this.#prevValue !== this.value) {
+			this.#yAnimation = this.el.animate(
+				{
+					// Add the offset between the prev top and current parent top to account for interruptions:
+					transform: [
+						`translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`,
+						'none'
+					]
+				},
+				{
+					duration: 1000,
+					easing:
+						'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+				}
+			)
+		}
+		this.#xAnimation = this.el.animate(
+			{
+				transform: [`translateX(${this.#prevCenter! - center}px)`, 'none']
+			},
+			{
+				duration: 1000,
+				composite: 'accumulate',
+				easing:
+					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+			}
+		)
 	}
 }
 
