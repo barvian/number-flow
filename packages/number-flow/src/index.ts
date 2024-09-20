@@ -270,12 +270,7 @@ class Section {
 
 		this.#animation = this.el.animate(
 			{
-				transform: frames(
-					1000,
-					scale === 1
-						? (t) => `translateX(${lerp(dx, 0, t)}px)`
-						: (t) => `translateX(${lerp(dx, 0, t)}px) scaleX(${lerp(scale, 1, t)})`
-				)
+				transform: [`translateX(${dx}px) scaleX(${scale})`, 'none']
 			},
 			{
 				duration: 1000,
@@ -287,6 +282,7 @@ class Section {
 			// Invert the scale on the inner element:
 			this.#innerAnimation = this.#inner?.animate(
 				{
+					// 1/x isn't linear so we need to do sampling:
 					transform: frames(1000, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
 				},
 				{
@@ -349,7 +345,6 @@ class Digit extends Char<KeyedDigitPart> {
 
 	willUpdate() {
 		this.#prevValue = this.value
-		// TODO: might be able to optimize this b/c it's relative i.e. if (!this.#prevRect) and set it in didupdate
 		this.#prevRect = this.el.getBoundingClientRect()
 	}
 

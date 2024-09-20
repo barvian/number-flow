@@ -3,7 +3,7 @@ export function frames<F extends string | (number | null)>(
 	frame: (t: number) => F,
 	fps = 30
 ) {
-	const length = (durationMs / 1000) * fps
+	const length = Math.trunc((durationMs / 1000) * fps)
 	return Array.from({ length }, (_, i) => frame(i / (length - 1)))
 }
 
@@ -25,8 +25,8 @@ export function discreteFrames(
 	}
 
 	// Discrete values change halfway between keyframes, so nudge everything over half a
-	// frame, throw out the final one, and add another initial one:
-	const length = Math.max((durationMs / 1000) * fps - 1, 0) // minus one frame
+	// frame, and add another initial one:
+	const length = Math.max(Math.trunc((durationMs / 1000) * fps), 0)
 	const frames = Array.from(
 		{ length },
 		(_, f): Keyframe => ({
