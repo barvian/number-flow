@@ -15,7 +15,7 @@ import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
 export type { Format, Value } from './formatter'
 
-const OBSERVED_ATTRIBUTES = ['value', 'timing'] as const
+const OBSERVED_ATTRIBUTES = ['value', 'timing', 'manual'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 
 const DEFAULT_TIMING: EffectTiming = {
@@ -32,7 +32,10 @@ class NumberFlow extends ServerSafeHTMLElement {
 	timing = DEFAULT_TIMING
 	#formatted?: string
 
+	manual = false
+
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
+		if (attr === 'manual') this.manual = newValue != null
 		this[attr] = JSON.parse(newValue)
 	}
 
@@ -113,27 +116,34 @@ class NumberFlow extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
-			// Update otherwise
-			this.#pre!.willUpdate()
-			this.#integer!.willUpdate()
-			this.#fraction!.willUpdate()
-			this.#post!.willUpdate()
+			if (!this.manual) this.willUpdate()
 
 			this.#pre!.update(pre)
 			this.#integer!.update(integer)
 			this.#fraction!.update(fraction)
 			this.#post!.update(post)
 
-			this.#pre!.didUpdate()
-			this.#integer!.didUpdate()
-			this.#fraction!.didUpdate()
-			this.#post!.didUpdate()
+			if (!this.manual) this.didUpdate()
 		}
 
 		this.#label!.textContent = formatted
 
 		this.#formatted = formatted
 		this.#created = true
+	}
+
+	willUpdate() {
+		this.#pre!.willUpdate()
+		this.#integer!.willUpdate()
+		this.#fraction!.willUpdate()
+		this.#post!.willUpdate()
+	}
+
+	didUpdate() {
+		this.#pre!.didUpdate()
+		this.#integer!.didUpdate()
+		this.#fraction!.didUpdate()
+		this.#post!.didUpdate()
 	}
 }
 
@@ -215,25 +225,35 @@ class Section {
 	}
 
 	update(parts: KeyedNumberPart[]) {
+		const added = new Map<KeyedNumberPart, Char>()
 		const updated = new Map<KeyedNumberPart, Char>()
 
 		// Add new parts before any other updates, so we can save their position correctly:
 		const reverse = this.justify === 'right'
-		const parent = this.#inner ?? this.el
 		const addOp = reverse ? 'prepend' : 'append'
 		forEach(parts, reverse, (part) => {
-			// Filter out updated children:
-			if (this.#children.has(part.key)) return updated.set(part, this.#children.get(part.key)!)
-
-			const comp: Char =
-				part.type === 'integer' || part.type === 'fraction'
-					? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
-					: new Sym(this, part.type, part.value)
-			comp.willUpdate(this.#prevWrapperRect!)
-			comp.update(part.value) // then set it to the correct value
-			this.#children.set(part.key, comp)
+			let comp: Char
+			// Already exists, so mark for updating
+			if (this.#children.has(part.key)) {
+				comp = this.#children.get(part.key)!
+				updated.set(part, comp)
+			} else {
+				// New part
+				comp =
+					part.type === 'integer' || part.type === 'fraction'
+						? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
+						: new Sym(this, part.type, part.value)
+				added.set(part, comp)
+				this.#children.set(part.key, comp)
+			}
 
 			this.#wrapper[addOp](comp.el)
+		})
+
+		// Finish updating any added children
+		added.forEach((comp, part) => {
+			comp.willUpdate(this.#prevWrapperRect!)
+			comp.update(part.value)
 		})
 
 		// Update any updated children

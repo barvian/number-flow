@@ -1,12 +1,16 @@
 import { BROWSER } from 'esm-env'
 
-if (BROWSER && typeof CSS?.registerProperty !== 'undefined') {
-	CSS.registerProperty({
-		name: '--_number-flow-scale-x',
-		syntax: '<number>',
-		inherits: false,
-		initialValue: '1'
-	})
+if (BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined') {
+	try {
+		CSS.registerProperty({
+			name: '--_number-flow-scale-x',
+			syntax: '<number>',
+			inherits: false,
+			initialValue: '1'
+		})
+	} catch {
+		// Ignore if already registered
+	}
 }
 
 // Mask technique taken from:
