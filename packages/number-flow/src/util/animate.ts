@@ -1,3 +1,5 @@
+import { SUPPORTS_PROPERTY } from '../styles'
+
 export function frames<F extends string | (number | null)>(
 	durationMs: number,
 	frame: (t: number) => F,
@@ -20,7 +22,7 @@ export function discreteFrames(
 ) {
 	// If CSS.registerProperty is supported, assume they've been registered and do a normal animation
 	// on them:
-	if (typeof CSS?.registerProperty !== 'undefined') {
+	if (SUPPORTS_PROPERTY) {
 		return [frame(0), frame(1)]
 	}
 

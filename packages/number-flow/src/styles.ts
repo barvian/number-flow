@@ -1,6 +1,9 @@
 import { BROWSER } from 'esm-env'
 
-if (BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined') {
+export const SUPPORTS_PROPERTY =
+	BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined'
+
+if (SUPPORTS_PROPERTY) {
 	try {
 		CSS.registerProperty({
 			name: '--_number-flow-scale-x',
