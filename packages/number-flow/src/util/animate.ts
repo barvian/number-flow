@@ -1,10 +1,10 @@
-const FPMS = 60 / 1000
+const FPS = 60 // 60fps
 
 export function frames<F extends string | (number | null)>(
 	durationMs: number,
 	frame: (t: number) => F
 ) {
-	const length = durationMs * FPMS // 60fps
+	const length = (durationMs / 1000) * FPS
 	return Array.from({ length }, (_, i) => frame(i / (length - 1)))
 }
 
@@ -23,7 +23,7 @@ export function discreteFrames(durationMs: number, frame: (t: number) => Discret
 
 	// Discrete values change halfway between keyframes, so nudge everything over half a
 	// frame, throw out the final one, and add another initial one:
-	const length = Math.max(durationMs * FPMS - 1, 0) // 60fps minus one frame
+	const length = Math.max((durationMs / 1000) * FPS - 1, 0) // 60fps minus one frame
 	const frames = Array.from(
 		{ length },
 		(_, f): Keyframe => ({
