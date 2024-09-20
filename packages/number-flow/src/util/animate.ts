@@ -1,10 +1,9 @@
-const FPS = 60 // 60fps
-
 export function frames<F extends string | (number | null)>(
 	durationMs: number,
-	frame: (t: number) => F
+	frame: (t: number) => F,
+	fps = 30
 ) {
-	const length = (durationMs / 1000) * FPS
+	const length = (durationMs / 1000) * fps
 	return Array.from({ length }, (_, i) => frame(i / (length - 1)))
 }
 
@@ -14,7 +13,11 @@ export type DiscreteKeyframeProps = {
 
 // Makeshift solution for animating discrete properties (i.e. custom propeties)
 // when @property isn't supported:
-export function discreteFrames(durationMs: number, frame: (t: number) => DiscreteKeyframeProps) {
+export function discreteFrames(
+	durationMs: number,
+	frame: (t: number) => DiscreteKeyframeProps,
+	fps = 60
+) {
 	// If CSS.registerProperty is supported, assume they've been registered and do a normal animation
 	// on them:
 	if (typeof CSS?.registerProperty !== 'undefined') {
@@ -23,7 +26,7 @@ export function discreteFrames(durationMs: number, frame: (t: number) => Discret
 
 	// Discrete values change halfway between keyframes, so nudge everything over half a
 	// frame, throw out the final one, and add another initial one:
-	const length = Math.max((durationMs / 1000) * FPS - 1, 0) // 60fps minus one frame
+	const length = Math.max((durationMs / 1000) * fps - 1, 0) // minus one frame
 	const frames = Array.from(
 		{ length },
 		(_, f): Keyframe => ({
