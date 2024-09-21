@@ -171,7 +171,26 @@ const styles = `
 
 .symbol {
 	display: inline-block;
+	position: relative;
+	isolation: isolate;
 }
+
+.symbol__value {
+	display: inline-block;
+}
+
+.symbol__exiting {
+	position: absolute;
+	z-index: -1;
+}
+
+	.section--justify-left .symbol__exiting {
+		left: 0;
+	}
+
+	.section--justify-right .symbol__exiting {
+		right: 0;
+	}
 `
 
 export default styles

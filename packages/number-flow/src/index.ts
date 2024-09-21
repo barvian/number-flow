@@ -542,17 +542,31 @@ class Sym extends Char<KeyedSymbolPart> {
 		value: KeyedSymbolPart['value'],
 		opts?: CharOptions
 	) {
+		const val = createElement('span', {
+			className: 'symbol__value',
+			textContent: value
+		})
 		super(
 			section,
 			value,
-			createElement('span', {
-				className: `symbol`,
-				// part: `symbol ${type}`,
-				textContent: value
-			}),
+			createElement(
+				'span',
+				{
+					className: `symbol`
+				},
+				[val]
+			),
 			opts
 		)
+		this.#children.set(
+			value,
+			new AnimatePresence(val, {
+				onRemove: this.#onChildRemove(value)
+			})
+		)
 	}
+
+	#children = new Map<KeyedSymbolPart['value'], AnimatePresence>()
 
 	#prevOffset?: number
 
@@ -562,12 +576,41 @@ class Sym extends Char<KeyedSymbolPart> {
 		this.#prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
 	}
 
-	update(value: KeyedSymbolPart['value']) {
-		this.el.textContent = value
-		this.value = value
+	#onChildRemove =
+		(key: KeyedSymbolPart['value']): OnRemove =>
+		() => {
+			this.#children.delete(key)
+		}
 
-		// @ts-expect-error wrong built-in DOM types
-		this.el.part = `symbol ${this.type} ${value}`
+	update(value: KeyedSymbolPart['value']) {
+		if (this.value !== value) {
+			// Pop the current value:
+			const current = this.#children.get(this.value)!
+			current.removed = true
+			current.el.classList.add('symbol__exiting')
+
+			// If we already have the new value and it hasn't finished removing, reclaim it:
+			if (this.#children.has(value)) {
+				const prev = this.#children.get(value)!
+				prev.removed = false
+				prev.el.classList.remove('symbol__exiting')
+			} else {
+				// Otherwise, create a new one:
+				const newVal = createElement('span', {
+					className: 'symbol__value',
+					textContent: value
+				})
+				this.el.appendChild(newVal)
+				this.#children.set(
+					value,
+					new AnimatePresence(newVal, {
+						initial: true,
+						onRemove: this.#onChildRemove(value)
+					})
+				)
+			}
+		}
+		this.value = value
 	}
 
 	#xAnimation?: Animation
