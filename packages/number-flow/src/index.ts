@@ -96,7 +96,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.shadowRoot!.appendChild(this.#label)
 
 			this.#pre = new Section(this, pre, {
-				part: 'pre',
+				// part: 'pre',
 				inert: true,
 				ariaHidden: 'true',
 				justify: 'right',
@@ -104,7 +104,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
 			this.#integer = new Section(this, integer, {
-				part: 'integer',
+				// part: 'integer',
 				inert: true,
 				masked: true,
 				ariaHidden: 'true',
@@ -113,7 +113,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#integer.el)
 			this.#fraction = new Section(this, fraction, {
-				part: 'fraction',
+				// part: 'fraction',
 				inert: true,
 				masked: true,
 				ariaHidden: 'true',
@@ -122,7 +122,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#fraction.el)
 			this.#post = new Section(this, post, {
-				part: 'post',
+				// part: 'post',
 				inert: true,
 				ariaHidden: 'true',
 				justify: 'left',
@@ -240,8 +240,8 @@ class Section {
 		const updated = new Map<KeyedNumberPart, Char>()
 		const removed = new Map<NumberPartKey, Char>()
 
-		// Find any removed children
 		this.#children.forEach((comp, key) => {
+			// Mark removed children
 			if (!parts.find((p) => p.key === key)) {
 				removed.set(key, comp)
 			}
@@ -382,7 +382,7 @@ class Digit extends Char<KeyedDigitPart> {
 			value,
 			createElement('span', {
 				className: `digit ${className ?? ''}`,
-				part: `digit ${type} ${value}`,
+				// part: `digit ${type} ${value}`,
 				textContent: value + ''
 			})
 		)
@@ -407,8 +407,8 @@ class Digit extends Char<KeyedDigitPart> {
 		this.value = value
 
 		if (this.#prevValue !== value) {
-			// @ts-expect-error wrong built-in DOM types
-			this.el.part = `digit ${this.type} ${value}`
+			// // @ts-expect-error wrong built-in DOM types
+			// this.el.part = `digit ${this.type} ${value}`
 
 			// We need all the digits, in case of interruptions:
 			replaceChildren(this.el, [
@@ -491,7 +491,7 @@ class Sym extends Char<KeyedSymbolPart> {
 			value,
 			createElement('span', {
 				className: `symbol ${className ?? ''}`,
-				part: `symbol ${type}`,
+				// part: `symbol ${type}`,
 				textContent: value
 			})
 		)
