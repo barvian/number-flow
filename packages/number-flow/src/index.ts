@@ -99,8 +99,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				// part: 'pre',
 				inert: true,
 				ariaHidden: 'true',
-				justify: 'right',
-				exitMode: 'pop'
+				justify: 'right'
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
 			this.#integer = new Section(this, integer, {
@@ -109,7 +108,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				masked: true,
 				ariaHidden: 'true',
 				justify: 'right',
-				exitMode: 'sync'
+				deferRemoved: true
 			})
 			this.shadowRoot!.appendChild(this.#integer.el)
 			this.#fraction = new Section(this, fraction, {
@@ -118,15 +117,14 @@ class NumberFlow extends ServerSafeHTMLElement {
 				masked: true,
 				ariaHidden: 'true',
 				justify: 'left',
-				exitMode: 'sync'
+				deferRemoved: true
 			})
 			this.shadowRoot!.appendChild(this.#fraction.el)
 			this.#post = new Section(this, post, {
 				// part: 'post',
 				inert: true,
 				ariaHidden: 'true',
-				justify: 'left',
-				exitMode: 'pop'
+				justify: 'left'
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
@@ -161,13 +159,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 	}
 }
 
-type ExitMode = 'sync' | 'pop'
+type deferRemoved = 'sync' | 'pop'
 
 class Section {
 	readonly el: HTMLSpanElement
 	readonly #inner?: HTMLSpanElement
 	readonly justify: Justify
-	readonly exitMode: ExitMode
+	readonly deferRemoved: boolean
 	readonly masked: boolean
 
 	// A shortcut to #inner or el:
@@ -181,13 +179,13 @@ class Section {
 		parts: KeyedNumberPart[],
 		{
 			justify,
-			exitMode,
+			deferRemoved = false,
 			masked = false,
 			...opts
-		}: { justify: Justify; exitMode: ExitMode; masked?: boolean } & HTMLProps<'section'>
+		}: { justify: Justify; deferRemoved?: boolean; masked?: boolean } & HTMLProps<'section'>
 	) {
 		this.justify = justify
-		this.exitMode = exitMode
+		this.deferRemoved = deferRemoved
 		this.masked = masked
 
 		this.#children = new Map()
@@ -248,18 +246,33 @@ class Section {
 		const updated = new Map<KeyedNumberPart, Char>()
 		const removed = new Map<NumberPartKey, Char>()
 
+		const popRemoved = () => {
+			removed.forEach((comp) => {
+				comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
+			})
+			// Then pop/update all
+			removed.forEach((comp, key) => {
+				comp.el.classList.add('section__exiting')
+				comp.removed = true
+			})
+		}
+
 		this.#children.forEach((comp, key) => {
-			// Mark removed children
+			// Keep track of removed children:
 			if (!parts.find((p) => p.key === key)) {
 				removed.set(key, comp)
 			}
-			// Re-add any exiting children to re-compute their offsets later
+			// Re-add any exiting children alongside new ones below
+			// (if they're actually removed they'll be taken care of by popRemoved)
 			if (comp.el.classList.contains('section__exiting')) {
 				comp.el.classList.remove('section__exiting')
 				comp.el.style[this.justify] = ''
 				comp.removed = false
 			}
 		})
+
+		// Pop first, alongside additions
+		if (!this.deferRemoved) popRemoved()
 
 		// Add new parts before any other updates, so we can save their position correctly:
 		const reverse = this.justify === 'left' // we want to prepend for left
@@ -308,14 +321,7 @@ class Section {
 			if (comp instanceof Digit) comp.update(0)
 		})
 		// Calculate offsets for removed before popping, to avoid layout thrashing:
-		removed.forEach((comp) => {
-			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
-		})
-		// Then pop/update all
-		removed.forEach((comp, key) => {
-			comp.el.classList.add('section__exiting')
-			comp.removed = true
-		})
+		if (this.deferRemoved) popRemoved()
 	}
 
 	#animation?: Animation
