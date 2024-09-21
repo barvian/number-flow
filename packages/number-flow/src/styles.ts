@@ -42,8 +42,8 @@ const styles = `
 	pointer-events: none;
 	white-space: nowrap;
 
-	--fade-duration: 0.3s;
-	--fade-easing: ease;
+	--fade-duration: 0.5s;
+	--fade-easing: ease-out;
 }
 
 .label {

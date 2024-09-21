@@ -10,7 +10,7 @@ import {
 	type NumberPartKey
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { maskHeight } from './styles'
+import styles, { maskHeight, SUPPORTS_ANIMATION_COMPOSITION } from './styles'
 import { frames, lerp, discreteFrames, type DiscreteKeyframeProps } from './util/animate'
 import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
@@ -360,6 +360,10 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
 		readonly el: HTMLSpanElement
 	) {}
 
+	get flow() {
+		return this.section.flow
+	}
+
 	abstract willUpdate(parentRect: DOMRect): void
 	abstract update(value: P['value']): void
 	abstract didUpdate(parentRect: DOMRect): void
@@ -446,33 +450,35 @@ class Digit extends Char<KeyedDigitPart> {
 		const halfWidth = rect.width / 2
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
 
-		if (this.#prevValue !== this.value) {
+		const x = `translateX(${this.#prevCenter! - center}px)`
+		// Add the offset between the prev top and current parent top to account for interruptions:
+		const y = `translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`
+
+		// If animation composition is not supported, animate x with y using x's easing which is probably safer (i.e. no bounce):
+		this.#xAnimation = this.el.animate(
+			{
+				transform: [SUPPORTS_ANIMATION_COMPOSITION ? x : `${x} ${y}`, 'none']
+			},
+			{
+				duration: 1000,
+				composite: 'accumulate', // in case there's an in-flight y animation
+				easing:
+					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+			}
+		)
+		if (SUPPORTS_ANIMATION_COMPOSITION && this.#prevValue !== this.value) {
 			this.#yAnimation = this.el.animate(
 				{
-					// Add the offset between the prev top and current parent top to account for interruptions:
-					transform: [
-						`translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`,
-						'none'
-					]
+					transform: [y, 'none']
 				},
 				{
 					duration: 1000,
+					composite: 'accumulate',
 					easing:
 						'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
 				}
 			)
 		}
-		this.#xAnimation = this.el.animate(
-			{
-				transform: [`translateX(${this.#prevCenter! - center}px)`, 'none']
-			},
-			{
-				duration: 1000,
-				composite: 'accumulate',
-				easing:
-					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-			}
-		)
 	}
 }
 
