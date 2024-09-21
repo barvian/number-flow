@@ -196,6 +196,15 @@ class Section {
 		// TODO: replace this with height: 1lh when it's better supported:
 		const innerHTML = '&#8203;'
 
+		const children = parts.map((part) => {
+			const comp =
+				part.type === 'integer' || part.type === 'fraction'
+					? new Digit(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
+					: new Sym(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
+			this.#children.set(part.key, comp)
+			return comp.el
+		})
+
 		if (masked)
 			this.#inner = createElement(
 				'span',
@@ -203,14 +212,7 @@ class Section {
 					className: 'section__inner',
 					innerHTML
 				},
-				parts.map((part) => {
-					const comp =
-						part.type === 'integer' || part.type === 'fraction'
-							? new Digit(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
-							: new Sym(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
-					this.#children.set(part.key, comp)
-					return comp.el
-				})
+				children
 			)
 
 		this.el = createElement(
@@ -220,7 +222,7 @@ class Section {
 				className: `section section--justify-${justify}${masked ? ' section--masked' : ''}`,
 				...(this.#inner ? {} : { innerHTML })
 			},
-			this.#inner && [this.#inner]
+			this.#inner ? [this.#inner] : children
 		)
 		this.#wrapper = this.#inner ?? this.el
 	}
