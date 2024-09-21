@@ -193,8 +193,8 @@ class Section {
 				parts.map((part) => {
 					const comp =
 						part.type === 'integer' || part.type === 'fraction'
-							? new Digit(this, part.type, part.value)
-							: new Sym(this, part.type, part.value)
+							? new Digit(this, part.type, part.value, 'section__char is-active')
+							: new Sym(this, part.type, part.value, 'section__char is-active')
 					this.#children.set(part.key, comp)
 					return comp.el
 				})
@@ -233,8 +233,11 @@ class Section {
 				removed.set(key, comp)
 			}
 			// Re-add any exiting children to re-compute their offsets later
-			comp.el.classList.remove('section__exiting')
-			comp.el.style[this.justify] = ''
+			if (comp.el.classList.contains('section__exiting')) {
+				comp.el.classList.remove('section__exiting')
+				comp.el.style[this.justify] = ''
+				requestAnimationFrame(() => comp.el.classList.add('is-active'))
+			}
 		})
 
 		// Add new parts before any other updates, so we can save their position correctly:
@@ -250,9 +253,10 @@ class Section {
 				// New part
 				comp =
 					part.type === 'integer' || part.type === 'fraction'
-						? new Digit(this, part.type, 0) // always start at 0 for mathematical correctness
-						: new Sym(this, part.type, part.value)
+						? new Digit(this, part.type, 0, 'section__char') // always start at 0 for mathematical correctness
+						: new Sym(this, part.type, part.value, 'section__char')
 				added.set(part, comp)
+				requestAnimationFrame(() => comp.el.classList.add('is-active'))
 				this.#children.set(part.key, comp)
 			}
 			this.#wrapper[addOp](comp.el)
@@ -284,6 +288,7 @@ class Section {
 		// Then pop/update all
 		removed.forEach((comp) => {
 			comp.el.classList.add('section__exiting')
+			requestAnimationFrame(() => comp.el.classList.remove('is-active'))
 		})
 	}
 
@@ -353,10 +358,6 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
 		readonly el: HTMLSpanElement
 	) {}
 
-	get flow() {
-		return this.section.flow
-	}
-
 	abstract willUpdate(parentRect: DOMRect): void
 	abstract update(value: P['value']): void
 	abstract didUpdate(parentRect: DOMRect): void
@@ -366,13 +367,14 @@ class Digit extends Char<KeyedDigitPart> {
 	constructor(
 		section: Section,
 		private type: KeyedDigitPart['type'],
-		value: KeyedDigitPart['value']
+		value: KeyedDigitPart['value'],
+		className?: string
 	) {
 		super(
 			section,
 			value,
 			createElement('span', {
-				className: 'digit',
+				className: `digit ${className ?? ''}`,
 				part: `digit ${type} ${value}`,
 				textContent: value + ''
 			})
@@ -401,6 +403,7 @@ class Digit extends Char<KeyedDigitPart> {
 			// @ts-expect-error wrong built-in DOM types
 			this.el.part = `digit ${this.type} ${value}`
 
+			// We need all the digits, in case of interruptions:
 			replaceChildren(this.el, [
 				...(value === 0
 					? []
@@ -475,9 +478,18 @@ class Sym extends Char<KeyedSymbolPart> {
 	constructor(
 		section: Section,
 		private type: KeyedSymbolPart['type'],
-		value: KeyedSymbolPart['value']
+		value: KeyedSymbolPart['value'],
+		className?: string
 	) {
-		super(section, value, createElement('span', { part: `symbol ${type}`, textContent: value }))
+		super(
+			section,
+			value,
+			createElement('span', {
+				className: `symbol ${className ?? ''}`,
+				part: `symbol ${type}`,
+				textContent: value
+			})
+		)
 	}
 
 	willUpdate() {}

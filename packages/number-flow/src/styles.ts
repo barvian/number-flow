@@ -41,6 +41,9 @@ const styles = `
 	user-select: none;
 	pointer-events: none;
 	white-space: nowrap;
+
+	--fade-duration: 0.5s;
+	--fade-easing: ease-out;
 }
 
 .label {
@@ -123,8 +126,16 @@ const styles = `
 	position: absolute !important;
 	z-index: -1;
 	top: 0;
-	opacity: 0;
 }
+
+.section__char {
+	opacity: 0;
+	transition: var(--fade-duration) opacity var(--fade-easing);
+}
+
+	.section__char.is-active {
+		opacity: 1;
+	}
 
 .digit {
 	display: inline-block;
