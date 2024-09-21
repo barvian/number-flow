@@ -1,5 +1,6 @@
 import * as React from 'react'
 import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'number-flow'
+export type * from 'number-flow'
 import { BROWSER } from 'esm-env'
 
 export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {

@@ -1,4 +1,4 @@
-import { createElement, replaceChildren, type HTMLProps } from './util/dom'
+import { createElement, offset, replaceChildren, type HTMLProps, type Justify } from './util/dom'
 import { forEach } from './util/iterable'
 import {
 	formatToParts,
@@ -6,7 +6,8 @@ import {
 	type KeyedNumberPart,
 	type KeyedSymbolPart,
 	type Format,
-	type Value
+	type Value,
+	type NumberPartKey
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight } from './styles'
@@ -147,7 +148,6 @@ class NumberFlow extends ServerSafeHTMLElement {
 	}
 }
 
-type Justify = 'left' | 'right'
 type ExitMode = 'sync' | 'pop'
 
 class Section {
@@ -161,7 +161,7 @@ class Section {
 	readonly #wrapper: HTMLSpanElement
 
 	// All children in the DOM:
-	#children: Map<string, Char>
+	#children: Map<NumberPartKey, Char>
 
 	constructor(
 		readonly flow: NumberFlow,
@@ -225,13 +225,24 @@ class Section {
 	update(parts: KeyedNumberPart[]) {
 		const added = new Map<KeyedNumberPart, Char>()
 		const updated = new Map<KeyedNumberPart, Char>()
+		const removed = new Map<NumberPartKey, Char>()
+
+		// Find any removed children
+		this.#children.forEach((comp, key) => {
+			if (!parts.find((p) => p.key === key)) {
+				removed.set(key, comp)
+			}
+			// Re-add any exiting children to re-compute their offsets later
+			comp.el.classList.remove('section__exiting')
+			comp.el.style[this.justify] = ''
+		})
 
 		// Add new parts before any other updates, so we can save their position correctly:
-		const reverse = this.justify === 'right'
+		const reverse = this.justify === 'left' // we want to prepend for left
 		const addOp = reverse ? 'prepend' : 'append'
 		forEach(parts, reverse, (part) => {
 			let comp: Char
-			// Already exists, so mark for updating
+			// Already exists/needs update, so set aside for now
 			if (this.#children.has(part.key)) {
 				comp = this.#children.get(part.key)!
 				updated.set(part, comp)
@@ -244,32 +255,35 @@ class Section {
 				added.set(part, comp)
 				this.#children.set(part.key, comp)
 			}
-
 			this.#wrapper[addOp](comp.el)
 		})
 
 		// Finish updating any added children
-		const rect = this.#wrapper.getBoundingClientRect()
+		const rect = this.#wrapper.getBoundingClientRect() // this should only cause a layout if there were added children
 		added.forEach((comp) => {
 			comp.willUpdate(rect)
 		})
+		// Update added children to their initial value (they start at 0)
 		added.forEach((comp, part) => {
 			comp.update(part.value)
 		})
 
 		// Update any updated children
 		updated.forEach((comp, part) => {
-			comp.el.classList.remove('section__exiting')
 			comp.update(part.value)
 		})
 
-		// And mark any removed children
-		this.#children.forEach((comp, key) => {
-			if (!parts.find((p) => p.key === key)) {
-				comp.el.classList.add('section__exiting')
-				// Exiting digits should always be set to 0 for mathematical correctness:
-				if (comp instanceof Digit) comp.update(0)
-			}
+		// Set all removed digits to 0, for mathematical correctness:
+		removed.forEach((comp) => {
+			if (comp instanceof Digit) comp.update(0)
+		})
+		// Calculate offsets for removed before popping, to avoid layout thrashing:
+		removed.forEach((comp) => {
+			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
+		})
+		// Then pop/update all
+		removed.forEach((comp) => {
+			comp.el.classList.add('section__exiting')
 		})
 	}
 
@@ -357,7 +371,11 @@ class Digit extends Char<KeyedDigitPart> {
 		super(
 			section,
 			value,
-			createElement('span', { className: 'digit', part: `digit ${type}`, textContent: value + '' })
+			createElement('span', {
+				className: 'digit',
+				part: `digit ${type} ${value}`,
+				textContent: value + ''
+			})
 		)
 	}
 
@@ -417,29 +435,29 @@ class Digit extends Char<KeyedDigitPart> {
 	didUpdate(parentRect: DOMRect) {
 		// Cancel any previous animations before getting the new rect:
 		this.#xAnimation?.cancel()
-		this.#yAnimation?.cancel()
+		/*if (this.#prevValue !== this.value) */ this.#yAnimation?.cancel() // see note below about interruptions
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
 
-		// Animate y if value updated
-		if (this.#prevValue !== this.value) {
-			this.#yAnimation = this.el.animate(
-				{
-					// Add the offset between the prev top and current parent top to account for interruptions:
-					transform: [
-						`translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`,
-						'none'
-					]
-				},
-				{
-					duration: 1000,
-					easing:
-						'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-				}
-			)
-		}
+		// I kind of like the visible interruption to the animation even if the value didn't change:
+		// if (this.#prevValue !== this.value) {
+		this.#yAnimation = this.el.animate(
+			{
+				// Add the offset between the prev top and current parent top to account for interruptions:
+				transform: [
+					`translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`,
+					'none'
+				]
+			},
+			{
+				duration: 1000,
+				easing:
+					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+			}
+		)
+		// }
 		this.#xAnimation = this.el.animate(
 			{
 				transform: [`translateX(${this.#prevCenter! - center}px)`, 'none']

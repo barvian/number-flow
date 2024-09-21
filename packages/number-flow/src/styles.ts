@@ -2,6 +2,10 @@ import { BROWSER } from 'esm-env'
 
 export const SUPPORTS_PROPERTY =
 	BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined'
+export const SUPPORTS_ANIMATION_COMPOSITION =
+	BROWSER &&
+	typeof CSS !== 'undefined' &&
+	typeof CSS.supports('animation-composition', 'accumulate') !== 'undefined'
 
 if (SUPPORTS_PROPERTY) {
 	try {

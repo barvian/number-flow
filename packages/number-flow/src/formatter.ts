@@ -11,7 +11,8 @@ type SymbolPart = {
 }
 export type NumberPart = DigitPart | SymbolPart
 
-type KeyedPart = { key: string }
+export type NumberPartKey = string
+type KeyedPart = { key: NumberPartKey }
 export type KeyedDigitPart = DigitPart & KeyedPart
 export type KeyedSymbolPart = SymbolPart & KeyedPart
 export type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart

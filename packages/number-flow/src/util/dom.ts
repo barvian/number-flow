@@ -28,3 +28,14 @@ export const replaceChildren = (el: HTMLElement, children: Node[]) => {
 		el.replaceChildren(...children)
 	}
 }
+
+export type Justify = 'left' | 'right'
+
+// Makeshift .offsetRight
+export const offset = (el: HTMLElement, justify: Justify) => {
+	return justify === 'left'
+		? el.offsetLeft
+		: ((el.offsetParent instanceof HTMLElement ? el.offsetParent : null)?.offsetWidth ?? 0) -
+				el.offsetWidth -
+				el.offsetLeft
+}
