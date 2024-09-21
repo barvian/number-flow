@@ -134,12 +134,12 @@ const styles = `
 	/* top: 0; this seemed to backfire */
 }
 
-.section__char {
+.animate-presence {
 	opacity: 0;
 	transition: var(--fade-duration) opacity var(--fade-easing);
 }
 
-	.section__char.is-active {
+	.animate-presence--present {
 		opacity: 1;
 	}
 

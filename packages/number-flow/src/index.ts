@@ -206,8 +206,8 @@ class Section {
 				parts.map((part) => {
 					const comp =
 						part.type === 'integer' || part.type === 'fraction'
-							? new Digit(this, part.type, part.value, 'section__char is-active')
-							: new Sym(this, part.type, part.value, 'section__char is-active')
+							? new Digit(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
+							: new Sym(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
 					this.#children.set(part.key, comp)
 					return comp.el
 				})
@@ -224,6 +224,12 @@ class Section {
 		)
 		this.#wrapper = this.#inner ?? this.el
 	}
+
+	#onCharRemove =
+		(key: NumberPartKey): OnRemove =>
+		() => {
+			this.#children.delete(key)
+		}
 
 	#prevRect?: DOMRect
 
@@ -249,7 +255,7 @@ class Section {
 			if (comp.el.classList.contains('section__exiting')) {
 				comp.el.classList.remove('section__exiting')
 				comp.el.style[this.justify] = ''
-				requestAnimationFrame(() => comp.el.classList.add('is-active'))
+				comp.removed = false
 			}
 		})
 
@@ -266,10 +272,15 @@ class Section {
 				// New part
 				comp =
 					part.type === 'integer' || part.type === 'fraction'
-						? new Digit(this, part.type, 0, 'section__char') // always start at 0 for mathematical correctness
-						: new Sym(this, part.type, part.value, 'section__char')
+						? new Digit(this, part.type, 0, {
+								initial: true,
+								onRemove: this.#onCharRemove(part.key)
+							}) // always start at 0 for mathematical correctness
+						: new Sym(this, part.type, part.value, {
+								initial: true,
+								onRemove: this.#onCharRemove(part.key)
+							})
 				added.set(part, comp)
-				requestAnimationFrame(() => comp.el.classList.add('is-active'))
 				this.#children.set(part.key, comp)
 			}
 			this.#wrapper[addOp](comp.el)
@@ -299,9 +310,9 @@ class Section {
 			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
 		})
 		// Then pop/update all
-		removed.forEach((comp) => {
+		removed.forEach((comp, key) => {
 			comp.el.classList.add('section__exiting')
-			requestAnimationFrame(() => comp.el.classList.remove('is-active'))
+			comp.removed = true
 		})
 	}
 
@@ -354,12 +365,54 @@ class Section {
 	}
 }
 
-abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> {
+type OnRemove = () => void
+interface AnimatePresenceOptions {
+	onRemove?: OnRemove
+	initial?: boolean
+}
+
+class AnimatePresence {
+	#removed = false
+
+	constructor(
+		readonly el: HTMLElement,
+		{ onRemove, initial = false }: AnimatePresenceOptions = {}
+	) {
+		el.classList.add('animate-presence')
+		if (initial) requestAnimationFrame(() => el.classList.add('animate-presence--present'))
+		else el.classList.add('animate-presence--present')
+
+		el.addEventListener('transitionend', () => {
+			if (this.#removed) {
+				this.el.remove()
+				onRemove?.()
+			}
+		})
+	}
+
+	get removed() {
+		return this.#removed
+	}
+	set removed(val) {
+		this.#removed = val
+		// Technically raf is only needed for entrance, but use it for all to handle interruptions?
+		requestAnimationFrame(() => {
+			this.el.classList.toggle('animate-presence--present', !val)
+		})
+	}
+}
+
+interface CharOptions extends AnimatePresenceOptions {}
+
+abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends AnimatePresence {
 	constructor(
 		readonly section: Section,
 		protected value: P['value'],
-		readonly el: HTMLSpanElement
-	) {}
+		override readonly el: HTMLSpanElement,
+		options?: AnimatePresenceOptions
+	) {
+		super(el, options)
+	}
 
 	get flow() {
 		return this.section.flow
@@ -375,16 +428,17 @@ class Digit extends Char<KeyedDigitPart> {
 		section: Section,
 		private type: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
-		className?: string
+		opts?: CharOptions
 	) {
 		super(
 			section,
 			value,
 			createElement('span', {
-				className: `digit ${className ?? ''}`,
+				className: `digit`,
 				// part: `digit ${type} ${value}`,
 				textContent: value + ''
-			})
+			}),
+			opts
 		)
 	}
 
@@ -484,16 +538,17 @@ class Sym extends Char<KeyedSymbolPart> {
 		section: Section,
 		private type: KeyedSymbolPart['type'],
 		value: KeyedSymbolPart['value'],
-		className?: string
+		opts?: CharOptions
 	) {
 		super(
 			section,
 			value,
 			createElement('span', {
-				className: `symbol ${className ?? ''}`,
+				className: `symbol`,
 				// part: `symbol ${type}`,
 				textContent: value
-			})
+			}),
+			opts
 		)
 	}
 
