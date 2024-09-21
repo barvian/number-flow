@@ -1,7 +1,13 @@
 import { BROWSER } from 'esm-env'
 
+export const SUPPORTS_LINEAR =
+	BROWSER &&
+	typeof CSS !== 'undefined' &&
+	CSS.supports('transition-timing-function', 'linear(1, 2)')
+
 export const SUPPORTS_PROPERTY =
 	BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined'
+
 export const SUPPORTS_ANIMATION_COMPOSITION =
 	BROWSER &&
 	typeof CSS !== 'undefined' &&

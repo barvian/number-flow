@@ -10,18 +10,28 @@ import {
 	type NumberPartKey
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { maskHeight, SUPPORTS_ANIMATION_COMPOSITION } from './styles'
+import styles, { maskHeight, SUPPORTS_ANIMATION_COMPOSITION, SUPPORTS_LINEAR } from './styles'
 import { frames, lerp, discreteFrames, type DiscreteKeyframeProps } from './util/animate'
 import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
 export type { Format, Value } from './formatter'
 
-const OBSERVED_ATTRIBUTES = ['value', 'timing', 'manual'] as const
+const OBSERVED_ATTRIBUTES = ['value', 'x-timing', 'y-timing', 'manual'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 
-const DEFAULT_TIMING: EffectTiming = {
-	duration: 1
-}
+export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
+	? {
+			duration: 1000,
+			easing:
+				'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+		}
+	: {
+			duration: 900,
+			// Stolen from Vaul: https://vaul.emilkowal.ski/
+			easing: 'cubic-bezier(0.32, 0.72, 0, 1)'
+		}
+
+export const DEFAULT_Y_TIMING: EffectTiming = DEFAULT_X_TIMING
 
 type Args = Value | [Value, locales?: Intl.LocalesArgument, format?: Format]
 
@@ -30,14 +40,17 @@ let styleSheet: CSSStyleSheet | undefined
 class NumberFlow extends ServerSafeHTMLElement {
 	static observedAttributes = OBSERVED_ATTRIBUTES
 
-	timing = DEFAULT_TIMING
 	#formatted?: string
 
+	xTiming = DEFAULT_X_TIMING
+	yTiming = DEFAULT_Y_TIMING
 	manual = false
 
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
-		if (attr === 'manual') this.manual = newValue != null
-		this[attr] = JSON.parse(newValue)
+		if (attr === 'x-timing') this.xTiming = JSON.parse(newValue)
+		else if (attr === 'y-timing') this.yTiming = JSON.parse(newValue)
+		else if (attr === 'manual') this.manual = newValue != null
+		else this[attr] = JSON.parse(newValue)
 	}
 
 	get value(): string | undefined {
@@ -314,11 +327,7 @@ class Section {
 			{
 				transform: [`translateX(${x}px) scaleX(${scale})`, 'none']
 			},
-			{
-				duration: 1000,
-				easing:
-					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-			}
+			this.flow.xTiming
 		)
 		if (scale !== 1) {
 			// Invert the scale on the inner element:
@@ -327,11 +336,7 @@ class Section {
 					// 1/x isn't linear so we need to do sampling:
 					transform: frames(1000, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
 				},
-				{
-					duration: 1000,
-					easing:
-						'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-				}
+				this.flow.xTiming
 			)
 
 			if (this.masked) {
@@ -342,11 +347,7 @@ class Section {
 							'--_number-flow-scale-x': lerp(scale, 1, t)
 						})
 					),
-					{
-						duration: 1000,
-						easing:
-							'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-					}
+					this.flow.xTiming
 				)
 			}
 		}
@@ -460,10 +461,8 @@ class Digit extends Char<KeyedDigitPart> {
 				transform: [SUPPORTS_ANIMATION_COMPOSITION ? x : `${x} ${y}`, 'none']
 			},
 			{
-				duration: 1000,
-				composite: 'accumulate', // in case there's an in-flight y animation
-				easing:
-					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+				...this.flow.xTiming,
+				composite: 'accumulate' // in case there's an in-flight y animation
 			}
 		)
 		if (SUPPORTS_ANIMATION_COMPOSITION && this.#prevValue !== this.value) {
@@ -472,10 +471,8 @@ class Digit extends Char<KeyedDigitPart> {
 					transform: [y, 'none']
 				},
 				{
-					duration: 1000,
-					composite: 'accumulate',
-					easing:
-						'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+					...this.flow.yTiming,
+					composite: 'accumulate'
 				}
 			)
 		}
@@ -529,11 +526,7 @@ class Sym extends Char<KeyedSymbolPart> {
 			{
 				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
-			{
-				duration: 1000,
-				easing:
-					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
-			}
+			this.flow.xTiming
 		)
 	}
 }

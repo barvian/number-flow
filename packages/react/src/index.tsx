@@ -1,5 +1,6 @@
 import * as React from 'react'
 import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'number-flow'
+export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
 export type * from 'number-flow'
 import { BROWSER } from 'esm-env'
 
@@ -7,6 +8,8 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
+	xTiming?: EffectTiming
+	yTiming?: EffectTiming
 	dsd?: boolean
 }
 
@@ -37,13 +40,16 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	}
 
 	override render() {
-		const { innerRef, value, className, locales, format, dsd, ...rest } = this.props
+		const { innerRef, value, className, locales, format, dsd, xTiming, yTiming, ...rest } =
+			this.props
 
 		return (
 			// @ts-expect-error
 			<number-flow
 				ref={this.handleRef}
 				class={className}
+				x-timing={JSON.stringify(xTiming)}
+				y-timing={JSON.stringify(yTiming)}
 				{...rest}
 				suppressHydrationWarning
 				dangerouslySetInnerHTML={
