@@ -177,6 +177,7 @@ const styles = `
 
 .symbol__value {
 	display: inline-block;
+	white-space: pre; /* some symbols are spaces or thin spaces */
 }
 
 .symbol__exiting {
