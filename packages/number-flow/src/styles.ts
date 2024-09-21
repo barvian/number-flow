@@ -42,8 +42,8 @@ const styles = `
 	pointer-events: none;
 	white-space: nowrap;
 
-	--fade-duration: 0.5s;
-	--fade-easing: ease-out;
+	--fade-duration: 0.3s;
+	--fade-easing: ease;
 }
 
 .label {
@@ -59,32 +59,32 @@ const styles = `
 
 .section {
 	display: inline-block; /* inline-flex broke with absolute positioned children in Safari */
+	padding-bottom: ${maskHeight};
+	padding-top: ${maskHeight};
 	user-select: none;
 }
 
-.section__inner {
-	display: inline-block;
-	justify-content: inherit;
-	transform-origin: inherit;
+.section:not(.section--masked), .section--masked .section__inner {
 	/* for .section__exiting: */
 	position: relative; 
 	isolation: isolate;
 }
 
+.section__inner {
+	display: inline-block;
+	transform-origin: inherit;
+}
+
 .section--justify-left {
-	justify-content: left;
 	transform-origin: center left;
 }
 
 .section--justify-right {
-	justify-content: right;
 	transform-origin: center right;
 }
 
 .section--masked {
 	overflow: clip;
-	padding-bottom: ${maskHeight};
-	padding-top: ${maskHeight};
 	position: relative; /* for z-index */
 	z-index: -1; /* display underneath other sections */
 	--_number-flow-scale-x: 1;
@@ -125,7 +125,7 @@ const styles = `
 .section__exiting {
 	position: absolute !important;
 	z-index: -1;
-	top: 0;
+	/* top: 0; this seemed to backfire */
 }
 
 .section__char {
@@ -161,6 +161,10 @@ const styles = `
 
 .digit__gt {
 	top: calc(100% + ${maskHeight});
+}
+
+.symbol {
+	display: inline-block;
 }
 `
 

@@ -305,7 +305,9 @@ class Section {
 		this.#maskAnimation?.cancel()
 
 		const rect = this.el.getBoundingClientRect()
-		const scale = Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
+		const scale = this.masked
+			? Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
+			: 1
 		const x = this.#prevRect![this.justify] - rect[this.justify]
 
 		this.#animation = this.el.animate(
@@ -492,7 +494,13 @@ class Sym extends Char<KeyedSymbolPart> {
 		)
 	}
 
-	willUpdate() {}
+	#prevOffset?: number
+
+	willUpdate(parentRect: DOMRect) {
+		if (this.type === 'decimal') return // decimal never needs animation b/c it's the first in a left aligned section and never moves
+		const rect = this.el.getBoundingClientRect()
+		this.#prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
+	}
 
 	update(value: KeyedSymbolPart['value']) {
 		this.el.textContent = value
@@ -502,7 +510,26 @@ class Sym extends Char<KeyedSymbolPart> {
 		this.el.part = `symbol ${this.type} ${value}`
 	}
 
-	didUpdate() {}
+	#xAnimation?: Animation
+
+	didUpdate(parentRect: DOMRect) {
+		if (this.type === 'decimal') return
+		// Cancel any previous animations before getting the new rect:
+		this.#xAnimation?.cancel()
+		const rect = this.el.getBoundingClientRect()
+		const offset = rect[this.section.justify] - parentRect[this.section.justify]
+
+		this.#xAnimation = this.el.animate(
+			{
+				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
+			},
+			{
+				duration: 1000,
+				easing:
+					'linear(0, 0.0008 0.4%, 0.0051 1%, 0.0189 2%, 0.0446, 0.0778 4.39%, 0.1585 6.79%, 0.3699 12.38%, 0.4693 15.17%, 0.5706 18.36%, 0.6521 21.36%, 0.7249, 0.7844 27.75%, 0.8349 31.14%, 0.8571 32.94%, 0.8785, 0.8969 36.93%, 0.9142 39.12%, 0.9298, 0.9428 43.91%, 0.9542, 0.9635 49.1%, 0.9788 55.29%, 0.9887 62.28%, 0.9949 71.06%, 0.9982 82.44%, 0.9997 99.8%)'
+			}
+		)
+	}
 }
 
 export default NumberFlow
