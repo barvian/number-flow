@@ -2,15 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-	/* Not the best way to do this, but it works for now: */
-	@media screen and (min-resolution: 1.75x) {
-		span[style*='transform:'] {
-			will-change: transform !important;
-		}
-	}
-}
-
 @layer components {
 	.container {
 		@apply ~px-6/10 mx-auto w-full max-w-2xl;
