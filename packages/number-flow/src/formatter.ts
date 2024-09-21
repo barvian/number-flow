@@ -25,6 +25,7 @@ export type Value = Parameters<typeof Intl.NumberFormat.prototype.formatToParts>
 
 // You're supposed to cache these between uses:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
+// Serialize to strings b/c React:
 const formatters: Record<string, Intl.NumberFormat> = {}
 
 export function formatToParts(value: Value, locales?: Intl.LocalesArgument, format?: Format) {

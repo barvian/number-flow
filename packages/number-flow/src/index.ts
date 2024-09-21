@@ -99,7 +99,8 @@ class NumberFlow extends ServerSafeHTMLElement {
 				// part: 'pre',
 				inert: true,
 				ariaHidden: 'true',
-				justify: 'right'
+				justify: 'right',
+				type: 'symbols'
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
 			this.#integer = new Section(this, integer, {
@@ -108,7 +109,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				masked: true,
 				ariaHidden: 'true',
 				justify: 'right',
-				deferRemoved: true
+				type: 'numbers'
 			})
 			this.shadowRoot!.appendChild(this.#integer.el)
 			this.#fraction = new Section(this, fraction, {
@@ -117,14 +118,15 @@ class NumberFlow extends ServerSafeHTMLElement {
 				masked: true,
 				ariaHidden: 'true',
 				justify: 'left',
-				deferRemoved: true
+				type: 'numbers'
 			})
 			this.shadowRoot!.appendChild(this.#fraction.el)
 			this.#post = new Section(this, post, {
 				// part: 'post',
 				inert: true,
 				ariaHidden: 'true',
-				justify: 'left'
+				justify: 'left',
+				type: 'symbols'
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
@@ -159,13 +161,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 	}
 }
 
-type deferRemoved = 'sync' | 'pop'
+type SectionType = 'numbers' | 'symbols'
 
 class Section {
 	readonly el: HTMLSpanElement
 	readonly #inner?: HTMLSpanElement
 	readonly justify: Justify
-	readonly deferRemoved: boolean
+	readonly type: SectionType
 	readonly masked: boolean
 
 	// A shortcut to #inner or el:
@@ -179,18 +181,18 @@ class Section {
 		parts: KeyedNumberPart[],
 		{
 			justify,
-			deferRemoved = false,
+			type,
 			masked = false,
 			...opts
-		}: { justify: Justify; deferRemoved?: boolean; masked?: boolean } & HTMLProps<'section'>
+		}: { justify: Justify; type: SectionType; masked?: boolean } & HTMLProps<'section'>
 	) {
 		this.justify = justify
-		this.deferRemoved = deferRemoved
+		this.type = type
 		this.masked = masked
 
 		this.#children = new Map()
 
-		// Zero width space prevents the height from collapsing when no chars
+		// Zero width space prevents the height from collapsing when empty
 		// TODO: replace this with height: 1lh when it's better supported:
 		const innerHTML = '&#8203;'
 
@@ -247,13 +249,13 @@ class Section {
 		const removed = new Map<NumberPartKey, Char>()
 
 		const popRemoved = () => {
+			// Save their offsets before popping, to avoid layout thrashing:
 			removed.forEach((comp) => {
 				comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
 			})
-			// Then pop/update all
 			removed.forEach((comp, key) => {
 				comp.el.classList.add('section__exiting')
-				comp.removed = true
+				comp.present = false
 			})
 		}
 
@@ -267,12 +269,12 @@ class Section {
 			if (comp.el.classList.contains('section__exiting')) {
 				comp.el.classList.remove('section__exiting')
 				comp.el.style[this.justify] = ''
-				comp.removed = false
+				comp.present = true
 			}
 		})
 
 		// Pop first, alongside additions
-		if (!this.deferRemoved) popRemoved()
+		if (this.type === 'symbols') popRemoved()
 
 		// Add new parts before any other updates, so we can save their position correctly:
 		const reverse = this.justify === 'left' // we want to prepend for left
@@ -288,11 +290,11 @@ class Section {
 				comp =
 					part.type === 'integer' || part.type === 'fraction'
 						? new Digit(this, part.type, 0, {
-								initial: true,
+								animateIn: true,
 								onRemove: this.#onCharRemove(part.key)
 							}) // always start at 0 for mathematical correctness
 						: new Sym(this, part.type, part.value, {
-								initial: true,
+								animateIn: true,
 								onRemove: this.#onCharRemove(part.key)
 							})
 				added.set(part, comp)
@@ -321,7 +323,7 @@ class Section {
 			if (comp instanceof Digit) comp.update(0)
 		})
 		// Calculate offsets for removed before popping, to avoid layout thrashing:
-		if (this.deferRemoved) popRemoved()
+		if (this.type === 'numbers') popRemoved()
 	}
 
 	#animation?: Animation
@@ -376,37 +378,34 @@ class Section {
 type OnRemove = () => void
 interface AnimatePresenceOptions {
 	onRemove?: OnRemove
-	initial?: boolean
+	animateIn?: boolean
 }
 
 class AnimatePresence {
-	#removed = false
+	#present = true
 
 	constructor(
 		readonly el: HTMLElement,
-		{ onRemove, initial = false }: AnimatePresenceOptions = {}
+		{ onRemove, animateIn = false }: AnimatePresenceOptions = {}
 	) {
 		el.classList.add('animate-presence')
-		if (initial) requestAnimationFrame(() => el.classList.add('animate-presence--present'))
+		if (animateIn) requestAnimationFrame(() => el.classList.add('animate-presence--present'))
 		else el.classList.add('animate-presence--present')
 
 		el.addEventListener('transitionend', () => {
-			if (this.#removed) {
+			if (!this.#present) {
 				this.el.remove()
 				onRemove?.()
 			}
 		})
 	}
 
-	get removed() {
-		return this.#removed
+	get present() {
+		return this.#present
 	}
-	set removed(val) {
-		this.#removed = val
-		// Technically raf is only needed for entrance, but use it for all to handle interruptions?
-		requestAnimationFrame(() => {
-			this.el.classList.toggle('animate-presence--present', !val)
-		})
+	set present(val) {
+		this.#present = val
+		this.el.classList.toggle('animate-presence--present', val)
 	}
 }
 
@@ -592,13 +591,13 @@ class Sym extends Char<KeyedSymbolPart> {
 		if (this.value !== value) {
 			// Pop the current value:
 			const current = this.#children.get(this.value)!
-			current.removed = true
+			current.present = false
 			current.el.classList.add('symbol__exiting')
 
 			// If we already have the new value and it hasn't finished removing, reclaim it:
 			if (this.#children.has(value)) {
 				const prev = this.#children.get(value)!
-				prev.removed = false
+				prev.present = true
 				prev.el.classList.remove('symbol__exiting')
 			} else {
 				// Otherwise, create a new one:
@@ -610,7 +609,7 @@ class Sym extends Char<KeyedSymbolPart> {
 				this.#children.set(
 					value,
 					new AnimatePresence(newVal, {
-						initial: true,
+						animateIn: true,
 						onRemove: this.#onChildRemove(value)
 					})
 				)
