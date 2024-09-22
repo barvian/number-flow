@@ -97,13 +97,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#label = createElement('span', { className: 'label' })
 			this.shadowRoot!.appendChild(this.#label)
 
-			// this.#pre = new SymbolSection(this, pre, {
-			// 	// part: 'pre',
-			// 	inert: true,
-			// 	ariaHidden: 'true',
-			// 	justify: 'right'
-			// })
-			// this.shadowRoot!.appendChild(this.#pre.el)
+			this.#pre = new SymbolSection(this, pre, {
+				// part: 'pre',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'right'
+			})
+			this.shadowRoot!.appendChild(this.#pre.el)
 			this.#integer = new NumberSection(this, integer, {
 				// part: 'integer',
 				inert: true,
@@ -111,27 +111,27 @@ class NumberFlow extends ServerSafeHTMLElement {
 				justify: 'right'
 			})
 			this.shadowRoot!.appendChild(this.#integer.el)
-			// this.#fraction = new NumberSection(this, fraction, {
-			// 	// part: 'fraction',
-			// 	inert: true,
-			// 	ariaHidden: 'true',
-			// 	justify: 'left'
-			// })
-			// this.shadowRoot!.appendChild(this.#fraction.el)
-			// this.#post = new SymbolSection(this, post, {
-			// 	// part: 'post',
-			// 	inert: true,
-			// 	ariaHidden: 'true',
-			// 	justify: 'left'
-			// })
-			// this.shadowRoot!.appendChild(this.#post.el)
+			this.#fraction = new NumberSection(this, fraction, {
+				// part: 'fraction',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'left'
+			})
+			this.shadowRoot!.appendChild(this.#fraction.el)
+			this.#post = new SymbolSection(this, post, {
+				// part: 'post',
+				inert: true,
+				ariaHidden: 'true',
+				justify: 'left'
+			})
+			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
 			if (!this.manual) this.willUpdate()
 
-			// this.#pre!.update(pre)
+			this.#pre!.update(pre)
 			this.#integer!.update(integer)
-			// this.#fraction!.update(fraction)
-			// this.#post!.update(post)
+			this.#fraction!.update(fraction)
+			this.#post!.update(post)
 
 			if (!this.manual) this.didUpdate()
 		}
@@ -143,17 +143,17 @@ class NumberFlow extends ServerSafeHTMLElement {
 	}
 
 	willUpdate() {
-		// this.#pre!.willUpdate()
+		this.#pre!.willUpdate()
 		this.#integer!.willUpdate()
-		// this.#fraction!.willUpdate()
-		// this.#post!.willUpdate()
+		this.#fraction!.willUpdate()
+		this.#post!.willUpdate()
 	}
 
 	didUpdate() {
-		// this.#pre!.didUpdate()
+		this.#pre!.didUpdate()
 		this.#integer!.didUpdate()
-		// this.#fraction!.didUpdate()
-		// this.#post!.didUpdate()
+		this.#fraction!.didUpdate()
+		this.#post!.didUpdate()
 	}
 }
 
@@ -230,6 +230,9 @@ abstract class Section {
 				if (this.children.has(part.key)) {
 					comp = this.children.get(part.key)!
 					updated.set(part, comp)
+					comp.el.classList.remove('section__exiting')
+					comp.el.style[this.justify] = ''
+					comp.present = true
 				} else {
 					// New part
 					comp = this.addChar(part, { startDigitsAtZero: true, animateIn: true })
@@ -240,7 +243,7 @@ abstract class Section {
 			{ reverse }
 		)
 
-		const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
+		const rect = parent.getBoundingClientRect() // this should only cause a layout if there were added children
 		added.forEach((comp) => {
 			comp.willUpdate(rect)
 		})
@@ -296,8 +299,7 @@ class NumberSection extends Section {
 	#prevRect?: DOMRect
 
 	override willUpdate() {
-		const rect = this.el.getBoundingClientRect()
-		this.#prevRect = rect
+		this.#prevRect = this.el.getBoundingClientRect()
 
 		super.willUpdate(this.#inner.getBoundingClientRect())
 	}
@@ -306,10 +308,8 @@ class NumberSection extends Section {
 		const removed = new Map<NumberPartKey, Char>()
 
 		this.children.forEach((comp, key) => {
-			if (parts.find((p) => p.key === key)) {
-				comp.present = true
-			} else {
-				// Keep track of removed children:
+			// Keep track of removed children:
+			if (!parts.find((p) => p.key === key)) {
 				removed.set(key, comp)
 			}
 			// Put everything back into the flow briefly, to recompute offsets:
@@ -324,7 +324,6 @@ class NumberSection extends Section {
 			if (comp instanceof Digit) comp.update(0)
 		})
 		// Calculate offsets for removed before popping, to avoid layout thrashing:
-		// Save their offsets before popping, to avoid layout thrashing:
 		removed.forEach((comp) => {
 			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
 		})
@@ -347,6 +346,9 @@ class NumberSection extends Section {
 		const rect = this.el.getBoundingClientRect()
 		const scale = Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
 		const x = this.#prevRect![this.justify] - rect[this.justify]
+
+		// Make sure to pass this in before starting to animate:
+		super.didUpdate(this.#inner.getBoundingClientRect())
 
 		this.#animation = this.el.animate(
 			{
@@ -374,8 +376,6 @@ class NumberSection extends Section {
 				this.flow.xTiming
 			)
 		}
-
-		super.didUpdate(this.#inner.getBoundingClientRect())
 	}
 }
 
@@ -396,16 +396,10 @@ class SymbolSection extends Section {
 			// Keep track of removed children:
 			if (!parts.find((p) => p.key === key)) {
 				removed.set(key, comp)
-			} else {
-				comp.present = true
-			}
-			if (comp.el.classList.contains('section__exiting')) {
-				comp.el.classList.remove('section__exiting')
-				comp.el.style[this.justify] = ''
 			}
 		})
 
-		// Pop first, alongside additions
+		// Pop them, before any additions
 		// Save their offsets before popping, to avoid layout thrashing:
 		removed.forEach((comp) => {
 			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
@@ -424,15 +418,17 @@ class SymbolSection extends Section {
 		// Cancel any previous animations before getting the new rects:
 		this.#animation?.cancel()
 		const rect = this.el.getBoundingClientRect()
+		const offset = rect[this.justify]
+
+		// Make sure to pass this in before starting to animate:
+		super.didUpdate(rect)
 
 		this.#animation = this.el.animate(
 			{
-				transform: [`translateX(${this.#prevOffset! - rect[this.justify]}px)`, 'none']
+				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
 			this.flow.xTiming
 		)
-
-		super.didUpdate(rect)
 	}
 }
 
@@ -589,7 +585,8 @@ class Digit extends Char<KeyedDigitPart> {
 		// Add the offset between the prev top and current parent top to account for interruptions:
 		const y = `translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`
 
-		// If animation composition is not supported, animate x with y using x's easing which is probably safer (i.e. no bounce):
+		// If animation composition is not supported, animate x with y using x's easing
+		// which is probably safer (i.e. if they use bounce for y):
 		this.#xAnimation = this.el.animate(
 			{
 				transform: [SUPPORTS_ANIMATION_COMPOSITION ? x : `${x} ${y}`, 'none']
@@ -699,6 +696,7 @@ class Sym extends Char<KeyedSymbolPart> {
 		this.#xAnimation?.cancel()
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
+		if (this.type === 'sign') console.log(offset)
 
 		this.#xAnimation = this.el.animate(
 			{

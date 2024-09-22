@@ -47,10 +47,8 @@ const styles = `
 	user-select: none;
 	pointer-events: none;
 	white-space: nowrap;
-
-	--fade-duration: 0.5s;
-	--fade-easing: ease-out;
 }
+
 
 .label {
 	position: absolute;

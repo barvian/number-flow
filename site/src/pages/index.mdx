@@ -22,18 +22,13 @@ See [MDN's `Intl.NumberFormat()` reference](https://developer.mozilla.org/en-US/
 
 ## Customizing
 
-Number Flow accepts a `timings` prop to customize the transitions. See [MDN's `KeyframeEffect` reference](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) for a full list of options.
+NumberFlow accepts a `timings` prop to customize the transitions. See [MDN's `KeyframeEffect` reference](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) for a full list of options.
 
 {/* <DemoTransition client:load defaultValue="code"> */}
 ```jsx
-import { easeOut } from 'framer-motion'
-
 <NumberFlow
-    timings={{
-        x: { duration: 700, easing: 'ease-out' },
-        y: { duration: 700, easing: 'ease-out' },
-        opacity: { duration: 300, easing: 'ease' }
-    }}
+    xTiming={{ duration: 700, easing: 'ease-out' }},
+    yTiming={{ duration: 700, easing: 'ease-out' }}
 />
 ```
 {/* </DemoTransition> */}
