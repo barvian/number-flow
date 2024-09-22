@@ -11,14 +11,15 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, SUPPORTS_ANIMATION_COMPOSITION, SUPPORTS_LINEAR } from './styles'
-import { frames, lerp, discreteFrames, type DiscreteKeyframeProps } from './util/animate'
+import { frames, lerp, type CustomPropertyKeyframes, customPropertyFrames } from './util/animate'
 import { BROWSER } from 'esm-env'
 export { renderInnerHTML } from './ssr'
 export type { Format, Value } from './formatter'
 
-const OBSERVED_ATTRIBUTES = ['value', 'x-timing', 'y-timing', 'manual'] as const
+const OBSERVED_ATTRIBUTES = ['value', 'x-timing', 'y-timing', 'fade-timing', 'manual'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 
+export const DEFAULT_FADE_TIMING: EffectTiming = { duration: 500, easing: 'ease-out' }
 export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
 	? {
 			duration: 1000,
@@ -27,11 +28,10 @@ export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
 		}
 	: {
 			duration: 900,
-			// Stolen from Vaul: https://vaul.emilkowal.ski/
+			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
 			easing: 'cubic-bezier(0.32, 0.72, 0, 1)'
 		}
-
-export const DEFAULT_Y_TIMING: EffectTiming = DEFAULT_X_TIMING
+export const DEFAULT_Y_TIMING = DEFAULT_X_TIMING
 
 type Args = Value | [Value, locales?: Intl.LocalesArgument, format?: Format]
 
@@ -44,11 +44,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 
 	xTiming = DEFAULT_X_TIMING
 	yTiming = DEFAULT_Y_TIMING
+	fadeTiming = DEFAULT_FADE_TIMING
 	manual = false
 
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
 		if (attr === 'x-timing') this.xTiming = JSON.parse(newValue)
 		else if (attr === 'y-timing') this.yTiming = JSON.parse(newValue)
+		else if (attr === 'fade-timing') this.fadeTiming = JSON.parse(newValue)
 		else if (attr === 'manual') this.manual = newValue != null
 		else this[attr] = JSON.parse(newValue)
 	}
@@ -58,10 +60,10 @@ class NumberFlow extends ServerSafeHTMLElement {
 	}
 
 	#created = false
-	#pre?: Section
-	#integer?: Section
-	#fraction?: Section
-	#post?: Section
+	#pre?: SymbolSection
+	#integer?: NumberSection
+	#fraction?: NumberSection
+	#post?: SymbolSection
 	#label?: HTMLSpanElement
 
 	set value(newVal: Args | undefined) {
@@ -95,47 +97,41 @@ class NumberFlow extends ServerSafeHTMLElement {
 			this.#label = createElement('span', { className: 'label' })
 			this.shadowRoot!.appendChild(this.#label)
 
-			this.#pre = new Section(this, pre, {
-				// part: 'pre',
-				inert: true,
-				ariaHidden: 'true',
-				justify: 'right',
-				type: 'symbols'
-			})
-			this.shadowRoot!.appendChild(this.#pre.el)
-			this.#integer = new Section(this, integer, {
+			// this.#pre = new SymbolSection(this, pre, {
+			// 	// part: 'pre',
+			// 	inert: true,
+			// 	ariaHidden: 'true',
+			// 	justify: 'right'
+			// })
+			// this.shadowRoot!.appendChild(this.#pre.el)
+			this.#integer = new NumberSection(this, integer, {
 				// part: 'integer',
 				inert: true,
-				masked: true,
 				ariaHidden: 'true',
-				justify: 'right',
-				type: 'numbers'
+				justify: 'right'
 			})
 			this.shadowRoot!.appendChild(this.#integer.el)
-			this.#fraction = new Section(this, fraction, {
-				// part: 'fraction',
-				inert: true,
-				masked: true,
-				ariaHidden: 'true',
-				justify: 'left',
-				type: 'numbers'
-			})
-			this.shadowRoot!.appendChild(this.#fraction.el)
-			this.#post = new Section(this, post, {
-				// part: 'post',
-				inert: true,
-				ariaHidden: 'true',
-				justify: 'left',
-				type: 'symbols'
-			})
-			this.shadowRoot!.appendChild(this.#post.el)
+			// this.#fraction = new NumberSection(this, fraction, {
+			// 	// part: 'fraction',
+			// 	inert: true,
+			// 	ariaHidden: 'true',
+			// 	justify: 'left'
+			// })
+			// this.shadowRoot!.appendChild(this.#fraction.el)
+			// this.#post = new SymbolSection(this, post, {
+			// 	// part: 'post',
+			// 	inert: true,
+			// 	ariaHidden: 'true',
+			// 	justify: 'left'
+			// })
+			// this.shadowRoot!.appendChild(this.#post.el)
 		} else {
 			if (!this.manual) this.willUpdate()
 
-			this.#pre!.update(pre)
+			// this.#pre!.update(pre)
 			this.#integer!.update(integer)
-			this.#fraction!.update(fraction)
-			this.#post!.update(post)
+			// this.#fraction!.update(fraction)
+			// this.#post!.update(post)
 
 			if (!this.manual) this.didUpdate()
 		}
@@ -147,168 +143,108 @@ class NumberFlow extends ServerSafeHTMLElement {
 	}
 
 	willUpdate() {
-		this.#pre!.willUpdate()
+		// this.#pre!.willUpdate()
 		this.#integer!.willUpdate()
-		this.#fraction!.willUpdate()
-		this.#post!.willUpdate()
+		// this.#fraction!.willUpdate()
+		// this.#post!.willUpdate()
 	}
 
 	didUpdate() {
-		this.#pre!.didUpdate()
+		// this.#pre!.didUpdate()
 		this.#integer!.didUpdate()
-		this.#fraction!.didUpdate()
-		this.#post!.didUpdate()
+		// this.#fraction!.didUpdate()
+		// this.#post!.didUpdate()
 	}
 }
 
-type SectionType = 'numbers' | 'symbols'
+type SectionProps = { justify: Justify } & HTMLProps<'span'>
 
-class Section {
+abstract class Section {
 	readonly el: HTMLSpanElement
-	readonly #inner?: HTMLSpanElement
 	readonly justify: Justify
-	readonly type: SectionType
-	readonly masked: boolean
-
-	// A shortcut to #inner or el:
-	readonly #wrapper: HTMLSpanElement
 
 	// All children in the DOM:
-	#children: Map<NumberPartKey, Char>
+	protected children = new Map<NumberPartKey, Char>()
 
 	constructor(
 		readonly flow: NumberFlow,
 		parts: KeyedNumberPart[],
-		{
-			justify,
-			type,
-			masked = false,
-			...opts
-		}: { justify: Justify; type: SectionType; masked?: boolean } & HTMLProps<'section'>
+		{ justify, className, ...opts }: SectionProps,
+		children?: (chars: Node[]) => Node[]
 	) {
 		this.justify = justify
-		this.type = type
-		this.masked = masked
-
-		this.#children = new Map()
-
+		const chars = parts.map<Node>((p) => this.addChar(p).el)
 		// Zero width space prevents the height from collapsing when empty
 		// TODO: replace this with height: 1lh when it's better supported:
-		const innerHTML = '&#8203;'
-
-		const children = parts.map((part) => {
-			const comp =
-				part.type === 'integer' || part.type === 'fraction'
-					? new Digit(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
-					: new Sym(this, part.type, part.value, { onRemove: this.#onCharRemove(part.key) })
-			this.#children.set(part.key, comp)
-			return comp.el
-		})
-
-		if (masked)
-			this.#inner = createElement(
-				'span',
-				{
-					className: 'section__inner',
-					innerHTML
-				},
-				children
-			)
+		chars.push(document.createTextNode('\u200B'))
 
 		this.el = createElement(
 			'span',
 			{
 				...opts,
-				className: `section section--justify-${justify}${masked ? ' section--masked' : ''}`,
-				...(this.#inner ? {} : { innerHTML })
+				className: `section section--justify-${justify} ${className ?? ''}`
 			},
-			this.#inner ? [this.#inner] : children
+			children ? children(chars) : chars
 		)
-		this.#wrapper = this.#inner ?? this.el
 	}
 
-	#onCharRemove =
+	protected addChar(
+		part: KeyedNumberPart,
+		{
+			startDigitsAtZero = false,
+			...props
+		}: { startDigitsAtZero?: boolean } & Pick<AnimatePresenceProps, 'animateIn'> = {}
+	) {
+		const comp =
+			part.type === 'integer' || part.type === 'fraction'
+				? new Digit(this, part.type, startDigitsAtZero ? 0 : part.value, {
+						...props,
+						onRemove: this.onCharRemove(part.key)
+					})
+				: new Sym(this, part.type, part.value, {
+						...props,
+						onRemove: this.onCharRemove(part.key)
+					})
+		this.children.set(part.key, comp)
+		return comp
+	}
+
+	private onCharRemove =
 		(key: NumberPartKey): OnRemove =>
 		() => {
-			this.#children.delete(key)
+			this.children.delete(key)
 		}
 
-	#prevRect?: DOMRect
-
-	willUpdate() {
-		const rect = this.el.getBoundingClientRect()
-		this.#prevRect = rect
-
-		const wrapperRect = this.#inner?.getBoundingClientRect() ?? rect
-		this.#children.forEach((comp) => comp.willUpdate(wrapperRect))
-	}
-
-	update(parts: KeyedNumberPart[]) {
+	protected addNewAndUpdateExisting(parts: KeyedNumberPart[], parent: HTMLElement = this.el) {
 		const added = new Map<KeyedNumberPart, Char>()
 		const updated = new Map<KeyedNumberPart, Char>()
-		const removed = new Map<NumberPartKey, Char>()
-
-		const popRemoved = () => {
-			// Save their offsets before popping, to avoid layout thrashing:
-			removed.forEach((comp) => {
-				comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
-			})
-			removed.forEach((comp, key) => {
-				comp.el.classList.add('section__exiting')
-				comp.present = false
-			})
-		}
-
-		this.#children.forEach((comp, key) => {
-			// Keep track of removed children:
-			if (!parts.find((p) => p.key === key)) {
-				removed.set(key, comp)
-			}
-			// Re-add any exiting children alongside new ones below
-			// (if they're actually removed they'll be taken care of by popRemoved)
-			if (comp.el.classList.contains('section__exiting')) {
-				comp.el.classList.remove('section__exiting')
-				comp.el.style[this.justify] = ''
-				comp.present = true
-			}
-		})
-
-		// Pop first, alongside additions
-		if (this.type === 'symbols') popRemoved()
 
 		// Add new parts before any other updates, so we can save their position correctly:
-		const reverse = this.justify === 'left' // we want to prepend for left
-		const addOp = reverse ? 'prepend' : 'append'
-		forEach(parts, reverse, (part) => {
-			let comp: Char
-			// Already exists/needs update, so set aside for now
-			if (this.#children.has(part.key)) {
-				comp = this.#children.get(part.key)!
-				updated.set(part, comp)
-			} else {
-				// New part
-				comp =
-					part.type === 'integer' || part.type === 'fraction'
-						? new Digit(this, part.type, 0, {
-								animateIn: true,
-								onRemove: this.#onCharRemove(part.key)
-							}) // always start at 0 for mathematical correctness
-						: new Sym(this, part.type, part.value, {
-								animateIn: true,
-								onRemove: this.#onCharRemove(part.key)
-							})
-				added.set(part, comp)
-				this.#children.set(part.key, comp)
-			}
-			this.#wrapper[addOp](comp.el)
-		})
+		const reverse = this.justify === 'left'
+		const op = reverse ? 'prepend' : 'append'
+		forEach(
+			parts,
+			(part) => {
+				let comp: Char
+				// Already exists/needs update, so set aside for now
+				if (this.children.has(part.key)) {
+					comp = this.children.get(part.key)!
+					updated.set(part, comp)
+				} else {
+					// New part
+					comp = this.addChar(part, { startDigitsAtZero: true, animateIn: true })
+					added.set(part, comp)
+				}
+				parent[op](comp.el)
+			},
+			{ reverse }
+		)
 
-		// Finish updating any added children
-		const rect = this.#wrapper.getBoundingClientRect() // this should only cause a layout if there were added children
+		const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
 		added.forEach((comp) => {
 			comp.willUpdate(rect)
 		})
-		// Update added children to their initial value (they start at 0)
+		// Update added children to their initial value (we start them at 0)
 		added.forEach((comp, part) => {
 			comp.update(part.value)
 		})
@@ -317,31 +253,99 @@ class Section {
 		updated.forEach((comp, part) => {
 			comp.update(part.value)
 		})
+	}
+
+	willUpdate(childrenParentRect: DOMRect) {
+		this.children.forEach((comp) => comp.willUpdate(childrenParentRect))
+	}
+
+	update(parts: KeyedNumberPart[]) {}
+
+	didUpdate(childrenParentRect: DOMRect) {
+		this.children.forEach((comp) => comp.didUpdate(childrenParentRect))
+	}
+}
+
+class NumberSection extends Section {
+	readonly #inner: HTMLSpanElement
+
+	constructor(flow: NumberFlow, parts: KeyedNumberPart[], { className, ...props }: SectionProps) {
+		let inner: HTMLSpanElement
+		super(
+			flow,
+			parts,
+			{
+				...props,
+				className: `${className ?? ''} section--masked`
+			},
+			(parts) => [
+				(inner = createElement(
+					'span',
+					{
+						className: 'section__inner'
+					},
+					parts
+				))
+			]
+		)
+
+		// @ts-expect-error TS doesn't know the cb is invoked immediately
+		this.#inner = inner
+	}
+
+	#prevRect?: DOMRect
+
+	override willUpdate() {
+		const rect = this.el.getBoundingClientRect()
+		this.#prevRect = rect
+
+		super.willUpdate(this.#inner.getBoundingClientRect())
+	}
+
+	override update(parts: KeyedNumberPart[]) {
+		const removed = new Map<NumberPartKey, Char>()
+
+		this.children.forEach((comp, key) => {
+			if (parts.find((p) => p.key === key)) {
+				comp.present = true
+			} else {
+				// Keep track of removed children:
+				removed.set(key, comp)
+			}
+			// Put everything back into the flow briefly, to recompute offsets:
+			comp.el.classList.remove('section__exiting')
+			comp.el.style[this.justify] = ''
+		})
+
+		this.addNewAndUpdateExisting(parts, this.#inner)
 
 		// Set all removed digits to 0, for mathematical correctness:
 		removed.forEach((comp) => {
 			if (comp instanceof Digit) comp.update(0)
 		})
 		// Calculate offsets for removed before popping, to avoid layout thrashing:
-		if (this.type === 'numbers') popRemoved()
+		// Save their offsets before popping, to avoid layout thrashing:
+		removed.forEach((comp) => {
+			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
+		})
+		removed.forEach((comp, key) => {
+			comp.el.classList.add('section__exiting')
+			comp.present = false
+		})
 	}
 
 	#animation?: Animation
 	#maskAnimation?: Animation
 	#innerAnimation?: Animation
 
-	didUpdate() {
-		this.#children.forEach((comp) => comp.didUpdate(this.#wrapper.getBoundingClientRect()))
-
+	override didUpdate() {
 		// Cancel any previous animations before getting the new rects:
 		this.#animation?.cancel()
 		this.#innerAnimation?.cancel()
 		this.#maskAnimation?.cancel()
 
 		const rect = this.el.getBoundingClientRect()
-		const scale = this.masked
-			? Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
-			: 1
+		const scale = Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
 		const x = this.#prevRect![this.justify] - rect[this.justify]
 
 		this.#animation = this.el.animate(
@@ -360,69 +364,138 @@ class Section {
 				this.flow.xTiming
 			)
 
-			if (this.masked) {
-				this.#maskAnimation = this.el.animate(
-					discreteFrames(
-						1000,
-						(t): DiscreteKeyframeProps => ({
-							'--_number-flow-scale-x': lerp(scale, 1, t)
-						})
-					),
-					this.flow.xTiming
-				)
-			}
+			this.#maskAnimation = this.el.animate(
+				customPropertyFrames(
+					1000,
+					(t): CustomPropertyKeyframes => ({
+						'--_number-flow-scale-x': lerp(scale, 1, t)
+					})
+				),
+				this.flow.xTiming
+			)
 		}
+
+		super.didUpdate(this.#inner.getBoundingClientRect())
+	}
+}
+
+class SymbolSection extends Section {
+	#prevOffset?: number
+
+	override willUpdate() {
+		const rect = this.el.getBoundingClientRect()
+		this.#prevOffset = rect[this.justify]
+
+		super.willUpdate(rect)
+	}
+
+	override update(parts: KeyedNumberPart[]) {
+		const removed = new Map<NumberPartKey, Char>()
+
+		this.children.forEach((comp, key) => {
+			// Keep track of removed children:
+			if (!parts.find((p) => p.key === key)) {
+				removed.set(key, comp)
+			} else {
+				comp.present = true
+			}
+			if (comp.el.classList.contains('section__exiting')) {
+				comp.el.classList.remove('section__exiting')
+				comp.el.style[this.justify] = ''
+			}
+		})
+
+		// Pop first, alongside additions
+		// Save their offsets before popping, to avoid layout thrashing:
+		removed.forEach((comp) => {
+			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
+		})
+		removed.forEach((comp, key) => {
+			comp.el.classList.add('section__exiting')
+			comp.present = false
+		})
+
+		this.addNewAndUpdateExisting(parts)
+	}
+
+	#animation?: Animation
+
+	override didUpdate() {
+		// Cancel any previous animations before getting the new rects:
+		this.#animation?.cancel()
+		const rect = this.el.getBoundingClientRect()
+
+		this.#animation = this.el.animate(
+			{
+				transform: [`translateX(${this.#prevOffset! - rect[this.justify]}px)`, 'none']
+			},
+			this.flow.xTiming
+		)
+
+		super.didUpdate(rect)
 	}
 }
 
 type OnRemove = () => void
-interface AnimatePresenceOptions {
+interface AnimatePresenceProps {
 	onRemove?: OnRemove
 	animateIn?: boolean
 }
 
 class AnimatePresence {
 	#present = true
+	#onRemove?: OnRemove
+	#animation?: Animation
 
 	constructor(
+		readonly flow: NumberFlow,
 		readonly el: HTMLElement,
-		{ onRemove, animateIn = false }: AnimatePresenceOptions = {}
+		{ onRemove, animateIn = false }: AnimatePresenceProps = {}
 	) {
-		el.classList.add('animate-presence')
-		if (animateIn) requestAnimationFrame(() => el.classList.add('animate-presence--present'))
-		else el.classList.add('animate-presence--present')
+		if (animateIn) {
+			this.el.animate(
+				{
+					opacity: ['0', '1']
+				},
+				flow.fadeTiming
+			)
+		}
 
-		el.addEventListener('transitionend', () => {
-			if (!this.#present) {
-				this.el.remove()
-				onRemove?.()
-			}
-		})
+		this.#onRemove = onRemove
 	}
 
 	get present() {
 		return this.#present
 	}
 	set present(val) {
+		if (this.#present === val) return
+		const opacity = getComputedStyle(this.el).getPropertyValue('opacity')
+		this.#animation?.cancel()
+		this.#animation = this.el.animate(
+			{
+				opacity: [opacity, val ? '1' : '0']
+			},
+			this.flow.fadeTiming
+		)
+		if (!val)
+			this.#animation!.onfinish = () => {
+				this.el.remove()
+				this.#onRemove?.()
+			}
 		this.#present = val
-		this.el.classList.toggle('animate-presence--present', val)
 	}
 }
 
-interface CharOptions extends AnimatePresenceOptions {}
+interface CharOptions extends AnimatePresenceProps {}
 
 abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends AnimatePresence {
 	constructor(
 		readonly section: Section,
 		protected value: P['value'],
 		override readonly el: HTMLSpanElement,
-		options?: AnimatePresenceOptions
+		options?: AnimatePresenceProps
 	) {
-		super(el, options)
-	}
-
-	get flow() {
-		return this.section.flow
+		super(section.flow, el, options)
 	}
 
 	abstract willUpdate(parentRect: DOMRect): void
@@ -565,7 +638,7 @@ class Sym extends Char<KeyedSymbolPart> {
 		)
 		this.#children.set(
 			value,
-			new AnimatePresence(val, {
+			new AnimatePresence(this.flow, val, {
 				onRemove: this.#onChildRemove(value)
 			})
 		)
@@ -608,7 +681,7 @@ class Sym extends Char<KeyedSymbolPart> {
 				this.el.appendChild(newVal)
 				this.#children.set(
 					value,
-					new AnimatePresence(newVal, {
+					new AnimatePresence(this.flow, newVal, {
 						animateIn: true,
 						onRemove: this.#onChildRemove(value)
 					})

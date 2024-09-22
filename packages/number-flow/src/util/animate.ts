@@ -9,15 +9,15 @@ export function frames<F extends string | (number | null)>(
 	return Array.from({ length }, (_, i) => frame(i / (length - 1)))
 }
 
-export type DiscreteKeyframeProps = {
+export type CustomPropertyKeyframes = {
 	[property: `--${string}`]: string | number | null | undefined
 }
 
-// Makeshift solution for animating discrete properties (i.e. custom propeties)
+// Makeshift solution for animating custom propeties
 // when @property isn't supported:
-export function discreteFrames(
+export function customPropertyFrames(
 	durationMs: number,
-	frame: (t: number) => DiscreteKeyframeProps,
+	frame: (t: number) => CustomPropertyKeyframes,
 	fps = 60
 ) {
 	// If CSS.registerProperty is supported, assume they've been registered and do a normal animation
@@ -26,8 +26,8 @@ export function discreteFrames(
 		return [frame(0), frame(1)]
 	}
 
-	// Discrete values change halfway between keyframes, so nudge everything over half a
-	// frame, and add another initial one:
+	// Discrete values (i.e. custom properties) change halfway between keyframes, so nudge
+	// everything over half a frame...
 	const length = Math.max(Math.trunc((durationMs / 1000) * fps), 0)
 	const frames = Array.from(
 		{ length },
@@ -36,7 +36,7 @@ export function discreteFrames(
 			offset: (f + 0.5) / length
 		})
 	)
-	// add another initial frame
+	// ...and add another initial frame
 	frames.unshift({
 		...frame(0),
 		offset: 0

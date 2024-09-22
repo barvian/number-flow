@@ -134,15 +134,6 @@ const styles = `
 	/* top: 0; this seemed to backfire */
 }
 
-.animate-presence {
-	opacity: 0;
-	transition: var(--fade-duration) opacity var(--fade-easing);
-}
-
-	.animate-presence--present {
-		opacity: 1;
-	}
-
 .digit {
 	display: inline-block;
 	position: relative;
