@@ -5,6 +5,7 @@ import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'num
 export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
 export type * from 'number-flow'
 import { BROWSER } from 'esm-env'
+export { NumberFlowElement }
 
 export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	value: Value

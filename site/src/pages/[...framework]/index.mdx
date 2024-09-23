@@ -1,19 +1,13 @@
 ---
-layout: ../_Layout.astro
+layout: '../_Home.astro'
 title: Number Flow
-description: Transition, format, and localize numbers with one component. Accessible and customizable.
+description: Transition formatted numbers. Built on Intl.NumberFormat and WAAPI. Zero dependencies. Accessible and customizable.
 ---
 import Pre from '@/components/Pre.astro';
 export const components = {pre: Pre}
 import Demo from '@/components/Demo'
 import Match from '@/components/Match.astro'
-export function getStaticPaths() {
-  return [
-    {params: {framework: undefined}},
-    {params: {framework: 'vue'}},
-    {params: {framework: 'vanilla'}},
-  ];
-}
+export { getStaticPaths } from '@/lib/framework'
 
 <Match>
 <Fragment slot="react">
@@ -42,6 +36,20 @@ import NumberFlow from '@number-flow/vue'
 />
 ```
 </Fragment>
+<Fragment slot="svelte">
+```svelte
+<!-- Basic usage -->
+<script>
+import NumberFlow from '@number-flow/svelte'
+</script>
+
+<NumberFlow
+    value={312}
+    format={{ notation: 'compact' }}
+    locales="en-US"
+/>
+```
+</Fragment>
 ```html
 <number-flow x-timing="{}"></number-flow>
 
@@ -67,6 +75,7 @@ NumberFlow accepts a timings props to customize the transitions. See [MDN's `Key
 <NumberFlow
     xTiming={{ duration: 700, easing: 'ease-out' }}
     yTiming={{ duration: 700, easing: 'ease-out' }}
+    opacityTiming={{ duration: 350, easing: 'ease' }}
 />
 ```
 </Fragment>
@@ -75,6 +84,7 @@ NumberFlow accepts a timings props to customize the transitions. See [MDN's `Key
 <NumberFlow
     :xTiming="{ duration: 700, easing: 'ease-out' }"
     :yTiming="{ duration: 700, easing: 'ease-out' }"
+    :opacityTiming="{ duration: 350, easing: 'ease' }"
 />
 ```
 </Fragment>
@@ -98,7 +108,25 @@ These adjust the height and width of the gradient fade-out masks at the edges of
 
 In my opinion, the transitions look better with small vertical gaps between numbers, because it reduces the distance
 they travel.
-I recommend using the smallest `line-height` that fits all your component's characters (i.e. `0.8`).
+I recommend using the smallest `line-height` that fits all your component's characters:
+
+<Match>
+<Fragment slot="react">
+```jsx
+<NumberFlow style={{ lineHeight: 0.8 }} />
+```
+</Fragment>
+<Fragment slot="vue">
+```vue
+<NumberFlow :style="{ lineHeight: 0.8 }" />
+```
+</Fragment>
+```html
+<number-flow x-timing="{} />
+```
+</Match>
+
+The exact value will depend on your font and formatting options.
 
 ## Limitations
 

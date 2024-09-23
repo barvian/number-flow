@@ -1,14 +1,16 @@
 ---
 import '@/assets/main.css'
-import type { MDXLayoutProps } from 'astro'
 import preview from '@/assets/preview.png'
 import { getImage } from 'astro:assets'
 import pkg from '/../packages/number-flow/package.json'
-import Hero from './_Hero'
 import FrameworkMenu from '@/components/FrameworkMenu'
-import { getFramework } from '@/lib/framework'
+import { getFramework, FRAMEWORKS } from '@/lib/framework'
+import { getFrameworkPath } from '@/lib/framework'
+// import { AstroFont } from 'astro-font'
+// import * as path from 'node:path'
 
-const framework = getFramework(Astro.params.framework)
+const frameworkId = getFramework(Astro.params)
+const framework = frameworkId && FRAMEWORKS[frameworkId]
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
@@ -17,13 +19,12 @@ const image = import.meta.env.URL
 	? new URL(previewOptimized.src, import.meta.env.URL)
 	: previewOptimized.src
 
-type Props = MDXLayoutProps<{
+type Props = {
 	title: string
-	headline: string
 	description: string
-}>
+}
 
-const { frontmatter } = Astro.props
+const { title, description } = Astro.props
 
 const app = {
 	'@context': 'https://schema.org',
@@ -49,26 +50,53 @@ const app = {
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta property="twitter:image" content={image} />
 		<meta name="generator" content={Astro.generator} />
-		<title>{frontmatter.title}</title>
+		<title>{title}</title>
+		<style
+			define:vars={{ frameworkLight: framework?.lightColor, frameworkDark: framework?.darkColor }}
+		>
+			:root {
+				@apply [--color-framework:var(--frameworkLight)] dark:[--color-framework:var(--frameworkDark)];
+			}
+		</style>
+		<!-- <AstroFont
+			config={[
+				{
+					name: 'Inter',
+					src: [
+						{
+							weight: '100 900',
+							style: 'normal',
+							path: path.join(process.cwd(), 'public', 'fonts', 'Inter-roman-latin.var.woff2')
+						}
+					],
+					preload: true,
+					display: 'swap',
+					selector: ':root',
+					fallback: 'sans-serif'
+				}
+			]}
+		/> -->
 		<link rel="canonical" href={canonicalURL} />
-		<meta property="og:title" content={frontmatter.title} />
-		<meta name="twitter:title" content={frontmatter.title} />
-		<meta name="description" content={frontmatter.description} />
-		<meta property="og:description" content={frontmatter.description} />
-		<meta name="twitter:description" content={frontmatter.description} />
+		<meta property="og:title" content={title} />
+		<meta name="twitter:title" content={title} />
+		<meta name="description" content={description} />
+		<meta property="og:description" content={description} />
+		<meta name="twitter:description" content={description} />
 		<script type="application/ld+json" set:html={JSON.stringify(app)} />
 	</head>
 	<header class="~py-4/6 ~px-6/10">
 		<div class="flex items-center gap-6">
-			<div class="flex items-center gap-4">
-				<a class="text-lg" href="/">NumberFlow</a>
-				<FrameworkMenu value={framework} client:load />
+			<div class="mr-auto flex items-center gap-3">
+				<a class="font-semibold" href={getFrameworkPath('/', frameworkId)}>NumberFlow</a>
+				<!-- <span
+					class="flex items-center rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50"
+					>v{pkg.version}</span
+				> -->
+				{frameworkId && <FrameworkMenu url={Astro.url} value={frameworkId} client:load />}
 			</div>
-			<a
-				href={pkg.repository.url}
-				class="ml-auto flex items-center gap-2.5"
-				aria-label="View on GitHub"
-			>
+			<a href={getFrameworkPath('/examples', frameworkId)}>Examples</a>
+			<a href="/showcase">Showcase</a>
+			<a href={pkg.repository.url} class="flex items-center gap-2.5" aria-label="View on GitHub">
 				<svg viewBox="0 0 16 16" class="size-6 fill-current" role="none">
 					<path
 						d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
@@ -84,13 +112,8 @@ const app = {
 			</a>
 		</div>
 	</header>
-	<main class="~pt-8/16 ~pb-16/32 overflow-x-clip">
-		<Hero client:load description={frontmatter.description} />
-		<div
-			class="prose prose-zinc dark:prose-invert prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none prose-a:font-medium prose-a:underline prose-a:underline-offset-4 container leading-[1.7]"
-		>
-			<slot />
-		</div>
+	<main class="~pt-12/18 ~pb-16/32 overflow-x-clip">
+		<slot />
 	</main>
 
 

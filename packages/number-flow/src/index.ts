@@ -19,7 +19,7 @@ export type { Format, Value } from './formatter'
 const OBSERVED_ATTRIBUTES = ['value', 'x-timing', 'y-timing', 'fade-timing', 'manual'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 
-export const DEFAULT_FADE_TIMING: EffectTiming = { duration: 500, easing: 'ease-out' }
+export const DEFAULT_OPACITY_TIMING: EffectTiming = { duration: 500, easing: 'ease-out' }
 export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
 	? {
 			duration: 1000,
@@ -44,13 +44,13 @@ class NumberFlow extends ServerSafeHTMLElement {
 
 	xTiming = DEFAULT_X_TIMING
 	yTiming = DEFAULT_Y_TIMING
-	fadeTiming = DEFAULT_FADE_TIMING
+	opacityTiming = DEFAULT_OPACITY_TIMING
 	manual = false
 
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
 		if (attr === 'x-timing') this.xTiming = JSON.parse(newValue)
 		else if (attr === 'y-timing') this.yTiming = JSON.parse(newValue)
-		else if (attr === 'fade-timing') this.fadeTiming = JSON.parse(newValue)
+		else if (attr === 'fade-timing') this.opacityTiming = JSON.parse(newValue)
 		else if (attr === 'manual') this.manual = newValue != null
 		else this[attr] = JSON.parse(newValue)
 	}
@@ -453,7 +453,7 @@ class AnimatePresence {
 				{
 					opacity: ['0', '1']
 				},
-				flow.fadeTiming
+				flow.opacityTiming
 			)
 		}
 
@@ -471,7 +471,7 @@ class AnimatePresence {
 			{
 				opacity: [opacity, val ? '1' : '0']
 			},
-			this.flow.fadeTiming
+			this.flow.opacityTiming
 		)
 		if (!val)
 			this.#animation!.onfinish = () => {

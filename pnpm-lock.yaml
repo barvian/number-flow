@@ -113,6 +113,9 @@ importers:
       astro:
         specifier: ^4.14.2
         version: 4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4)
+      astro-font:
+        specifier: ^0.1.81
+        version: 0.1.81
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -1634,6 +1637,9 @@ packages:
   astring@1.8.6:
     resolution: {integrity: sha512-ISvCdHdlTDlH5IpxQJIex7BWBywFWgjJSVdwst+/iQCoEYnyOaQ95+X1JGshuBjGp6nxKUy1jMgE3zPqN7fQdg==}
     hasBin: true
+
+  astro-font@0.1.81:
+    resolution: {integrity: sha512-rbrv/+ZSYdgyjBlhkAqfCjMxqqo6iEwnSo/rAdDt/POILsF0ChxMFhefIIzKEukrRGtVjEj1lrLRYk+AdV9scQ==}
 
   astro@4.14.2:
     resolution: {integrity: sha512-x9VeYx8Ih6kYKBMVwwsfRzsZVq30+SUhiawnYQ6+46qQnEx3zH05KcH24HsJMe6dVpHD8HdH7CWR5C4o7Q/jeg==}
@@ -5163,6 +5169,8 @@ snapshots:
   array-union@2.1.0: {}
 
   astring@1.8.6: {}
+
+  astro-font@0.1.81: {}
 
   astro@4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4):
     dependencies:

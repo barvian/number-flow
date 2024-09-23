@@ -1,10 +1,11 @@
 import NumberFlow, { type Format } from '@number-flow/react'
 import useCycle from '../hooks/useCycle'
 import { useEffect, useRef } from 'react'
-import { motion, useInView, MotionConfig } from 'framer-motion'
-const MotionNumberFlow = motion(NumberFlow)
+import { useInView, MotionConfig } from 'framer-motion'
+// const MotionNumberFlow = motion(NumberFlow)
+import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
 
-const NUMBERS = [312, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
+const NUMBERS = [321, -3241.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
 const LOCALES = ['fr-FR', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
 const FORMATS = [
 	{
@@ -44,7 +45,7 @@ const FORMATS = [
 	}
 ] as Format[]
 
-export default function Hero({ description }: { description: string }) {
+export default function Hero({ title }: { title: string }) {
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
 	const [format, cycleFormat] = useCycle(FORMATS)
@@ -54,12 +55,12 @@ export default function Hero({ description }: { description: string }) {
 	const timeoutRef = useRef<NodeJS.Timeout>()
 	useEffect(() => {
 		if (!inView) return
-		// timeoutRef.current = setTimeout(() => {
-		// 	// Get off the initial "hello" easter egg:
-		// 	cycleValue()
-		// 	cycleLocale()
-		// 	cycleFormat()
-		// }, 750)
+		timeoutRef.current = setTimeout(() => {
+			// Get off the initial "hello" easter egg:
+			cycleValue()
+			cycleLocale()
+			cycleFormat()
+		}, 750)
 		return () => {
 			clearTimeout(timeoutRef.current)
 		}
@@ -70,7 +71,8 @@ export default function Hero({ description }: { description: string }) {
 			ref={ref}
 			className="~mb-16/24 container flex w-full flex-col items-center gap-2 text-center"
 		>
-			<div className="~mt-0/0.5 ~mb-0.5/1 flex items-center">
+			<h1 className="text-framework text-sm font-medium">{title}</h1>
+			<div className="~mb-0.5/1 flex items-center">
 				<MotionConfig transition={{ duration: 1, type: 'spring', bounce: 0 }}>
 					<NumberFlow
 						className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
@@ -103,7 +105,23 @@ export default function Hero({ description }: { description: string }) {
 					</motion.div> */}
 				</MotionConfig>
 			</div>
-			<h1 className="~text-lg/xl text-balance text-zinc-500 dark:text-zinc-400">{description}</h1>
+			<p className="~text-base/lg prose dark:prose-invert text-balance text-zinc-500 dark:text-zinc-400">
+				A lightweight component to format &amp; transition numbers. Built on{' '}
+				<a
+					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
+					target="_blank"
+				>
+					Intl.NumberFormat
+				</a>{' '}
+				and{' '}
+				<a
+					href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API"
+					target="_blank"
+				>
+					WAAPI
+				</a>
+				. Accessible. Customizable.
+			</p>
 			<div className="~mt-3/5 flex w-full items-stretch justify-center gap-x-3">
 				<button
 					className="flex h-11 items-center gap-2 rounded-full bg-zinc-900 px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms]"
@@ -130,7 +148,8 @@ export default function Hero({ description }: { description: string }) {
 					target="_blank"
 					className="flex h-11 items-center gap-2 rounded-full px-5 text-sm font-medium transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:bg-zinc-100 active:scale-[98%] active:brightness-[98%] active:duration-[25ms] dark:hover:bg-zinc-900 dark:hover:brightness-125"
 				>
-					Playground
+					Open sandbox
+					<ArrowUpRightIcon className="size-4" />
 				</a>
 			</div>
 		</header>

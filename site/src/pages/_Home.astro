@@ -1,0 +1,29 @@
+---
+import '@/assets/main.css'
+import Layout from '@/layouts/Layout.astro'
+import type { MDXLayoutProps } from 'astro'
+import Hero from './_Hero'
+import { getFramework, FRAMEWORKS } from '@/lib/framework'
+
+const frameworkId = getFramework(Astro.params)
+const framework = frameworkId && FRAMEWORKS[frameworkId]
+
+type Props = MDXLayoutProps<{
+	title: string
+	description: string
+}>
+
+const { frontmatter } = Astro.props
+---
+
+<Layout title={frontmatter.title} description={frontmatter.description}>
+	<Hero
+		client:load
+		title={`NumberFlow${frameworkId === 'vanilla' ? '' : ' for'} ${framework!.name}`}
+	/>
+	<div
+		class="prose prose-zinc dark:prose-invert prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none container leading-[1.7]"
+	>
+		<slot />
+	</div>
+</Layout>
