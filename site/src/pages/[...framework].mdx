@@ -1,0 +1,103 @@
+---
+layout: ./_Layout.astro
+title: Number Flow
+description: Transition, format, and localize numbers with one component. Accessible and customizable.
+---
+import Pre from '@/components/Pre.astro';
+export const components = {pre: Pre}
+import Demo from '@/components/Demo'
+import Match from '@/components/Match.astro'
+export function getStaticPaths() {
+  return [
+    {params: {framework: undefined}},
+    {params: {framework: 'vue'}},
+    {params: {framework: 'vanilla'}},
+  ];
+}
+
+<Match>
+<Fragment slot="react">
+```jsx
+// Basic usage
+import NumberFlow from '@number-flow/react'
+
+<NumberFlow
+    value={value}
+    format={{ notation: 'compact' }} // Intl.NumberFormat options
+    locales="en-US" // Intl.NumberFormat locales
+/>
+```
+</Fragment>
+<Fragment slot="vue">
+```vue
+<!-- Basic usage -->
+<script setup>
+import NumberFlow from '@number-flow/vue'
+</script>
+
+<NumberFlow
+    :value="123"
+    :format="{ notation: 'compact' } /* Intl.NumberFormat options */" 
+    :locales="'en-US' /* Intl.NumberFormat locales */"
+/>
+```
+</Fragment>
+```html
+<number-flow x-timing="{} />
+```
+</Match>
+
+See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
+
+## Customizing
+
+NumberFlow accepts a timings props to customize the transitions. See [MDN's `KeyframeEffect` reference](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) for a full list of options.
+
+<Match>
+<Fragment slot="react">
+```jsx
+<NumberFlow
+    xTiming={{ duration: 700, easing: 'ease-out' }}
+    yTiming={{ duration: 700, easing: 'ease-out' }}
+/>
+```
+</Fragment>
+<Fragment slot="vue">
+```vue
+<NumberFlow
+    :xTiming="{ duration: 700, easing: 'ease-out' }"
+    :yTiming="{ duration: 700, easing: 'ease-out' }"
+/>
+```
+</Fragment>
+```html
+<number-flow x-timing="{} />
+```
+</Match>
+
+For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs).
+
+---
+
+There's also some CSS properties you can use to customize the component:
+
+### `--mask-height`/`--mask-width`
+
+These adjust the height and width of the gradient fade-out masks at the edges of the number.
+`--mask-height` also gets used as the vertical padding for the number.
+
+### `line-height`
+
+In my opinion, the transitions look better with small vertical gaps between numbers, because it reduces the distance
+they travel.
+I recommend using the smallest `line-height` that fits all your component's characters (i.e. `0.8`).
+
+## Limitations
+
+* [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't currently supported
+* Selected text inside the number will not respect color changes from `::selection`, if any
+
+## Credits
+
+Built by [Max Barvian](https://x.com/mbarvian). Heavily inspired by the [Family](https://family.co) iOS app.
+[Technique for the `mask-image`](https://expensive.toys/blog/blur-vignette) from [Artur Bień](https://x.com/artur_bien).

@@ -1,0 +1,19 @@
+---
+export interface Props {
+	react?: string
+	vue?: string
+	vanilla?: string
+}
+const { react, vue, vanilla } = Astro.props
+const framework = Astro.params.framework ?? 'react'
+---
+
+{
+	framework === 'react' &&
+		(react ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
+}
+{framework === 'vue' && (vue ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)}
+{
+	framework === 'vanilla' &&
+		(vanilla ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
+}

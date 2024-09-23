@@ -49,7 +49,6 @@ const styles = `
 	white-space: nowrap;
 }
 
-
 .label {
 	position: absolute;
 	left: 0;
