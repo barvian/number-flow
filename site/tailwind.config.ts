@@ -1,12 +1,6 @@
 import type { Config } from 'tailwindcss'
 import reset from 'tw-reset'
-import fluid, {
-	extract,
-	fontSize,
-	screens as _screens,
-	type FluidThemeConfig
-} from 'fluid-tailwind'
-const { lg: _, xl: __, '2xl': ___, ...screens } = _screens
+import fluid, { extract, fontSize, screens, type FluidThemeConfig } from 'fluid-tailwind'
 import typography from '@tailwindcss/typography'
 
 export default {
@@ -28,13 +22,18 @@ export default {
 		container: false
 	},
 	theme: {
+		screens,
 		fontSize,
 		fluid: (({ theme }) => ({
 			defaultScreens: [, theme('screens.xl')]
 		})) satisfies FluidThemeConfig,
-		screens: {
-			xs: '20rem',
-			...screens
+		extend: {
+			screens: {
+				xs: '20rem'
+			},
+			spacing: {
+				'4.5': '1.125rem'
+			}
 		}
 	},
 	plugins: [fluid, typography]

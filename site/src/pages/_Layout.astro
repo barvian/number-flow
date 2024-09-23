@@ -5,6 +5,10 @@ import preview from '@/assets/preview.png'
 import { getImage } from 'astro:assets'
 import pkg from '/../packages/number-flow/package.json'
 import Hero from './_Hero'
+import FrameworkMenu from '@/components/FrameworkMenu'
+import { getFramework } from '@/lib/framework'
+
+const framework = getFramework(Astro.params.framework)
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
@@ -54,9 +58,12 @@ const app = {
 		<meta name="twitter:description" content={frontmatter.description} />
 		<script type="application/ld+json" set:html={JSON.stringify(app)} />
 	</head>
-	<header class="~py-6/8 ~px-6/10">
-		<div class="flex gap-6">
-			<a href="/">NumberFlow</a>
+	<header class="~py-4/6 ~px-6/10">
+		<div class="flex items-center gap-6">
+			<div class="flex items-center gap-4">
+				<a class="text-lg" href="/">NumberFlow</a>
+				<FrameworkMenu value={framework} client:load />
+			</div>
 			<a
 				href={pkg.repository.url}
 				class="ml-auto flex items-center gap-2.5"

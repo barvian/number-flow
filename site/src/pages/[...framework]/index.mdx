@@ -43,7 +43,15 @@ import NumberFlow from '@number-flow/vue'
 ```
 </Fragment>
 ```html
-<number-flow x-timing="{} />
+<number-flow x-timing="{}"></number-flow>
+
+<script type="module">
+  import NumberFlow from 'number-flow'
+
+  const flow = document.querySelector('number-flow')
+  // Change value, triggering an animation:
+  flow.value = 123
+</script>
 ```
 </Match>
 

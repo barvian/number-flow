@@ -1,11 +1,13 @@
 ---
+import { getFramework } from '@/lib/framework'
+
 export interface Props {
 	react?: string
 	vue?: string
 	vanilla?: string
 }
 const { react, vue, vanilla } = Astro.props
-const framework = Astro.params.framework ?? 'react'
+const framework = getFramework(Astro.params.framework)
 ---
 
 {
