@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react'
 import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'number-flow'
 export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
