@@ -106,7 +106,7 @@ export default function Hero({ title }: { title: string }) {
 				</MotionConfig>
 			</div>
 			<p className="~text-base/lg prose dark:prose-invert text-balance text-zinc-500 dark:text-zinc-400">
-				A lightweight component to format &amp; transition numbers. Built on{' '}
+				A lightweight component to transition &amp; format numbers. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
 					target="_blank"
