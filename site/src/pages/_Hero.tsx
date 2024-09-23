@@ -68,7 +68,7 @@ export default function Hero({ description }: { description: string }) {
 	return (
 		<header
 			ref={ref}
-			className="~mb-16/24 container flex w-full flex-col items-center gap-2 overflow-x-clip text-center"
+			className="~mb-16/24 container flex w-full flex-col items-center gap-2 text-center"
 		>
 			<div className="~mt-0/0.5 ~mb-0.5/1 flex items-center">
 				<MotionConfig transition={{ duration: 1, type: 'spring', bounce: 0 }}>
