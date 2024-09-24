@@ -1,0 +1,23 @@
+---
+import ClientFrameworkLink from './FrameworkLink'
+import { toFrameworkPath, getFramework } from '@/lib/framework'
+import type { HTMLAttributes } from 'astro/types'
+export interface Props extends HTMLAttributes<'a'> {
+	href: string
+}
+const pageFramework = getFramework(Astro.params)
+const { href, ...props } = Astro.props
+---
+
+{
+	pageFramework ? (
+		<a {...props} href={toFrameworkPath(href, pageFramework)}>
+			<slot />
+		</a>
+	) : (
+		// @ts-ignore
+		<ClientFrameworkLink {...Astro.props} className={Astro.props.class} client:load>
+			<slot />
+		</ClientFrameworkLink>
+	)
+}

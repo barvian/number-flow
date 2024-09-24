@@ -134,6 +134,9 @@ importers:
       tailwindcss:
         specifier: ^3.4.10
         version: 3.4.10
+      tailwindcss-spring:
+        specifier: ^1.0.1
+        version: 1.0.1(tailwindcss@3.4.10)
       typescript:
         specifier: ^5.5.4
         version: 5.5.4
@@ -3316,6 +3319,11 @@ packages:
 
   tabbable@6.2.0:
     resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
+
+  tailwindcss-spring@1.0.1:
+    resolution: {integrity: sha512-v8ibKyVCgbFcHzP9EFSbsvR0vH7Vk2Skl9JnJ9HUrnA16NhjvI4SlV9Y4SkinL+4bNrm1XpftZwX1DAD1mNZFA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
 
   tailwindcss@3.4.10:
     resolution: {integrity: sha512-KWZkVPm7yJRhdu4SRSl9d4AK2wM3a50UsvgHZO7xY77NQr2V+fIrEuoDGQcbvswWvFGbS2f6e+jC/6WJm1Dl0w==}
@@ -7274,6 +7282,10 @@ snapshots:
   supports-preserve-symlinks-flag@1.0.0: {}
 
   tabbable@6.2.0: {}
+
+  tailwindcss-spring@1.0.1(tailwindcss@3.4.10):
+    dependencies:
+      tailwindcss: 3.4.10
 
   tailwindcss@3.4.10:
     dependencies:

@@ -71,7 +71,7 @@ export default function Hero({ title }: { title: string }) {
 			ref={ref}
 			className="~mb-16/24 container flex w-full flex-col items-center gap-2 text-center"
 		>
-			<h1 className="text-framework text-sm font-medium">{title}</h1>
+			<h1 className="text-sm font-medium">{title}</h1>
 			<div className="~mb-0.5/1 flex items-center">
 				<MotionConfig transition={{ duration: 1, type: 'spring', bounce: 0 }}>
 					<NumberFlow

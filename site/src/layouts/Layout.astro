@@ -5,7 +5,7 @@ import { getImage } from 'astro:assets'
 import pkg from '/../packages/number-flow/package.json'
 import FrameworkMenu from '@/components/FrameworkMenu'
 import { getFramework, FRAMEWORKS } from '@/lib/framework'
-import { getFrameworkPath } from '@/lib/framework'
+import FrameworkLink from '@/components/FrameworkLink.astro'
 // import { AstroFont } from 'astro-font'
 // import * as path from 'node:path'
 
@@ -51,6 +51,9 @@ const app = {
 		<meta property="twitter:image" content={image} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script is:inline define:vars={{ frameworkId }}>
+			if (frameworkId) localStorage.setItem('framework', frameworkId)
+		</script>
 		<style
 			define:vars={{ frameworkLight: framework?.lightColor, frameworkDark: framework?.darkColor }}
 		>
@@ -87,14 +90,14 @@ const app = {
 	<header class="~py-4/6 ~px-6/10">
 		<div class="flex items-center gap-6">
 			<div class="mr-auto flex items-center gap-3">
-				<a class="font-semibold" href={getFrameworkPath('/', frameworkId)}>NumberFlow</a>
+				<FrameworkLink class="font-semibold" href="/">NumberFlow</FrameworkLink>
 				<!-- <span
 					class="flex items-center rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50"
 					>v{pkg.version}</span
 				> -->
 				{frameworkId && <FrameworkMenu url={Astro.url} value={frameworkId} client:load />}
 			</div>
-			<a href={getFrameworkPath('/examples', frameworkId)}>Examples</a>
+			<FrameworkLink href="/examples">Examples</FrameworkLink>
 			<a href="/showcase">Showcase</a>
 			<a href={pkg.repository.url} class="flex items-center gap-2.5" aria-label="View on GitHub">
 				<svg viewBox="0 0 16 16" class="size-6 fill-current" role="none">

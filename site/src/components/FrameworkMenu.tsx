@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { FRAMEWORKS, getFrameworkPath, type Framework } from '@/lib/framework'
+import { FRAMEWORKS, toFrameworkPath, type Framework } from '@/lib/framework'
 import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import * as React from 'react'
 import { CheckIcon } from '@heroicons/react/20/solid'
@@ -34,7 +34,7 @@ export default function FrameworkMenu({ value, url }: { value: Framework; url: U
 							as="a"
 							disabled={id === value}
 							className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium data-[disabled]:cursor-default data-[focus]:bg-zinc-800"
-							href={getFrameworkPath(url.pathname, id as Framework)}
+							href={toFrameworkPath(url.pathname, id as Framework)}
 						>
 							<Icon className="size-4.5" />
 							{framework.name}

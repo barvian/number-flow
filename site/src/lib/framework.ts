@@ -39,8 +39,8 @@ export const getStaticPaths = () =>
 		params: { framework: id === DEFAULT_FRAMEWORK ? undefined : id }
 	}))
 
-export const getFrameworkPath = (path: string, id?: Framework | null) => {
-	if (!id) return path
+export const toFrameworkPath = (path?: string | null, id?: Framework | false | null) => {
+	if (!path || !id) return path
 	const [_, firstSegment, ...segments] = path.split('/')
 
 	// New prefix to prepend, based on new framework:

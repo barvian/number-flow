@@ -4,6 +4,7 @@ import fluid, { extract, fontSize, screens, type FluidThemeConfig } from 'fluid-
 import typography from '@tailwindcss/typography'
 // import defaultTheme from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
+import spring from 'tailwindcss-spring'
 
 export default {
 	presets: [reset()],
@@ -61,6 +62,7 @@ export default {
 		}
 	},
 	plugins: [
+		spring,
 		fluid,
 		typography,
 		plugin(({ matchUtilities, theme }) => {
@@ -73,6 +75,10 @@ export default {
 					'decoration-current': (_, { modifier }) =>
 						modifier && {
 							'text-decoration-color': `color-mix(in srgb, currentColor, transparent ${(1 - modifier) * 100}%)`
+						},
+					'border-current': (_, { modifier }) =>
+						modifier && {
+							'border-color': `color-mix(in srgb, currentColor, transparent ${(1 - modifier) * 100}%)`
 						}
 				},
 				{ values: { DEFAULT: '' }, modifiers: theme('opacity')! }
