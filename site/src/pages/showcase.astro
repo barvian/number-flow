@@ -1,6 +1,26 @@
 ---
 import Layout from '@/layouts/Layout.astro'
+import Tweet from '@/components/Tweet.astro'
 ---
 
-<Layout title="Showcase" description="A showcase of number-roll"> showcase </Layout>
-https://x.com/RaillyHugo/status/1828974087013609776
+<Layout title="Showcase" description="A showcase of number-roll">
+	<header class="~mb-16/24 container max-w-3xl text-center">
+		<h1 class="~text-4xl/6xl font-semibold">What will you build?</h1>
+		<div class="~text-base/lg ~mt-2/4 prose dark:prose-invert text-zinc-500 dark:text-zinc-400">
+			<p>
+				I'd love to see what you're building with NumberFlow 👋. Tag <a
+					href="https://x.com/mbarvian"
+					target="_blank">@mbarvian</a
+				> in a post on X and I might include it here. Note: NumberFlow was previously called MotionNumber.
+			</p>
+		</div>
+	</header>
+	<div class="max-w-9xl container columns-2 gap-8 *:mb-8 2xl:columns-3">
+		<Tweet id="1825941664189526067" />
+		<Tweet id="1837159796564447380" />
+		<Tweet id="1828760806047051899" />
+		<Tweet id="1827742960672489594" />
+		<Tweet id="1828974087013609776" />
+		<Tweet id="1837782472030822803" />
+	</div>
+</Layout>

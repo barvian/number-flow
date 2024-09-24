@@ -33,6 +33,7 @@ export default function FrameworkMenu({ value, url }: { value: Framework; url: U
 							key={id}
 							as="a"
 							disabled={id === value}
+							onClick={() => void localStorage.setItem('framework', id)}
 							className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium data-[disabled]:cursor-default data-[focus]:bg-zinc-800"
 							href={toFrameworkPath(url.pathname, id as Framework)}
 						>

@@ -1,0 +1,45 @@
+---
+import AstroTweet from 'astro-tweet'
+import type { ComponentProps } from 'astro/types'
+export type Props = ComponentProps<typeof AstroTweet>
+---
+
+<div class:list={['Tweet']}>
+	<AstroTweet className="not-prose" {...Astro.props} />
+</div>
+
+<style is:global>
+	.Tweet .astro-tweet-theme {
+		--tweet-container-margin: 0;
+		max-width: none;
+		@apply [--tweet-bg-color-hover:var(--tweet-bg-color)] [--tweet-body-font-size:1rem] dark:[--tweet-bg-color:theme(colors.zinc.900)] dark:[--tweet-border:1px_solid_theme(colors.white/15%)];
+	}
+	.Tweet [class*='authorFollow'],
+	.Tweet [class*='replies'],
+	.Tweet [class*='reply'],
+	.Tweet [class*='info'] {
+		display: none !important;
+	}
+
+	.Tweet [class*='actions'] {
+		border-top: none;
+	}
+	.Tweet [class*='rounded'] {
+		border: none;
+		position: relative;
+	}
+
+	.Tweet [class*='rounded']::after {
+		content: '';
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		border-radius: inherit;
+		pointer-events: none;
+		box-shadow: inset 0 0 0 1px theme(colors.white/25%);
+	}
+	.Tweet p {
+		white-space: pre-line !important;
+	}
+</style>

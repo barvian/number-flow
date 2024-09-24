@@ -22,6 +22,7 @@
 		"@types/react-dom": "^18",
 		"astro": "^4.14.2",
 		"astro-font": "^0.1.81",
+		"astro-tweet": "^0.0.4",
 		"clsx": "^2.1.1",
 		"framer-motion": "^11.3.19",
 		"jotai": "^2.9.3",

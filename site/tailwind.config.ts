@@ -48,6 +48,9 @@ export default {
 			transitionTimingFunction: {
 				'out-quad': 'cubic-bezier(.25, .46, .45, .94)'
 			},
+			maxWidth: ({ theme }) => ({
+				'9xl': theme('screens.2xl')
+			}),
 			typography: {
 				DEFAULT: {
 					css: {
