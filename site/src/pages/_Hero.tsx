@@ -69,13 +69,13 @@ export default function Hero({ title }: { title: string }) {
 	return (
 		<header
 			ref={ref}
-			className="~mb-16/24 container flex w-full flex-col items-center gap-2 text-center"
+			className="~mb-16/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
 		>
-			<h1 className="text-sm font-medium">{title}</h1>
+			<h1 className="font-medium">{title}</h1>
 			<div className="~mb-0.5/1 flex items-center">
 				<MotionConfig transition={{ duration: 1, type: 'spring', bounce: 0 }}>
 					<NumberFlow
-						className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
+						className="~text-5xl/8xl font-[525] tracking-tight [--mask-height:0.25em]"
 						style={{ lineHeight: 0.85 }}
 						value={value}
 						locales={locale}
@@ -105,7 +105,7 @@ export default function Hero({ title }: { title: string }) {
 					</motion.div> */}
 				</MotionConfig>
 			</div>
-			<p className="~text-base/lg prose dark:prose-invert text-balance text-zinc-500 dark:text-zinc-400">
+			<p className="~text-base/lg prose dark:prose-invert-zinc text-zinc-500 dark:text-zinc-400">
 				A lightweight component to transition &amp; format numbers. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"

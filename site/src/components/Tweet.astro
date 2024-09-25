@@ -10,9 +10,13 @@ export type Props = ComponentProps<typeof AstroTweet>
 
 <style is:global>
 	.Tweet .astro-tweet-theme {
+		--tweet-bg-color-hover: var(--tweet-bg-color);
+		--tweet-font-family: inherit;
+		--tweet-body-font-size: 1rem;
 		--tweet-container-margin: 0;
 		max-width: none;
-		@apply [--tweet-bg-color-hover:var(--tweet-bg-color)] [--tweet-body-font-size:1rem] dark:[--tweet-bg-color:theme(colors.zinc.900)] dark:[--tweet-border:1px_solid_theme(colors.white/15%)];
+
+		@apply dark:[--tweet-bg-color:theme(colors.zinc.900)] dark:[--tweet-border:1px_solid_theme(colors.zinc.800)];
 	}
 	.Tweet [class*='authorFollow'],
 	.Tweet [class*='replies'],

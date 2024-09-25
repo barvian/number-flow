@@ -2,9 +2,10 @@ import type { Config } from 'tailwindcss'
 import reset from 'tw-reset'
 import fluid, { extract, fontSize, screens, type FluidThemeConfig } from 'fluid-tailwind'
 import typography from '@tailwindcss/typography'
-// import defaultTheme from 'tailwindcss/defaultTheme'
+import defaultTheme from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
 import spring from 'tailwindcss-spring'
+import type { PluginUtils } from 'tailwindcss/types/config'
 
 export default {
 	presets: [reset()],
@@ -27,16 +28,28 @@ export default {
 	theme: {
 		screens,
 		fontSize,
-		// fontFamily: {
-		// 	ui: defaultTheme.fontFamily.sans,
-		// 	mono: defaultTheme.fontFamily.mono
-		// },
+		fontFamily: {
+			sans: 'var(--font-inter)',
+			'mac-ui': ['-apple-system', 'BlinkMacSystemFont', 'var(--font-inter)'],
+			mono: defaultTheme.fontFamily.mono
+		},
 		fluid: (({ theme }) => ({
 			defaultScreens: [, theme('screens.md')]
 		})) satisfies FluidThemeConfig,
 		extend: {
 			colors: {
 				framework: 'var(--color-framework)'
+			},
+			keyframes: {
+				'pop-in': {
+					from: {
+						opacity: '0',
+						transform: 'scale(.96)'
+					}
+				}
+			},
+			animation: {
+				'pop-in': 'pop-in .1s ease'
 			},
 			screens: {
 				xs: '20rem'
@@ -51,7 +64,7 @@ export default {
 			maxWidth: ({ theme }) => ({
 				'9xl': theme('screens.2xl')
 			}),
-			typography: {
+			typography: ({ theme }: PluginUtils) => ({
 				DEFAULT: {
 					css: {
 						'--tw-prose-links': 'currentColor',
@@ -60,8 +73,16 @@ export default {
 							'@apply link-underline': {}
 						}
 					}
+				},
+				'invert-zinc': {
+					css: {
+						'--tw-prose-hr': theme('colors.zinc.800'),
+						'--tw-prose-headings': theme('colors.zinc.50'),
+						'--tw-prose-body': theme('colors.zinc.300'),
+						'--tw-prose-links': 'theme(colors.white)'
+					}
 				}
-			}
+			})
 		}
 	},
 	plugins: [

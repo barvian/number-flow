@@ -7,6 +7,7 @@ export default function FrameworkLink({
 	...props
 }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
 	const ref = React.useRef<HTMLAnchorElement>(null)
+	// This is gross but not sure a better way:
 	React.useEffect(() => {
 		const savedFramework = localStorage.getItem('framework') as Framework | undefined
 		if (!savedFramework) return

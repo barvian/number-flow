@@ -24,7 +24,7 @@ export default function FrameworkMenu({ value, url }: { value: Framework; url: U
 			</MenuButton>
 			<MenuItems
 				anchor={{ to: 'bottom start', gap: '0.375rem' }}
-				className="min-w-32 rounded-xl bg-zinc-900 p-1"
+				className="animate-pop-in min-w-32 origin-top-left rounded-xl bg-zinc-900 p-1"
 			>
 				{Object.entries(FRAMEWORKS).map(([id, framework]) => {
 					const Icon = icons[`./icons/frameworks/${id}.tsx`]!
