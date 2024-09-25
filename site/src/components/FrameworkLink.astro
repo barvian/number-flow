@@ -9,15 +9,20 @@ const pageFramework = getFramework(Astro.params)
 const { href, ...props } = Astro.props
 ---
 
-{
-	pageFramework ? (
-		<a {...props} href={toFrameworkPath(href, pageFramework)}>
-			<slot />
-		</a>
-	) : (
-		// @ts-ignore
-		<ClientFrameworkLink {...Astro.props} className={Astro.props.class} client:load>
-			<slot />
-		</ClientFrameworkLink>
-	)
-}
+<a {...props} data-framework-link href={toFrameworkPath(href, pageFramework)}>
+	<slot />
+</a>
+
+<script>
+	import { toFrameworkPath, type Framework } from '@/lib/framework'
+
+	const pageFramework = document.documentElement.dataset.framework
+	if (!pageFramework) {
+		const savedFramework = localStorage.getItem('framework') as Framework | undefined
+		if (savedFramework) {
+			document.querySelectorAll<HTMLAnchorElement>('a[data-framework-link]').forEach((el) => {
+				el.setAttribute('href', toFrameworkPath(el.getAttribute('href'), savedFramework)!)
+			})
+		}
+	}
+</script>
