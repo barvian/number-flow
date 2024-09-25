@@ -14,9 +14,10 @@ export type Props = ComponentProps<typeof AstroTweet>
 		--tweet-font-family: inherit;
 		--tweet-body-font-size: 1rem;
 		--tweet-container-margin: 0;
+		--tweet-font-color-secondary: theme(colors.zinc.500);
 		max-width: none;
 
-		@apply dark:[--tweet-bg-color:theme(colors.zinc.900)] dark:[--tweet-border:1px_solid_theme(colors.zinc.800)];
+		@apply dark:[--tweet-bg-color:theme(colors.zinc.900)] dark:[--tweet-border:1px_solid_theme(colors.zinc.800)] dark:[--tweet-font-color-secondary:theme(colors.zinc.400)];
 	}
 	.Tweet [class*='authorFollow'],
 	.Tweet [class*='replies'],

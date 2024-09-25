@@ -30,7 +30,7 @@ export default {
 		fontSize,
 		fontFamily: {
 			sans: 'var(--font-inter)',
-			'mac-ui': ['-apple-system', 'BlinkMacSystemFont', 'var(--font-inter)'],
+			ui: defaultTheme.fontFamily.sans,
 			mono: defaultTheme.fontFamily.mono
 		},
 		fluid: (({ theme }) => ({
@@ -78,6 +78,7 @@ export default {
 					css: {
 						'--tw-prose-hr': theme('colors.zinc.800'),
 						'--tw-prose-headings': theme('colors.zinc.50'),
+						'--tw-prose-code': theme('colors.zinc.50'),
 						'--tw-prose-body': theme('colors.zinc.300'),
 						'--tw-prose-links': 'theme(colors.white)'
 					}

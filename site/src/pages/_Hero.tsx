@@ -75,7 +75,7 @@ export default function Hero({ title }: { title: string }) {
 			<div className="~mb-0.5/1 flex items-center">
 				<MotionConfig transition={{ duration: 1, type: 'spring', bounce: 0 }}>
 					<NumberFlow
-						className="~text-5xl/8xl font-[525] tracking-tight [--mask-height:0.25em]"
+						className="~text-5xl/8xl font-ui font-medium [--mask-height:0.25em]"
 						style={{ lineHeight: 0.85 }}
 						value={value}
 						locales={locale}
