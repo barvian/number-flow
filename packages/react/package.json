@@ -52,7 +52,7 @@
 	},
 	"dependencies": {
 		"esm-env": "^1.0.0",
-		"number-flow": "workspace:^"
+		"number-flow": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.3",
