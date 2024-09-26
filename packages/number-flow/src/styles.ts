@@ -40,7 +40,7 @@ const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
 const styles = `
 :host {
-	display: inline-flex;
+	display: inline-block;
 	direction: ltr;
 	position: relative;
 	isolation: isolate;
