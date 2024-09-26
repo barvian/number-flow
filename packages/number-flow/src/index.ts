@@ -215,6 +215,22 @@ abstract class Section {
 			this.children.delete(key)
 		}
 
+	protected unpop(char: Char) {
+		char.el.classList.remove('section__exiting')
+		char.el.style[this.justify] = ''
+	}
+
+	protected pop(chars: Map<any, Char>) {
+		// Calculate offsets for removed before popping, to avoid layout thrashing:
+		chars.forEach((char) => {
+			char.el.style[this.justify] = `${offset(char.el, this.justify)}px`
+		})
+		chars.forEach((char) => {
+			char.el.classList.add('section__exiting')
+			char.present = false
+		})
+	}
+
 	protected addNewAndUpdateExisting(parts: KeyedNumberPart[], parent: HTMLElement = this.el) {
 		const added = new Map<KeyedNumberPart, Char>()
 		const updated = new Map<KeyedNumberPart, Char>()
@@ -230,8 +246,7 @@ abstract class Section {
 				if (this.children.has(part.key)) {
 					comp = this.children.get(part.key)!
 					updated.set(part, comp)
-					comp.el.classList.remove('section__exiting')
-					comp.el.style[this.justify] = ''
+					this.unpop(comp)
 					comp.present = true
 				} else {
 					// New part
@@ -313,8 +328,7 @@ class NumberSection extends Section {
 				removed.set(key, comp)
 			}
 			// Put everything back into the flow briefly, to recompute offsets:
-			comp.el.classList.remove('section__exiting')
-			comp.el.style[this.justify] = ''
+			this.unpop(comp)
 		})
 
 		this.addNewAndUpdateExisting(parts, this.#inner)
@@ -323,14 +337,9 @@ class NumberSection extends Section {
 		removed.forEach((comp) => {
 			if (comp instanceof Digit) comp.update(0)
 		})
-		// Calculate offsets for removed before popping, to avoid layout thrashing:
-		removed.forEach((comp) => {
-			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
-		})
-		removed.forEach((comp, key) => {
-			comp.el.classList.add('section__exiting')
-			comp.present = false
-		})
+
+		// Then end with them popped out again:
+		this.pop(removed)
 	}
 
 	#animation?: Animation
@@ -400,14 +409,7 @@ class SymbolSection extends Section {
 		})
 
 		// Pop them, before any additions
-		// Save their offsets before popping, to avoid layout thrashing:
-		removed.forEach((comp) => {
-			comp.el.style[this.justify] = `${offset(comp.el, this.justify)}px`
-		})
-		removed.forEach((comp, key) => {
-			comp.el.classList.add('section__exiting')
-			comp.present = false
-		})
+		this.pop(removed)
 
 		this.addNewAndUpdateExisting(parts)
 	}
