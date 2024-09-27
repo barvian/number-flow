@@ -1,0 +1,56 @@
+---
+import type { MarkdownHeading } from 'astro'
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'nav'> & {
+	headings: MarkdownHeading[]
+}
+const { headings, ...props } = Astro.props
+const h2s = headings.filter((h) => h.depth <= 2)
+---
+
+<nav {...props} id="toc" aria-label="Table Of Contents">
+	<ol class="space-y-4 text-sm">
+		{
+			h2s.map((h, i) => (
+				<li>
+					<a
+						data-active={i === 0 || undefined}
+						class="opacity-50 data-[active]:opacity-100"
+						href={`#${h.slug}`}
+					>
+						{h.text}
+					</a>
+				</li>
+			))
+		}
+	</ol>
+</nav>
+
+<script>
+	const tocItems = Array.from(document.querySelectorAll<HTMLAnchorElement>('#toc a'))
+
+	const io = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((e) => {
+				if (!e.isIntersecting) return
+				const slug = (e.target as HTMLElement).dataset.slug!
+				tocItems.forEach((item) => {
+					if (item.getAttribute('href') === `#${slug}`) item.dataset.active = ''
+					else delete item.dataset.active
+				})
+			})
+		},
+		{
+			rootMargin: '-20% 0% -80%' // a sliver near the top of the viewport
+		}
+	)
+	document.querySelectorAll<HTMLHeadingElement>('article h2').forEach((heading) => {
+		const section = heading.closest('section')
+		if (!section) return
+		section.dataset.slug = heading.id
+		io.observe(section)
+	})
+</script>
+
+<style></style>

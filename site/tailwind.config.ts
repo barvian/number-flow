@@ -4,7 +4,6 @@ import fluid, { extract, fontSize, screens, type FluidThemeConfig } from 'fluid-
 import typography from '@tailwindcss/typography'
 import defaultTheme from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
-// @ts-expect-error untyped
 import spring from 'tailwindcss-spring'
 import type { PluginUtils } from 'tailwindcss/types/config'
 
@@ -16,7 +15,7 @@ export default {
 			mdx: (src) =>
 				src
 					// Ignore classes in code blocks
-					.replaceAll(/```.*?```/gs, '')
+					.replace(/```.*?```/gs, '')
 					// Only return stuff in <component>s
 					.match(/<[^/].*?>/g)
 					?.join() ?? ''
@@ -73,6 +72,16 @@ export default {
 
 						a: {
 							'@apply link-underline': {}
+						},
+
+						'&>section': {
+							'@apply py-12 first:pt-0 last:pb-0': {}
+						},
+						'section > :first-child': {
+							'margin-top': '0 !important'
+						},
+						'section > :last-child': {
+							'margin-bottom': '0 !important'
 						}
 					}
 				},

@@ -17,10 +17,10 @@ export default function FrameworkMenu({ value, url }: { value: Framework; url: U
 
 	return (
 		<Menu>
-			<MenuButton className="flex items-center rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-out hover:brightness-125 active:brightness-[98%] active:duration-[25ms]">
-				<ValueIcon className="size-4.5 mr-2 shrink-0" />
+			<MenuButton className="flex items-center gap-1.5 rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-out hover:brightness-125 active:brightness-[98%] active:duration-[25ms]">
+				<ValueIcon className="size-4.5 mr-0.5 shrink-0" />
 				{FRAMEWORKS[value].name}
-				<ChevronDownIcon className="ml-1.5 h-3 shrink-0 opacity-50" strokeWidth={2} />
+				<ChevronDownIcon className="ml-auto h-3 shrink-0 opacity-50" strokeWidth={2} />
 			</MenuButton>
 			<MenuItems
 				anchor={{ to: 'bottom start', gap: '0.375rem' }}

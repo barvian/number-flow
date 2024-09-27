@@ -11,5 +11,10 @@
 		"build": "pnpm -r build",
 		"dev": "pnpm -r --parallel dev",
 		"format": "prettier --write ."
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"remark-sectionize": "patches/remark-sectionize.patch"
+		}
 	}
 }

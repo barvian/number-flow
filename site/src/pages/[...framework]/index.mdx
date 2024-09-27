@@ -11,8 +11,8 @@ export { getStaticPaths } from '@/lib/framework'
 
 ## Basic usage
 
-<Match class='xl:pre-first-line:hidden'>
-<div slot="react">
+<Match class='xl:pre-first-line:hidden [&_pre]:mt-0'>
+<Fragment slot="react">
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'
@@ -23,7 +23,7 @@ import NumberFlow from '@number-flow/react'
     locales="en-US" // Intl.NumberFormat locales
 />
 ```
-</div>
+</Fragment>
 <Fragment slot="vue">
 ```vue
 <!-- Basic usage -->
@@ -54,8 +54,6 @@ import NumberFlow from '@number-flow/svelte'
 </Fragment>
 ```html
 <!-- Basic usage -->
-<number-flow x-timing="{}"></number-flow>
-
 <script type="module">
   import NumberFlow from 'number-flow'
 
@@ -67,6 +65,8 @@ import NumberFlow from '@number-flow/svelte'
   // Change value, triggering an animation:
   flow.value = 123
 </script>
+
+<number-flow x-timing="{}"></number-flow>
 ```
 </Match>
 
