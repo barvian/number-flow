@@ -20,13 +20,13 @@ export default function DemoIndicator({ children, ...rest }: DemoProps) {
 			<span className="flex items-center gap-2">
 				{/* <MotionNumber
 					value={value}
-					className="~text-xl/4xl font-semibold [--mask-height:0.25em]"
+					className="~text-xl/4xl font-semibold [--number-flow-mask-height:0.25em]"
 					format={{ style: 'currency', currency: 'USD' }}
 					style={{ lineHeight: 0.85 }}
 					after={() => (
 						<MotionNumber
 							value={diff}
-							className="~text-base/2xl px-[0.3em] font-semibold [--mask-height:0.3em]"
+							className="~text-base/2xl px-[0.3em] font-semibold [--number-flow-mask-height:0.3em]"
 							format={{ style: 'percent', maximumFractionDigits: 2 }}
 							animate={{ backgroundColor: diff > 0 ? '#34d399' : '#ef4444' }}
 							style={{ borderRadius: 999, lineHeight: 0.85 }}

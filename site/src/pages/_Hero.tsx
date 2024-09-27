@@ -1,7 +1,8 @@
 import NumberFlow, { type Format } from '@number-flow/react'
 import useCycle from '../hooks/useCycle'
 import { useEffect, useRef } from 'react'
-import { useInView, MotionConfig } from 'framer-motion'
+import { useInView } from 'framer-motion'
+// import { motion, MotionConfig } from 'framer-motion'
 // const MotionNumberFlow = motion(NumberFlow)
 import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
 
@@ -73,21 +74,22 @@ export default function Hero({ title }: { title: string }) {
 		>
 			<h1 className="font-medium">{title}</h1>
 			<div className="~mb-0.5/1 flex items-center">
-				<MotionConfig transition={{ duration: 1, type: 'spring', bounce: 0 }}>
-					<NumberFlow
-						className="~text-5xl/8xl font-ui font-medium [--mask-height:0.25em]"
-						style={{ lineHeight: 0.85 }}
-						value={value}
-						locales={locale}
-						format={format}
-					/>
-					{/* <motion.div
+				{/* <MotionConfig transition={{ duration: 0.9, type: 'spring', bounce: 0 }}> */}
+				<NumberFlow
+					className="~text-5xl/8xl font-ui font-medium [--number-flow-mask-height:0.25em]"
+					style={{ lineHeight: 0.85 }}
+					value={value}
+					locales={locale}
+					format={format}
+				/>
+				{/* <motion.div
 						layout
 						style={{
 							borderRadius: 999,
 							whiteSpace: 'nowrap',
 							backgroundColor: 'green',
-							paddingInline: '5rem'
+							paddingInline: '5rem',
+							overflow: 'clip'
 						}}
 					>
 						<motion.span layout="position" style={{ display: 'inline-block' }}>
@@ -96,16 +98,16 @@ export default function Hero({ title }: { title: string }) {
 						<MotionNumberFlow
 							layout
 							layoutRoot
-							className="~text-5xl/8xl font-medium [--mask-height:0.25em]"
+							className="~text-5xl/8xl font-medium [--number-flow-mask-height:0.25em]"
 							style={{ lineHeight: 0.85 }}
 							value={value + 8}
 							locales={locale}
 							format={format}
 						/>
-					</motion.div> */}
-				</MotionConfig>
+					</motion.div>
+				</MotionConfig> */}
 			</div>
-			<p className="~text-base/lg prose dark:prose-invert-zinc text-zinc-500 dark:text-zinc-400">
+			<p className="~text-base/lg prose dark:prose-invert-zinc text-muted">
 				A lightweight component to transition &amp; format numbers. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"

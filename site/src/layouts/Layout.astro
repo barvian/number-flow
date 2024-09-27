@@ -99,17 +99,17 @@ const app = {
 				data-active={toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK) === '/examples' ||
 					undefined}
 				href="/examples"
-				class="font-medium text-zinc-500 transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50 dark:text-zinc-400"
+				class="text-muted font-medium transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
 				>Examples</FrameworkLink
 			>
 			<a
 				data-active={Astro.url.pathname === '/showcase' || undefined}
-				class="font-medium text-zinc-500 transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50 dark:text-zinc-400"
+				class="text-muted font-medium transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
 				href="/showcase">Showcase</a
 			>
 			<a
 				href={pkg.repository.url}
-				class="flex items-center gap-2.5 text-zinc-500 transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50 dark:text-zinc-400"
+				class="text-muted flex items-center gap-2.5 transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
 				aria-label="View on GitHub"
 			>
 				<svg viewBox="0 0 16 16" class="size-6 fill-current" role="none">
@@ -120,7 +120,7 @@ const app = {
 			</a>
 			<a
 				href="https://x.com/mbarvian"
-				class="text-zinc-500 transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50 dark:text-zinc-400"
+				class="text-muted transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
 				aria-label="Follow on X"
 			>
 				<svg viewBox="0 0 24 24" class="size-6 fill-current">

@@ -9,7 +9,6 @@
 		"moduleResolution": "Bundler",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"noEmit": true,
 
 		/* Linting */
 		"strict": true,
@@ -19,6 +18,6 @@
 		"verbatimModuleSyntax": true,
 		"noUncheckedIndexedAccess": true
 	},
-	"include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
-	"exclude": ["node_modules", "build", "dist", ".astro"]
+	"include": ["**/src"],
+	"exclude": ["**/node_modules", "**/dist", "**/build"]
 }

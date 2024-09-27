@@ -1,5 +1,4 @@
 {
-	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		// Stricter linting during builds:
 		"noUnusedLocals": true,

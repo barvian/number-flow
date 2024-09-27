@@ -1,24 +1,36 @@
 'use client'
 
 import * as React from 'react'
-import NumberFlowElement, { type Value, type Format, renderInnerHTML } from 'number-flow'
+import {
+	type Value,
+	type Format,
+	SLOTTED_TAG,
+	SLOTTED_STYLES,
+	partitionParts,
+	NumberFlowWithShallowAttributes as NumberFlowElement
+} from 'number-flow'
 export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
 export type * from 'number-flow'
-import { BROWSER } from 'esm-env'
-export { NumberFlowElement }
+
+NumberFlowElement.define()
 
 export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
-	xTiming?: EffectTiming
-	yTiming?: EffectTiming
-	dsd?: boolean
+	fadeTiming?: (typeof NumberFlowElement)['prototype']['fadeTiming']
+	xTiming?: (typeof NumberFlowElement)['prototype']['xTiming']
+	yTiming?: (typeof NumberFlowElement)['prototype']['yTiming']
 }
 
 type NumberFlowPrivProps = NumberFlowProps & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
 }
+
+// You're supposed to cache these between uses:
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
+// Serialize to strings b/c React:
+const formatters: Record<string, Intl.NumberFormat> = {}
 
 // We need a class component to use getSnapshotBeforeUpdate:
 class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
@@ -43,27 +55,31 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	}
 
 	override render() {
-		const { innerRef, value, className, locales, format, dsd, xTiming, yTiming, ...rest } =
+		const { innerRef, value, className, locales, format, fadeTiming, xTiming, yTiming, ...rest } =
 			this.props
 
+		const formatter = (formatters[
+			`${locales ? JSON.stringify(locales) : ''}:${format ? JSON.stringify(format) : ''}`
+		] ??= new Intl.NumberFormat(locales, format))
+		const parts = partitionParts(value, formatter)
+
 		return (
-			// @ts-expect-error
+			// @ts-expect-error missing types
 			<number-flow
 				ref={this.handleRef}
 				class={className}
+				fade-timing={JSON.stringify(fadeTiming)}
 				x-timing={JSON.stringify(xTiming)}
 				y-timing={JSON.stringify(yTiming)}
 				{...rest}
-				suppressHydrationWarning
-				dangerouslySetInnerHTML={
-					BROWSER ? undefined : { __html: renderInnerHTML(value, { locales, format, dsd }) }
-				}
 				manual
-				// Make sure value is set last, so timings can be updated beforehand.
+				// Make sure parts are set last, so timings can be updated beforehand.
 				// window check ensures no double update in React 18.
-				// Should be able to do value={[value,...]} in React 19:
-				value={BROWSER ? JSON.stringify([value, locales, format]) : undefined}
-			/>
+				parts={JSON.stringify(parts)}
+			>
+				<SLOTTED_TAG style={SLOTTED_STYLES}>{parts.formatted}</SLOTTED_TAG>
+				{/* @ts-expect-error missing types */}
+			</number-flow>
 		)
 	}
 }

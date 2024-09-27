@@ -2,26 +2,30 @@
 import { getFramework } from '@/lib/framework'
 
 export interface Props {
+	class?: string
 	react?: string
 	vue?: string
 	svelte?: string
 	vanilla?: string
 }
-const { react, vue, svelte, vanilla } = Astro.props
+const { class: cls, react, vue, svelte, vanilla } = Astro.props
 const framework = getFramework(Astro.params)
+const Comp = cls ? 'div' : Fragment
 ---
 
-{/* We can't use a loop here because the slot name have to be static strings */}
-{
-	framework === 'react' &&
-		(react ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
-}
-{framework === 'vue' && (vue ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)}
-{
-	framework === 'svelte' &&
-		(svelte ? svelte : Astro.slots.has('svelte') ? <slot name="svelte" /> : <slot />)
-}
-{
-	framework === 'vanilla' &&
-		(vanilla ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
-}
+<Comp class={cls}>
+	{/* We can't use a loop here because the slot name have to be static strings */}
+	{
+		framework === 'react' &&
+			(react ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
+	}
+	{framework === 'vue' && (vue ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)}
+	{
+		framework === 'svelte' &&
+			(svelte ? svelte : Astro.slots.has('svelte') ? <slot name="svelte" /> : <slot />)
+	}
+	{
+		framework === 'vanilla' &&
+			(vanilla ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
+	}
+</Comp>

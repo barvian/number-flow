@@ -23,15 +23,7 @@ export type Format = Omit<Intl.NumberFormatOptions, 'notation'> & {
 
 export type Value = Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0]
 
-// You're supposed to cache these between uses:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
-// Serialize to strings b/c React:
-const formatters: Record<string, Intl.NumberFormat> = {}
-
-export function formatToParts(value: Value, locales?: Intl.LocalesArgument, format?: Format) {
-	const formatter = (formatters[
-		`${locales ? JSON.stringify(locales) : ''}:${format ? JSON.stringify(format) : ''}`
-	] ??= new Intl.NumberFormat(locales, format))
+export function partitionParts(value: Value, formatter: Intl.NumberFormat) {
 	const parts = formatter.formatToParts(value)
 
 	const pre: KeyedNumberPart[] = []
@@ -84,3 +76,5 @@ export function formatToParts(value: Value, locales?: Intl.LocalesArgument, form
 
 	return { pre, integer, fraction, post, formatted }
 }
+
+export type PartitionedParts = ReturnType<typeof partitionParts>

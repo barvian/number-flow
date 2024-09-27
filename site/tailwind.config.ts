@@ -4,6 +4,7 @@ import fluid, { extract, fontSize, screens, type FluidThemeConfig } from 'fluid-
 import typography from '@tailwindcss/typography'
 import defaultTheme from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
+// @ts-expect-error untyped
 import spring from 'tailwindcss-spring'
 import type { PluginUtils } from 'tailwindcss/types/config'
 
@@ -52,7 +53,8 @@ export default {
 				'pop-in': 'pop-in .1s ease'
 			},
 			screens: {
-				xs: '20rem'
+				xs: '20rem',
+				xl: '74rem'
 			},
 			spacing: {
 				'4.5': '1.125rem',
@@ -90,7 +92,7 @@ export default {
 		spring,
 		fluid,
 		typography,
-		plugin(({ matchUtilities, theme }) => {
+		plugin(({ matchUtilities, addVariant, theme }) => {
 			matchUtilities(
 				{
 					'text-current': (_, { modifier }) =>
@@ -108,6 +110,8 @@ export default {
 				},
 				{ values: { DEFAULT: '' }, modifiers: theme('opacity')! }
 			)
+
+			addVariant('pre-first-line', '& pre .line:first-of-type')
 		})
 	]
 } satisfies Config

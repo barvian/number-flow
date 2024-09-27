@@ -5,5 +5,26 @@ const { class: _, style: __, ...props } = Astro.props
 <pre
 	{...props}
 	class:list={[
-		'AstroCode max-h-[650px] overflow-x-auto rounded-lg bg-zinc-950 p-5 text-sm [scrollbar-color:theme(colors.white/.3)_transparent] [scrollbar-width:thin] dark:border dark:border-zinc-800 dark:bg-zinc-900 dark:[scrollbar-color:theme(colors.white/.1)_transparent]'
+		'AstroCode rounded-lg bg-zinc-950 p-5 text-sm [scrollbar-color:theme(colors.white/.3)_transparent] [scrollbar-width:thin] dark:border dark:border-zinc-800 dark:bg-zinc-900 dark:[scrollbar-color:theme(colors.white/.1)_transparent]'
 	]}><slot /></pre>
+
+<style>
+	.AstroCode {
+		max-height: 650px;
+		overflow-x: auto;
+		white-space: normal;
+	}
+
+	.AstroCode :global(.line) {
+		display: block;
+		white-space: pre;
+	}
+
+	.AstroCode :global(.line:empty):before {
+		content: ' ';
+	}
+
+	.AstroCode :global(.line:last-of-type:empty) {
+		display: none;
+	}
+</style>

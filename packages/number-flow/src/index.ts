@@ -1,23 +1,19 @@
 import { createElement, offset, replaceChildren, type HTMLProps, type Justify } from './util/dom'
 import { forEach } from './util/iterable'
 import {
-	formatToParts,
 	type KeyedDigitPart,
 	type KeyedNumberPart,
 	type KeyedSymbolPart,
-	type Format,
-	type Value,
-	type NumberPartKey
+	type NumberPartKey,
+	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, SUPPORTS_ANIMATION_COMPOSITION, SUPPORTS_LINEAR } from './styles'
 import { frames, lerp, type CustomPropertyKeyframes, customPropertyFrames } from './util/animate'
 import { BROWSER } from 'esm-env'
-export { renderInnerHTML } from './ssr'
-export type { Format, Value } from './formatter'
 
-const OBSERVED_ATTRIBUTES = ['value', 'x-timing', 'y-timing', 'fade-timing', 'manual'] as const
-type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
+export { SLOTTED_TAG, SLOTTED_STYLES } from './styles'
+export * from './formatter'
 
 export const DEFAULT_OPACITY_TIMING: EffectTiming = { duration: 500, easing: 'ease-out' }
 export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
@@ -33,48 +29,35 @@ export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
 		}
 export const DEFAULT_Y_TIMING = DEFAULT_X_TIMING
 
-type Args = Value | [Value, locales?: Intl.LocalesArgument, format?: Format]
-
 let styleSheet: CSSStyleSheet | undefined
 
-class NumberFlow extends ServerSafeHTMLElement {
-	static observedAttributes = OBSERVED_ATTRIBUTES
-
-	#formatted?: string
+// This one is used internally for framework wrappers, and
+// doesn't include things like i.e. attribute support:
+export class NumberFlowLite extends ServerSafeHTMLElement {
+	static define() {
+		if (BROWSER && !customElements.get('number-flow')) {
+			customElements.define('number-flow', this)
+		}
+	}
 
 	xTiming = DEFAULT_X_TIMING
 	yTiming = DEFAULT_Y_TIMING
-	opacityTiming = DEFAULT_OPACITY_TIMING
+	fadeTiming = DEFAULT_OPACITY_TIMING
 	manual = false
-
-	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
-		if (attr === 'x-timing') this.xTiming = JSON.parse(newValue)
-		else if (attr === 'y-timing') this.yTiming = JSON.parse(newValue)
-		else if (attr === 'fade-timing') this.opacityTiming = JSON.parse(newValue)
-		else if (attr === 'manual') this.manual = newValue != null
-		else this[attr] = JSON.parse(newValue)
-	}
-
-	get value(): string | undefined {
-		return this.#formatted
-	}
 
 	#created = false
 	#pre?: SymbolSection
 	#integer?: NumberSection
 	#fraction?: NumberSection
 	#post?: SymbolSection
-	#label?: HTMLSpanElement
 
-	set value(newVal: Args | undefined) {
+	set parts(newVal: PartitionedParts | undefined) {
 		if (newVal == null) {
-			this.#formatted = undefined
 			return
 		}
+		console.log('updated')
 
-		const { pre, integer, fraction, post, formatted } = Array.isArray(newVal)
-			? formatToParts(...newVal)
-			: formatToParts(newVal)
+		const { pre, integer, fraction, post } = newVal
 
 		// Initialize if needed
 		if (!this.#created) {
@@ -94,8 +77,7 @@ class NumberFlow extends ServerSafeHTMLElement {
 				this.shadowRoot!.appendChild(style)
 			}
 
-			this.#label = createElement('span', { className: 'label' })
-			this.shadowRoot!.appendChild(this.#label)
+			this.shadowRoot!.appendChild(createElement('slot'))
 
 			this.#pre = new SymbolSection(this, pre, {
 				// part: 'pre',
@@ -136,9 +118,6 @@ class NumberFlow extends ServerSafeHTMLElement {
 			if (!this.manual) this.didUpdate()
 		}
 
-		this.#label!.textContent = formatted
-
-		this.#formatted = formatted
 		this.#created = true
 	}
 
@@ -167,7 +146,7 @@ abstract class Section {
 	protected children = new Map<NumberPartKey, Char>()
 
 	constructor(
-		readonly flow: NumberFlow,
+		readonly flow: NumberFlowLite,
 		parts: KeyedNumberPart[],
 		{ justify, className, ...opts }: SectionProps,
 		children?: (chars: Node[]) => Node[]
@@ -277,7 +256,7 @@ abstract class Section {
 		this.children.forEach((comp) => comp.willUpdate(childrenParentRect))
 	}
 
-	update(parts: KeyedNumberPart[]) {}
+	update(_: KeyedNumberPart[]) {}
 
 	didUpdate(childrenParentRect: DOMRect) {
 		this.children.forEach((comp) => comp.didUpdate(childrenParentRect))
@@ -287,7 +266,11 @@ abstract class Section {
 class NumberSection extends Section {
 	readonly #inner: HTMLSpanElement
 
-	constructor(flow: NumberFlow, parts: KeyedNumberPart[], { className, ...props }: SectionProps) {
+	constructor(
+		flow: NumberFlowLite,
+		parts: KeyedNumberPart[],
+		{ className, ...props }: SectionProps
+	) {
 		let inner: HTMLSpanElement
 		super(
 			flow,
@@ -446,7 +429,7 @@ class AnimatePresence {
 	#animation?: Animation
 
 	constructor(
-		readonly flow: NumberFlow,
+		readonly flow: NumberFlowLite,
 		readonly el: HTMLElement,
 		{ onRemove, animateIn = false }: AnimatePresenceProps = {}
 	) {
@@ -455,7 +438,7 @@ class AnimatePresence {
 				{
 					opacity: ['0', '1']
 				},
-				flow.opacityTiming
+				flow.fadeTiming
 			)
 		}
 
@@ -473,7 +456,7 @@ class AnimatePresence {
 			{
 				opacity: [opacity, val ? '1' : '0']
 			},
-			this.flow.opacityTiming
+			this.flow.fadeTiming
 		)
 		if (!val)
 			this.#animation!.onfinish = () => {
@@ -709,8 +692,18 @@ class Sym extends Char<KeyedSymbolPart> {
 	}
 }
 
-export default NumberFlow
+// This one includes shallow attribute support which is useful for i.e. React 18:
 
-if (BROWSER && !customElements.get('number-flow')) {
-	customElements.define('number-flow', NumberFlow)
+const SHALLOW_ATTRIBUTES = ['parts', 'x-timing', 'y-timing', 'fade-timing', 'manual'] as const
+type ShallowAttribute = (typeof SHALLOW_ATTRIBUTES)[number]
+
+export class NumberFlowWithShallowAttributes extends NumberFlowLite {
+	static observedAttributes = SHALLOW_ATTRIBUTES
+	attributeChangedCallback(attr: ShallowAttribute, _oldValue: string, newValue: string) {
+		if (attr === 'x-timing') this.xTiming = JSON.parse(newValue)
+		else if (attr === 'y-timing') this.yTiming = JSON.parse(newValue)
+		else if (attr === 'fade-timing') this.fadeTiming = JSON.parse(newValue)
+		else if (attr === 'manual') this.manual = newValue != null
+		else this[attr] = JSON.parse(newValue)
+	}
 }

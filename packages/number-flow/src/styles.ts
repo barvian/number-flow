@@ -1,4 +1,5 @@
 import { BROWSER } from 'esm-env'
+import { css } from './util/css'
 
 export const SUPPORTS_LINEAR =
 	BROWSER &&
@@ -29,8 +30,8 @@ if (SUPPORTS_PROPERTY) {
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 
-export const maskHeight = 'var(--mask-height, 0.15em)'
-const maskWidth = 'var(--mask-width, 0.5em)'
+export const maskHeight = 'var(--number-flow-mask-height, 0.15em)'
+const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 
 const scaledMaskWidth = `${maskWidth} * 1/var(--_number-flow-scale-x)`
 const calcScaledMaskWidth = `calc(${scaledMaskWidth})`
@@ -38,77 +39,88 @@ const calcScaledMaskWidth = `calc(${scaledMaskWidth})`
 const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
-const styles = `
-:host {
-	display: inline-block;
-	direction: ltr;
-	position: relative;
-	isolation: isolate;
-	user-select: none;
-	pointer-events: none;
-	white-space: nowrap;
-}
+export const SLOTTED_TAG = 'span'
+export const SLOTTED_STYLES = {
+	fontKerning: 'none',
+	display: 'inline-block',
+	padding: `${maskHeight} 0`
+} as const
 
-.label {
-	position: absolute;
-	left: 0;
-	top: ${maskHeight};
-	font-kerning: none;
-	color: transparent !important;
-	z-index: -1;
-	user-select: text;
-	pointer-events: auto;
-}
+const styles = css`
+	:host {
+		display: inline-block;
+		direction: ltr;
+		position: relative;
+		isolation: isolate;
+		user-select: none;
+		pointer-events: none;
+		white-space: nowrap;
+	}
 
-.section {
-	display: inline-block; /* inline-flex broke with absolute positioned children in Safari */
-	padding-bottom: ${maskHeight};
-	padding-top: ${maskHeight};
-	user-select: none;
-}
+	::slotted(${SLOTTED_TAG}) {
+		position: absolute;
+		left: 0;
+		top: 0;
+		color: transparent !important;
+		z-index: -1;
+		user-select: text;
+		pointer-events: auto;
+	}
 
-.section:not(.section--masked), .section--masked .section__inner {
-	/* for .section__exiting: */
-	position: relative; 
-	isolation: isolate;
-}
+	.section {
+		display: inline-block; /* inline-flex broke with absolute positioned children in Safari */
+		padding-bottom: ${maskHeight};
+		padding-top: ${maskHeight};
+		user-select: none;
+	}
 
-.section__inner {
-	display: inline-block;
-	transform-origin: inherit;
-}
+	.section:not(.section--masked),
+	.section--masked .section__inner {
+		/* for .section__exiting: */
+		position: relative;
+		isolation: isolate;
+	}
 
-.section--justify-left {
-	transform-origin: center left;
-}
+	.section__inner {
+		display: inline-block;
+		transform-origin: inherit;
+	}
 
-.section--justify-right {
-	transform-origin: center right;
-}
+	.section--justify-left {
+		transform-origin: center left;
+	}
 
-.section--masked {
-	overflow: clip;
-	position: relative; /* for z-index */
-	z-index: -1; /* display underneath other sections */
-	--_number-flow-scale-x: 1;
-	/* -webkit prefixed versions have universally better support than non-prefixed */
-	-webkit-mask-repeat: no-repeat;
-	-webkit-mask-size:
-		calc(100% - ${scaledMaskWidth}) 100%, 100% calc(100% - ${maskHeight} * 2), ${calcScaledMaskWidth} ${maskHeight}, ${calcScaledMaskWidth} ${maskHeight};
-}
+	.section--justify-right {
+		transform-origin: center right;
+	}
+
+	.section--masked {
+		overflow: clip;
+		position: relative; /* for z-index */
+		z-index: -1; /* display underneath other sections */
+		--_number-flow-scale-x: 1;
+		/* -webkit prefixed versions have universally better support than non-prefixed */
+		-webkit-mask-repeat: no-repeat;
+		-webkit-mask-size:
+			calc(100% - ${scaledMaskWidth}) 100%,
+			100% calc(100% - ${maskHeight} * 2),
+			${calcScaledMaskWidth} ${maskHeight},
+			${calcScaledMaskWidth} ${maskHeight};
+	}
 
 	.section--masked.section--justify-left {
 		padding-right: ${maskWidth};
 		margin-right: calc(-1 * ${maskWidth});
 		-webkit-mask-image:
 			${verticalMask},
-			linear-gradient(to right, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%), 
-			/* TR corner */
-			radial-gradient(at bottom left, ${cornerGradient}),
-			/* BR corner */
-			radial-gradient(at top left, ${cornerGradient})
-		;
-		-webkit-mask-position: left, center, right top, right bottom;
+			linear-gradient(to right, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%),
+			/* TR corner */ radial-gradient(at bottom left, ${cornerGradient}),
+			/* BR corner */ radial-gradient(at top left, ${cornerGradient});
+		-webkit-mask-position:
+			left,
+			center,
+			right top,
+			right bottom;
 	}
 
 	.section--masked.section--justify-right {
@@ -117,61 +129,62 @@ const styles = `
 		-webkit-mask-image:
 			${verticalMask},
 			linear-gradient(to left, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%),
-			/* TL corner */
-			radial-gradient(at bottom right, ${cornerGradient}),
-			/* BL corner */
-			radial-gradient(at top right, ${cornerGradient})
-		;
-		-webkit-mask-position: right, center, left top, left bottom;
+			/* TL corner */ radial-gradient(at bottom right, ${cornerGradient}),
+			/* BL corner */ radial-gradient(at top right, ${cornerGradient});
+		-webkit-mask-position:
+			right,
+			center,
+			left top,
+			left bottom;
 	}
 
-.section__exiting {
-	position: absolute !important;
-	z-index: -1;
-	/* top: 0; this seemed to backfire */
-}
+	.section__exiting {
+		position: absolute !important;
+		z-index: -1;
+		/* top: 0; this seemed to backfire */
+	}
 
-.digit {
-	display: inline-block;
-	position: relative;
-}
+	.digit {
+		display: inline-block;
+		position: relative;
+	}
 
-.digit__stack {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: ${maskHeight};
-	position: absolute;
-	width: 100%;
-}
+	.digit__stack {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: ${maskHeight};
+		position: absolute;
+		width: 100%;
+	}
 
-.digit__stack > * {
-	display: inline-block;
-}
+	.digit__stack > * {
+		display: inline-block;
+	}
 
-.digit__lt {
-	bottom: calc(100% + ${maskHeight});
-}
+	.digit__lt {
+		bottom: calc(100% + ${maskHeight});
+	}
 
-.digit__gt {
-	top: calc(100% + ${maskHeight});
-}
+	.digit__gt {
+		top: calc(100% + ${maskHeight});
+	}
 
-.symbol {
-	display: inline-block;
-	position: relative;
-	isolation: isolate;
-}
+	.symbol {
+		display: inline-block;
+		position: relative;
+		isolation: isolate;
+	}
 
-.symbol__value {
-	display: inline-block;
-	white-space: pre; /* some symbols are spaces or thin spaces */
-}
+	.symbol__value {
+		display: inline-block;
+		white-space: pre; /* some symbols are spaces or thin spaces */
+	}
 
-.symbol__exiting {
-	position: absolute;
-	z-index: -1;
-}
+	.symbol__exiting {
+		position: absolute;
+		z-index: -1;
+	}
 
 	.section--justify-left .symbol__exiting {
 		left: 0;
