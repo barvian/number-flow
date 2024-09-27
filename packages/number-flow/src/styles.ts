@@ -50,11 +50,12 @@ const styles = css`
 	:host {
 		display: inline-block;
 		direction: ltr;
-		position: relative;
-		isolation: isolate;
 		user-select: none;
 		pointer-events: none;
 		white-space: nowrap;
+		/* for invisible slotted label used for screen readers and selecting: */
+		position: relative;
+		isolation: isolate;
 	}
 
 	::slotted(${SLOTTED_TAG}) {
@@ -68,9 +69,10 @@ const styles = css`
 	}
 
 	.section {
-		display: inline-block; /* inline-flex broke with absolute positioned children in Safari */
+		display: inline-block;
 		padding-bottom: ${maskHeight};
 		padding-top: ${maskHeight};
+		vertical-align: top; /* Safari needs this for some reason */
 		user-select: none;
 	}
 
