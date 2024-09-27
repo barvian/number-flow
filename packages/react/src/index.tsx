@@ -7,6 +7,7 @@ import {
 	SLOTTED_TAG,
 	SLOTTED_STYLES,
 	partitionParts,
+	type PartitionedParts,
 	NumberFlowWithShallowAttributes as NumberFlowElement
 } from 'number-flow'
 export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
@@ -23,8 +24,9 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	yTiming?: (typeof NumberFlowElement)['prototype']['yTiming']
 }
 
-type NumberFlowPrivProps = NumberFlowProps & {
+type NumberFlowPrivProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
+	parts: PartitionedParts
 }
 
 // You're supposed to cache these between uses:
@@ -55,13 +57,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	}
 
 	override render() {
-		const { innerRef, value, className, locales, format, fadeTiming, xTiming, yTiming, ...rest } =
-			this.props
-
-		const formatter = (formatters[
-			`${locales ? JSON.stringify(locales) : ''}:${format ? JSON.stringify(format) : ''}`
-		] ??= new Intl.NumberFormat(locales, format))
-		const parts = partitionParts(value, formatter)
+		const { innerRef, className, parts, fadeTiming, xTiming, yTiming, ...rest } = this.props
 
 		return (
 			// @ts-expect-error missing types
@@ -84,12 +80,24 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	}
 }
 
-const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(
-	function NumberFlow(props, _ref) {
-		React.useImperativeHandle(_ref, () => ref.current!, [])
-		const ref = React.useRef<NumberFlowElement>()
-		return <NumberFlowPriv {...props} innerRef={ref} />
-	}
-)
+const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
+	{ value, locales, format, ...props },
+	_ref
+) {
+	React.useImperativeHandle(_ref, () => ref.current!, [])
+	const ref = React.useRef<NumberFlowElement>()
+
+	const localesString = React.useMemo(() => (locales ? JSON.stringify(locales) : ''), [locales])
+	const formatString = React.useMemo(() => (format ? JSON.stringify(format) : ''), [format])
+	const parts = React.useMemo(() => {
+		const formatter = (formatters[`${localesString}:${formatString}`] ??= new Intl.NumberFormat(
+			locales,
+			format
+		))
+		return partitionParts(value, formatter)
+	}, [value, localesString, formatString])
+
+	return <NumberFlowPriv {...props} parts={parts} innerRef={ref} />
+})
 
 export default NumberFlow
