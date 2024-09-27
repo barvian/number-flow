@@ -3,6 +3,7 @@ import '@/assets/main.css'
 import Layout from '@/layouts/Layout.astro'
 import type { MDXLayoutProps } from 'astro'
 import Hero from './_Hero'
+import TOC from '@/components/TOC.astro'
 import { getFramework, FRAMEWORKS } from '@/lib/framework'
 
 const frameworkId = getFramework(Astro.params)
@@ -13,7 +14,7 @@ type Props = MDXLayoutProps<{
 	description: string
 }>
 
-const { frontmatter } = Astro.props
+const { frontmatter, headings } = Astro.props
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
@@ -21,9 +22,14 @@ const { frontmatter } = Astro.props
 		client:load
 		title={`NumberFlow${frameworkId === 'vanilla' ? '' : ' for'} ${framework!.name}`}
 	/>
-	<article
-		class="prose prose-zinc first:prose-h2:sr-only dark:prose-invert-zinc prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none container max-w-2xl leading-[1.7]"
+	<div
+		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
 	>
-		<slot />
-	</article>
+		<TOC class="sticky top-8 max-xl:hidden" {headings} />
+		<article
+			class="prose prose-zinc dark:prose-invert-zinc prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none container max-w-2xl leading-[1.7] [&>section:first-child>h2:first-child]:sr-only"
+		>
+			<slot />
+		</article>
+	</div>
 </Layout>
