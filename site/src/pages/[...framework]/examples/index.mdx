@@ -32,8 +32,11 @@ you can add a simple animation to indicate whether numbers are increasing/decrea
 
 NumberFlow was designed to integrate well with Framer Motion layout animations.
 The default [x and y easings](/#customizing) are
-equivalent to Framer Motion springs with `{ duration: 0.9, bounce: 0 }`.
+equivalent to Framer Motion springs with `{ duration: 0.9, bounce: 0 }`:
 
 <FramerMotionLayoutAnimations client:visible>
 <Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
 </FramerMotionLayoutAnimations>
+
+Note the [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes) props on `MotionNumberFlow`. These are required whenever
+you place `NumberFlow` within a `motion` component that has a layout animation.

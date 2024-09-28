@@ -5,7 +5,7 @@ type Props = {
 	value: number
 }
 
-export default function FramerMotionExample({ value }: Props) {
+export default function CustomTimingsExample({ value }: Props) {
 	const supportsLinear = useSupportsLinear()
 
 	return (
