@@ -10,18 +10,14 @@ export default function CustomTimingsExample({ value }: Props) {
 
 	return (
 		<NumberFlow
-			suppressHydrationWarning
 			value={value}
 			// Use linear() spring-based easings if supported, otherwise
 			// fall back to default. Generated with Kevin Grajeda's tool:
 			// https://www.kvin.me/css-springs
 			yTiming={
+				// prettier-ignore
 				supportsLinear
-					? {
-							easing:
-								'linear(0, 0.0011 0.45%, 0.0065 1.12%, 0.0293, 0.0653, 0.1116 5.16%, 0.2247 7.85%, 0.5887 15.69%, 0.6968, 0.7893 21.07%, 0.8597 23.54%, 0.9211, 0.9676 28.92%, 0.9859 30.26%, 1.0034 31.83%, 1.0222 34.07%, 1.0356 36.54%, 1.0435 39.23%, 1.046 42.37%, 1.0444 44.84%, 1.0405 47.53%, 1.0118 61.87%, 1.0027 69.49%, 0.9981 80.48%, 0.9991 99.98%)',
-							duration: 900
-						}
+					? { duration: 900,  easing: 'linear(0, 0.0011 0.45%, 0.0064 1.12%, 0.0243 2.24%, 0.0579, 0.1018 4.93%, 0.21 7.62%, 0.5691 15.69%, 0.6723, 0.7609, 0.8344, 0.8932 26.45%, 0.9418, 0.9769 32.28%, 0.9994 34.97%, 1.0151 37.89%, 1.0244 41.02%, 1.0282 44.61%, 1.0262 49.77%, 1.0096 63.67%, 1.0028 72.41%, 0.9996 83.17%, 0.9994 99.98%)' }
 					: DEFAULT_Y_TIMING
 			}
 			className="~text-xl/4xl font-semibold [--number-flow-mask-height:0.25em]"

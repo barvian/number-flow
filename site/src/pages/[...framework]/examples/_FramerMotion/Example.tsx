@@ -24,6 +24,7 @@ export default function FramerMotionExample({ value, diff }: Props) {
 				className="~text-base/2xl inline-flex items-center px-[0.3em]"
 				style={{ borderRadius: 999 }}
 				layout
+				// Match NumberFlow's default timings:
 				transition={{ layout: { type: 'spring', duration: 0.9, bounce: 0 } }}
 			>
 				<MotionArrowUp

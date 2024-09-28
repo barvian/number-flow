@@ -4,9 +4,12 @@ import type { MDXLayoutProps } from 'astro'
 import TOC from '@/components/TOC.astro'
 import type { ComponentProps } from 'astro/types'
 
-type Props = ComponentProps<typeof Layout> & Pick<MDXLayoutProps<{}>, 'headings'>
+type Props = ComponentProps<typeof Layout> & {
+	articleClass?: string
+	headings: MDXLayoutProps<{}>['headings']
+}
 
-const { headings, ...props } = Astro.props
+const { headings, articleClass, ...props } = Astro.props
 ---
 
 <Layout {...props}>
@@ -16,7 +19,10 @@ const { headings, ...props } = Astro.props
 	>
 		<TOC class="~top-6/10 sticky max-xl:hidden" {headings} />
 		<article
-			class="prose prose-zinc dark:prose-invert-zinc prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none container max-w-2xl leading-[1.7] [&>section:first-child>h2:first-child]:sr-only"
+			class:list={[
+				'prose prose-zinc dark:prose-invert-zinc prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none container max-w-2xl leading-[1.7]',
+				articleClass
+			]}
 		>
 			<slot />
 		</article>

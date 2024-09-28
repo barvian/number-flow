@@ -1,4 +1,4 @@
-import { defineConfig } from 'astro/config'
+import { defineConfig, envField } from 'astro/config'
 import { readFileSync } from 'node:fs'
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
@@ -16,6 +16,13 @@ export default defineConfig({
 			theme: JSON.parse(readFileSync('./highlighter-theme.json', 'utf-8'))
 		},
 		remarkPlugins: [sectionize]
+	},
+	experimental: {
+		env: {
+			schema: {
+				GITHUB_TOKEN: envField.string({ context: 'server', access: 'secret' })
+			}
+		}
 	},
 	integrations: [
 		tailwind({

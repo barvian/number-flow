@@ -79,7 +79,7 @@ export default function Hero() {
 				/>
 			</div>
 			<p className="~text-base/lg prose dark:prose-invert-zinc text-muted">
-				Transition and format numbers with one lightweight component. Built on{' '}
+				A lightweight React component to transition &amp; format numbers. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
 					target="_blank"
@@ -95,7 +95,7 @@ export default function Hero() {
 				</a>
 				. Accessible. Customizable.
 			</p>
-			<div className="~mt-3/5 flex w-full items-stretch justify-center gap-x-3">
+			<div className="~mt-3/5 flex w-full flex-wrap items-stretch justify-center gap-3">
 				<button
 					className="btn btn-primary"
 					onClick={() => {

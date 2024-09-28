@@ -116,16 +116,15 @@ There's also some CSS properties you can use to customize the component:
 These adjust the height and width of the gradient fade-out masks at the edges of the number.
 `--number-flow-mask-height` also gets used as the vertical padding for the number.
 
-### `line-height`
+### `--number-flow-char-height`
 
-In my opinion, the transitions look better with small vertical gaps between numbers because it reduces the distance
-they travel.
-I recommend using the smallest `line-height` that fits all your component's characters:
+Sets the overall height of each character (default: `1em`). In my opinion, the transitions look better when this is set to
+the smallest number that fits all your component's characters, i.e.
 
 <Match>
 <Fragment slot="react">
 ```jsx
-<NumberFlow style={{ lineHeight: 0.85 }} />
+<NumberFlow className="[--number-flow-char-height:0.85em]" />
 ```
 </Fragment>
 <Fragment slot="vue">

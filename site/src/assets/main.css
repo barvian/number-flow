@@ -12,7 +12,7 @@
 	}
 
 	.btn {
-		@apply inline-flex h-11 items-center gap-2 rounded-full px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms];
+		@apply inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms];
 	}
 
 	.btn-primary {

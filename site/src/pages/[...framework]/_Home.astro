@@ -11,7 +11,12 @@ type Props = MDXLayoutProps<{
 const { frontmatter, headings } = Astro.props
 ---
 
-<PostLayout title={frontmatter.title} description={frontmatter.description} {headings}>
+<PostLayout
+	title={frontmatter.title}
+	description={frontmatter.description}
+	articleClass="[&>section:first-child>h2:first-child]:sr-only"
+	{headings}
+>
 	<Hero client:load slot="hero" />
 	<slot />
 </PostLayout>
