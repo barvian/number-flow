@@ -1,0 +1,120 @@
+diff --git a/src/Tweet.astro b/src/Tweet.astro
+index 9ef574015d9f58d13dd1de8fe343d66518e4b27f..a63d4dbacf3c1b3c132739316d52e999701c3a9c 100644
+--- a/src/Tweet.astro
++++ b/src/Tweet.astro
+@@ -6,6 +6,7 @@ interface Props {
+   // TODO: add support for custom components (do we need this though?)
+   // components?: TwitterComponents;
+   fetchOptions?: RequestInit;
++  autoplay?: boolean
+   onError?: ((error: any) => any) | undefined;
+ }
+ ---
+diff --git a/src/TweetContent.astro b/src/TweetContent.astro
+index 8084b749cf2782e0f2ab6c6106d1dda3faaa7f91..43a2424eb6b7fe3a53b2619c9329bc48bb05edbe 100644
+--- a/src/TweetContent.astro
++++ b/src/TweetContent.astro
+@@ -5,12 +5,13 @@ import TweetNotFound from "./twitter-theme/TweetNotFound.astro";
+ import type { TwitterComponents } from "./twitter-theme/types";
+ interface Props {
+   id: string;
++  autoplay?: boolean
+   components?: TwitterComponents;
+   fetchOptions?: RequestInit;
+   onError?: ((error: any) => any) | undefined;
+ }
+ 
+-const { id, components, fetchOptions, onError } = Astro.props;
++const { id, components, fetchOptions, autoplay, onError } = Astro.props;
+ let error;
+ const tweet = id
+   ? await getTweet(id, fetchOptions).catch((err) => {
+@@ -35,6 +36,6 @@ if (!tweet) {
+   tweetNotFound ? (
+     <NotFound error={error} />
+   ) : (
+-    <EmbeddedTweet tweet={tweet!} components={components} />
++    <EmbeddedTweet tweet={tweet!} {autoplay} components={components} />
+   )
+ }
+diff --git a/src/twitter-theme/EmbeddedTweet.astro b/src/twitter-theme/EmbeddedTweet.astro
+index fd68fcc916e99bba05196c18220c861d1e643c7c..cc068817bb980bc25b4aac0bb1e5bca0b99dd697 100644
+--- a/src/twitter-theme/EmbeddedTweet.astro
++++ b/src/twitter-theme/EmbeddedTweet.astro
+@@ -13,11 +13,12 @@ import QuotedTweet from "./quoted-tweet/QuotedTweet.astro";
+ import { enrichTweet } from "../utils.js";
+ 
+ type Props = {
++  autoplay?: boolean
+   tweet: Tweet;
+   components?: Omit<TwitterComponents, "TweetNotFound">;
+ };
+ 
+-const { tweet: t, components } = Astro.props;
++const { tweet: t, components, autoplay } = Astro.props;
+ const tweet = enrichTweet(t);
+ ---
+ 
+@@ -27,7 +28,7 @@ const tweet = enrichTweet(t);
+   <TweetBody tweet={tweet} />
+   {
+     tweet.mediaDetails?.length ? (
+-      <TweetMedia tweet={tweet} components={components} />
++      <TweetMedia tweet={tweet} {autoplay} components={components} />
+     ) : null
+   }
+   {tweet.quoted_tweet && <QuotedTweet tweet={tweet.quoted_tweet} />}
+diff --git a/src/twitter-theme/TweetMedia.astro b/src/twitter-theme/TweetMedia.astro
+index 6cc610f3595f2fc2691a46d9e81020e4b5269bba..05bff18637497dc7a9108b9b31946fde13a9a3d6 100644
+--- a/src/twitter-theme/TweetMedia.astro
++++ b/src/twitter-theme/TweetMedia.astro
+@@ -29,11 +29,12 @@ const getSkeletonStyle = (media: MediaDetails, itemCount: number) => {
+   };
+ };
+ interface Props {
++  autoplay?: boolean
+   tweet: EnrichedTweet | EnrichedQuotedTweet;
+   components?: TwitterComponents;
+   quoted?: boolean;
+ }
+-const { tweet, components, quoted } = Astro.props;
++const { tweet, components, quoted, autoplay } = Astro.props;
+ const length = tweet.mediaDetails?.length ?? 0;
+ const Img = components?.MediaImg ?? MediaImg;
+ ---
+@@ -74,7 +75,7 @@ const Img = components?.MediaImg ?? MediaImg;
+                 class={styles.skeleton}
+                 style={getSkeletonStyle(media, length)}
+               />
+-              <TweetMediaVideo tweet={tweet} media={media} />
++              <TweetMediaVideo {autoplay} tweet={tweet} media={media} />
+             </div>
+           )}
+         </Fragment>
+diff --git a/src/twitter-theme/TweetMediaVideo.astro b/src/twitter-theme/TweetMediaVideo.astro
+index 26160563073d27dacda6a1c25fc55a38be1dda45..94425915d03382e22869587707584d2cac385223 100644
+--- a/src/twitter-theme/TweetMediaVideo.astro
++++ b/src/twitter-theme/TweetMediaVideo.astro
+@@ -9,18 +9,20 @@ import {
+ import mediaStyles from "./tweet-media.module.css";
+ 
+ interface Props {
++  autoplay?: boolean
+   tweet: EnrichedTweet | EnrichedQuotedTweet;
+   media: MediaAnimatedGif | MediaVideo;
+ }
+ 
+-const { media } = Astro.props;
++const { media, autoplay } = Astro.props;
+ const mp4Video = getMp4Video(media);
+ ---
+ 
+ <video
+   class={mediaStyles.image}
+   poster={getMediaUrl(media, "small")}
+-  controls
++  {autoplay}
++  playsinline
+   muted
+   preload="metadata"
+ >

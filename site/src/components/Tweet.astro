@@ -34,6 +34,9 @@ export type Props = ComponentProps<typeof AstroTweet>
 		position: relative;
 	}
 
+	.Tweet [class*='like']:hover > [class*='likeCount'] {
+		text-decoration: none;
+	}
 	.Tweet [class*='rounded']::after {
 		content: '';
 		inset: 0;

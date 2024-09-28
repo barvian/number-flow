@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
+  astro-tweet:
+    hash: ryn3t5acfidpzor4ft2ma5yqbm
+    path: patches/astro-tweet.patch
   remark-sectionize:
     hash: z6c4pkn54rlvljhicvr2jzk2qy
     path: patches/remark-sectionize.patch
@@ -132,7 +135,7 @@ importers:
         version: 0.1.81
       astro-tweet:
         specifier: ^0.0.4
-        version: 0.0.4(astro@4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4))(prettier-plugin-astro@0.14.1)(prettier@3.3.3)
+        version: 0.0.4(patch_hash=ryn3t5acfidpzor4ft2ma5yqbm)(astro@4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4))(prettier-plugin-astro@0.14.1)(prettier@3.3.3)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -5208,7 +5211,7 @@ snapshots:
 
   astro-font@0.1.81: {}
 
-  astro-tweet@0.0.4(astro@4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4))(prettier-plugin-astro@0.14.1)(prettier@3.3.3):
+  astro-tweet@0.0.4(patch_hash=ryn3t5acfidpzor4ft2ma5yqbm)(astro@4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4))(prettier-plugin-astro@0.14.1)(prettier@3.3.3):
     dependencies:
       '@astrojs/check': 0.2.1(prettier-plugin-astro@0.14.1)(prettier@3.3.3)(typescript@5.5.4)
       astro: 4.14.2(@types/node@20.14.11)(rollup@4.21.0)(typescript@5.5.4)
