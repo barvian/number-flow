@@ -46,7 +46,7 @@ const FORMATS = [
 	}
 ] as Format[]
 
-export default function Hero({ title }: { title: string }) {
+export default function Hero() {
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
 	const [format, cycleFormat] = useCycle(FORMATS)
@@ -70,10 +70,9 @@ export default function Hero({ title }: { title: string }) {
 	return (
 		<header
 			ref={ref}
-			className="~mb-16/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
+			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
 		>
-			<h1 className="font-medium">{title}</h1>
-			<div className="~mb-0.5/1 flex items-center">
+			<div className="~mt-1/2 ~mb-0.5/1 flex items-center">
 				{/* <MotionConfig transition={{ duration: 0.9, type: 'spring', bounce: 0 }}> */}
 				<NumberFlow
 					className="~text-5xl/8xl font-ui font-medium [--number-flow-mask-height:0.25em]"
@@ -108,7 +107,7 @@ export default function Hero({ title }: { title: string }) {
 				</MotionConfig> */}
 			</div>
 			<p className="~text-base/lg prose dark:prose-invert-zinc text-muted">
-				A lightweight component to transition &amp; format numbers. Built on{' '}
+				Transition and format numbers with one lightweight component. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
 					target="_blank"

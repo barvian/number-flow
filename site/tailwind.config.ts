@@ -38,7 +38,10 @@ export default {
 		})) satisfies FluidThemeConfig,
 		extend: {
 			colors: {
-				framework: 'var(--color-framework)'
+				framework: 'var(--color-framework)',
+				zinc: {
+					850: '#1f1f22'
+				}
 			},
 			keyframes: {
 				'pop-in': {
@@ -59,6 +62,9 @@ export default {
 				'4.5': '1.125rem',
 				18: '4.5rem'
 			},
+			opacity: {
+				'12.5': '12.5%'
+			},
 			transitionTimingFunction: {
 				'out-quad': 'cubic-bezier(.25, .46, .45, .94)'
 			},
@@ -74,8 +80,9 @@ export default {
 							'@apply link-underline': {}
 						},
 
+						// We need to always use padding for the IntersectionObserver to work:
 						'&>section': {
-							'@apply py-12 first:pt-0 last:pb-0': {}
+							'@apply py-10 first:pt-0 last:pb-0': {}
 						},
 						'section > :first-child': {
 							'margin-top': '0 !important'

@@ -25,7 +25,9 @@
 		"accessible",
 		"odometer",
 		"animation",
-		"number-format"
+		"number-format",
+		"number-animation",
+		"animated-number"
 	],
 	"files": [
 		"dist",

@@ -6,6 +6,7 @@ import pkg from '/../packages/number-flow/package.json'
 import FrameworkMenu from '@/components/FrameworkMenu'
 import { getFramework, FRAMEWORKS, toFrameworkPath, DEFAULT_FRAMEWORK } from '@/lib/framework'
 import FrameworkLink from '@/components/FrameworkLink.astro'
+import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
 import { AstroFont } from 'astro-font'
 import * as path from 'node:path'
 
@@ -38,7 +39,7 @@ const app = {
 <html
 	lang="en"
 	data-framework={frameworkId || undefined}
-	class="min-h-screen scroll-pt-10 overflow-x-hidden bg-white text-zinc-950 antialiased motion-safe:scroll-smooth dark:bg-zinc-950 dark:text-zinc-50"
+	class="text-primary min-h-screen scroll-pt-10 overflow-x-hidden bg-white antialiased motion-safe:scroll-smooth dark:bg-zinc-950"
 >
 	<head>
 		<meta charset="UTF-8" />
@@ -85,53 +86,102 @@ const app = {
 		<meta name="twitter:description" content={description} />
 		<script type="application/ld+json" set:html={JSON.stringify(app)} />
 	</head>
-	<header class="container max-w-7xl">
-		<div class="flex h-20 items-center gap-8">
-			<div class="mr-auto flex items-center gap-3">
-				<FrameworkLink class="font-medium" href="/">NumberFlow</FrameworkLink>
-				<!-- <span
+	<body class="~pt-12/28 ~pb-32/48">
+		<div class="container flex items-baseline justify-center whitespace-nowrap">
+			{
+				toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK) === '/' ? (
+					<h1 class="inline-block font-medium">NumberFlow</h1>
+				) : (
+					<FrameworkLink class="inline-block font-medium" href="/">
+						NumberFlow
+					</FrameworkLink>
+				)
+			}
+			<!-- <span
 					class="flex items-center rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50"
 					>v{pkg.version}</span
 				> -->
-				{frameworkId && <FrameworkMenu url={Astro.url} value={frameworkId} client:load />}
-			</div>
-			<FrameworkLink
-				data-active={toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK) === '/examples' ||
-					undefined}
-				href="/examples"
-				class="text-muted font-medium transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
-				>Examples</FrameworkLink
-			>
-			<a
-				data-active={Astro.url.pathname === '/showcase' || undefined}
-				class="text-muted font-medium transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
-				href="/showcase">Showcase</a
-			>
-			<a
-				href={pkg.repository.url}
-				class="text-muted flex items-center gap-2.5 transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
-				aria-label="View on GitHub"
-			>
-				<svg viewBox="0 0 16 16" class="size-6 fill-current" role="none">
-					<path
-						d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-					></path>
-				</svg>
-			</a>
-			<a
-				href="https://x.com/mbarvian"
-				class="text-muted transition-[color] hover:text-zinc-50 data-[active]:text-zinc-50"
-				aria-label="Follow on X"
-			>
-				<svg viewBox="0 0 24 24" class="size-6 fill-current">
-					<path
-						d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-					></path>
-				</svg>
-			</a>
+			{
+				frameworkId && (
+					<>
+						&nbsp;for
+						<FrameworkMenu
+							className="ml-0 relative top-[.1875rem]"
+							url={Astro.url}
+							value={frameworkId}
+							client:load
+						/>
+					</>
+				)
+			}
 		</div>
-	</header>
-	<main class="~pt-12/18 ~pb-16/32 overflow-x-clip">
-		<slot />
-	</main>
+		<nav
+			class="~pb-6/10 pointer-events-none fixed bottom-0 left-0 z-10 w-full bg-gradient-to-t from-zinc-950 to-zinc-950/0 pt-12"
+		>
+			<div class="container flex justify-center">
+				<div
+					class="pointer-events-auto max-w-full rounded-[1.375rem] bg-zinc-950/90 p-1.5 ring ring-inset ring-white/[8%] backdrop-blur-xl backdrop-saturate-[140%]"
+				>
+					<div class="scrollbar-none overflow-x-auto rounded-2xl">
+						<div class="grid grid-cols-[repeat(5,5.6875em)]">
+							<FrameworkLink
+								data-active={toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK) === '/' ||
+									undefined}
+								href="/"
+								class="text-muted hover:text-primary data-[active]:text-primary data-[active]:bg-white/12.5 flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+							>
+								<BookOpen className="size-6" absoluteStrokeWidth />
+								Docs
+							</FrameworkLink>
+							<FrameworkLink
+								data-active={toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK) ===
+									'/examples' || undefined}
+								href="/examples"
+								class="text-muted hover:text-primary data-[active]:text-primary data-[active]:bg-white/12.5 flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+							>
+								<Shapes className="size-6" absoluteStrokeWidth />
+								Examples
+							</FrameworkLink>
+							<a
+								data-active={Astro.url.pathname === '/showcase' || undefined}
+								class="text-muted hover:text-primary data-[active]:text-primary data-[active]:bg-white/12.5 flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+								href="/showcase"
+							>
+								<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
+								Showcase
+							</a>
+							<a
+								class="text-muted hover:text-primary data-[active]:text-primary data-[active]:bg-white/12.5 flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+								href={pkg.repository.url}
+								target="_blank"
+							>
+								<svg viewBox="0 0 16 16" class="size-6 fill-current" role="none">
+									<path
+										d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+									></path>
+								</svg>
+								<span class="tabular-nums">657</span>
+							</a>
+							<a
+								href="https://x.com/mbarvian"
+								class="text-muted hover:text-primary data-[active]:text-primary data-[active]:bg-white/12.5 flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+								target="_blank"
+							>
+								<svg viewBox="0 0 24 24" class="size-6 fill-current">
+									<path
+										d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+									></path>
+								</svg>
+								Follow
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<main class="overflow-x-clip">
+			<slot />
+		</main>
+	</body>
 </html>

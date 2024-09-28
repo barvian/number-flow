@@ -18,14 +18,11 @@ const { frontmatter, headings } = Astro.props
 ---
 
 <Layout title={frontmatter.title} description={frontmatter.description}>
-	<Hero
-		client:load
-		title={`NumberFlow${frameworkId === 'vanilla' ? '' : ' for'} ${framework!.name}`}
-	/>
+	<Hero client:load />
 	<div
 		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
 	>
-		<TOC class="sticky top-8 max-xl:hidden" {headings} />
+		<TOC class="~top-6/10 sticky max-xl:hidden" {headings} />
 		<article
 			class="prose prose-zinc dark:prose-invert-zinc prose-hr:my-[2em] prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg prose-code:before:content-none prose-code:after:content-none container max-w-2xl leading-[1.7] [&>section:first-child>h2:first-child]:sr-only"
 		>

@@ -1,8 +1,9 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { FRAMEWORKS, toFrameworkPath, type Framework } from '@/lib/framework'
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
+import { ChevronDown } from 'lucide-react'
 import * as React from 'react'
 import { CheckIcon } from '@heroicons/react/20/solid'
+import clsx from 'clsx/lite'
 
 const icons = import.meta.glob<React.FC<React.HTMLAttributes<SVGElement>>>(
 	'./icons/frameworks/*.tsx',
@@ -12,19 +13,32 @@ const icons = import.meta.glob<React.FC<React.HTMLAttributes<SVGElement>>>(
 	}
 )
 
-export default function FrameworkMenu({ value, url }: { value: Framework; url: URL }) {
+export default function FrameworkMenu({
+	value,
+	url,
+	className
+}: {
+	value: Framework
+	url: URL
+	className?: string
+}) {
 	const ValueIcon = icons[`./icons/frameworks/${value}.tsx`]!
 
 	return (
 		<Menu>
-			<MenuButton className="flex items-center gap-1.5 rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-out hover:brightness-125 active:brightness-[98%] active:duration-[25ms]">
-				<ValueIcon className="size-4.5 mr-0.5 shrink-0" />
+			<MenuButton
+				className={clsx(
+					className,
+					'-mx-3 -my-3 inline-flex items-center rounded-full px-3 py-2 font-medium text-zinc-50 transition duration-[.16s] ease-out hover:brightness-125 active:brightness-[98%] active:duration-[25ms]'
+				)}
+			>
+				<ValueIcon className="size-4.5 mr-2 shrink-0" />
 				{FRAMEWORKS[value].name}
-				<ChevronDownIcon className="ml-auto h-3 shrink-0 opacity-50" strokeWidth={2} />
+				<ChevronDown className="ml-1 size-4 shrink-0" strokeWidth={2} />
 			</MenuButton>
 			<MenuItems
-				anchor={{ to: 'bottom start', gap: '0.375rem' }}
-				className="animate-pop-in min-w-32 origin-top-left rounded-xl bg-zinc-900 p-1"
+				anchor={{ to: 'bottom start' }}
+				className="animate-pop-in min-w-32 origin-top-left rounded-xl bg-zinc-950/90 p-1 p-1.5 ring ring-inset ring-white/[8%] backdrop-blur-xl backdrop-saturate-[140%]"
 			>
 				{Object.entries(FRAMEWORKS).map(([id, framework]) => {
 					const Icon = icons[`./icons/frameworks/${id}.tsx`]!
@@ -34,7 +48,7 @@ export default function FrameworkMenu({ value, url }: { value: Framework; url: U
 							as="a"
 							disabled={id === value}
 							onClick={() => void localStorage.setItem('framework', id)}
-							className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium data-[disabled]:cursor-default data-[focus]:bg-zinc-800"
+							className="data-[focus]:bg-white/12.5 flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium data-[disabled]:cursor-default"
 							href={toFrameworkPath(url.pathname, id as Framework)}
 						>
 							<Icon className="size-4.5" />
