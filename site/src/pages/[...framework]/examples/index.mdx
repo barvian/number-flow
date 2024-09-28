@@ -16,7 +16,8 @@ import Code from '@/components/Code.astro';
 ## Custom timings
 
 <CustomEasings client:visible>
-<Code code={CustomEasingsCode} lang="tsx" />
+<span aria-hidden="true" className='xl:hidden' slot="title">Custom timings</span>
+<Code code={CustomEasingsCode} class="xl:pre-first-line:hidden" firstLine='// Custom timings example' lang="tsx" />
 </CustomEasings>
 
 ## Colored trends

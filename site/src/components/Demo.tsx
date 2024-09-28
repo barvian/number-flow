@@ -11,6 +11,7 @@ export type DemoProps = {
 	children: React.ReactNode
 	defaultValue?: TabValue
 	code: React.ReactNode
+	title?: React.ReactNode
 }
 
 // const knowsToClickAtom = atom(false)
@@ -19,6 +20,7 @@ export default function Demo({
 	children,
 	defaultValue = 'preview',
 	code,
+	title,
 	onClick
 }: DemoProps & { onClick?: () => void }) {
 	// const [knowsToClick, setKnowsToClick] = useAtom(knowsToClickAtom)
@@ -78,12 +80,12 @@ export default function Demo({
 				</Tabs.List>
 			</MotionConfig>
 			<Tabs.Content
-				// forceMount
 				value="preview"
 				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-5 pb-6 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
 				onClick={handleClick}
 				onMouseDown={handleMouseDown}
 			>
+				{title && <div className="text-muted top-4.5 absolute left-5 text-sm">{title}</div>}
 				{children}
 				<span
 					className={clsx(

@@ -14,7 +14,7 @@ const { frontmatter, headings } = Astro.props
 <PostLayout
 	title={frontmatter.title}
 	description={frontmatter.description}
-	articleClass="xl:[&>section:first-child>h2:first-child]:sr-only"
+	articleClass="[&>section:first-child>h2:first-child]:sr-only"
 	{headings}
 >
 	<header slot="hero" class="~mb-12/24 container mt-4 max-w-2xl text-center">

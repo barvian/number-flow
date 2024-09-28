@@ -4,20 +4,23 @@ import { Code as AstroCode } from 'astro:components'
 import config from '/astro.config.mjs'
 import type { ComponentProps } from 'astro/types'
 
-export type Props = ComponentProps<typeof AstroCode>
-const { code: _code, ...props } = Astro.props
+export type Props = ComponentProps<typeof AstroCode> & {
+	firstLine?: string
+}
+const { code: _code, firstLine, ...props } = Astro.props
 
 // Clean up code a little bit:
 const code = _code
 	.split('\n')
 	// Remove prettier-ignore comments:
 	.filter((line) => !/^\s*\/\/ prettier-ignore\s*$/.test(line))
-	.join('\n')
+
+if (firstLine) code.unshift(firstLine)
 ---
 
 <AstroCode
 	{...props}
-	code={code}
+	code={code.join('\n')}
 	class:list={[styles.code]}
 	theme={config.markdown?.shikiConfig?.theme}
 />

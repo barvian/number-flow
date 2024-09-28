@@ -127,7 +127,7 @@ export default {
 				{ values: { DEFAULT: '' }, modifiers: theme('opacity')! }
 			)
 
-			addVariant('pre-first-line', '& pre .line:first-of-type')
+			addVariant('pre-first-line', ['pre& .line:first-of-type', '& pre .line:first-of-type'])
 		})
 	]
 } satisfies Config
