@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 // import { motion, MotionConfig } from 'framer-motion'
 // const MotionNumberFlow = motion(NumberFlow)
-import { ArrowUpRightIcon } from '@heroicons/react/20/solid'
+import { ArrowUpRight } from 'lucide-react'
 
 const NUMBERS = [321, -3241.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
 const LOCALES = ['fr-FR', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
@@ -150,7 +150,7 @@ export default function Hero() {
 					className="flex h-11 items-center gap-2 rounded-full px-5 text-sm font-medium transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:bg-zinc-100 active:scale-[98%] active:brightness-[98%] active:duration-[25ms] dark:hover:bg-zinc-900 dark:hover:brightness-125"
 				>
 					Open sandbox
-					<ArrowUpRightIcon className="size-4" />
+					<ArrowUpRight className="size-4" />
 				</a>
 			</div>
 		</header>

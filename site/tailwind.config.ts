@@ -52,7 +52,7 @@ export default {
 				}
 			},
 			animation: {
-				'pop-in': 'pop-in .1s ease'
+				'pop-in': 'pop-in .11s ease'
 			},
 			screens: {
 				xs: '20rem',

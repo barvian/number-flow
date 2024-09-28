@@ -28,14 +28,15 @@ import NumberFlow from '@number-flow/react'
 ```vue
 <!-- Basic usage -->
 <script setup>
-import NumberFlow from '@number-flow/vue'
+    import NumberFlow from '@number-flow/vue'
 </script>
-
-<NumberFlow
-    :value="123"
-    :format="{ notation: 'compact' } /* Intl.NumberFormat options */" 
-    :locales="'en-US' /* Intl.NumberFormat locales */"
-/>
+<template>
+    <NumberFlow
+        :value="123"
+        :format="{ notation: 'compact' } /* Intl.NumberFormat options */" 
+        :locales="'en-US' /* Intl.NumberFormat locales */"
+    />
+</template>
 ```
 </Fragment>
 <Fragment slot="svelte">

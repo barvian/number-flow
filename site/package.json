@@ -15,7 +15,6 @@
 		"@astrojs/react": "^3.6.2",
 		"@astrojs/tailwind": "^5.1.0",
 		"@headlessui/react": "^2.1.8",
-		"@heroicons/react": "^2.1.5",
 		"@number-flow/react": "workspace:*",
 		"@radix-ui/react-tabs": "^1.1.0",
 		"@types/react": "^18",
