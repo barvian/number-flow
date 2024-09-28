@@ -1,24 +1,16 @@
 ---
-import '@/assets/main.css'
 import Layout from '@/layouts/Layout.astro'
 import type { MDXLayoutProps } from 'astro'
-import Hero from './_Hero'
 import TOC from '@/components/TOC.astro'
-import { getFramework, FRAMEWORKS } from '@/lib/framework'
+import type { ComponentProps } from 'astro/types'
 
-const frameworkId = getFramework(Astro.params)
-const framework = frameworkId && FRAMEWORKS[frameworkId]
+type Props = ComponentProps<typeof Layout> & Pick<MDXLayoutProps<{}>, 'headings'>
 
-type Props = MDXLayoutProps<{
-	title: string
-	description: string
-}>
-
-const { frontmatter, headings } = Astro.props
+const { headings, ...props } = Astro.props
 ---
 
-<Layout title={frontmatter.title} description={frontmatter.description}>
-	<Hero client:load />
+<Layout {...props}>
+	<slot name="hero" />
 	<div
 		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
 	>

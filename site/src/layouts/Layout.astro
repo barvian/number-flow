@@ -3,7 +3,7 @@ import '@/assets/main.css'
 import preview from '@/assets/preview.png'
 import { getImage } from 'astro:assets'
 import pkg from '/../packages/number-flow/package.json'
-import FrameworkMenu from '@/components/FrameworkMenu'
+// import FrameworkMenu from '@/components/FrameworkMenu'
 import { getFramework, FRAMEWORKS, toFrameworkPath, DEFAULT_FRAMEWORK } from '@/lib/framework'
 import FrameworkLink from '@/components/FrameworkLink.astro'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
@@ -87,21 +87,21 @@ const app = {
 		<script type="application/ld+json" set:html={JSON.stringify(app)} />
 	</head>
 	<body class="~pt-12/28 ~pb-32/48">
-		<div class="container flex items-baseline justify-center whitespace-nowrap">
+		<div class="container whitespace-nowrap text-center">
 			{
 				toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK) === '/' ? (
-					<h1 class="inline-block font-medium">NumberFlow</h1>
+					<h1 class="inline font-medium">
+						NumberFlow
+						<span class="text-muted text-sm font-medium">v{pkg.version}</span>
+					</h1>
 				) : (
-					<FrameworkLink class="inline-block font-medium" href="/">
+					<FrameworkLink class="font-medium" href="/">
 						NumberFlow
 					</FrameworkLink>
 				)
 			}
-			<!-- <span
-					class="flex items-center rounded-full bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-50"
-					>v{pkg.version}</span
-				> -->
 			{
+				/*
 				frameworkId && (
 					<>
 						&nbsp;for
@@ -113,12 +113,15 @@ const app = {
 						/>
 					</>
 				)
+			 */
 			}
 		</div>
-		<nav
-			class="~pb-6/10 pointer-events-none fixed bottom-0 left-0 z-10 w-full bg-gradient-to-t from-zinc-950 to-zinc-950/0 pt-12"
-		>
-			<div class="container flex justify-center">
+		<nav class="~pb-6/10 pointer-events-none fixed bottom-0 left-0 z-10 w-full pt-12">
+			<div
+				class="absolute -inset-[18px] top-auto h-[12rem] bg-gradient-to-t from-zinc-950 to-zinc-950/0 blur-[10px]"
+			>
+			</div>
+			<div class="container relative flex justify-center">
 				<div
 					class="pointer-events-auto max-w-full rounded-[1.375rem] bg-zinc-950/90 p-1.5 ring ring-inset ring-white/[8%] backdrop-blur-xl backdrop-saturate-[140%]"
 				>

@@ -12,6 +12,7 @@ import {
 } from 'number-flow'
 export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
 export type * from 'number-flow'
+export { NumberFlowElement }
 
 NumberFlowElement.define()
 

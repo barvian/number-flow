@@ -1,0 +1,36 @@
+---
+import PostLayout from '@/layouts/Post.astro'
+import type { MDXLayoutProps } from 'astro'
+import { ArrowUpRight } from 'lucide-react'
+
+type Props = MDXLayoutProps<{
+	title: string
+	description: string
+}>
+
+const { frontmatter, headings } = Astro.props
+---
+
+<PostLayout title={frontmatter.title} description={frontmatter.description} {headings}>
+	<header slot="hero" class="~mb-12/24 container mt-4 max-w-2xl text-center">
+		<h1 class="~text-3xl/5xl font-semibold tracking-tight">Examples</h1>
+		<div class="~text-base/lg ~mt-4/6 prose dark:prose-invert-zinc text-muted text-pretty">
+			<p>Ready-made examples of common patterns to get you started.</p>
+		</div>
+		<div class="~mt-3/5 flex w-full items-stretch justify-center gap-x-3">
+			<a href="/" target="_blank" class="btn btn-primary">
+				Open sandbox
+				<ArrowUpRight className="size-4" />
+			</a>
+			<a
+				href="https://github.com/barvian/motion-number/discussions/new?category=example-request"
+				target="_blank"
+				class="btn btn-secondary"
+			>
+				Request an example
+				<ArrowUpRight className="size-4" />
+			</a>
+		</div>
+	</header>
+	<slot />
+</PostLayout>

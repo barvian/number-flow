@@ -1,9 +1,7 @@
 import NumberFlow, { type Format } from '@number-flow/react'
-import useCycle from '../hooks/useCycle'
+import useCycle from '@/hooks/useCycle'
 import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
-// import { motion, MotionConfig } from 'framer-motion'
-// const MotionNumberFlow = motion(NumberFlow)
 import { ArrowUpRight } from 'lucide-react'
 
 const NUMBERS = [321, -3241.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
@@ -73,7 +71,6 @@ export default function Hero() {
 			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
 		>
 			<div className="~mt-1/2 ~mb-0.5/1 flex items-center">
-				{/* <MotionConfig transition={{ duration: 0.9, type: 'spring', bounce: 0 }}> */}
 				<NumberFlow
 					className="~text-5xl/8xl font-ui font-medium [--number-flow-mask-height:0.25em]"
 					style={{ lineHeight: 0.85 }}
@@ -81,30 +78,6 @@ export default function Hero() {
 					locales={locale}
 					format={format}
 				/>
-				{/* <motion.div
-						layout
-						style={{
-							borderRadius: 999,
-							whiteSpace: 'nowrap',
-							backgroundColor: 'green',
-							paddingInline: '5rem',
-							overflow: 'clip'
-						}}
-					>
-						<motion.span layout="position" style={{ display: 'inline-block' }}>
-							hi there this osidfj
-						</motion.span>
-						<MotionNumberFlow
-							layout
-							layoutRoot
-							className="~text-5xl/8xl font-medium [--number-flow-mask-height:0.25em]"
-							style={{ lineHeight: 0.85 }}
-							value={value + 8}
-							locales={locale}
-							format={format}
-						/>
-					</motion.div>
-				</MotionConfig> */}
 			</div>
 			<p className="~text-base/lg prose dark:prose-invert-zinc text-muted">
 				Transition and format numbers with one lightweight component. Built on{' '}
@@ -125,7 +98,7 @@ export default function Hero() {
 			</p>
 			<div className="~mt-3/5 flex w-full items-stretch justify-center gap-x-3">
 				<button
-					className="flex h-11 items-center gap-2 rounded-full bg-zinc-900 px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms]"
+					className="btn btn-primary"
 					onClick={() => {
 						clearTimeout(timeoutRef.current)
 
@@ -144,11 +117,7 @@ export default function Hero() {
 					</svg>
 					Shuffle
 				</button>
-				<a
-					href="/"
-					target="_blank"
-					className="flex h-11 items-center gap-2 rounded-full px-5 text-sm font-medium transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:bg-zinc-100 active:scale-[98%] active:brightness-[98%] active:duration-[25ms] dark:hover:bg-zinc-900 dark:hover:brightness-125"
-				>
+				<a href="/" target="_blank" className="btn btn-secondary">
 					Open sandbox
 					<ArrowUpRight className="size-4" />
 				</a>

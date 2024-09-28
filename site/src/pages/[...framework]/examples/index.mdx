@@ -1,9 +1,39 @@
 ---
-layout: '../../_Home.astro'
+layout: './_Examples.astro'
 title: 'Examples'
 description: 'Examples'
 ---
 import Match from '@/components/Match.astro'
 export { getStaticPaths } from '@/lib/framework'
+import CustomEasings from './_CustomEasings'
+import CustomEasingsCode from './_CustomEasings/Example?raw'
+import ColoredTrends from './_ColoredTrends'
+import ColoredTrendsCode from './_ColoredTrends/Example?raw'
+import FramerMotionLayoutAnimations from './_FramerMotion'
+import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
+import Code from '@/components/Code.astro';
 
-<Match react="React">default</Match> examples
+## Custom timings
+
+<CustomEasings client:visible>
+<Code code={CustomEasingsCode} lang="tsx" />
+</CustomEasings>
+
+## Colored trends
+
+By storing the previous value,
+you can add a simple animation to indicate whether numbers are increasing/decreasing:
+
+<ColoredTrends client:visible>
+<Code code={ColoredTrendsCode} lang="tsx" />
+</ColoredTrends>
+
+## Framer Motion
+
+NumberFlow was designed to integrate well with Framer Motion layout animations.
+The default [x and y easings](/#customizing) are
+equivalent to Framer Motion springs with `{ duration: 0.9, bounce: 0 }`.
+
+<FramerMotionLayoutAnimations client:visible>
+<Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
+</FramerMotionLayoutAnimations>

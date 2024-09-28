@@ -30,6 +30,8 @@ if (SUPPORTS_PROPERTY) {
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 
+export const charHeight = 'var(--number-flow-char-height, 1em)'
+
 export const maskHeight = 'var(--number-flow-mask-height, 0.15em)'
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 
@@ -43,6 +45,7 @@ export const SLOTTED_TAG = 'span'
 export const SLOTTED_STYLES = {
 	fontKerning: 'none',
 	display: 'inline-block',
+	lineHeight: charHeight,
 	padding: `${maskHeight} 0`
 } as const
 
@@ -55,6 +58,7 @@ const styles = css`
 		white-space: nowrap;
 		/* for invisible slotted label used for screen readers and selecting: */
 		position: relative;
+		line-height: ${charHeight} !important;
 		isolation: isolate;
 	}
 

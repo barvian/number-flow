@@ -5,6 +5,7 @@ import react from '@astrojs/react'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/static'
+// @ts-expect-error missing types
 import sectionize from 'remark-sectionize'
 
 // https://astro.build/config

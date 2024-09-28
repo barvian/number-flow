@@ -1,0 +1,17 @@
+---
+import PostLayout from '@/layouts/Post.astro'
+import type { MDXLayoutProps } from 'astro'
+import Hero from './_Hero'
+
+type Props = MDXLayoutProps<{
+	title: string
+	description: string
+}>
+
+const { frontmatter, headings } = Astro.props
+---
+
+<PostLayout title={frontmatter.title} description={frontmatter.description} {headings}>
+	<Hero client:load slot="hero" />
+	<slot />
+</PostLayout>

@@ -1,5 +1,5 @@
 ---
-layout: '../_Home.astro'
+layout: './_Home.astro'
 title: Number Flow
 description: Transition formatted numbers. Built on Intl.NumberFormat and WAAPI. Zero dependencies. Accessible and customizable.
 ---
@@ -75,14 +75,17 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 ## Customizing
 
-NumberFlow accepts props to customize the transition timings. See [MDN's `KeyframeEffect` reference](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) for a full list of options.
+NumberFlow accepts props to customize the transition timings. Each take a [`KeyframeEffect`](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) object:
 
 <Match>
 <Fragment slot="react">
 ```jsx
 <NumberFlow
+    // Used for x transforms on individual characters:
     xTiming={{ duration: 700, easing: 'ease-out' }}
+    // Used for the digit stack animations:
     yTiming={{ duration: 700, easing: 'ease-out' }}
+    // Used for fading in/out characters:
     fadeTiming={{ duration: 350, easing: 'ease' }}
 />
 ```
@@ -101,7 +104,8 @@ NumberFlow accepts props to customize the transition timings. See [MDN's `Keyfra
 ```
 </Match>
 
-For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs).
+For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
+or [easing.dev](https://www.easing.dev/).
 
 ---
 
@@ -121,7 +125,7 @@ I recommend using the smallest `line-height` that fits all your component's char
 <Match>
 <Fragment slot="react">
 ```jsx
-<NumberFlow style={{ lineHeight: 0.8 }} />
+<NumberFlow style={{ lineHeight: 0.85 }} />
 ```
 </Fragment>
 <Fragment slot="vue">
@@ -140,6 +144,7 @@ The exact value will depend on your font and formatting options.
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported
 * Selected text inside the number will not respect color changes from `::selection`, if any
+* Some locales that use non-English characters (i.e. `fa-IR`, `ar-OM`) [aren't supported yet](https://github.com/barvian/number-flow/issues/8), but will be soon
 
 ## Credits
 

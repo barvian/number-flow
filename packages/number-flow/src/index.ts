@@ -55,7 +55,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		if (newVal == null) {
 			return
 		}
-		console.log('updated')
 
 		const { pre, integer, fraction, post } = newVal
 
@@ -681,7 +680,6 @@ class Sym extends Char<KeyedSymbolPart> {
 		this.#xAnimation?.cancel()
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
-		if (this.type === 'sign') console.log(offset)
 
 		this.#xAnimation = this.el.animate(
 			{
