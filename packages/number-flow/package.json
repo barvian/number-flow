@@ -10,7 +10,7 @@
 		"email": "max@barvian.me",
 		"url": "https://barvian.me"
 	},
-	"description": "Smooth transitions for Intl.NumberFormat.",
+	"description": "A lightweight component to transitio and format numbers.",
 	"license": "MIT",
 	"homepage": "https://number-flow.barvian.me/",
 	"repository": {
