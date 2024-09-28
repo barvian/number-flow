@@ -36,12 +36,13 @@ export default function FramerMotionExample({ value, diff }: Props) {
 					initial={false}
 				/>
 				<MotionNumberFlow
-					layout
-					layoutRoot
 					value={diff}
 					className="font-semibold [--number-flow-mask-height:0.3em]"
 					format={{ style: 'percent', maximumFractionDigits: 2 }}
 					style={{ borderRadius: 999 }}
+					// Important, see note below:
+					layout
+					layoutRoot
 				/>
 			</motion.span>
 		</span>

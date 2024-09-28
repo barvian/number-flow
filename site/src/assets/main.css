@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+	number-flow {
+		@apply font-mac-ui;
+	}
+}
+
 @layer components {
 	.container {
 		@apply ~px-6/10 mx-auto w-full;

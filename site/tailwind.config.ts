@@ -30,7 +30,7 @@ export default {
 		fontSize,
 		fontFamily: {
 			sans: 'var(--font-inter)',
-			ui: defaultTheme.fontFamily.sans,
+			'mac-ui': '-apple-system, BlinkMacSystemFont, var(--font-inter)',
 			mono: defaultTheme.fontFamily.mono
 		},
 		fluid: (({ theme }) => ({

@@ -38,5 +38,5 @@ equivalent to Framer Motion springs with `{ duration: 0.9, bounce: 0 }`:
 <Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
 </FramerMotionLayoutAnimations>
 
-Note the [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes) props on `MotionNumberFlow`. These are required whenever
-you place `NumberFlow` within a `motion` component that has a layout animation.
+Note that we turned `NumberFlow` into a [`motion` component](https://www.framer.com/motion/component/#custom-components) so we could use the [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes) props.
+These are required whenever `NumberFlow` has an ancestor `motion` component with a layout animation (in this case, the `span` with the animated background).
