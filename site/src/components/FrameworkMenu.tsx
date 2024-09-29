@@ -51,7 +51,10 @@ export default function FrameworkMenu({
 							as="a"
 							disabled={id === value}
 							onClick={() => void localStorage.setItem('framework', id)}
-							className="data-[focus]:bg-white/12.5 flex items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium data-[disabled]:cursor-default"
+							className={clsx(
+								id === value ? 'pr-2' : 'pr-4',
+								'data-[focus]:bg-white/12.5 flex items-center gap-2 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default'
+							)}
 							href={toFrameworkPath(url.pathname, id as Framework)}
 						>
 							<Icon className="size-4.5" />
