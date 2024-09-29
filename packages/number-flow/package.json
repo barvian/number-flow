@@ -46,11 +46,13 @@
 		"prepublishOnly": "pnpm run build"
 	},
 	"devDependencies": {
-		"@rollup/plugin-typescript": "^11.1.6",
+		"@rollup/plugin-typescript": "^12.1.0",
 		"babel-plugin-styled-components": "^2.1.4",
 		"magic-string": "^0.30.11",
 		"parse-literals": "^1.2.1",
-		"vite": "^5.4.3"
+		"vite": "^5.4.3",
+		"typescript": "^5.6.2",
+		"tslib": "^2.7.0"
 	},
 	"dependencies": {
 		"esm-env": "^1.0.0"
