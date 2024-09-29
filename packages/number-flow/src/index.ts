@@ -35,9 +35,7 @@ let styleSheet: CSSStyleSheet | undefined
 // doesn't include things like i.e. attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement {
 	static define() {
-		if (BROWSER && !customElements.get('number-flow')) {
-			customElements.define('number-flow', this)
-		}
+		if (BROWSER) customElements.define('number-flow', this)
 	}
 
 	xTiming = DEFAULT_X_TIMING
@@ -687,21 +685,5 @@ class Sym extends Char<KeyedSymbolPart> {
 			},
 			this.flow.xTiming
 		)
-	}
-}
-
-// This one includes shallow attribute support which is useful for i.e. React 18:
-
-const SHALLOW_ATTRIBUTES = ['parts', 'x-timing', 'y-timing', 'fade-timing', 'manual'] as const
-type ShallowAttribute = (typeof SHALLOW_ATTRIBUTES)[number]
-
-export class NumberFlowWithShallowAttributes extends NumberFlowLite {
-	static observedAttributes = SHALLOW_ATTRIBUTES
-	attributeChangedCallback(attr: ShallowAttribute, _oldValue: string, newValue: string) {
-		if (attr === 'x-timing') this.xTiming = JSON.parse(newValue)
-		else if (attr === 'y-timing') this.yTiming = JSON.parse(newValue)
-		else if (attr === 'fade-timing') this.fadeTiming = JSON.parse(newValue)
-		else if (attr === 'manual') this.manual = newValue != null
-		else this[attr] = JSON.parse(newValue)
 	}
 }

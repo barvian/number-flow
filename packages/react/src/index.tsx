@@ -8,11 +8,20 @@ import {
 	SLOTTED_STYLES,
 	partitionParts,
 	type PartitionedParts,
-	NumberFlowWithShallowAttributes as NumberFlowElement
+	NumberFlowLite
 } from 'number-flow'
 export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
 export type * from 'number-flow'
-export { NumberFlowElement }
+
+// Can't wait to not have to do this in React 19:
+const OBSERVED_ATTRIBUTES = ['parts'] as const
+type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
+export class NumberFlowElement extends NumberFlowLite {
+	static observedAttributes = OBSERVED_ATTRIBUTES
+	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
+		this[attr] = JSON.parse(newValue)
+	}
+}
 
 NumberFlowElement.define()
 
@@ -41,7 +50,24 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 		super(props)
 		this.handleRef = this.handleRef.bind(this)
 	}
+
+	// Update the non-parts props to avoid JSON serialization
+	// Parts needs to be set in render still:
+	updateNonPartsProps() {
+		if (this.#el) {
+			if (this.props.fadeTiming) this.#el.fadeTiming = this.props.fadeTiming
+			if (this.props.xTiming) this.#el.xTiming = this.props.xTiming
+			if (this.props.yTiming) this.#el.yTiming = this.props.yTiming
+		}
+	}
+
+	override componentDidMount() {
+		this.updateNonPartsProps()
+		if (this.#el) this.#el.manual = true
+	}
+
 	override getSnapshotBeforeUpdate() {
+		this.updateNonPartsProps()
 		this.#el?.willUpdate()
 		return null
 	}
@@ -58,20 +84,25 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	}
 
 	override render() {
-		const { innerRef, className, parts, fadeTiming, xTiming, yTiming, ...rest } = this.props
+		const {
+			innerRef,
+			className,
+			parts,
+			// These are set in updateNonPartsProps, so ignore them here:
+			fadeTiming,
+			xTiming,
+			yTiming,
+			...rest
+		} = this.props
 
 		return (
 			// @ts-expect-error missing types
 			<number-flow
 				ref={this.handleRef}
+				// Have to rename this:
 				class={className}
-				fade-timing={JSON.stringify(fadeTiming)}
-				x-timing={JSON.stringify(xTiming)}
-				y-timing={JSON.stringify(yTiming)}
 				{...rest}
-				manual
-				// Make sure parts are set last, so timings can be updated beforehand.
-				// window check ensures no double update in React 18.
+				// Make sure parts are set last, everything else is updated:
 				parts={JSON.stringify(parts)}
 			>
 				<SLOTTED_TAG style={SLOTTED_STYLES}>{parts.formatted}</SLOTTED_TAG>
