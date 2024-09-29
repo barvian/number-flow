@@ -119,28 +119,26 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
 or [easing.dev](https://www.easing.dev/).
 
-### `root`: <code className="text-muted">boolean</code>
+#### `root`: <code className="text-muted">boolean</code>
 
-This prop can be set to make the animations relative to the `<NumberFlow>` itself, rather than the
-viewport (default). This can be used to prevent unwanted horizontal animations when the `<NumberFlow>`
-component moves around the page.
+This prop can be used to make the animations relative to the `<NumberFlow>` itself, rather than the
+viewport (default). This can prevent unwanted animations when the `<NumberFlow>`
+ moves around the page.
 
 ```tsx
 <NumberFlow root />
 ```
 
-See [the range example](/examples/#range) for a visual demo.
-
----
+### Styling
 
 There's also some CSS properties you can use to style the component:
 
-### `--number-flow-mask-[height|width]`
+#### `--number-flow-mask-[height|width]`
 
 These adjust the height and width of the gradient fade-out masks at the edges of the number.
 `--number-flow-mask-height` also gets used as the vertical padding for the number.
 
-### `--number-flow-char-height`
+#### `--number-flow-char-height`
 
 Sets the overall height of each character (default: `1em`). In my opinion, the transitions look better when this is set to
 the smallest number that fits all your component's characters, i.e.

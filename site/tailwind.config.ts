@@ -96,6 +96,16 @@ export default {
 							content: 'none'
 						},
 
+						h3: {
+							'margin-top': '1.7em',
+							'margin-bottom': '1em'
+						},
+
+						h4: {
+							'margin-bottom': '0.7em',
+							'margin-top': '1.25em'
+						},
+
 						// We need to always use padding for the IntersectionObserver to work:
 						'&>section': {
 							'@apply py-10 first:pt-0 last:pb-0': {}
