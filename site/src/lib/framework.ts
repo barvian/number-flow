@@ -9,22 +9,22 @@ export const FRAMEWORKS = {
 		name: 'React',
 		lightColor: '#0A7EA4',
 		darkColor: '#58C4DC'
-	},
-	vue: {
-		name: 'Vue',
-		lightColor: '#42B883',
-		darkColor: '#42B883'
-	},
-	svelte: {
-		name: 'Svelte',
-		lightColor: '#FF3E00',
-		darkColor: '#F96844'
-	},
-	vanilla: {
-		name: 'Vanilla',
-		lightColor: '#F7DF1E',
-		darkColor: '#F7DF1E'
 	}
+	// vue: {
+	// 	name: 'Vue',
+	// 	lightColor: '#42B883',
+	// 	darkColor: '#42B883'
+	// },
+	// svelte: {
+	// 	name: 'Svelte',
+	// 	lightColor: '#FF3E00',
+	// 	darkColor: '#F96844'
+	// },
+	// vanilla: {
+	// 	name: 'Vanilla',
+	// 	lightColor: '#F7DF1E',
+	// 	darkColor: '#F7DF1E'
+	// }
 } satisfies Record<string, FrameworkData>
 
 export type Framework = keyof typeof FRAMEWORKS
