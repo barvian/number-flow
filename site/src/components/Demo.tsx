@@ -85,7 +85,7 @@ export default function Demo({
 				onClick={handleClick}
 				onMouseDown={handleMouseDown}
 			>
-				{title && <div className="text-muted top-4.5 absolute left-5 text-sm">{title}</div>}
+				{title && <div className="top-4.5 absolute left-5 text-sm">{title}</div>}
 				{children}
 				<span
 					className={clsx(
