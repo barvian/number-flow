@@ -14,19 +14,19 @@
 	}
 
 	.link-underline {
-		@apply ease-out-quad decoration-current/50 text-current underline decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:text-zinc-50 hover:decoration-current;
+		@apply ease-out-quad decoration-current/20 dark:decoration-current/35 hover:text-primary text-current underline decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current;
 	}
 
 	.btn {
-		@apply inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full px-5 text-sm font-medium text-zinc-50 transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] hover:brightness-125 active:scale-[98%] active:brightness-[98%] active:duration-[25ms];
+		@apply inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full px-5 text-sm font-medium transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] active:scale-[98%] active:brightness-[98%] active:duration-[25ms] dark:hover:brightness-125;
 	}
 
 	.btn-primary {
-		@apply bg-zinc-900;
+		@apply bg-zinc-900 text-zinc-50 hover:brightness-125;
 	}
 
 	.btn-secondary {
-		@apply hover:bg-zinc-900;
+		@apply hover:bg-zinc-100 dark:hover:bg-zinc-900;
 	}
 }
 

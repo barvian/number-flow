@@ -87,7 +87,7 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 ## Customizing
 
-NumberFlow accepts props to customize the transition timings. Each take a [`KeyframeEffect`](https://developer.mozilla.org/en-US/docs/Web/API/KeyframeEffect/KeyframeEffect#options) object:
+NumberFlow accepts props to customize the transition timings. Each take an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
 <Match>
 <Fragment slot="react">
@@ -106,7 +106,7 @@ NumberFlow accepts props to customize the transition timings. Each take a [`Keyf
 ```vue
 <NumberFlow
     :xTiming="{ duration: 700, easing: 'ease-out' }"
-    :yTiming="{ duration: 700, easing: 'ease-out' }"
+    :yTiming="{ duration: 700, easing: 'linear(...)' }"
     :fadeTiming="{ duration: 350, easing: 'ease' }"
 />
 ```
@@ -116,12 +116,24 @@ NumberFlow accepts props to customize the transition timings. Each take a [`Keyf
 ```
 </Match>
 
-For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
+For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
 or [easing.dev](https://www.easing.dev/).
+
+### `root`: <code className="text-muted">boolean</code>
+
+This prop can be set to make the animations relative to the `<NumberFlow>` itself, rather than the
+viewport (default). This can be used to prevent unwanted horizontal animations when the `<NumberFlow>`
+component moves around the page.
+
+```tsx
+<NumberFlow root />
+```
+
+See [the range example](/examples/#range) for a visual demo.
 
 ---
 
-There's also some CSS properties you can use to customize the component:
+There's also some CSS properties you can use to style the component:
 
 ### `--number-flow-mask-[height|width]`
 

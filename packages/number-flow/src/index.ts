@@ -8,26 +8,31 @@ import {
 	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { maskHeight, SUPPORTS_ANIMATION_COMPOSITION, SUPPORTS_LINEAR } from './styles'
+import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
 import { frames, lerp, type CustomPropertyKeyframes, customPropertyFrames } from './util/animate'
 import { BROWSER } from 'esm-env'
 
-export { SLOTTED_TAG, SLOTTED_STYLES } from './styles'
+export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
 export * from './formatter'
 
-export const DEFAULT_OPACITY_TIMING: EffectTiming = { duration: 500, easing: 'ease-out' }
-export const DEFAULT_X_TIMING: EffectTiming = SUPPORTS_LINEAR
+export const defaultXTimingLinearDuration = 900
+// prettier-ignore
+export const defaultXTimingLinearPoints = [0, 0.0050235113985758065, 0.018768235438646315, 0.0394665067267097, 0.06561435806809059, 0.09593671402266707, 0.12935688367555642, 0.16496984329827014, 0.2020188582086, 0.2398750451603972, 0.2780195227408494, 0.316027838175776, 0.35355639522427323, 0.3903306400002338, 0.42613479005042487, 0.4608029172568362, 0.494211217479539, 0.5262713196397582, 0.5569245044497536, 0.5861367184830215, 0.6138942829733466, 0.6402002088371546, 0.6650710401106178, 0.688534157441182, 0.7106254816148533, 0.7313875244620506, 0.7508677409782638, 0.7691171422207626, 0.7861891335875677, 0.8021385475282429, 0.8170208436473976, 0.830891452602792, 0.8438052432253264, 0.8558160949464902, 0.8669765599529741, 0.8773376015362415, 0.8869483969005642, 0.8958561942662493, 0.9041062154819053, 0.9117415965639958, 0.9188033596342844, 0.9253304106443357, 0.9313595580771787, 0.9369255485137984, 0.9420611155589194, 0.9467970391476751, 0.9511622127120402, 0.9551837160819846, 0.9588868923388109, 0.9622954271337615, 0.9654314292396703, 0.9683155113223428, 0.9709668701061009, 0.9734033652684989, 0.9756415965361696, 0.9776969785701735, 0.9795838133278193, 0.9813153596710892, 0.9829039000616127, 0.9843608042404175, 0.985696589839041, 0.986920979908387, 0.9880429573842098, 0.989070816534304, 0.990012211453356, 0.9908742016877166, 0.9916632950848158, 0.9923854879711473, 0.9930463027692117, 0.9936508231680027, 0.994203726963899, 0.9947093166895601, 0.9951715481478591, 0.9955940569663103, 0.9959801832850321, 0.9963329946882337, 0.9966553074856583, 0.9969497064465007, 0.9972185630841328, 0.9974640525856172, 0.9976881694755444, 0.9978927420992383, 0.9980794460059083, 0.998249816307907, 0.9984052590879293, 0.998547061921768, 0.9986764035801687, 0.9987943629693811, 0.9989019273662413, 1]
+export const defaultXTimingFallbackDuration = 900
+export const defaultXTimingFallbackPoints = [0.32, 0.72, 0, 1]
+
+export const defaultFadeTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
+export const defaultXTiming: EffectTiming = supportsLinear
 	? {
-			duration: 900,
-			easing:
-				'linear(0 0%,0.004916 1%,0.018381 2%,0.038681 3%,0.064355 4%,0.094162 5%,0.127051 6%,0.16214 7%,0.198685 8%,0.236069 9%,0.273781 10%,0.311402 11%,0.348591 12%,0.385074 13%,0.420636 14%,0.45511 15%,0.488368 16%,0.520322 17%,0.550908 18%,0.580091 19%,0.607852 20%,0.634191 21%,0.659123 22%,0.68267 23%,0.704866 24%,0.725751 25%,0.745369 26%,0.763768 27%,0.781001 28%,0.797119 29%,0.812175 30%,0.826225 31%,0.83932 32%,0.851514 33%,0.862857 34%,0.8734 35%,0.883191 36%,0.892276 37%,0.9007 38%,0.908506 39%,0.915733 40%,0.922421 41%,0.928606 42%,0.934322 43%,0.939602 44%,0.944477 45%,0.948976 46%,0.953125 47%,0.95695 48%,0.960475 49%,0.963722 50%,0.966711 51%,0.969462 52%,0.971994 53%,0.974322 54%,0.976462 55%,0.978429 56%,0.980236 57%,0.981896 58%,0.98342 59%,0.984819 60%,0.986103 61%,0.987281 62%,0.988361 63%,0.989351 64%,0.990259 65%,0.991092 66%,0.991854 67%,0.992552 68%,0.993192 69%,0.993778 70%,0.994314 71%,0.994805 72%,0.995254 73%,0.995665 74%,0.996041 75%,0.996385 76%,0.9967 77%,0.996987 78%,0.99725 79%,0.99749 80%,0.997709 81%,0.99791 82%,0.998093 83%,0.998261 84%,0.998413 85%,0.998553 86%,0.998681 87%,0.998797 88%,0.998903 89%,0.999 90%,0.999088 91%,0.999169 92%,0.999243 93%,0.99931 94%,0.999371 95%,0.999427 96%,0.999478 97%,0.999525 98%,0.999567 99%,0.999606 100%)'
+			duration: defaultXTimingLinearDuration,
+			easing: `linear(${defaultXTimingLinearPoints.join(',')})`
 		}
 	: {
-			duration: 900,
+			duration: defaultXTimingFallbackDuration,
 			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
-			easing: 'cubic-bezier(0.32, 0.72, 0, 1)'
+			easing: `cubic-bezier(${defaultXTimingFallbackPoints.join(',')})`
 		}
-export const DEFAULT_Y_TIMING = DEFAULT_X_TIMING
+export const defaultYTiming = defaultXTiming
 
 let styleSheet: CSSStyleSheet | undefined
 
@@ -38,9 +43,10 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		if (BROWSER) customElements.define('number-flow', this)
 	}
 
-	xTiming = DEFAULT_X_TIMING
-	yTiming = DEFAULT_Y_TIMING
-	fadeTiming = DEFAULT_OPACITY_TIMING
+	xTiming = defaultXTiming
+	yTiming = defaultYTiming
+	fadeTiming = defaultFadeTiming
+	root = false
 	manual = false
 
 	#created = false
@@ -119,17 +125,19 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	willUpdate() {
-		this.#pre!.willUpdate()
-		this.#integer!.willUpdate()
-		this.#fraction!.willUpdate()
-		this.#post!.willUpdate()
+		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
+		this.#pre!.willUpdate(rect)
+		this.#integer!.willUpdate(rect)
+		this.#fraction!.willUpdate(rect)
+		this.#post!.willUpdate(rect)
 	}
 
 	didUpdate() {
-		this.#pre!.didUpdate()
-		this.#integer!.didUpdate()
-		this.#fraction!.didUpdate()
-		this.#post!.didUpdate()
+		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
+		this.#pre!.didUpdate(rect)
+		this.#integer!.didUpdate(rect)
+		this.#fraction!.didUpdate(rect)
+		this.#post!.didUpdate(rect)
 	}
 }
 
@@ -248,16 +256,6 @@ abstract class Section {
 			comp.update(part.value)
 		})
 	}
-
-	willUpdate(childrenParentRect: DOMRect) {
-		this.children.forEach((comp) => comp.willUpdate(childrenParentRect))
-	}
-
-	update(_: KeyedNumberPart[]) {}
-
-	didUpdate(childrenParentRect: DOMRect) {
-		this.children.forEach((comp) => comp.didUpdate(childrenParentRect))
-	}
 }
 
 class NumberSection extends Section {
@@ -291,15 +289,19 @@ class NumberSection extends Section {
 		this.#inner = inner
 	}
 
-	#prevRect?: DOMRect
+	#prevWidth?: number
+	#prevOffset?: number
 
-	override willUpdate() {
-		this.#prevRect = this.el.getBoundingClientRect()
+	willUpdate(parentRect: DOMRect) {
+		const rect = this.el.getBoundingClientRect()
+		this.#prevWidth = rect.width
+		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
 
-		super.willUpdate(this.#inner.getBoundingClientRect())
+		const innerRect = this.#inner.getBoundingClientRect()
+		this.children.forEach((comp) => comp.willUpdate(innerRect))
 	}
 
-	override update(parts: KeyedNumberPart[]) {
+	update(parts: KeyedNumberPart[]) {
 		const removed = new Map<NumberPartKey, Char>()
 
 		this.children.forEach((comp, key) => {
@@ -326,18 +328,21 @@ class NumberSection extends Section {
 	#maskAnimation?: Animation
 	#innerAnimation?: Animation
 
-	override didUpdate() {
+	didUpdate(parentRect: DOMRect) {
 		// Cancel any previous animations before getting the new rects:
 		this.#animation?.cancel()
 		this.#innerAnimation?.cancel()
 		this.#maskAnimation?.cancel()
 
 		const rect = this.el.getBoundingClientRect()
-		const scale = Math.max(this.#prevRect!.width, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
-		const x = this.#prevRect![this.justify] - rect[this.justify]
+		const offset = rect[this.justify] - parentRect[this.justify]
+
+		const x = this.#prevOffset! - offset
+		const scale = Math.max(this.#prevWidth!, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
 
 		// Make sure to pass this in before starting to animate:
-		super.didUpdate(this.#inner.getBoundingClientRect())
+		const innerRect = this.#inner.getBoundingClientRect()
+		this.children.forEach((comp) => comp.didUpdate(innerRect))
 
 		this.#animation = this.el.animate(
 			{
@@ -371,14 +376,14 @@ class NumberSection extends Section {
 class SymbolSection extends Section {
 	#prevOffset?: number
 
-	override willUpdate() {
+	willUpdate(parentRect: DOMRect) {
 		const rect = this.el.getBoundingClientRect()
-		this.#prevOffset = rect[this.justify]
+		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
 
-		super.willUpdate(rect)
+		this.children.forEach((comp) => comp.willUpdate(rect))
 	}
 
-	override update(parts: KeyedNumberPart[]) {
+	update(parts: KeyedNumberPart[]) {
 		const removed = new Map<NumberPartKey, Char>()
 
 		this.children.forEach((comp, key) => {
@@ -396,14 +401,14 @@ class SymbolSection extends Section {
 
 	#animation?: Animation
 
-	override didUpdate() {
+	didUpdate(parentRect: DOMRect) {
 		// Cancel any previous animations before getting the new rects:
 		this.#animation?.cancel()
 		const rect = this.el.getBoundingClientRect()
-		const offset = rect[this.justify]
+		const offset = rect[this.justify] - parentRect[this.justify]
 
 		// Make sure to pass this in before starting to animate:
-		super.didUpdate(rect)
+		this.children.forEach((comp) => comp.didUpdate(rect))
 
 		this.#animation = this.el.animate(
 			{
@@ -571,14 +576,14 @@ class Digit extends Char<KeyedDigitPart> {
 		// which is probably safer (i.e. if they use bounce for y):
 		this.#xAnimation = this.el.animate(
 			{
-				transform: [SUPPORTS_ANIMATION_COMPOSITION ? x : `${x} ${y}`, 'none']
+				transform: [supportsAnimationComposition ? x : `${x} ${y}`, 'none']
 			},
 			{
 				...this.flow.xTiming,
 				composite: 'accumulate' // in case there's an in-flight y animation
 			}
 		)
-		if (SUPPORTS_ANIMATION_COMPOSITION && this.#prevValue !== this.value) {
+		if (supportsAnimationComposition && this.#prevValue !== this.value) {
 			this.#yAnimation = this.el.animate(
 				{
 					transform: [y, 'none']

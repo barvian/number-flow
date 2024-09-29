@@ -4,13 +4,13 @@ import * as React from 'react'
 import {
 	type Value,
 	type Format,
-	SLOTTED_TAG,
-	SLOTTED_STYLES,
+	SlottedTag,
+	slottedStyles,
 	partitionParts,
 	type PartitionedParts,
 	NumberFlowLite
 } from 'number-flow'
-export { DEFAULT_X_TIMING, DEFAULT_Y_TIMING } from 'number-flow'
+export { defaultXTiming, defaultYTiming } from 'number-flow'
 export type * from 'number-flow'
 
 // Can't wait to not have to do this in React 19:
@@ -29,6 +29,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
+	root?: (typeof NumberFlowElement)['prototype']['root']
 	fadeTiming?: (typeof NumberFlowElement)['prototype']['fadeTiming']
 	xTiming?: (typeof NumberFlowElement)['prototype']['xTiming']
 	yTiming?: (typeof NumberFlowElement)['prototype']['yTiming']
@@ -55,6 +56,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	// Parts needs to be set in render still:
 	updateNonPartsProps() {
 		if (this.#el) {
+			if (this.props.root != null) this.#el.root = this.props.root
 			if (this.props.fadeTiming) this.#el.fadeTiming = this.props.fadeTiming
 			if (this.props.xTiming) this.#el.xTiming = this.props.xTiming
 			if (this.props.yTiming) this.#el.yTiming = this.props.yTiming
@@ -105,7 +107,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 				// Make sure parts are set last, everything else is updated:
 				parts={JSON.stringify(parts)}
 			>
-				<SLOTTED_TAG style={SLOTTED_STYLES}>{parts.formatted}</SLOTTED_TAG>
+				<SlottedTag style={slottedStyles}>{parts.formatted}</SlottedTag>
 				{/* @ts-expect-error missing types */}
 			</number-flow>
 		)

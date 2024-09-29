@@ -1,20 +1,20 @@
 import { BROWSER } from 'esm-env'
 import { css } from './util/css'
 
-export const SUPPORTS_LINEAR =
+export const supportsLinear =
 	BROWSER &&
 	typeof CSS !== 'undefined' &&
 	CSS.supports('transition-timing-function', 'linear(1, 2)')
 
-export const SUPPORTS_PROPERTY =
+export const supportsAtProperty =
 	BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined'
 
-export const SUPPORTS_ANIMATION_COMPOSITION =
+export const supportsAnimationComposition =
 	BROWSER &&
 	typeof CSS !== 'undefined' &&
 	typeof CSS.supports('animation-composition', 'accumulate') !== 'undefined'
 
-if (SUPPORTS_PROPERTY) {
+if (supportsAtProperty) {
 	try {
 		CSS.registerProperty({
 			name: '--_number-flow-scale-x',
@@ -41,8 +41,8 @@ const calcScaledMaskWidth = `calc(${scaledMaskWidth})`
 const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
-export const SLOTTED_TAG = 'span'
-export const SLOTTED_STYLES = {
+export const SlottedTag = 'span'
+export const slottedStyles = {
 	fontKerning: 'none',
 	display: 'inline-block',
 	lineHeight: charHeight,
@@ -62,7 +62,7 @@ const styles = css`
 		isolation: isolate;
 	}
 
-	::slotted(${SLOTTED_TAG}) {
+	::slotted(${SlottedTag}) {
 		position: absolute;
 		left: 0;
 		top: 0;

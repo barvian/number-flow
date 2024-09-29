@@ -9,6 +9,7 @@ type TabValue = 'preview' | 'code'
 
 export type DemoProps = {
 	children: React.ReactNode
+	className?: string
 	defaultValue?: TabValue
 	code: React.ReactNode
 	title?: React.ReactNode
@@ -18,6 +19,7 @@ export type DemoProps = {
 
 export default function Demo({
 	children,
+	className,
 	defaultValue = 'preview',
 	code,
 	title,
@@ -30,8 +32,9 @@ export default function Demo({
 	const id = useId()
 
 	function handleClick() {
+		if (!onClick) return
 		setKnowsToClick(true)
-		onClick?.()
+		onClick()
 	}
 	function handleMouseDown(event: React.MouseEvent<HTMLElement>) {
 		// Prevent selection of text:
@@ -81,20 +84,25 @@ export default function Demo({
 			</MotionConfig>
 			<Tabs.Content
 				value="preview"
-				className="relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-5 pb-6 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800"
+				className={clsx(
+					className,
+					'relative flex min-h-[20rem] items-center justify-center rounded-lg bg-zinc-950 p-5 pb-6 text-zinc-50 data-[state=inactive]:hidden dark:border dark:border-zinc-800'
+				)}
 				onClick={handleClick}
 				onMouseDown={handleMouseDown}
 			>
 				{title && <div className="top-4.5 absolute left-5 text-sm">{title}</div>}
 				{children}
-				<span
-					className={clsx(
-						'text-muted absolute bottom-5 left-0 w-full text-center text-sm transition-opacity duration-200 ease-out',
-						knowsToClick && 'opacity-0'
-					)}
-				>
-					Click anywhere to change numbers
-				</span>
+				{onClick && (
+					<span
+						className={clsx(
+							'text-muted absolute bottom-5 left-0 w-full text-center text-sm transition-opacity duration-200 ease-out',
+							knowsToClick && 'opacity-0'
+						)}
+					>
+						Click anywhere to change numbers
+					</span>
+				)}
 			</Tabs.Content>
 			<Tabs.Content value="code">{code}</Tabs.Content>
 		</Tabs.Root>

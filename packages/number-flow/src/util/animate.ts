@@ -1,4 +1,4 @@
-import { SUPPORTS_PROPERTY } from '../styles'
+import { supportsAtProperty } from '../styles'
 
 export function frames<F extends string | (number | null)>(
 	durationMs: number,
@@ -22,7 +22,7 @@ export function customPropertyFrames(
 ) {
 	// If CSS.registerProperty is supported, assume they've been registered and do a normal animation
 	// on them:
-	if (SUPPORTS_PROPERTY) {
+	if (supportsAtProperty) {
 		return [frame(0), frame(1)]
 	}
 

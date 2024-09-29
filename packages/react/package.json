@@ -43,6 +43,16 @@
 				"types": "./dist/index.d.ts",
 				"default": "./dist/index.js"
 			}
+		},
+		"./framer-motion": {
+			"import": {
+				"types": "./dist/framer-motion.d.mts",
+				"default": "./dist/framer-motion.mjs"
+			},
+			"require": {
+				"types": "./dist/framer-motion.d.ts",
+				"default": "./dist/framer-motion.js"
+			}
 		}
 	},
 	"scripts": {
@@ -57,6 +67,7 @@
 	"devDependencies": {
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
+		"framer-motion": "^11.9.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"tsup": "^8.2.4"
@@ -64,7 +75,13 @@
 	"peerDependencies": {
 		"@types/react": "^18.3.3",
 		"@types/react-dom": "^18.3.0",
+		"framer-motion": "^11.0.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1"
+	},
+	"peerDependenciesMeta": {
+		"framer-motion": {
+			"optional": true
+		}
 	}
 }

@@ -7,6 +7,8 @@ import Match from '@/components/Match.astro'
 export { getStaticPaths } from '@/lib/framework'
 import CustomEasings from './_CustomEasings'
 import CustomEasingsCode from './_CustomEasings/Example?raw'
+import Range from './_Range'
+import RangeCode from './_Range/Example?raw'
 import ColoredTrends from './_ColoredTrends'
 import ColoredTrendsCode from './_ColoredTrends/Example?raw'
 import FramerMotionLayoutAnimations from './_FramerMotion'
@@ -20,6 +22,12 @@ import Code from '@/components/Code.astro';
 <Code code={CustomEasingsCode} class="xl:pre-first-line:hidden" firstLine='// Custom timings example' lang="tsx" />
 </CustomEasings>
 
+{/* ## Range
+
+<Range client:visible>
+<Code code={RangeCode} lang="tsx" />
+</Range> */}
+
 ## Colored trends
 
 By storing the previous value,
@@ -31,13 +39,11 @@ we can add a simple animation to indicate whether numbers are increasing/decreas
 
 ## Framer Motion
 
-NumberFlow was designed to integrate well with Framer Motion layout animations.
-The default [x and y easings](/#customizing) are
-equivalent to Framer Motion springs with `{ duration: 0.9, bounce: 0 }`:
+NumberFlow was designed to integrate well with Framer Motion layout animations:
 
 <FramerMotionLayoutAnimations client:visible>
 <Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
 </FramerMotionLayoutAnimations>
 
 Note that we turned `NumberFlow` into a [`motion` component](https://www.framer.com/motion/component/#custom-components) so we could use the [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes) props.
-These are required whenever `NumberFlow` has an ancestor `motion` component with a layout animation (in this case, the `span` with the animated background).
+These are required whenever `NumberFlow` is used within a layout animation.

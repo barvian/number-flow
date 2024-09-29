@@ -1,5 +1,6 @@
 ---
-import { toFrameworkPath, getFramework } from '@/lib/framework'
+import { toFrameworkPath, getFramework, DEFAULT_FRAMEWORK } from '@/lib/framework'
+import { isActive } from '@/lib/url'
 import type { HTMLAttributes } from 'astro/types'
 export interface Props extends HTMLAttributes<'a'> {
 	href: string
@@ -8,7 +9,12 @@ const pageFramework = getFramework(Astro.params)
 const { href, ...props } = Astro.props
 ---
 
-<a {...props} data-framework-link href={toFrameworkPath(href, pageFramework)}>
+<a
+	{...props}
+	data-framework-link
+	data-active={isActive(toFrameworkPath(href, DEFAULT_FRAMEWORK), Astro.url)}
+	href={toFrameworkPath(href, pageFramework)}
+>
 	<slot />
 </a>
 

@@ -74,10 +74,26 @@ export default {
 			typography: ({ theme }: PluginUtils) => ({
 				DEFAULT: {
 					css: {
-						'--tw-prose-links': 'currentColor',
+						'line-height': '1.7',
 
 						a: {
-							'@apply link-underline': {}
+							'@apply link-underline text-primary': {}
+						},
+
+						hr: {
+							'@apply my-[2em]': {}
+						},
+
+						code: {
+							'@apply text-primary': {}
+						},
+
+						'code::before': {
+							content: 'none'
+						},
+
+						'code::after': {
+							content: 'none'
 						},
 
 						// We need to always use padding for the IntersectionObserver to work:
@@ -96,9 +112,7 @@ export default {
 					css: {
 						'--tw-prose-hr': theme('colors.zinc.800'),
 						'--tw-prose-headings': theme('colors.zinc.50'),
-						'--tw-prose-code': theme('colors.zinc.50'),
-						'--tw-prose-body': theme('colors.zinc.300'),
-						'--tw-prose-links': 'theme(colors.white)'
+						'--tw-prose-body': theme('colors.zinc.300')
 					}
 				}
 			})
