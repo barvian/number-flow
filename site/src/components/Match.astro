@@ -3,7 +3,7 @@ import { getFramework } from '@/lib/framework'
 import type { HTMLAttributes } from 'astro/types'
 
 export interface Props extends HTMLAttributes<'div'> {
-	children: Array<Element | JSX.Element>
+	children: Array<Element | JSX.Element> | string
 	react?: string
 	vue?: string
 	svelte?: string
@@ -18,15 +18,18 @@ const Comp = props.class ? 'div' : Fragment
 	{/* We can't use a loop here because Astro needs the slot names to be static strings */}
 	{
 		framework === 'react' &&
-			(react ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
+			(react != null ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
 	}
-	{framework === 'vue' && (vue ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)}
+	{
+		framework === 'vue' &&
+			(vue != null ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)
+	}
 	{
 		framework === 'svelte' &&
-			(svelte ? svelte : Astro.slots.has('svelte') ? <slot name="svelte" /> : <slot />)
+			(svelte != null ? svelte : Astro.slots.has('svelte') ? <slot name="svelte" /> : <slot />)
 	}
 	{
 		framework === 'vanilla' &&
-			(vanilla ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
+			(vanilla != null ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
 	}
 </Comp>

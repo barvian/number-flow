@@ -24,6 +24,18 @@ import NumberFlow from '@number-flow/react'
 />
 ```
 </Fragment>
+<Fragment slot="framer">
+```jsx
+// Basic usage
+import MotionNumber from 'motion-number'
+
+<MotionNumber
+    value={value}
+    format={{ notation: 'compact' }} // Intl.NumberFormat options
+    locales="en-US" // Intl.NumberFormat locales
+/>
+```
+</Fragment>
 <Fragment slot="vue">
 ```vue
 <!-- Basic usage -->
