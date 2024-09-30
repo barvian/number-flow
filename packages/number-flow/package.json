@@ -3,8 +3,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"type": "module",
-	"version": "0.2.0",
+	"version": "0.2.1",
 	"author": {
 		"name": "Maxwell Barvian",
 		"email": "max@barvian.me",
@@ -33,11 +32,14 @@
 		"dist",
 		"README.md"
 	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js",
-			"require": "./dist/index.cjs"
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
 		}
 	},
 	"scripts": {
