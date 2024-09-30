@@ -15,22 +15,17 @@ import { BROWSER } from 'esm-env'
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
 export * from './formatter'
 
-export const defaultXTimingLinearDuration = 900
-// prettier-ignore
-export const defaultXTimingLinearPoints = [0, .005, .019, .039, .066, .096, .129, .165, .202, .24, .278, .316, .354, .39, .426, .461, .494, .526, .557, .586, .614, .64, .665, .689, .711, .731, .751, .769, .786, .802, .817, .831, .844, .856, .867, .877, .887, .896, .904, .912, .919, .925, .931, .937, .942, .947, .951, .955, .959, .962, .965, .968, .971, .973, .976, .978, .98, .981, .983, .984, .986, .987, .988, .989, .99, .991, .992, .992, .993, .994, .994, .995, .995, .996, .996, .9963, .9967, .9969, .9972, .9975, .9977, .9979, .9981, .9982, .9984, .9985, .9987, .9988, .9989, 1]
-export const defaultXTimingFallbackDuration = 900
-export const defaultXTimingFallbackPoints = [0.32, 0.72, 0, 1]
-
 export const defaultFadeTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
 export const defaultXTiming: EffectTiming = supportsLinear
 	? {
-			duration: defaultXTimingLinearDuration,
-			easing: `linear(${defaultXTimingLinearPoints.join(',')})`
+			duration: 900,
+			easing:
+				'linear(0 0%,.01436 1.88679%,.04884 3.77358%,.0972 5.66038%,.15489 7.54717%,.21702 9.43396%,.28089 11.32075%,.34435 13.20755%,.40587 15.09434%,.46458 16.98113%,.51962 18.86792%,.5707 2.75472%,.61786 22.64151%,.66085 24.5283%,.69979 26.41509%,.73506 28.30189%,.76671 3.18868%,.79492 32.07547%,.82016 33.96226%,.84259 35.84906%,.86234 37.73585%,.87988 39.62264%,.89535 41.50943%,.90886 43.39623%,.92077 45.28302%,.93125 47.16981%,.94032 49.0566%,.94828 5.9434%,.95525 52.83019%,.96127 54.71698%,.96652 56.60377%,.9711 58.49057%,.97505 6.37736%,.97848 62.26415%,.98147 64.15094%,.98403 66.03774%,.98625 67.92453%,.98818 69.81132%,.98983 71.69811%,.99126 73.58491%,.9925 75.4717%,.99356 77.35849%,.99447 79.24528%,.99526 81.13208%,.99594 83.01887%,.99652 84.90566%,.99702 86.79245%,.99745 88.67925%,.99781 9.56604%,.99813 92.45283%,.9984 94.33962%,.99863 96.22642%,.99883 98.11321%,1 100%)'
 		}
 	: {
-			duration: defaultXTimingFallbackDuration,
+			duration: 900,
 			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
-			easing: `cubic-bezier(${defaultXTimingFallbackPoints.join(',')})`
+			easing: `cubic-bezier(.32, .72, 0, 1)`
 		}
 export const defaultYTiming = defaultXTiming
 

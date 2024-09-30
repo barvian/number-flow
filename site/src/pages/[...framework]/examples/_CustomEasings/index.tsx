@@ -3,7 +3,7 @@ import useCycle from '@/hooks/useCycle'
 import Example from './Example'
 import type { Rename } from '@/lib/types'
 
-const NUMBERS = [12398.4, -543.2, 3243.6]
+const NUMBERS = [124.23, 41.75, 2125.95]
 
 export default function DemoHOC({
 	children,
