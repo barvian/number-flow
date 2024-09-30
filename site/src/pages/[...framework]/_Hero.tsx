@@ -78,7 +78,7 @@ export default function Hero() {
 					format={format}
 				/>
 			</div>
-			<p className="~text-base/lg prose prose-zinc dark:prose-invert">
+			<p className="~text-base/lg prose prose-muted dark:prose-invert">
 				A React component to transition &amp; format numbers. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
