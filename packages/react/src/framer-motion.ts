@@ -23,18 +23,23 @@ export function toEase(_easing: string): Easing {
 		const points = linearExpr.split(',')
 		const times: number[] = []
 		const values: number[] = []
-		for (const point of points) {
-			const [p1, p2] = point.trim().split(/\s+/)
-			if (!p1 || !p2) throw new Error(`Cannot parse linear() expression: ${easing}`)
+		try {
+			points.forEach((point, i) => {
+				const [p1, p2] = point.trim().split(/\s+/)
 
-			let time: number, value: number
-			if (p1?.includes('%')) {
-				times.push(parseFloat(p1) / 100)
-				values.push(parseFloat(p2))
-			} else {
-				times.push(parseFloat(p2) / 100)
-				values.push(parseFloat(p1))
-			}
+				if (p1?.includes('%')) {
+					times.push(parseFloat(p1) / 100)
+					values.push(parseFloat(p2!))
+				} else if (p2?.includes('%')) {
+					times.push(parseFloat(p2) / 100)
+					values.push(parseFloat(p1!))
+				} else {
+					times.push(i / (points.length - 1))
+					values.push(parseFloat(p1!))
+				}
+			})
+		} catch {
+			throw new Error(`Cannot parse linear() expression: ${easing}`)
 		}
 		return transform(times, values)
 	}
