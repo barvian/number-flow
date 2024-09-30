@@ -116,7 +116,11 @@ export default function Hero() {
 					</svg>
 					Shuffle
 				</button>
-				<a href="/" target="_blank" className="btn btn-secondary">
+				<a
+					href="https://codesandbox.io/p/sandbox/r47dcw"
+					target="_blank"
+					className="btn btn-secondary"
+				>
 					Open sandbox
 					<ArrowUpRight className="size-4" />
 				</a>
