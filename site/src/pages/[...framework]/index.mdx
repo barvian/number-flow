@@ -76,6 +76,30 @@ the smallest number that fits all your component's characters, i.e.
 
 The exact value will depend on your font and formatting options.
 
+## Hooks
+
+### `useLinear(linear, fallback)`
+
+An SSR-safe way to use a `linear()`-based easing if the browser supports it, and a fallback
+easing otherwise. Accepts a string for the easings i.e.
+
+```ts
+// Use linear() if supported, otherwise cubic-bezier:
+const easing = useLinear(`linear(...)`, 'cubic-bezier(...)')
+```
+
+or full `EffectTiming` objects, i.e.
+
+```ts
+// Use first timing if linear is supported, otherwise cubic-bezier one:
+const timing = useLinear(
+    { easing: `linear(...)`, duration: 900 },
+    { easing: `cubic-bezier(...)`, duration: 750 }
+)
+```
+
+See the [custom timings example](/examples/#custom-timings) for a full demo.
+
 ## Limitations
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported

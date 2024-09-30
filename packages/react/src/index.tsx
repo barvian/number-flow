@@ -8,7 +8,8 @@ import {
 	slottedStyles,
 	partitionParts,
 	type PartitionedParts,
-	NumberFlowLite
+	NumberFlowLite,
+	supportsLinear
 } from 'number-flow'
 export { defaultXTiming, defaultYTiming } from 'number-flow'
 export type * from 'number-flow'
@@ -135,3 +136,29 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 })
 
 export default NumberFlow
+
+// SSR-safe supportsLinear
+export function useSupportsLinear() {
+	const [supported, setSupported] = React.useState(false)
+
+	React.useEffect(() => {
+		setSupported(supportsLinear)
+	}, [])
+
+	return supported
+}
+
+type LinearEasing = `linear(${string})`
+type LinearTiming = EffectTiming & { easing: LinearEasing }
+
+function useLinear(linear: LinearEasing, fallback: string): string
+function useLinear(linear: LinearTiming, fallback: EffectTiming): EffectTiming
+function useLinear(
+	linear: LinearEasing | LinearTiming,
+	fallback: string | EffectTiming
+): string | EffectTiming {
+	const supported = useSupportsLinear()
+	return supported ? linear : fallback
+}
+
+export { useLinear }
