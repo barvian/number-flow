@@ -19,10 +19,7 @@ const { headings, articleClass, ...props } = Astro.props
 	>
 		<TOC class="~top-6/10 sticky max-xl:hidden" {headings} />
 		<article
-			class:list={[
-				'prose prose-zinc dark:prose-invert-zinc prose-headings:font-semibold prose-h2:text-xl prose-h2:~mt-12/16 prose-h3:text-lg container max-w-2xl',
-				articleClass
-			]}
+			class:list={['prose prose-zinc dark:prose-invert-zinc container max-w-2xl', articleClass]}
 		>
 			<slot />
 		</article>

@@ -96,12 +96,18 @@ export default {
 							content: 'none'
 						},
 
+						h2: {
+							'@apply font-semibold text-xl': {}
+						},
+
 						h3: {
+							'@apply font-semibold text-base': {},
 							'margin-top': '1.7em',
 							'margin-bottom': '1em'
 						},
 
 						h4: {
+							'@apply font-semibold': {},
 							'margin-bottom': '0.7em',
 							'margin-top': '1.25em'
 						},

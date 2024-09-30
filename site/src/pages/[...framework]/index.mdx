@@ -6,13 +6,11 @@ description: Transition formatted numbers. Built on Intl.NumberFormat and WAAPI.
 import Pre from '@/components/Pre.astro';
 export const components = {pre: Pre}
 import Demo from '@/components/Demo'
-import Match from '@/components/Match.astro'
 export { getStaticPaths } from '@/lib/framework'
 
 ## Basic usage
 
-<Match class='xl:pre-first-line:hidden first:*:mt-0'>
-<Fragment slot="react">
+<div className='xl:pre-first-line:hidden first:*:mt-0'>
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'
@@ -23,105 +21,34 @@ import NumberFlow from '@number-flow/react'
     locales="en-US" // Intl.NumberFormat locales
 />
 ```
-</Fragment>
-<Fragment slot="framer">
-```jsx
-// Basic usage
-import MotionNumber from 'motion-number'
-
-<MotionNumber
-    value={value}
-    format={{ notation: 'compact' }} // Intl.NumberFormat options
-    locales="en-US" // Intl.NumberFormat locales
-/>
-```
-</Fragment>
-<Fragment slot="vue">
-```vue
-<!-- Basic usage -->
-<script setup>
-    import NumberFlow from '@number-flow/vue'
-</script>
-<template>
-    <NumberFlow
-        :value="123"
-        :format="{ notation: 'compact' } /* Intl.NumberFormat options */" 
-        :locales="'en-US' /* Intl.NumberFormat locales */"
-    />
-</template>
-```
-</Fragment>
-<Fragment slot="svelte">
-```svelte
-<!-- Basic usage -->
-<script>
-import NumberFlow from '@number-flow/svelte'
-</script>
-
-<NumberFlow
-    value={312}
-    format={{ notation: 'compact' }}
-    locales="en-US"
-/>
-```
-</Fragment>
-```html
-<!-- Basic usage -->
-<script type="module">
-  import NumberFlow from 'number-flow'
-
-  // Define the custom element before using it:
-  NumberFlow.define()
-
-  const flow = document.querySelector('number-flow')
-  
-  // Change value, triggering an animation:
-  flow.value = 123
-</script>
-
-<number-flow x-timing="{}"></number-flow>
-```
-</Match>
+</div>
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
-## Customizing
+## Transitions
+
+<h3 className="sr-only">Timings</h3>
 
 NumberFlow accepts props to customize the transition timings. Each take an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
-<Match>
-<Fragment slot="react">
 ```jsx
 <NumberFlow
-    // Used for x transforms on individual characters:
-    xTiming={{ duration: 700, easing: 'ease-out' }}
+    // Used for x-related transforms:
+    xTiming={{ duration: 700, easing: 'linear(...)' }}
     // Used for the digit stack animations:
     yTiming={{ duration: 700, easing: 'ease-out' }}
     // Used for fading in/out characters:
     fadeTiming={{ duration: 350, easing: 'ease' }}
 />
 ```
-</Fragment>
-<Fragment slot="vue">
-```vue
-<NumberFlow
-    :xTiming="{ duration: 700, easing: 'ease-out' }"
-    :yTiming="{ duration: 700, easing: 'linear(...)' }"
-    :fadeTiming="{ duration: 350, easing: 'ease' }"
-/>
-```
-</Fragment>
-```html
-<number-flow x-timing="{} />
-```
-</Match>
+
 
 For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
 or [easing.dev](https://www.easing.dev/).
 
-#### `root`: <code className="text-muted">boolean</code>
+### `root`: <code className="text-muted">boolean</code>
 
-This prop can be used to make the animations relative to the `<NumberFlow>` itself, rather than the
+This prop can be used to make the transitions relative to the `<NumberFlow>` itself, rather than the
 viewport (default). This can prevent unwanted animations when the `<NumberFlow>`
  moves around the page.
 
@@ -129,35 +56,23 @@ viewport (default). This can prevent unwanted animations when the `<NumberFlow>`
 <NumberFlow root />
 ```
 
-### Styling
+## Styling
 
-There's also some CSS properties you can use to style the component:
+There's some CSS properties you can use to style the component:
 
-#### `--number-flow-mask-[height|width]`
+### `--number-flow-mask-[height|width]`
 
 These adjust the height and width of the gradient fade-out masks at the edges of the number.
 `--number-flow-mask-height` also gets used as the vertical padding for the number.
 
-#### `--number-flow-char-height`
+### `--number-flow-char-height`
 
 Sets the overall height of each character (default: `1em`). In my opinion, the transitions look better when this is set to
 the smallest number that fits all your component's characters, i.e.
 
-<Match>
-<Fragment slot="react">
 ```jsx
 <NumberFlow className="[--number-flow-char-height:0.85em]" />
 ```
-</Fragment>
-<Fragment slot="vue">
-```vue
-<NumberFlow :style="{ lineHeight: 0.8 }" />
-```
-</Fragment>
-```html
-<number-flow x-timing="{} />
-```
-</Match>
 
 The exact value will depend on your font and formatting options.
 
