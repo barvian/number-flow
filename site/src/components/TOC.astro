@@ -45,7 +45,7 @@ const h2s = headings.filter((h) => h.depth <= 2)
 			rootMargin: '-20% 0% -80%' // a sliver near the top of the viewport
 		}
 	)
-	document.querySelectorAll<HTMLHeadingElement>('article h2').forEach((heading) => {
+	document.querySelectorAll<HTMLHeadingElement>('article section h2').forEach((heading) => {
 		const section = heading.closest('section')
 		if (!section) return
 		section.dataset.slug = heading.id

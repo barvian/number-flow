@@ -19,4 +19,19 @@ const { frontmatter, headings } = Astro.props
 >
 	<Hero client:load slot="hero" />
 	<slot />
+	<footer
+		slot="footer"
+		class="prose prose-muted dark:prose-invert mt-20 border-t border-zinc-200 pt-20 dark:border-zinc-800"
+	>
+		<p>
+			Built by <a href="https://x.com/mbarvian" target="_blank">Max Barvian</a>. Heavily inspired by
+			the
+			<a href="https://family.co" target="_blank">Family</a> iOS app. <a
+				href="https://expensive.toys/blog/blur-vignette"
+				target="_blank"
+				>Technique for the
+				<code>mask-image</code></a
+			> from <a href="https://x.com/artur_bien" target="_blank">Artur Bień</a>.
+		</p>
+	</footer>
 </PostLayout>

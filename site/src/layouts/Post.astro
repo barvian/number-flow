@@ -18,10 +18,11 @@ const { headings, articleClass, ...props } = Astro.props
 		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
 	>
 		<TOC class="~top-6/10 sticky max-xl:hidden" {headings} />
-		<article
-			class:list={['prose prose-zinc dark:prose-invert-zinc container max-w-2xl', articleClass]}
-		>
-			<slot />
+		<article class="container max-w-2xl">
+			<div class:list={['prose prose-zinc dark:prose-invert', articleClass]}>
+				<slot />
+			</div>
+			<slot name="footer" />
 		</article>
 	</div>
 </Layout>

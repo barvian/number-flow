@@ -77,15 +77,11 @@ export default {
 						'line-height': '1.7',
 
 						a: {
-							'@apply link-underline text-primary': {}
+							'@apply link-underline': {}
 						},
 
 						hr: {
 							'@apply my-[2em]': {}
-						},
-
-						code: {
-							'@apply text-primary': {}
 						},
 
 						'code::before': {
@@ -113,22 +109,37 @@ export default {
 						},
 
 						// We need to always use padding for the IntersectionObserver to work:
-						'&>section': {
+						'&>section,&>footer': {
 							'@apply py-10 first:pt-0 last:pb-0': {}
 						},
-						'section > :first-child': {
+						'section > :first-child, footer > :first-child': {
 							'margin-top': '0 !important'
 						},
-						'section > :last-child': {
+						'section > :last-child, footer > :last-child': {
 							'margin-bottom': '0 !important'
 						}
 					}
 				},
-				'invert-zinc': {
+				zinc: {
 					css: {
-						'--tw-prose-hr': theme('colors.zinc.800'),
-						'--tw-prose-headings': theme('colors.zinc.50'),
-						'--tw-prose-body': theme('colors.zinc.300')
+						'--tw-prose-links': theme('colors.zinc.950'),
+						'--tw-prose-invert-links': theme('colors.zinc.50'),
+						'--tw-prose-code': theme('colors.zinc.950'),
+						'--tw-prose-invert-code': theme('colors.zinc.50'),
+						'--tw-prose-headings': theme('colors.zinc.950'),
+						'--tw-prose-invert-headings': theme('colors.zinc.50'),
+						'--tw-prose-invert-hr': theme('colors.zinc.900'),
+						'--tw-prose-invert-body': theme('colors.zinc.300')
+					}
+				},
+				muted: {
+					css: {
+						'--tw-prose-body': theme('colors.zinc.500'),
+						'--tw-prose-invert-body': theme('colors.zinc.400'),
+						'--tw-prose-links': 'currentColor',
+						'--tw-prose-invert-links': 'currentColor',
+						'--tw-prose-headings': 'currentColor',
+						'--tw-prose-invert-headings': 'currentColor'
 					}
 				}
 			})
