@@ -12,7 +12,7 @@ const defaultTransformer = transform(
 	defaultXTimingLinearPoints.map((_, i) => i / (defaultXTimingLinearPoints.length - 1)),
 	defaultXTimingLinearPoints
 )
-export const defaultLayoutTransition: Transition = supportsLinear
+export const defaultXTiming: Transition = supportsLinear
 	? {
 			duration: defaultXTimingLinearDuration / 1000,
 			ease: defaultTransformer
