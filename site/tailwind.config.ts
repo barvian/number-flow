@@ -77,7 +77,7 @@ export default {
 						'line-height': '1.7',
 
 						a: {
-							'@apply link-underline': {}
+							'@apply link-underline font-normal': {}
 						},
 
 						hr: {
@@ -136,10 +136,10 @@ export default {
 					css: {
 						'--tw-prose-body': theme('colors.zinc.500'),
 						'--tw-prose-invert-body': theme('colors.zinc.400'),
-						'--tw-prose-links': 'currentColor',
-						'--tw-prose-invert-links': 'currentColor',
-						'--tw-prose-headings': 'currentColor',
-						'--tw-prose-invert-headings': 'currentColor'
+						// '--tw-prose-links': 'currentColor',
+						// '--tw-prose-invert-links': 'currentColor',
+						'--tw-prose-links': theme('colors.zinc.600'),
+						'--tw-prose-invert-links': theme('colors.zinc.400')
 					}
 				}
 			})
