@@ -489,7 +489,7 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends Animate
 class Digit extends Char<KeyedDigitPart> {
 	constructor(
 		section: Section,
-		private type: KeyedDigitPart['type'],
+		_: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
 		opts?: CharOptions
 	) {

@@ -20,14 +20,7 @@ export default defineConfig(({ mode }) => ({
 			external: ['esm-env'],
 			plugins: [
 				typescript({
-					tsconfig: resolve(
-						__dirname,
-						`../../tsconfig${mode === 'production' ? '.build' : ''}.json`
-					),
-					declaration: true,
-					outDir,
-					stripInternal: true,
-					noEmitOnError: true
+					tsconfig: resolve(__dirname, `./tsconfig${mode === 'production' ? '.build' : ''}.json`)
 				})
 			]
 		}
