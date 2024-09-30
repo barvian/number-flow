@@ -9,7 +9,7 @@
 		"email": "max@barvian.me",
 		"url": "https://barvian.me"
 	},
-	"description": "A lightweight component to transition and format numbers.",
+	"description": "A component to transition and format numbers.",
 	"license": "MIT",
 	"homepage": "https://number-flow.barvian.me/",
 	"repository": {

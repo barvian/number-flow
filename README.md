@@ -1,6 +1,6 @@
 # Number Flow
 
-A lightweight component to transition & format numbers.
+A component to transition & format numbers.
 
 [![Number Flow](https://motion-number.barvian.me/preview.webp)](https://number-flow.barvian.me)
 
