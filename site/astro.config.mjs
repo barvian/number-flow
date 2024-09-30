@@ -6,7 +6,7 @@ import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
 import theme from './shiki-theme'
 // @ts-expect-error missing types
-import sectionize from 'remark-sectionize'
+import sectionize from './remark-sectionize'
 
 // https://astro.build/config
 export default defineConfig({
