@@ -46,7 +46,7 @@ export default function Demo({
 
 	return (
 		<Tabs.Root
-			className="not-prose relative isolate"
+			className="not-prose text-primary relative isolate" // reset text color if inside prose
 			value={active}
 			onValueChange={(val) => setActive(val as TabValue)}
 		>
