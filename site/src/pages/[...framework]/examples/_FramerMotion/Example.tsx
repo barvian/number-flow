@@ -22,7 +22,7 @@ export default function FramerMotionExample({ value, diff }: Props) {
 			<motion.span
 				animate={{ backgroundColor: diff > 0 ? '#34d399' : '#ef4444' }}
 				initial={false}
-				className="~text-base/2xl inline-flex items-center px-[0.3em]"
+				className="~text-base/2xl inline-flex items-center px-[0.3em] text-white"
 				style={{ borderRadius: 999 }}
 				layout
 				// Match NumberFlow's default x timing:
