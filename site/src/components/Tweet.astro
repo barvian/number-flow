@@ -38,6 +38,10 @@ export type Props = ComponentProps<typeof AstroTweet>
 	.Tweet [class*='like']:hover > [class*='likeCount'] {
 		text-decoration: none;
 	}
+	.Tweet [class*='rounded'] {
+		@apply rounded-lg;
+	}
+
 	.Tweet [class*='rounded']::after {
 		content: '';
 		inset: 0;
@@ -46,7 +50,10 @@ export type Props = ComponentProps<typeof AstroTweet>
 		position: absolute;
 		border-radius: inherit;
 		pointer-events: none;
-		box-shadow: inset 0 0 0 1px theme(colors.white/25%);
+		--border-color: theme(colors.black/.1);
+		box-shadow: inset 0 0 0 1px var(--border-color);
+
+		@apply dark:[--border-color:theme(colors.white/.1)];
 	}
 	.Tweet p {
 		white-space: pre-line !important;
