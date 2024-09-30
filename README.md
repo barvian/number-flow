@@ -2,7 +2,7 @@
 
 A component to transition & format numbers.
 
-[![Number Flow](https://motion-number.barvian.me/preview.webp)](https://number-flow.barvian.me)
+[![Number Flow](https://number-flow.barvian.me/preview.webp)](https://number-flow.barvian.me)
 
 [![NPM Version](https://img.shields.io/npm/v/number-flow.svg)](https://npmjs.com/package/number-flow)
 [![Follow @mbarvian](https://img.shields.io/twitter/follow/mbarvian.svg?style=social&label=Follow)](https://x.com/mbarvian)
