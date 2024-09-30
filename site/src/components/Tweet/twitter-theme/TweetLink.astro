@@ -1,0 +1,15 @@
+---
+import s from "./tweet-link.module.css";
+interface Props {
+  href: string;
+}
+---
+
+<a
+  href={Astro.props.href}
+  class={s.root}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <slot />
+</a>

@@ -1,0 +1,31 @@
+---
+import type { EnrichedTweet } from '../utils.js'
+import TweetLink from './TweetLink.astro'
+import styles from './tweet-body.module.css'
+interface Props {
+	tweet: EnrichedTweet
+}
+const { tweet } = Astro.props
+---
+
+<p class={styles.root}>
+	{
+		tweet.entities.map((item) => {
+			switch (item.type) {
+				case 'hashtag':
+				case 'mention':
+				case 'url':
+				case 'symbol':
+					return <TweetLink href={item.href}>{item.text}</TweetLink>
+				case 'media':
+					// Media text is currently never displayed, some tweets however might have indices
+					// that do match `display_text_range` so for those cases we ignore the content.
+					return
+				default:
+					// We use `dangerouslySetInnerHTML` to preserve the text encoding.
+					// https://github.com/vercel-labs/react-tweet/issues/29
+					return <span set:html={item.text} />
+			}
+		})
+	}
+</p>

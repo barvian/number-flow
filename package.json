@@ -14,8 +14,7 @@
 	},
 	"pnpm": {
 		"patchedDependencies": {
-			"remark-sectionize": "patches/remark-sectionize.patch",
-			"astro-tweet": "patches/astro-tweet.patch"
+			"remark-sectionize": "patches/remark-sectionize.patch"
 		}
 	}
 }

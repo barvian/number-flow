@@ -1,0 +1,18 @@
+---
+import type { EnrichedQuotedTweet } from "../../utils";
+import QuotedTweetContainer from "./QuotedTweetContainer.astro";
+import QuotedTweetHeader from "./QuotedTweetHeader.astro";
+import QuotedTweetBody from "./QuotedTweetBody.astro";
+import TweetMedia from "../TweetMedia.astro";
+
+interface Props {
+  tweet: EnrichedQuotedTweet;
+}
+const { tweet } = Astro.props;
+---
+
+<QuotedTweetContainer tweet={tweet}>
+  <QuotedTweetHeader tweet={tweet} />
+  <QuotedTweetBody tweet={tweet} />
+  {tweet.mediaDetails?.length ? <TweetMedia quoted tweet={tweet} /> : null}
+</QuotedTweetContainer>

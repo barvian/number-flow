@@ -1,0 +1,26 @@
+---
+import { getTweet } from './api'
+import EmbeddedTweet from './twitter-theme/EmbeddedTweet.astro'
+import TweetNotFound from './twitter-theme/TweetNotFound.astro'
+interface Props {
+	id: string
+	autoplay?: boolean
+	fetchOptions?: RequestInit
+	onError?: ((error: any) => any) | undefined
+}
+
+const { id, fetchOptions, autoplay, onError } = Astro.props
+let error
+const tweet = id
+	? await getTweet(id, fetchOptions).catch((err) => {
+			if (onError) {
+				error = onError(err)
+			} else {
+				console.error(err)
+				error = err
+			}
+		})
+	: undefined
+---
+
+{!tweet ? <TweetNotFound error={error} /> : <EmbeddedTweet {autoplay} tweet={tweet!} />}

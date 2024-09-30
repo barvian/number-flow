@@ -1,0 +1,12 @@
+---
+import TweetContent from './TweetContent.astro'
+
+interface Props {
+	id: string
+	autoplay?: boolean
+	fetchOptions?: RequestInit
+	onError?: ((error: any) => any) | undefined
+}
+---
+
+<TweetContent {...Astro.props} />

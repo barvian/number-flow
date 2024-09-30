@@ -1,0 +1,40 @@
+---
+import clsx from 'clsx'
+import type { TweetUser } from '../api/index.js'
+import { Verified, VerifiedBusiness, VerifiedGovernment } from './icons/index'
+import styles from './verified-badge.module.css'
+
+interface Props {
+	user: TweetUser
+	className?: string
+}
+
+const { user, className } = Astro.props
+const verified = user.verified || user.is_blue_verified || user.verified_type
+let Icon = Verified
+let iconClassName: string | undefined = styles.verifiedBlue
+
+if (verified) {
+	if (!user.is_blue_verified) {
+		iconClassName = styles.verifiedOld
+	}
+	switch (user.verified_type) {
+		case 'Government':
+			Icon = VerifiedGovernment
+			iconClassName = styles.verifiedGovernment
+			break
+		case 'Business':
+			Icon = VerifiedBusiness
+			iconClassName = undefined
+			break
+	}
+}
+---
+
+{
+	verified ? (
+		<div class={clsx(className, iconClassName)}>
+			<Icon />
+		</div>
+	) : null
+}

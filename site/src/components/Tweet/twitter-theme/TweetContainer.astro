@@ -1,0 +1,17 @@
+---
+import clsx from "clsx";
+import styles from "./tweet-container.module.css";
+import "./theme.css";
+
+interface Props {
+  className?: string;
+}
+
+const { className } = Astro.props;
+---
+
+<div class={clsx("astro-tweet-theme", styles.root, className)}>
+  <article class={styles.article}>
+    <slot />
+  </article>
+</div>

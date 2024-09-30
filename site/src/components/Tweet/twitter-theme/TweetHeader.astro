@@ -1,0 +1,69 @@
+---
+import clsx from 'clsx'
+import type { EnrichedTweet } from '../utils.js'
+import AvatarImg from './AvatarImg.astro'
+import styles from './tweet-header.module.css'
+import VerifiedBadge from './VerifiedBadge.astro'
+
+interface Props {
+	tweet: EnrichedTweet
+}
+
+const { tweet } = Astro.props
+const { user } = tweet
+---
+
+<div class={styles.header}>
+	<a href={tweet.url} class={styles.avatar} target="_blank" rel="noopener noreferrer">
+		<div
+			class={clsx(
+				styles.avatarOverflow,
+				user.profile_image_shape === 'Square' && styles.avatarSquare
+			)}
+		>
+			<AvatarImg src={user.profile_image_url_https} alt={user.name} width={48} height={48} />
+		</div>
+		<div class={styles.avatarOverflow}>
+			<div class={styles.avatarShadow}></div>
+		</div>
+	</a>
+	<div class={styles.author}>
+		<a href={tweet.url} class={styles.authorLink} target="_blank" rel="noopener noreferrer">
+			<div class={styles.authorLinkText}>
+				<span title={user.name}>{user.name}</span>
+			</div>
+			<VerifiedBadge user={user} className={styles.authorVerified} />
+		</a>
+		<div class={styles.authorMeta}>
+			<a href={tweet.url} class={styles.username} target="_blank" rel="noopener noreferrer">
+				<span title={`@${user.screen_name}`}>@{user.screen_name}</span>
+			</a>
+			<!-- <div class={styles.authorFollow}>
+        <span class={styles.separator}>·</span>
+        <a
+          href={user.follow_url}
+          class={styles.follow}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Follow
+        </a>
+      </div> -->
+		</div>
+	</div>
+	<a
+		href={tweet.url}
+		class={styles.brand}
+		target="_blank"
+		rel="noopener noreferrer"
+		aria-label="View on Twitter"
+	>
+		<svg viewBox="0 0 24 24" aria-hidden="true" class={styles.twitterIcon}>
+			<g>
+				<path
+					d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+				></path>
+			</g>
+		</svg>
+	</a>
+</div>

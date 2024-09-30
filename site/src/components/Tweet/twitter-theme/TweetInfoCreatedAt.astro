@@ -1,0 +1,23 @@
+---
+import format from 'date-fns/format/index.js'
+import type { EnrichedTweet } from '../utils.js'
+import styles from './tweet-info-created-at.module.css'
+
+interface Props {
+	tweet: EnrichedTweet
+}
+const { tweet } = Astro.props
+const createdAt = new Date(tweet.created_at)
+---
+
+<a
+	class={styles.root}
+	href={tweet.url}
+	target="_blank"
+	rel="noopener noreferrer"
+	aria-label={format(createdAt!, 'h:mm a · MMM d, y')}
+>
+	<time datetime={createdAt?.toISOString()}>
+		{format(createdAt!, 'h:mm a · MMM d, y')}
+	</time>
+</a>

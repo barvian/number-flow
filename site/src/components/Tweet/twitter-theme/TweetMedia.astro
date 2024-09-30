@@ -1,0 +1,71 @@
+---
+import clsx from 'clsx'
+import { type EnrichedTweet, type EnrichedQuotedTweet, getMediaUrl } from '../utils.js'
+import { type MediaDetails } from '../api/index'
+// import { TweetMediaVideo } from "./TweetMediaVideo.astro";
+import MediaImg from './MediaImg.astro'
+import styles from './tweet-media.module.css'
+import TweetMediaVideo from './TweetMediaVideo.astro'
+
+const getSkeletonStyle = (media: MediaDetails, itemCount: number) => {
+	let paddingBottom = 56.25 // default of 16x9
+
+	// if we only have 1 item, show at original ratio
+	if (itemCount === 1)
+		paddingBottom = (100 / media.original_info.width) * media.original_info.height
+
+	// if we have 2 items, double the default to be 16x9 total
+	if (itemCount === 2) paddingBottom = paddingBottom * 2
+
+	return {
+		width: media.type === 'photo' ? undefined : 'unset',
+		paddingBottom: `${paddingBottom}%`
+	}
+}
+interface Props {
+	autoplay?: boolean
+	tweet: EnrichedTweet | EnrichedQuotedTweet
+	quoted?: boolean
+}
+const { tweet, quoted, autoplay } = Astro.props
+const length = tweet.mediaDetails?.length ?? 0
+---
+
+<div class={clsx(styles.root, !quoted && styles.rounded)}>
+	<div
+		class={clsx(
+			styles.mediaWrapper,
+			length > 1 && styles.grid2Columns,
+			length === 3 && styles.grid3,
+			length > 4 && styles.grid2x2
+		)}
+	>
+		{
+			tweet.mediaDetails?.map((media: any) => (
+				<Fragment>
+					{media.type === 'photo' ? (
+						<a
+							href={tweet.url}
+							class={clsx(styles.mediaContainer, styles.mediaLink)}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<div class={styles.skeleton} style={getSkeletonStyle(media, length)} />
+							<MediaImg
+								src={getMediaUrl(media, 'small')}
+								alt={media.ext_alt_text || 'Image'}
+								class={styles.image}
+								draggable
+							/>
+						</a>
+					) : (
+						<div class={styles.mediaContainer}>
+							<div class={styles.skeleton} style={getSkeletonStyle(media, length)} />
+							<TweetMediaVideo {autoplay} tweet={tweet} media={media} />
+						</div>
+					)}
+				</Fragment>
+			))
+		}
+	</div>
+</div>

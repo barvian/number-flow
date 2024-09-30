@@ -1,0 +1,45 @@
+---
+import clsx from "clsx";
+import AvatarImg from "../AvatarImg.astro";
+import styles from "./quoted-tweet-header.module.css";
+import type { EnrichedQuotedTweet } from "../../utils.js";
+import VerifiedBadge from "../VerifiedBadge.astro";
+
+interface Props {
+  tweet: EnrichedQuotedTweet;
+}
+const { user } = Astro.props.tweet;
+const { tweet } = Astro.props;
+---
+
+<div class={styles.header}>
+  <a
+    href={tweet.url}
+    class={styles.avatar}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <div
+      class={clsx(
+        styles.avatarOverflow,
+        user.profile_image_shape === "Square" && styles.avatarSquare,
+      )}
+    >
+      <AvatarImg
+        src={user.profile_image_url_https}
+        alt={user.name}
+        width={20}
+        height={20}
+      />
+    </div>
+  </a>
+  <div class={styles.author}>
+    <div class={styles.authorText}>
+      <span title={user.name}>{user.name}</span>
+    </div>
+    <VerifiedBadge user={user} />
+    <div class={styles.username}>
+      <span title={`@${user.screen_name}`}>@{user.screen_name}</span>
+    </div>
+  </div>
+</div>

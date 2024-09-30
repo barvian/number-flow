@@ -1,15 +1,13 @@
 ---
-import AstroTweet from 'astro-tweet'
+import AstroTweet from './Tweet/Tweet.astro'
 import type { ComponentProps } from 'astro/types'
 export type Props = ComponentProps<typeof AstroTweet>
 ---
 
-<div class:list={['Tweet']}>
-	<AstroTweet {...Astro.props} />
-</div>
+<AstroTweet {...Astro.props} />
 
 <style is:global>
-	.Tweet .astro-tweet-theme {
+	.Tweet {
 		--tweet-bg-color-hover: var(--tweet-bg-color);
 		--tweet-font-family: inherit;
 		--tweet-body-font-size: 1rem;
@@ -19,12 +17,6 @@ export type Props = ComponentProps<typeof AstroTweet>
 		max-width: none;
 
 		@apply dark:[--tweet-bg-color:theme(colors.zinc.900)] dark:[--tweet-border:1px_solid_theme(colors.zinc.800)] dark:[--tweet-font-color-secondary:theme(colors.zinc.400)];
-	}
-	.Tweet [class*='authorFollow'],
-	.Tweet [class*='replies'],
-	.Tweet [class*='reply'],
-	.Tweet [class*='info'] {
-		display: none !important;
 	}
 
 	.Tweet [class*='actions'] {

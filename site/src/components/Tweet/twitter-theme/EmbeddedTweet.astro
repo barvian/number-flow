@@ -1,0 +1,32 @@
+---
+import type { Tweet } from '../api/index.js'
+import TweetContainer from './TweetContainer.astro'
+import TweetHeader from './TweetHeader.astro'
+import TweetInReplyTo from './TweetInReplyTo.astro'
+import TweetBody from './TweetBody.astro'
+import TweetMedia from './TweetMedia.astro'
+// import TweetInfo from './TweetInfo.astro'
+import TweetActions from './TweetActions.astro'
+// import TweetReplies from './TweetReplies.astro'
+import QuotedTweet from './quoted-tweet/QuotedTweet.astro'
+import { enrichTweet } from '../utils.js'
+
+type Props = {
+	autoplay?: boolean
+	tweet: Tweet
+}
+
+const { tweet: t, autoplay } = Astro.props
+const tweet = enrichTweet(t)
+---
+
+<TweetContainer className="Tweet">
+	<TweetHeader tweet={tweet} />
+	{tweet.in_reply_to_status_id_str && <TweetInReplyTo tweet={tweet} />}
+	<TweetBody tweet={tweet} />
+	{tweet.mediaDetails?.length ? <TweetMedia {autoplay} tweet={tweet} /> : null}
+	{tweet.quoted_tweet && <QuotedTweet tweet={tweet.quoted_tweet} />}
+	<!-- <TweetInfo tweet={tweet} /> -->
+	<TweetActions tweet={tweet} />
+	<!-- <TweetReplies tweet={tweet} /> -->
+</TweetContainer>
