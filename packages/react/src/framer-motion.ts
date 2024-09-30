@@ -17,6 +17,9 @@ export function toEase(_easing: string): Easing {
 		return bezierMatch.slice(1).map(parseFloat) as BezierDefinition
 	}
 
+	// Pretty rough but I don't want to blow up the bundle.
+	// Should handle linear(x,x,x,x) and linear(x y%, x y%, x y%, x y%)
+	// but not i.e. linear(x, x y%)
 	const linearMatch = easing.match(linearRegExp)
 	const linearExpr = linearMatch?.[1]
 	if (linearExpr) {
