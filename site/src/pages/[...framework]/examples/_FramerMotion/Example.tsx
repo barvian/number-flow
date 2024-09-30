@@ -13,7 +13,7 @@ type Props = {
 
 export default function FramerMotionExample({ value, diff }: Props) {
 	return (
-		<span className="flex items-center gap-2 [--number-flow-char-height:0.85em]">
+		<span style={{ '--number-flow-char-height': '0.85em' }} className="flex items-center gap-2">
 			<MotionNumberFlow
 				value={value}
 				className="~text-xl/4xl font-semibold"
@@ -38,9 +38,9 @@ export default function FramerMotionExample({ value, diff }: Props) {
 				/>
 				<MotionNumberFlow
 					value={diff}
-					className="font-semibold [--number-flow-mask-height:0.3em]"
+					className="font-semibold"
 					format={{ style: 'percent', maximumFractionDigits: 2 }}
-					style={{ borderRadius: 999 }}
+					style={{ '--number-flow-mask-height': '0.3em' }}
 					// Important, see note below:
 					layout
 					layoutRoot
