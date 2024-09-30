@@ -32,7 +32,7 @@ if (supportsAtProperty) {
 
 export const charHeight = 'var(--number-flow-char-height, 1em)'
 
-export const maskHeight = 'var(--number-flow-mask-height, 0.15em)'
+export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 
 const scaledMaskWidth = `${maskWidth} * 1/var(--_number-flow-scale-x)`

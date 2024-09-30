@@ -34,7 +34,7 @@ export default function ColoredTrendsExample({ value }: Props) {
 				style: 'currency',
 				currency: 'USD'
 			}}
-			className="~text-xl/4xl font-semibold [--number-flow-char-height:0.85em] [--number-flow-mask-height:0.25em]"
+			className="~text-xl/4xl font-semibold [--number-flow-char-height:0.85em]"
 		/>
 	)
 }

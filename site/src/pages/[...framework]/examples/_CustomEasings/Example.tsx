@@ -19,7 +19,7 @@ export default function CustomTimingsExample({ value }: Props) {
 		<NumberFlow
 			value={value}
 			yTiming={yTiming}
-			className="~text-xl/4xl font-semibold [--number-flow-char-height:0.85em] [--number-flow-mask-height:0.25em]"
+			className="~text-xl/4xl font-semibold [--number-flow-char-height:0.85em]"
 		/>
 	)
 }

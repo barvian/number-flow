@@ -72,7 +72,7 @@ export default function Hero() {
 		>
 			<div className="~mt-1/2 ~mb-0.5/1 flex items-center">
 				<NumberFlow
-					className="~text-5xl/8xl font-medium [--number-flow-char-height:0.85em] [--number-flow-mask-height:0.25em]"
+					className="~text-5xl/8xl font-medium [--number-flow-char-height:0.85em]"
 					value={value}
 					locales={locale}
 					format={format}

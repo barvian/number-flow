@@ -42,7 +42,7 @@ export default function RangeExample() {
 						duration: 300
 					}}
 					root
-					className="absolute bottom-8 left-1/2 -translate-x-1/2 text-lg font-semibold [--number-flow-char-height:0.85em] [--number-flow-mask-height:0.25em]"
+					className="absolute bottom-8 left-1/2 -translate-x-1/2 text-lg font-semibold [--number-flow-char-height:0.85em]"
 				/>
 			</Slider.Thumb>
 		</Slider.Root>

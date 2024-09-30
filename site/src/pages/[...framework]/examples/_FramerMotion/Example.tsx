@@ -16,7 +16,7 @@ export default function FramerMotionExample({ value, diff }: Props) {
 		<span className="flex items-center gap-2 [--number-flow-char-height:0.85em]">
 			<MotionNumberFlow
 				value={value}
-				className="~text-xl/4xl font-semibold [--number-flow-mask-height:0.25em]"
+				className="~text-xl/4xl font-semibold"
 				format={{ style: 'currency', currency: 'USD' }}
 			/>
 			<motion.span
