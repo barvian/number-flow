@@ -9,7 +9,7 @@
 		"email": "max@barvian.me",
 		"url": "https://barvian.me"
 	},
-	"description": "Smooth transitions for Intl.NumberFormat.",
+	"description": "A lightweight component to transition and format numbers.",
 	"license": "MIT",
 	"homepage": "https://number-flow.barvian.me/react",
 	"repository": {
@@ -24,11 +24,10 @@
 		"accessible",
 		"odometer",
 		"animation",
-		"number-format"
+		"number-format",
+		"number-animation",
+		"animated-number"
 	],
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
-	"types": "./dist/index.d.ts",
 	"files": [
 		"dist",
 		"README.md"
