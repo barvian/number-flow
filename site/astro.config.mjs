@@ -1,10 +1,10 @@
 import { defineConfig, envField } from 'astro/config'
-import { readFileSync } from 'node:fs'
 import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
-import vercel from '@astrojs/vercel/static'
+import vercel from '@astrojs/vercel/serverless'
+import theme from './shiki-theme'
 // @ts-expect-error missing types
 import sectionize from 'remark-sectionize'
 
@@ -13,9 +13,15 @@ export default defineConfig({
 	site: pkg.homepage,
 	markdown: {
 		shikiConfig: {
-			theme: JSON.parse(readFileSync('./highlighter-theme.json', 'utf-8'))
+			theme
 		},
 		remarkPlugins: [sectionize]
+	},
+	vite: {
+		ssr: {
+			// Fixes build issue on macOS
+			external: ['fsevents']
+		}
 	},
 	experimental: {
 		env: {
@@ -31,7 +37,7 @@ export default defineConfig({
 		react(),
 		mdx()
 	],
-	output: 'static',
+	output: 'hybrid',
 	adapter: vercel({
 		webAnalytics: {
 			enabled: true

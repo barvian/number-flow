@@ -20,7 +20,7 @@ const Comp = props.class ? 'div' : Fragment
 		framework === 'react' &&
 			(react != null ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
 	}
-	{
+	<!-- {
 		framework === 'vue' &&
 			(vue != null ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)
 	}
@@ -31,5 +31,5 @@ const Comp = props.class ? 'div' : Fragment
 	{
 		framework === 'vanilla' &&
 			(vanilla != null ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
-	}
+	} -->
 </Comp>
