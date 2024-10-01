@@ -39,8 +39,12 @@ export const getStaticPaths = () =>
 		params: { framework: id === DEFAULT_FRAMEWORK ? undefined : id }
 	}))
 
-export const toFrameworkPath = (path?: string | null, id?: Framework | false | null) => {
-	if (!path) return
+export const toFrameworkPath = (
+	urlOrPathname?: string | URL | Location | null,
+	id?: Framework | false | null
+) => {
+	if (!urlOrPathname) return
+	const path = typeof urlOrPathname === 'string' ? urlOrPathname : urlOrPathname.pathname
 	if (!id) return path
 	const [_, firstSegment, ...segments] = path.split('/')
 

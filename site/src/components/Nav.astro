@@ -1,0 +1,105 @@
+---
+import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
+import { GITHUB_TOKEN } from 'astro:env/server'
+import Link from '/src/components/Link.astro'
+import pkg from '/../packages/number-flow/package.json'
+import { isActive } from '../lib/url'
+
+const repoPath = 'barvian/motion-number'
+const repo = await fetch(`https://api.github.com/repos/${repoPath}`, {
+	headers: {
+		Authorization: `Bearer ${GITHUB_TOKEN}`,
+		'X-GitHub-Api-Version': '2022-11-28'
+	}
+}).then((r) =>
+	r.ok ? r.json() : Promise.reject(`Could not fetch repo ${repoPath}: ${r.statusText}`)
+)
+const x = isActive('/examples', Astro.url) ? 1 : isActive('/showcase', Astro.url) ? 2 : 0
+---
+
+<nav
+	class="~pb-6/10 pointer-events-none fixed bottom-0 left-0 z-10 w-full pt-12"
+	id="nav"
+	style={`--x: ${x}`}
+>
+	<div
+		class="absolute -inset-[18px] top-auto h-[12rem] bg-gradient-to-t from-white to-white/0 blur-[10px] dark:from-zinc-950 dark:to-zinc-950/0"
+	>
+	</div>
+	<div class="container flex justify-center">
+		<div
+			class="scrollbar-none pointer-events-auto max-w-full overflow-x-auto rounded-[1.375rem] bg-zinc-100/90 p-1.5 ring ring-black/[5%] backdrop-blur-xl backdrop-saturate-[140%] dark:border dark:border-white/[8%] dark:bg-zinc-950/90 dark:ring-0"
+		>
+			<div class="relative isolate grid grid-cols-[repeat(5,5.6875em)]">
+				<div
+					class="dark:bg-white/12.5 absolute left-0 top-0 -z-10 h-full w-[5.6875em] translate-x-[calc(var(--x)*5.6875em)] rounded-2xl bg-white shadow-lg dark:shadow-none"
+				>
+				</div>
+				<Link
+					href="/"
+					class="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+				>
+					<BookOpen className="size-6" absoluteStrokeWidth />
+					Docs
+				</Link>
+				<Link
+					href="/examples"
+					class="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+				>
+					<Shapes className="size-6" absoluteStrokeWidth />
+					Examples
+				</Link>
+				<Link
+					href="/showcase"
+					frameworked={false}
+					class="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+				>
+					<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
+					Showcase
+				</Link>
+				<a
+					class="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+					href={pkg.repository.url}
+					target="_blank"
+					aria-label="Star on GitHub"
+				>
+					<svg viewBox="0 0 16 16" class="size-6 fill-current" role="none">
+						<path
+							d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
+						></path>
+					</svg>
+					{repo.stargazers_count}
+				</a>
+				<a
+					href="https://x.com/mbarvian"
+					class="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+					target="_blank"
+				>
+					<svg viewBox="0 0 24 24" class="size-6 fill-current">
+						<path
+							d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+						></path>
+					</svg>
+					Follow
+				</a>
+			</div>
+		</div>
+	</div>
+</nav>
+
+<!-- <script>
+	import { isTransitionBeforePreparationEvent } from 'astro:transitions/client'
+	import { isActive } from '../lib/url'
+	const nav = document.getElementById('nav')!
+	const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('a'))
+
+	document.addEventListener('astro:before-preparation', (event) => {
+		if (!isTransitionBeforePreparationEvent(event)) return
+		const x = isActive('/examples', event.to) ? 1 : isActive('/showcase', event.to) ? 2 : 0
+		nav.style.setProperty('--x', String(x))
+		links.forEach((link, i) => {
+			if (i === x) link.dataset.active = ''
+			else delete link.dataset.active
+		})
+	})
+</script> -->

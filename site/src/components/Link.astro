@@ -1,23 +1,23 @@
 ---
-import { toFrameworkPath, getFramework, DEFAULT_FRAMEWORK } from '@/lib/framework'
+import { toFrameworkPath, getFramework } from '@/lib/framework'
 import { isActive } from '@/lib/url'
 import type { HTMLAttributes } from 'astro/types'
 export interface Props extends HTMLAttributes<'a'> {
+	frameworked?: boolean
 	href: string
 }
 const pageFramework = getFramework(Astro.params)
-const { href, ...props } = Astro.props
+const { href, frameworked = true, ...props } = Astro.props
+const active = isActive(href, Astro.url)
 ---
 
 <a
 	{...props}
-	data-framework-link
-	data-active={isActive(
-		toFrameworkPath(href, DEFAULT_FRAMEWORK),
-		toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK)
-	)}
-	href={toFrameworkPath(href, pageFramework)}
+	data-framework-link={frameworked}
+	data-active={active}
+	href={frameworked ? toFrameworkPath(href, pageFramework) : href}
 >
+	{active && <slot name="active" />}
 	<slot />
 </a>
 
