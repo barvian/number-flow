@@ -12,7 +12,10 @@ const { href, ...props } = Astro.props
 <a
 	{...props}
 	data-framework-link
-	data-active={isActive(toFrameworkPath(href, DEFAULT_FRAMEWORK), Astro.url)}
+	data-active={isActive(
+		toFrameworkPath(href, DEFAULT_FRAMEWORK),
+		toFrameworkPath(Astro.url.pathname, DEFAULT_FRAMEWORK)
+	)}
 	href={toFrameworkPath(href, pageFramework)}
 >
 	<slot />
