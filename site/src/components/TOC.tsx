@@ -16,7 +16,6 @@ export default function TOC({ headings, ...props }: Props) {
 				for (const entry of entries) {
 					if (entry.isIntersecting) {
 						const section = entry.target as HTMLElement
-						console.log(section)
 						setActiveSlug(section.dataset.slug)
 						break
 					}
