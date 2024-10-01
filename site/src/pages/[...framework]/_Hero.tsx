@@ -79,19 +79,21 @@ export default function Hero() {
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
-				A React component to transition &amp; format numbers. Built on{' '}
+				A React component to transition &amp; format numbers. Dependency-free. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
 					target="_blank"
+					aria-label="Intl.NumberFormat"
 				>
-					Intl.NumberFormat
+					web
 				</a>{' '}
-				and{' '}
+				<span className="sr-only">and</span>
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API"
 					target="_blank"
+					aria-label="Web Animations API"
 				>
-					WAAPI
+					standards
 				</a>
 				. Accessible. Customizable.
 			</p>
