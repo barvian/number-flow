@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import type { MDXLayoutProps } from 'astro'
-import TOC from '@/components/TOC.astro'
+import TOC from '/src/components/TOC'
 import type { ComponentProps } from 'astro/types'
 
 type Props = ComponentProps<typeof Layout> & {
@@ -17,7 +17,7 @@ const { headings, articleClass, ...props } = Astro.props
 	<div
 		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
 	>
-		<TOC class="~top-6/10 sticky max-xl:hidden" {headings} />
+		<TOC client:load className="~top-6/10 sticky max-xl:hidden" {headings} />
 		<article class="container max-w-2xl">
 			<div class:list={['prose prose-zinc dark:prose-invert', articleClass]}>
 				<slot />
