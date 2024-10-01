@@ -7,6 +7,8 @@ import plugin from 'tailwindcss/plugin'
 import spring from 'tailwindcss-spring'
 import type { PluginUtils } from 'tailwindcss/types/config'
 
+const sans = ['Inter', '_font_fallback_732902278794', 'sans-serif']
+
 export default {
 	presets: [reset()],
 	content: {
@@ -29,8 +31,8 @@ export default {
 		screens,
 		fontSize,
 		fontFamily: {
-			sans: ['Inter', '_font_fallback_732902278794', 'sans-serif'],
-			'mac-ui': '-apple-system, BlinkMacSystemFont, var(--font-inter)',
+			sans,
+			'mac-ui': ['-apple-system', 'BlinkMacSystemFont', ...sans],
 			mono: defaultTheme.fontFamily.mono
 		},
 		fluid: (({ theme }) => ({
