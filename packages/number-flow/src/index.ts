@@ -15,12 +15,7 @@ import { BROWSER } from 'esm-env'
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
 export * from './formatter'
 
-export const defaultFadeTiming: EffectTiming = {
-	duration: 500,
-	easing: 'ease-out',
-	endDelay: 400,
-	fill: 'forwards'
-}
+export const defaultFadeTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
 export const defaultXTiming: EffectTiming = supportsLinear
 	? {
 			duration: 900,
