@@ -48,4 +48,5 @@ These are required whenever `NumberFlow` is used within a layout animation.
 To synchronize NumberFlow's transitions with Framer Motion's layout animations,
 the package exports a `useTiming` hook from `@number-flow/react/framer-motion` that
 takes an `EffectTiming` object and converts it to a Framer transition.
-Make sure that the provided `EffectTiming` is defined outside of the component, as shown above.
+Make sure that the provided `EffectTiming` is memoized or  defined outside of the component,
+as shown above.

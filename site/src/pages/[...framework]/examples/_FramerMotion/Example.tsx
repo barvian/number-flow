@@ -13,7 +13,7 @@ type Props = {
 
 export default function FramerMotionExample({ value, diff }: Props) {
 	// Match NumberFlow's default x timing.
-	// Make sure the timing is defined outside the component:
+	// Make sure the timing is memoized or defined outside the component:
 	const layoutTransition = useTiming(defaultXTiming)
 
 	return (
