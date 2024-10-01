@@ -3,7 +3,7 @@ import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
-import vercel from '@astrojs/vercel/serverless'
+import vercel from '@astrojs/vercel/static'
 import theme from './shiki-theme'
 // @ts-expect-error missing types
 import sectionize from './remark-sectionize'
@@ -37,7 +37,7 @@ export default defineConfig({
 		react(),
 		mdx()
 	],
-	output: 'hybrid',
+	output: 'static',
 	adapter: vercel({
 		webAnalytics: {
 			enabled: true
