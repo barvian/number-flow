@@ -6,8 +6,8 @@ import pkg from '/../packages/number-flow/package.json'
 // import FrameworkMenu from '@/components/FrameworkMenu'
 import Link from '@/components/Link.astro'
 import Nav from '@/components/Nav.astro'
-import { AstroFont } from 'astro-font'
-import * as path from 'node:path'
+// import { AstroFont } from 'astro-font'
+// import * as path from 'node:path'
 import { ViewTransitions } from 'astro:transitions'
 import { isActive } from '@/lib/url'
 import { getFramework } from '@/lib/framework'
@@ -54,7 +54,7 @@ const app = {
 		<meta property="twitter:image" content={image} />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
-		<AstroFont
+		<!-- <AstroFont
 			config={[
 				{
 					name: 'Inter',
@@ -71,7 +71,7 @@ const app = {
 					fallback: 'sans-serif'
 				}
 			]}
-		/>
+		/> -->
 		<link rel="canonical" href={canonicalURL} />
 		<meta property="og:title" content={title} />
 		<meta name="twitter:title" content={title} />

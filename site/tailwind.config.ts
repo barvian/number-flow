@@ -29,7 +29,7 @@ export default {
 		screens,
 		fontSize,
 		fontFamily: {
-			sans: 'var(--font-inter)',
+			sans: ['Inter', '_font_fallback_732902278794', 'sans-serif'],
 			'mac-ui': '-apple-system, BlinkMacSystemFont, var(--font-inter)',
 			mono: defaultTheme.fontFamily.mono
 		},
