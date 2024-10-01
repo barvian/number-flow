@@ -50,7 +50,6 @@ export default function FrameworkMenu({
 							key={id}
 							as="a"
 							disabled={id === value}
-							onClick={() => void localStorage.setItem('framework', id)}
 							className={clsx(
 								id === value ? 'pr-2' : 'pr-4',
 								'data-[focus]:bg-white/12.5 flex items-center gap-2 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default'

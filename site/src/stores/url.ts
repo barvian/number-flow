@@ -11,6 +11,6 @@ if (!import.meta.env.SSR)
 		urlAtom.set(event.to)
 	})
 
-export const frameworkAtom = atom<Framework | null>(
+export const pageFrameworkAtom = atom<Framework | null>(
 	import.meta.env.SSR ? null : (document.documentElement.dataset.framework as Framework)
 )

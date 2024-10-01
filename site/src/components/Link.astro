@@ -1,36 +1,8 @@
 ---
-import { toFrameworkPath, getFramework } from '@/lib/framework'
-import { isActive } from '@/lib/url'
-import type { HTMLAttributes } from 'astro/types'
-export interface Props extends HTMLAttributes<'a'> {
-	frameworked?: boolean
-	href: string
-}
-const pageFramework = getFramework(Astro.params)
-const { href, frameworked = true, ...props } = Astro.props
-const active = isActive(href, Astro.url)
+import ReactLink from './Link'
+export type { Props } from './Link'
 ---
 
-<a
-	{...props}
-	data-framework-link={frameworked}
-	data-active={active}
-	href={frameworked ? toFrameworkPath(href, pageFramework) : href}
->
-	{active && <slot name="active" />}
+<ReactLink {...Astro.props}>
 	<slot />
-</a>
-
-<script>
-	import { toFrameworkPath, type Framework } from '@/lib/framework'
-
-	const pageFramework = document.documentElement.dataset.framework
-	if (!pageFramework) {
-		const savedFramework = localStorage.getItem('framework') as Framework | undefined
-		if (savedFramework) {
-			document.querySelectorAll<HTMLAnchorElement>('a[data-framework-link]').forEach((el) => {
-				el.setAttribute('href', toFrameworkPath(el.getAttribute('href'), savedFramework)!)
-			})
-		}
-	}
-</script>
+</ReactLink>

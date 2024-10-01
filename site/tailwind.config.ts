@@ -152,6 +152,15 @@ export default {
 		plugin(({ matchUtilities, addVariant, theme }) => {
 			matchUtilities(
 				{
+					vt: (_, { modifier }) => ({
+						'view-transition-name': modifier
+					})
+				},
+				{ values: { DEFAULT: '' }, modifiers: 'any' }
+			)
+
+			matchUtilities(
+				{
 					'text-current': (_, { modifier }) =>
 						modifier && {
 							color: `color-mix(in srgb, currentColor, transparent ${(1 - modifier) * 100}%)`

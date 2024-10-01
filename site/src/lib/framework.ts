@@ -14,7 +14,7 @@ export const FRAMEWORKS = {
 	// 	name: 'Vue',
 	// 	lightColor: '#42B883',
 	// 	darkColor: '#42B883'
-	// },
+	// }
 	// svelte: {
 	// 	name: 'Svelte',
 	// 	lightColor: '#FF3E00',
