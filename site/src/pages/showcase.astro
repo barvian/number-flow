@@ -24,31 +24,3 @@ import Tweet from '@/components/Tweet.astro'
 		<Tweet id="1837782472030822803" />
 	</div>
 </Layout>
-
-<script>
-	const videos = document.querySelectorAll<HTMLVideoElement>('video')
-
-	const io = new IntersectionObserver(
-		(entries) => {
-			entries.forEach((e) => {
-				if (!e.isIntersecting) return
-				;(e.target as HTMLVideoElement).play()
-			})
-		},
-		{
-			threshold: 1
-		}
-	)
-	videos.forEach((video) => {
-		video.addEventListener('play', () => {
-			videos.forEach((v) => {
-				if (v !== video) v.pause()
-			})
-		})
-		video.addEventListener('click', () => {
-			if (video.paused) video.play()
-			else video.pause()
-		})
-		io.observe(video)
-	})
-</script>

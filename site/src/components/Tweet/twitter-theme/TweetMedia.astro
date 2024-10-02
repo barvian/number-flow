@@ -5,7 +5,7 @@ import { type MediaDetails } from '../api/index'
 // import { TweetMediaVideo } from "./TweetMediaVideo.astro";
 import MediaImg from './MediaImg.astro'
 import styles from './tweet-media.module.css'
-import TweetMediaVideo from './TweetMediaVideo.astro'
+import TweetMediaVideo from './TweetMediaVideo'
 
 const getSkeletonStyle = (media: MediaDetails, itemCount: number) => {
 	let paddingBottom = 56.25 // default of 16x9
@@ -61,7 +61,7 @@ const length = tweet.mediaDetails?.length ?? 0
 					) : (
 						<div class={styles.mediaContainer}>
 							<div class={styles.skeleton} style={getSkeletonStyle(media, length)} />
-							<TweetMediaVideo {autoplay} tweet={tweet} media={media} />
+							<TweetMediaVideo client:load {autoplay} tweet={tweet} media={media} />
 						</div>
 					)}
 				</Fragment>
