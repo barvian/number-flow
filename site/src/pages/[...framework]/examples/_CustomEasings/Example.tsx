@@ -1,4 +1,4 @@
-import NumberFlow, { useLinear, defaultXTiming } from '@number-flow/react'
+import NumberFlow, { useLinear, defaultXTiming, defaultYTiming } from '@number-flow/react'
 
 const bouncySpring = {
 	duration: 750,
@@ -15,13 +15,14 @@ type Props = {
 export default function CustomTimingsExample({ value }: Props) {
 	// Use bouncySpring if linear() is supported, otherwise
 	// fall back to default timing:
-	const timing = useLinear(bouncySpring, defaultXTiming)
+	const xTiming = useLinear(bouncySpring, defaultXTiming)
+	const yTiming = useLinear(bouncySpring, defaultYTiming)
 
 	return (
 		<NumberFlow
 			value={value}
-			xTiming={timing}
-			yTiming={timing}
+			xTiming={xTiming}
+			yTiming={yTiming}
 			fadeTiming={fadeTiming}
 			className="~text-xl/4xl font-semibold"
 			style={{ '--number-flow-char-height': '0.85em' }}
