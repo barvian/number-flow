@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from 'astro/types'
+
+export interface Props extends HTMLAttributes<'code'> {
+	types: string[]
+}
+const { types, class: cls, ...props } = Astro.props
+---
+
+<code {...props} class:list={[cls, 'inline-flex flex-wrap gap-[0.5em] leading-snug']}>
+	{
+		types.map((type, i) => (
+			<span class:list={[i !== types.length - 1 && 'border-r-[0.125em] pr-[0.5em]']}>{type}</span>
+		))
+	}
+</code>
