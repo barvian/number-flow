@@ -51,12 +51,12 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 							<div className="isolate grid grid-cols-[repeat(5,5.6875em)]">
 								<Link
 									href="/"
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									active={
 										<motion.div
 											layout
 											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-2xl bg-white shadow-lg dark:shadow-none"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 										></motion.div>
 									}
 								>
@@ -65,12 +65,12 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								</Link>
 								<Link
 									href="/examples"
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									active={
 										<motion.div
 											layout
 											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-2xl bg-white shadow-lg dark:shadow-none"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 										></motion.div>
 									}
 								>
@@ -80,20 +80,20 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								<Link
 									href="/showcase"
 									frameworked={false}
+									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									active={
 										<motion.div
 											layout
 											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-2xl bg-white shadow-lg dark:shadow-none"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 										></motion.div>
 									}
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 								>
 									<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
 									Showcase
 								</Link>
 								<a
-									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									href={repo}
 									target="_blank"
 									aria-label="Star on GitHub"
@@ -105,7 +105,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								</a>
 								<a
 									href="https://x.com/mbarvian"
-									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									target="_blank"
 								>
 									<svg viewBox="0 0 24 24" className="size-6 fill-current">
