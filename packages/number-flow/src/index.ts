@@ -153,9 +153,6 @@ abstract class Section {
 	) {
 		this.justify = justify
 		const chars = parts.map<Node>((p) => this.addChar(p).el)
-		// Zero width space prevents the height from collapsing when empty
-		// TODO: replace this with height: 1lh when it's better supported:
-		chars.push(document.createTextNode('\u200B'))
 
 		this.el = createElement(
 			'span',
@@ -482,22 +479,44 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends Animate
 }
 
 class Digit extends Char<KeyedDigitPart> {
+	#roll: HTMLSpanElement
+	#numbers: HTMLSpanElement[]
+
 	constructor(
 		section: Section,
 		_: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
 		opts?: CharOptions
 	) {
-		super(
-			section,
-			value,
-			createElement('span', {
-				className: `digit`,
-				// part: `digit ${type} ${value}`,
-				textContent: value + ''
-			}),
-			opts
+		const numbers = Array.from({ length: 10 }).map((_, i) => {
+			const num = createElement(
+				'span',
+				{ className: `digit__num${i === value ? ' current' : ''}` },
+				[document.createTextNode(String(i))]
+			)
+			num.style.setProperty('--i', String(i))
+			return num
+		})
+		const roll = createElement(
+			'span',
+			{
+				className: `digit__roll`
+			},
+			numbers
 		)
+		const el = createElement(
+			'span',
+			{
+				className: `digit`
+			},
+			[roll]
+		)
+		el.style.setProperty('--c', String(value))
+
+		super(section, value, el, opts)
+
+		this.#roll = roll
+		this.#numbers = numbers
 	}
 
 	#prevValue?: KeyedDigitPart['value']
@@ -506,7 +525,6 @@ class Digit extends Char<KeyedDigitPart> {
 	#prevCenter?: number
 
 	willUpdate(parentRect: DOMRect) {
-		this.#prevValue = this.value
 		const rect = this.el.getBoundingClientRect()
 		this.#prevY = rect.y - parentRect.y
 		const prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
@@ -516,72 +534,41 @@ class Digit extends Char<KeyedDigitPart> {
 	}
 
 	update(value: KeyedDigitPart['value']) {
+		// Keep this here not in willUpdate because it's not transition related:
+		this.#prevValue = this.value
+		this.#numbers[this.#prevValue]?.classList.remove('current')
+		this.el.style.setProperty('--c', String(value))
+		this.#numbers[value]?.classList.add('current')
 		this.value = value
-
-		if (this.#prevValue !== value) {
-			// // @ts-expect-error wrong built-in DOM types
-			// this.el.part = `digit ${this.type} ${value}`
-
-			// We need all the digits, in case of interruptions:
-			replaceChildren(this.el, [
-				...(value === 0
-					? []
-					: [
-							createElement(
-								'span',
-								{ className: 'digit__stack digit__lt' },
-								Array.from({ length: value }, (_, i) =>
-									createElement('span', { textContent: i + '' })
-								)
-							)
-						]),
-				document.createTextNode(value + ''),
-				...(value === 9
-					? []
-					: [
-							createElement(
-								'span',
-								{ className: 'digit__stack digit__gt' },
-								Array.from({ length: 9 - value }, (_, i) =>
-									createElement('span', { textContent: value + i + 1 + '' })
-								)
-							)
-						])
-			])
-		}
 	}
 
 	#xAnimation?: Animation
-	#yAnimation?: Animation
 
 	didUpdate(parentRect: DOMRect) {
-		// Cancel any previous animations before getting the new rect:
+		// Cancel any previous x animation before getting the new rect:
 		this.#xAnimation?.cancel()
-		if (this.#prevValue !== this.value) this.#yAnimation?.cancel()
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
 
 		const x = `translateX(${this.#prevCenter! - center}px)`
-		// Add the offset between the prev top and current parent top to account for interruptions:
-		const y = `translateY(calc((100% + ${maskHeight}) * ${this.value - this.#prevValue!} + ${this.#prevY!}px))`
 
 		// If animation composition is not supported, animate x with y using x's easing
 		// which is probably safer (i.e. if they use bounce for y):
 		this.#xAnimation = this.el.animate(
 			{
-				transform: [supportsAnimationComposition ? x : `${x} ${y}`, 'none']
+				transform: [x, 'none']
 			},
-			{
-				...this.flow.xTiming,
-				composite: 'accumulate' // in case there's an in-flight y animation
-			}
+			this.flow.xTiming
 		)
-		if (supportsAnimationComposition && this.#prevValue !== this.value) {
-			this.#yAnimation = this.el.animate(
+		if (supportsAnimationComposition) {
+			let diff = this.value - this.#prevValue!
+			// Loop around if we're going the other way:
+			if (this.#prevValue! > this.value) diff = 10 - this.#prevValue! + this.value
+			this.#roll.animate(
 				{
-					transform: [y, 'none']
+					transform: [`rotateX(${diff * 36}deg)`, 'none']
 				},
 				{
 					...this.flow.yTiming,

@@ -6,6 +6,7 @@ description: A React component to transition & format numbers. Dependency-free. 
 import Pre from '@/components/Pre.astro';
 export const components = {pre: Pre}
 import Demo from '@/components/Demo'
+import Union from '@/components/Union.astro'
 export { getStaticPaths } from '@/lib/framework'
 
 ## Basic usage
@@ -46,7 +47,17 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
 or [easing.dev](https://www.easing.dev/).
 
-### `root`: <code className="text-muted">boolean</code>
+### `trend: `<Union class="text-muted" types={["boolean", "'increasing'", "'decreasing'"]} />
+
+Controls the direction of the digits.
+
+- `true` (default): The digits go up if the number increases, and down if the number decreases.
+- `'increasing'`: The digits always go up.
+- `'decreasing'`: The digits always go down.
+- `false`: Ignores the trend of the number; each digit goes up if it increases and down if it decreases. This can be useful if you
+want to animate number changes without conveying an overall increase or decrease ([example](https://x.com/pontusab/status/1825941664189526067)).
+
+### `root: `<code className="text-muted">boolean</code>
 
 This prop can be used to make the transitions relative to the `<NumberFlow>` itself, rather than the
 viewport (default). This can prevent unwanted animations when the `<NumberFlow>`

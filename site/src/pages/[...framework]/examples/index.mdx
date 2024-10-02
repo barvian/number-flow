@@ -6,6 +6,8 @@ description: 'Ready-made examples of common patterns to get you started with Num
 export { getStaticPaths } from '@/lib/framework'
 import CustomEasings from './_CustomEasings'
 import CustomEasingsCode from './_CustomEasings/Example?raw'
+import Range from './_Range'
+import RangeCode from './_Range/Example?raw'
 import ColoredTrends from './_ColoredTrends'
 import ColoredTrendsCode from './_ColoredTrends/Example?raw'
 import FramerMotionLayoutAnimations from './_FramerMotion'
@@ -19,11 +21,11 @@ import Code from '@/components/Code.astro';
 <Code code={CustomEasingsCode} class="xl:pre-first-line:hidden" firstLine='// Custom timings example' lang="tsx" />
 </CustomEasings>
 
-{/* ## Range
+## Range
 
 <Range client:visible>
 <Code code={RangeCode} lang="tsx" />
-</Range> */}
+</Range>
 
 ## Colored trends
 

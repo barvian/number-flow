@@ -49,6 +49,8 @@ export const slottedStyles = {
 	padding: `${maskHeight} 0`
 } as const
 
+const halfMaskHeight = `calc(${maskHeight} / 2)`
+
 const styles = css`
 	:host {
 		display: inline-block;
@@ -74,10 +76,12 @@ const styles = css`
 
 	.section {
 		display: inline-block;
-		padding-bottom: ${maskHeight};
-		padding-top: ${maskHeight};
+		padding-bottom: ${halfMaskHeight};
+		padding-top: ${halfMaskHeight};
 		vertical-align: top; /* Safari needs this for some reason */
 		user-select: none;
+		/* Prevent height from collapsing when empty */
+		height: calc(${maskHeight} + ${charHeight});
 	}
 
 	.section:not(.section--masked),
@@ -90,6 +94,7 @@ const styles = css`
 	.section__inner {
 		display: inline-block;
 		transform-origin: inherit;
+		height: inherit;
 	}
 
 	.section--justify-left {
@@ -152,34 +157,35 @@ const styles = css`
 
 	.digit {
 		display: inline-block;
-		position: relative;
 	}
 
-	.digit__stack {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: ${maskHeight};
-		position: absolute;
-		width: 100%;
-	}
-
-	.digit__stack > * {
+	.digit__roll {
 		display: inline-block;
+		position: relative;
+		transform-style: preserve-3d;
+		backface-visibility: hidden;
+		transform-origin: center center calc((${charHeight} + ${maskHeight}) / 0.649838);
 	}
 
-	.digit__lt {
-		bottom: calc(100% + ${maskHeight});
+	.digit__num {
+		display: inline-block;
+		padding: ${halfMaskHeight} 0;
+		backface-visibility: hidden;
 	}
 
-	.digit__gt {
-		top: calc(100% + ${maskHeight});
+	.digit__num:not(.current) {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%) rotateX(calc((var(--c) - var(--i)) * -36deg));
+		transform-origin: center center calc((${charHeight} + ${maskHeight}) / 0.649838);
 	}
 
 	.symbol {
 		display: inline-block;
 		position: relative;
 		isolation: isolate;
+		padding: ${halfMaskHeight} 0;
 	}
 
 	.symbol__value {
