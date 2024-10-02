@@ -1,8 +1,11 @@
 import Link from '@/components/Link'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
 import { motion, MotionConfig } from 'framer-motion'
+import { useStore } from '@nanostores/react'
+import { urlAtom } from '@/stores/url'
 import * as React from 'react'
 import clsx from 'clsx/lite'
+import { isActive } from '../lib/url'
 
 type Props = JSX.IntrinsicElements['nav'] & {
 	stargazers: number
@@ -10,6 +13,8 @@ type Props = JSX.IntrinsicElements['nav'] & {
 }
 
 export default function Nav({ stargazers, className, repo, ...props }: Props) {
+	const url = useStore(urlAtom)
+
 	// Fix scroll positions after view transitions:
 	const scrollableRef = React.useRef<HTMLDivElement>(null)
 	React.useEffect(() => {
@@ -30,6 +35,12 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 		}
 	}, [])
 
+	const x = React.useMemo(() => {
+		if (isActive('/', url)) return 0
+		if (isActive('/examples', url)) return 1
+		return 2
+	}, [url])
+
 	return (
 		<MotionConfig transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0 } }}>
 			<nav
@@ -39,6 +50,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 					'~pb-6/10 pointer-events-none fixed bottom-0 left-0 z-10 w-full pt-12'
 				)}
 				id="nav"
+				style={{ '--x': x }}
 			>
 				<div className="absolute -inset-[18px] top-auto h-[12rem] bg-gradient-to-t from-white to-white/0 blur-[10px] dark:from-zinc-950 dark:to-zinc-950/0"></div>
 				<div className="container flex justify-center">
@@ -48,31 +60,18 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 							ref={scrollableRef}
 							className="scrollbar-none vt/nav pointer-events-auto overflow-x-auto scroll-smooth rounded-[inherit] p-1.5"
 						>
-							<div className="isolate grid grid-cols-[repeat(5,5.6875em)]">
+							<div className="relative isolate grid grid-cols-[repeat(5,5.6875em)]">
+								<div className="dark:bg-white/12.5 spring-bounce-0 spring-duration-300 absolute left-0 top-0 -z-10 h-full w-[5.6875em] translate-x-[calc(var(--x)*5.6875em)] rounded-2xl bg-white shadow-lg transition-transform dark:shadow-none" />
 								<Link
 									href="/"
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-									active={
-										<motion.div
-											layout
-											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-										></motion.div>
-									}
+									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 								>
 									<BookOpen className="size-6" absoluteStrokeWidth />
 									Docs
 								</Link>
 								<Link
 									href="/examples"
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-									active={
-										<motion.div
-											layout
-											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-										></motion.div>
-									}
+									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 								>
 									<Shapes className="size-6" absoluteStrokeWidth />
 									Examples
@@ -80,14 +79,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								<Link
 									href="/showcase"
 									frameworked={false}
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-									active={
-										<motion.div
-											layout
-											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-										></motion.div>
-									}
+									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 								>
 									<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
 									Showcase
