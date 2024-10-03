@@ -1,48 +1,31 @@
 import { supportsAtProperty } from '../styles'
 
-export function frames<F extends string | (number | null)>(
-	durationMs: number,
-	frame: (t: number) => F,
-	fps = 60
-) {
-	const length = Math.trunc((durationMs / 1000) * fps)
-	return Array.from({ length }, (_, i) => frame(i / (length - 1)))
+export function getDuration(timing: EffectTiming) {
+	if (typeof timing.duration !== 'number')
+		throw new Error('NumberFlow timing duration must be a number')
+	return timing.duration ?? 0
 }
 
-export type CustomPropertyKeyframes = {
-	[property: `--${string}`]: string | number | null | undefined
-}
+// "Ignores" all animations on an element by pausing them, saving their current time,
+// scrubbing them to end, then returning a fn that resumes them at the saved time
+export function ignoreAnimations(el: HTMLElement) {
+	const animations = el.getAnimations()
+	const resumeFns = animations.map((a) => {
+		// I think the duration types are wrong in TS for this:
+		const duration = a.effect?.getComputedTiming().duration as number | undefined
+		if (duration == null) return
 
-// Makeshift solution for animating custom propeties
-// when @property isn't supported:
-export function customPropertyFrames(
-	durationMs: number,
-	frame: (t: number) => CustomPropertyKeyframes,
-	fps = 60
-) {
-	// If CSS.registerProperty is supported, assume they've been registered and do a normal animation
-	// on them:
-	if (supportsAtProperty) {
-		return [frame(0), frame(1)]
-	}
-
-	// Discrete values (i.e. custom properties) change halfway between keyframes, so nudge
-	// everything over half a frame...
-	const length = Math.max(Math.trunc((durationMs / 1000) * fps), 0)
-	const frames = Array.from(
-		{ length },
-		(_, f): Keyframe => ({
-			...frame(f / length),
-			offset: (f + 0.5) / length
-		})
-	)
-	// ...and add another initial frame
-	frames.unshift({
-		...frame(0),
-		offset: 0
+		const time = a.currentTime
+		// a.pause()
+		a.currentTime = duration
+		return () => {
+			a.currentTime = time
+			// a.play()
+		}
 	})
-
-	return frames
+	return () => {
+		resumeFns.forEach((r) => r?.())
+	}
 }
 
-export const lerp = (min: number, max: number, weight: number) => min + (max - min) * weight
+export type UnignoreAnimationsFn = ReturnType<typeof ignoreAnimations>

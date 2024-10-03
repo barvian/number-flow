@@ -9,15 +9,7 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
-import {
-	frames,
-	lerp,
-	type CustomPropertyKeyframes,
-	customPropertyFrames,
-	type UnignoreAnimationsFn,
-	ignoreAnimations,
-	getDuration
-} from './util/animate'
+import { type UnignoreAnimationsFn, ignoreAnimations, getDuration } from './util/animate'
 import { BROWSER } from 'esm-env'
 
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
