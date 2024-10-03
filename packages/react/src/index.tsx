@@ -11,7 +11,7 @@ import {
 	NumberFlowLite,
 	supportsLinear
 } from 'number-flow'
-export { defaultXTiming, defaultYTiming } from 'number-flow'
+export { defaultXTiming, defaultSpinTiming } from 'number-flow'
 export type * from 'number-flow'
 
 // Can't wait to not have to do this in React 19:
@@ -33,7 +33,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	root?: (typeof NumberFlowElement)['prototype']['root']
 	fadeTiming?: (typeof NumberFlowElement)['prototype']['fadeTiming']
 	xTiming?: (typeof NumberFlowElement)['prototype']['xTiming']
-	yTiming?: (typeof NumberFlowElement)['prototype']['yTiming']
+	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
 }
 
 type NumberFlowPrivProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
@@ -60,7 +60,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 			if (this.props.root != null) this.#el.root = this.props.root
 			if (this.props.fadeTiming) this.#el.fadeTiming = this.props.fadeTiming
 			if (this.props.xTiming) this.#el.xTiming = this.props.xTiming
-			if (this.props.yTiming) this.#el.yTiming = this.props.yTiming
+			if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
 		}
 	}
 
@@ -94,7 +94,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 			// These are set in updateNonPartsProps, so ignore them here:
 			fadeTiming,
 			xTiming,
-			yTiming,
+			spinTiming,
 			...rest
 		} = this.props
 
