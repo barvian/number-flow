@@ -9,7 +9,15 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
-import { frames, lerp, type CustomPropertyKeyframes, customPropertyFrames } from './util/animate'
+import {
+	frames,
+	lerp,
+	type CustomPropertyKeyframes,
+	customPropertyFrames,
+	type UnignoreAnimationsFn,
+	ignoreAnimations,
+	getDuration
+} from './util/animate'
 import { BROWSER } from 'esm-env'
 
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
@@ -154,6 +162,8 @@ abstract class Section {
 		this.justify = justify
 		const chars = parts.map<Node>((p) => this.addChar(p).el)
 		// Add zero-width space to prevent height from collapsing when empty:
+		// Can't use :empty because technically popped digits are still in the DOM, just
+		// absolutely positioned
 		chars.push(createElement('span', { className: 'empty', textContent: '\u200B' }))
 
 		this.el = createElement(
@@ -283,10 +293,13 @@ class NumberSection extends Section {
 		this.#inner = inner
 	}
 
+	#unignoreAnimations?: UnignoreAnimationsFn
 	#prevWidth?: number
 	#prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
+		this.#unignoreAnimations = ignoreAnimations(this.el)
+
 		const rect = this.el.getBoundingClientRect()
 		this.#prevWidth = rect.width
 		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
@@ -318,16 +331,7 @@ class NumberSection extends Section {
 		this.pop(removed)
 	}
 
-	#animation?: Animation
-	#maskAnimation?: Animation
-	#innerAnimation?: Animation
-
 	didUpdate(parentRect: DOMRect) {
-		// Cancel any previous animations before getting the new rects:
-		this.#animation?.cancel()
-		this.#innerAnimation?.cancel()
-		this.#maskAnimation?.cancel()
-
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.justify] - parentRect[this.justify]
 
@@ -338,39 +342,29 @@ class NumberSection extends Section {
 		const innerRect = this.#inner.getBoundingClientRect()
 		this.children.forEach((comp) => comp.didUpdate(innerRect))
 
-		this.#animation = this.el.animate(
+		this.el.animate(
 			{
+				'--_number-flow-scale-x-delta': [scale - 1, 0],
 				transform: [`translateX(${x}px) scaleX(${scale})`, 'none']
+				// transform: [`translateX(${x}px)`, 'none']
 			},
-			this.flow.xTiming
+			{
+				...this.flow.xTiming,
+				composite: 'accumulate'
+			}
 		)
-		if (scale !== 1) {
-			// Invert the scale on the inner element:
-			this.#innerAnimation = this.#inner?.animate(
-				{
-					// 1/x isn't linear so we need to do sampling:
-					transform: frames(1000, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
-				},
-				this.flow.xTiming
-			)
 
-			this.#maskAnimation = this.el.animate(
-				customPropertyFrames(
-					1000,
-					(t): CustomPropertyKeyframes => ({
-						'--_number-flow-scale-x': lerp(scale, 1, t)
-					})
-				),
-				this.flow.xTiming
-			)
-		}
+		this.#unignoreAnimations?.()
 	}
 }
 
 class SymbolSection extends Section {
+	#unignoreAnimations?: UnignoreAnimationsFn
 	#prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
+		this.#unignoreAnimations = ignoreAnimations(this.el)
+
 		const rect = this.el.getBoundingClientRect()
 		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
 
@@ -393,23 +387,24 @@ class SymbolSection extends Section {
 		this.addNewAndUpdateExisting(parts)
 	}
 
-	#animation?: Animation
-
 	didUpdate(parentRect: DOMRect) {
-		// Cancel any previous animations before getting the new rects:
-		this.#animation?.cancel()
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.justify] - parentRect[this.justify]
 
 		// Make sure to pass this in before starting to animate:
 		this.children.forEach((comp) => comp.didUpdate(rect))
 
-		this.#animation = this.el.animate(
+		this.el.animate(
 			{
 				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
-			this.flow.xTiming
+			{
+				...this.flow.xTiming,
+				composite: 'accumulate'
+			}
 		)
+
+		this.#unignoreAnimations?.()
 	}
 }
 
@@ -672,7 +667,7 @@ class Sym extends Char<KeyedSymbolPart> {
 			{
 				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
-			this.flow.xTiming
+			{ ...this.flow.xTiming, composite: 'accumulate' }
 		)
 	}
 }

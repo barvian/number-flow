@@ -17,10 +17,10 @@ export const supportsAnimationComposition =
 if (supportsAtProperty) {
 	try {
 		CSS.registerProperty({
-			name: '--_number-flow-scale-x',
+			name: '--_number-flow-scale-x-delta',
 			syntax: '<number>',
-			inherits: false,
-			initialValue: '1'
+			inherits: true,
+			initialValue: '0'
 		})
 	} catch {
 		// Ignore if already registered
@@ -35,8 +35,9 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 
-const scaledMaskWidth = `${maskWidth} * 1/var(--_number-flow-scale-x)`
-const calcScaledMaskWidth = `calc(${scaledMaskWidth})`
+const sectionScaleXCorrection = 'calc(1/(1 + var(--_number-flow-scale-x-delta)))'
+
+const scaledMaskWidth = `calc(${maskWidth} * ${sectionScaleXCorrection})`
 
 const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
@@ -92,6 +93,7 @@ const styles = css`
 	.section__inner {
 		display: inline-block;
 		transform-origin: inherit;
+		transform: scaleX(${sectionScaleXCorrection});
 		height: inherit;
 	}
 
@@ -107,14 +109,13 @@ const styles = css`
 		overflow: clip;
 		position: relative; /* for z-index */
 		z-index: -1; /* display underneath other sections */
-		--_number-flow-scale-x: 1;
 		/* -webkit prefixed versions have universally better support than non-prefixed */
 		-webkit-mask-repeat: no-repeat;
 		-webkit-mask-size:
 			calc(100% - ${scaledMaskWidth}) 100%,
 			100% calc(100% - ${maskHeight} * 2),
-			${calcScaledMaskWidth} ${maskHeight},
-			${calcScaledMaskWidth} ${maskHeight};
+			${scaledMaskWidth} ${maskHeight},
+			${scaledMaskWidth} ${maskHeight};
 	}
 
 	.section--masked.section--justify-left {
