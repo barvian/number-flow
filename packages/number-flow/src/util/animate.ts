@@ -1,5 +1,10 @@
 import { supportsAtProperty } from '../styles'
 
+export function resolveDuration(timing: EffectTiming) {
+	if (typeof timing.duration !== 'number')
+		throw new Error('NumberFlow timing duration must be a number')
+	return timing.duration ?? 0
+}
 export function frames<F extends string | (number | null)>(
 	durationMs: number,
 	frame: (t: number) => F,

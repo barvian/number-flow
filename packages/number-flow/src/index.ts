@@ -9,7 +9,13 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
-import { frames, lerp, type CustomPropertyKeyframes, customPropertyFrames } from './util/animate'
+import {
+	frames,
+	lerp,
+	type CustomPropertyKeyframes,
+	customPropertyFrames,
+	resolveDuration
+} from './util/animate'
 import { BROWSER } from 'esm-env'
 
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
@@ -346,18 +352,20 @@ class NumberSection extends Section {
 			this.flow.xTiming
 		)
 		if (scale !== 1) {
+			const duration = resolveDuration(this.flow.xTiming)
+
 			// Invert the scale on the inner element:
 			this.#innerAnimation = this.#inner?.animate(
 				{
 					// 1/x isn't linear so we need to do sampling:
-					transform: frames(1000, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
+					transform: frames(duration, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
 				},
 				this.flow.xTiming
 			)
 
 			this.#maskAnimation = this.el.animate(
 				customPropertyFrames(
-					1000,
+					duration,
 					(t): CustomPropertyKeyframes => ({
 						'--_number-flow-scale-x': lerp(scale, 1, t)
 					})
