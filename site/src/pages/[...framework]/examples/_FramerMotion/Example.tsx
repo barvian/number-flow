@@ -29,7 +29,16 @@ export default function FramerMotionExample({ value, diff }: Props) {
 				className="~text-base/2xl inline-flex items-center px-[0.3em] text-white"
 				style={{ borderRadius: 999 }}
 				layout
-				transition={{ layout: layoutTransition }}
+				transition={{
+					layout: {
+						type: 'spring',
+						// stiffness: 105.254227687,
+						// damping: 20.51869661,
+						// mass: 1
+						duration: 0.9,
+						bounce: 0
+					}
+				}}
 			>
 				<MotionArrowUp
 					className="mr-0.5 size-[0.75em]"

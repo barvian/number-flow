@@ -35,7 +35,7 @@ export const defaultXTiming: EffectTiming = supportsLinear
 			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
 			easing: `cubic-bezier(.32,.72,0,1)`
 		}
-export const defaultYTiming = defaultXTiming
+export const defaultSpinTiming = defaultXTiming
 
 let styleSheet: CSSStyleSheet | undefined
 
@@ -47,7 +47,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	xTiming = defaultXTiming
-	yTiming = defaultYTiming
+	spinTiming = defaultSpinTiming
 	fadeTiming = defaultFadeTiming
 	root = false
 	manual = false
@@ -346,7 +346,6 @@ class NumberSection extends Section {
 			{
 				'--_number-flow-scale-x-delta': [scale - 1, 0],
 				transform: [`translateX(${x}px) scaleX(${scale})`, 'none']
-				// transform: [`translateX(${x}px)`, 'none']
 			},
 			{
 				...this.flow.xTiming,
@@ -568,7 +567,7 @@ class Digit extends Char<KeyedDigitPart> {
 					transform: [`rotateX(${diff * 36}deg)`, 'none']
 				},
 				{
-					...this.flow.yTiming,
+					...this.flow.spinTiming,
 					composite: 'accumulate'
 				}
 			)
