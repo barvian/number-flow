@@ -80,8 +80,6 @@ const styles = css`
 		padding-top: ${halfMaskHeight};
 		vertical-align: top; /* Safari needs this for some reason */
 		user-select: none;
-		/* Prevent height from collapsing when empty */
-		height: calc(${maskHeight} + ${charHeight});
 	}
 
 	.section:not(.section--masked),
@@ -179,6 +177,11 @@ const styles = css`
 		left: 50%;
 		transform: translateX(-50%) rotateX(calc((var(--c) - var(--i)) * -36deg));
 		transform-origin: center center calc((${charHeight} + ${maskHeight}) / 0.649838);
+	}
+
+	.empty {
+		display: inline-block;
+		padding: ${halfMaskHeight} 0;
 	}
 
 	.symbol {
