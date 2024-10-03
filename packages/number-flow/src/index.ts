@@ -408,7 +408,6 @@ interface AnimatePresenceProps {
 class AnimatePresence {
 	#present = true
 	#onRemove?: OnRemove
-	#animation?: Animation
 
 	constructor(
 		readonly flow: NumberFlowLite,
@@ -418,9 +417,9 @@ class AnimatePresence {
 		if (animateIn) {
 			this.el.animate(
 				{
-					opacity: ['0', '1']
+					opacity: [0, 1]
 				},
-				flow.fadeTiming
+				{ ...flow.fadeTiming, composite: 'accumulate' }
 			)
 		}
 
@@ -432,19 +431,20 @@ class AnimatePresence {
 	}
 	set present(val) {
 		if (this.#present === val) return
-		const opacity = getComputedStyle(this.el).getPropertyValue('opacity')
-		this.#animation?.cancel()
-		this.#animation = this.el.animate(
+		this.el.animate(
 			{
-				opacity: [opacity, val ? '1' : '0']
+				opacity: val ? [0, 1] : [1, 0]
 			},
-			this.flow.fadeTiming
-		)
-		if (!val)
-			this.#animation!.onfinish = () => {
-				this.el.remove()
-				this.#onRemove?.()
+			{
+				...this.flow.fadeTiming,
+				composite: 'accumulate'
 			}
+		)
+		// if (!val)
+		// this.#animation!.onfinish = () => {
+		// 	this.el.remove()
+		// 	this.#onRemove?.()
+		// }
 		this.#present = val
 	}
 }
@@ -507,14 +507,17 @@ class Digit extends Char<KeyedDigitPart> {
 		this.#numbers = numbers
 	}
 
+	#unignoreAnimations?: UnignoreAnimationsFn
 	#prevValue?: KeyedDigitPart['value']
+
 	// Relative to parent:
-	#prevY?: number
 	#prevCenter?: number
 
 	willUpdate(parentRect: DOMRect) {
+		this.#unignoreAnimations = ignoreAnimations(this.el)
+
 		const rect = this.el.getBoundingClientRect()
-		this.#prevY = rect.y - parentRect.y
+
 		const prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		this.#prevCenter =
@@ -530,40 +533,36 @@ class Digit extends Char<KeyedDigitPart> {
 		this.value = value
 	}
 
-	#xAnimation?: Animation
-
 	didUpdate(parentRect: DOMRect) {
-		// Cancel any previous x animation before getting the new rect:
-		this.#xAnimation?.cancel()
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
 
-		const x = `translateX(${this.#prevCenter! - center}px)`
-
-		// If animation composition is not supported, animate x with y using x's easing
-		// which is probably safer (i.e. if they use bounce for y):
-		this.#xAnimation = this.el.animate(
+		this.el.animate(
 			{
-				transform: [x, 'none']
+				transform: [`translateX(${this.#prevCenter! - center}px)`, 'none']
 			},
-			this.flow.xTiming
+			{
+				...this.flow.xTiming,
+				composite: 'accumulate'
+			}
 		)
-		if (supportsAnimationComposition) {
-			let diff = this.value - this.#prevValue!
-			// Loop around if we're going the other way:
-			if (this.#prevValue! > this.value) diff = 10 - this.#prevValue! + this.value
-			this.#roll.animate(
-				{
-					transform: [`rotateX(${diff * 36}deg)`, 'none']
-				},
-				{
-					...this.flow.spinTiming,
-					composite: 'accumulate'
-				}
-			)
-		}
+
+		let diff = this.value - this.#prevValue!
+		// Loop around if we're going the other way:
+		if (this.#prevValue! > this.value) diff = 10 - this.#prevValue! + this.value
+		this.#roll.animate(
+			{
+				transform: [`rotateX(${diff * 36}deg)`, 'none']
+			},
+			{
+				...this.flow.spinTiming,
+				composite: 'accumulate'
+			}
+		)
+
+		this.#unignoreAnimations?.()
 	}
 }
 
@@ -600,10 +599,15 @@ class Sym extends Char<KeyedSymbolPart> {
 
 	#children = new Map<KeyedSymbolPart['value'], AnimatePresence>()
 
+	#unignoreAnimations?: UnignoreAnimationsFn
+
 	#prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
 		if (this.type === 'decimal') return // decimal never needs animation b/c it's the first in a left aligned section and never moves
+
+		this.#unignoreAnimations = ignoreAnimations(this.el)
+
 		const rect = this.el.getBoundingClientRect()
 		this.#prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
 	}
@@ -645,20 +649,19 @@ class Sym extends Char<KeyedSymbolPart> {
 		this.value = value
 	}
 
-	#xAnimation?: Animation
-
 	didUpdate(parentRect: DOMRect) {
 		if (this.type === 'decimal') return
-		// Cancel any previous animations before getting the new rect:
-		this.#xAnimation?.cancel()
+
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 
-		this.#xAnimation = this.el.animate(
+		this.el.animate(
 			{
 				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
 			{ ...this.flow.xTiming, composite: 'accumulate' }
 		)
+
+		this.#unignoreAnimations?.()
 	}
 }
