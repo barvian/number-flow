@@ -17,7 +17,7 @@ export function ignoreAnimations(el: HTMLElement) {
 
 		const time = a.currentTime
 		// a.pause()
-		a.currentTime = duration
+		a.currentTime = duration - 0.1 // don't know if this matters but try not to trigger complete event
 		return () => {
 			a.currentTime = time
 			// a.play()

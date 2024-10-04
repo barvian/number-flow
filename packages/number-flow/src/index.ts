@@ -327,7 +327,7 @@ class NumberSection extends Section {
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.justify] - parentRect[this.justify]
 
-		const x = this.#prevOffset! - offset
+		const dx = this.#prevOffset! - offset
 		const scale = Math.max(this.#prevWidth!, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
 
 		// Make sure to pass this in before starting to animate:
@@ -337,7 +337,7 @@ class NumberSection extends Section {
 		this.el.animate(
 			{
 				'--_number-flow-scale-x-delta': [scale - 1, 0],
-				transform: [`translateX(${x}px) scaleX(${scale})`, 'none']
+				transform: [`translateX(${dx}px) scaleX(${scale})`, 'none']
 			},
 			{
 				...this.flow.xTiming,
@@ -417,9 +417,9 @@ class AnimatePresence {
 		if (animateIn) {
 			this.el.animate(
 				{
-					opacity: [0, 1]
+					opacity: [-1, 0]
 				},
-				{ ...flow.fadeTiming, composite: 'accumulate' }
+				{ ...flow.fadeTiming, composite: 'add' }
 			)
 		}
 
@@ -429,19 +429,23 @@ class AnimatePresence {
 	get present() {
 		return this.#present
 	}
+
 	set present(val) {
 		if (this.#present === val) return
+		this.el.style.opacity = val ? '1' : '0'
 		this.el.animate(
 			{
-				opacity: val ? [0, 1] : [1, 0]
+				opacity: val ? [-1, 0] : [1, 0]
 			},
 			{
 				...this.flow.fadeTiming,
-				composite: 'accumulate'
+				// Add == accumulate here seemingly:
+				// https://svelte.dev/repl/f666877ccf4c434d807b0591f58cca09?version=4.2.19
+				composite: 'add'
 			}
 		)
 		// if (!val)
-		// this.#animation!.onfinish = () => {
+		// animation.onfinish = () => {
 		// 	this.el.remove()
 		// 	this.#onRemove?.()
 		// }
