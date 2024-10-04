@@ -6,26 +6,10 @@ export const supportsLinear =
 	typeof CSS !== 'undefined' &&
 	CSS.supports('transition-timing-function', 'linear(1, 2)')
 
-export const supportsAtProperty =
-	BROWSER && typeof CSS !== 'undefined' && typeof CSS.registerProperty !== 'undefined'
-
 export const supportsAnimationComposition =
 	BROWSER &&
 	typeof CSS !== 'undefined' &&
 	typeof CSS.supports('animation-composition', 'accumulate') !== 'undefined'
-
-if (supportsAtProperty) {
-	try {
-		CSS.registerProperty({
-			name: '--_number-flow-scale-x-delta',
-			syntax: '<number>',
-			inherits: true,
-			initialValue: '0'
-		})
-	} catch {
-		// Ignore if already registered
-	}
-}
 
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
