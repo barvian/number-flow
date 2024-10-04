@@ -1,10 +1,19 @@
-import { supportsAtProperty } from '../styles'
-
 export function getDuration(timing: EffectTiming) {
 	if (typeof timing.duration !== 'number')
 		throw new Error('NumberFlow timing duration must be a number')
 	return timing.duration ?? 0
 }
+
+export function frames<F extends string | (number | null)>(
+	durationMs: number,
+	frame: (t: number) => F,
+	fps = 60
+) {
+	const length = Math.trunc((durationMs / 1000) * fps)
+	return Array.from({ length }, (_, i) => frame(i / (length - 1)))
+}
+
+export const lerp = (min: number, max: number, weight: number) => min + (max - min) * weight
 
 // "Ignores" all animations on an element by pausing them, saving their current time,
 // scrubbing them to end, then returning a fn that resumes them at the saved time

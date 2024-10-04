@@ -93,7 +93,6 @@ const styles = css`
 	.section__inner {
 		display: inline-block;
 		transform-origin: inherit;
-		transform: scaleX(${sectionScaleXCorrection});
 		height: inherit;
 	}
 

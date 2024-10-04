@@ -9,7 +9,13 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
-import { type UnignoreAnimationsFn, ignoreAnimations, getDuration } from './util/animate'
+import {
+	type UnignoreAnimationsFn,
+	ignoreAnimations,
+	getDuration,
+	frames,
+	lerp
+} from './util/animate'
 import { BROWSER } from 'esm-env'
 
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
@@ -336,12 +342,34 @@ class NumberSection extends Section {
 
 		this.el.animate(
 			{
-				'--_number-flow-scale-x-delta': [scale - 1, 0],
-				transform: [`translateX(${dx}px) scaleX(${scale})`, 'none']
+				transform: [`translateX(${dx}px)`, 'none']
 			},
 			{
 				...this.flow.xTiming,
 				composite: 'accumulate'
+			}
+		)
+
+		this.el.animate(
+			{
+				transform: [`scaleX(${scale})`, 'none']
+			},
+			{
+				...this.flow.xTiming,
+				composite: 'add' // important
+			}
+		)
+
+		const duration = getDuration(this.flow.xTiming)
+
+		this.#inner.animate(
+			{
+				// 1/x isn't linear so we need to sample:
+				transform: frames(duration, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
+			},
+			{
+				...this.flow.xTiming,
+				composite: 'add' // important
 			}
 		)
 
@@ -419,7 +447,7 @@ class AnimatePresence {
 				{
 					opacity: [-1, 0]
 				},
-				{ ...flow.fadeTiming, composite: 'add' }
+				{ ...flow.fadeTiming, composite: 'accumulate' }
 			)
 		}
 
@@ -439,9 +467,7 @@ class AnimatePresence {
 			},
 			{
 				...this.flow.fadeTiming,
-				// Add == accumulate here seemingly:
-				// https://svelte.dev/repl/f666877ccf4c434d807b0591f58cca09?version=4.2.19
-				composite: 'add'
+				composite: 'accumulate'
 			}
 		)
 		// if (!val)
