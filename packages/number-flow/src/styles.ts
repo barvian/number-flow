@@ -21,7 +21,8 @@ const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 
 const sectionScaleXCorrection = 'calc(1/(1 + var(--_number-flow-scale-x-delta)))'
 
-const scaledMaskWidth = `calc(${maskWidth} * ${sectionScaleXCorrection})`
+// const scaledMaskWidth = `calc(${maskWidth} * ${sectionScaleXCorrection})`
+const scaledMaskWidth = maskWidth
 
 const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
