@@ -9,13 +9,7 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
-import {
-	type UnignoreAnimationsFn,
-	ignoreAnimations,
-	getDuration,
-	frames,
-	lerp
-} from './util/animate'
+import { getDuration, frames, lerp } from './util/animate'
 import { BROWSER } from 'esm-env'
 
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
@@ -291,13 +285,10 @@ class NumberSection extends Section {
 		this.#inner = inner
 	}
 
-	#unignoreAnimations?: UnignoreAnimationsFn
 	#prevWidth?: number
 	#prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
-		this.#unignoreAnimations = ignoreAnimations(this.el)
-
 		const rect = this.el.getBoundingClientRect()
 		this.#prevWidth = rect.width
 		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
@@ -346,7 +337,6 @@ class NumberSection extends Section {
 			},
 			{
 				...this.flow.xTiming,
-				composite: 'accumulate'
 				composite: 'accumulate' // important, accumulate onto pre-scaled instead of add to scaled
 			}
 		)
@@ -373,18 +363,13 @@ class NumberSection extends Section {
 				composite: 'add' // important
 			}
 		)
-
-		this.#unignoreAnimations?.()
 	}
 }
 
 class SymbolSection extends Section {
-	#unignoreAnimations?: UnignoreAnimationsFn
 	#prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
-		this.#unignoreAnimations = ignoreAnimations(this.el)
-
 		const rect = this.el.getBoundingClientRect()
 		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
 
@@ -423,8 +408,6 @@ class SymbolSection extends Section {
 				composite: 'accumulate'
 			}
 		)
-
-		this.#unignoreAnimations?.()
 	}
 }
 
@@ -537,16 +520,12 @@ class Digit extends Char<KeyedDigitPart> {
 		this.#roll = roll
 		this.#numbers = numbers
 	}
-
-	#unignoreAnimations?: UnignoreAnimationsFn
 	#prevValue?: KeyedDigitPart['value']
 
 	// Relative to parent:
 	#prevCenter?: number
 
 	willUpdate(parentRect: DOMRect) {
-		this.#unignoreAnimations = ignoreAnimations(this.el)
-
 		const rect = this.el.getBoundingClientRect()
 
 		const prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
@@ -592,8 +571,6 @@ class Digit extends Char<KeyedDigitPart> {
 				composite: 'accumulate'
 			}
 		)
-
-		this.#unignoreAnimations?.()
 	}
 }
 
@@ -630,14 +607,10 @@ class Sym extends Char<KeyedSymbolPart> {
 
 	#children = new Map<KeyedSymbolPart['value'], AnimatePresence>()
 
-	#unignoreAnimations?: UnignoreAnimationsFn
-
 	#prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
 		if (this.type === 'decimal') return // decimal never needs animation b/c it's the first in a left aligned section and never moves
-
-		this.#unignoreAnimations = ignoreAnimations(this.el)
 
 		const rect = this.el.getBoundingClientRect()
 		this.#prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
@@ -692,7 +665,5 @@ class Sym extends Char<KeyedSymbolPart> {
 			},
 			{ ...this.flow.xTiming, composite: 'accumulate' }
 		)
-
-		this.#unignoreAnimations?.()
 	}
 }
