@@ -8,7 +8,12 @@ import {
 	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { maskHeight, supportsAnimationComposition, supportsLinear } from './styles'
+import styles, {
+	maskHeight,
+	opacityDeltaVar,
+	supportsAnimationComposition,
+	supportsLinear
+} from './styles'
 import { getDuration, frames, lerp } from './util/animate'
 import { BROWSER } from 'esm-env'
 
@@ -458,12 +463,19 @@ class AnimatePresence {
 		readonly el: HTMLElement,
 		{ onRemove, animateIn = false }: AnimatePresenceProps = {}
 	) {
+		this.el.classList.add('animate-presence')
+		// This craziness is the only way I could figure out how to get the opacity
+		// accumulation to work in all browsers. Accumulating -1 onto opacity directly
+		// failed in both FF and Safari, and setting a delta to -1 still failed in FF
 		if (animateIn) {
 			this.el.animate(
 				{
-					opacity: [-1, 0]
+					[opacityDeltaVar]: [-0.9999, 0]
 				},
-				{ ...flow.fadeTiming, composite: 'accumulate' }
+				{
+					...this.flow.fadeTiming,
+					composite: 'accumulate'
+				}
 			)
 		}
 
@@ -476,16 +488,17 @@ class AnimatePresence {
 
 	set present(val) {
 		if (this.#present === val) return
-		this.el.style.opacity = val ? '1' : '0'
+		this.el.style.setProperty('--_number-flow-d-opacity', val ? '0' : '-.999')
 		this.el.animate(
 			{
-				opacity: val ? [-1, 0] : [1, 0]
+				[opacityDeltaVar]: val ? [-0.9999, 0] : [0.999, 0]
 			},
 			{
 				...this.flow.fadeTiming,
 				composite: 'accumulate'
 			}
 		)
+
 		// if (!val)
 		// animation.onfinish = () => {
 		// 	this.el.remove()

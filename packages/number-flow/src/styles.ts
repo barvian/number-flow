@@ -6,6 +6,19 @@ export const supportsLinear =
 	typeof CSS !== 'undefined' &&
 	CSS.supports('transition-timing-function', 'linear(1, 2)')
 
+export const opacityDeltaVar = '--_number-flow-d-opacity'
+
+try {
+	CSS.registerProperty({
+		name: opacityDeltaVar,
+		syntax: '<number>',
+		inherits: true,
+		initialValue: '0'
+	})
+} catch {
+	// Ignore if already registered
+}
+
 export const supportsAnimationComposition =
 	BROWSER &&
 	typeof CSS !== 'undefined' &&
@@ -192,6 +205,10 @@ const styles = css`
 
 	.section--justify-right .symbol__exiting {
 		right: 0;
+	}
+
+	.animate-presence {
+		opacity: calc(1 + var(${opacityDeltaVar}));
 	}
 `
 
