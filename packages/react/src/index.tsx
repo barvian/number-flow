@@ -30,6 +30,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
+	trend?: (typeof NumberFlowElement)['prototype']['trend']
 	root?: (typeof NumberFlowElement)['prototype']['root']
 	fadeTiming?: (typeof NumberFlowElement)['prototype']['fadeTiming']
 	xTiming?: (typeof NumberFlowElement)['prototype']['xTiming']
@@ -57,6 +58,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	// Parts needs to be set in render still:
 	updateNonPartsProps() {
 		if (this.#el) {
+			if (this.props.trend != null) this.#el.trend = this.props.trend
 			if (this.props.root != null) this.#el.root = this.props.root
 			if (this.props.fadeTiming) this.#el.fadeTiming = this.props.fadeTiming
 			if (this.props.xTiming) this.#el.xTiming = this.props.xTiming
@@ -92,6 +94,8 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 			className,
 			parts,
 			// These are set in updateNonPartsProps, so ignore them here:
+			root,
+			trend,
 			fadeTiming,
 			xTiming,
 			spinTiming,
