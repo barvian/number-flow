@@ -15,6 +15,19 @@ import { BROWSER } from 'esm-env'
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
 export * from './formatter'
 
+enum Trend {
+	UP = 1,
+	DOWN = -1,
+	NONE = 0
+}
+
+const getTrend = (val: number | bigint, prev?: number | bigint) => {
+	if (!prev) return
+	if (val > prev) return Trend.UP
+	if (val < prev) return Trend.DOWN
+	return Trend.NONE
+}
+
 export const defaultFadeTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
 export const defaultXTiming: EffectTiming = supportsLinear
 	? {
@@ -50,12 +63,21 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	#fraction?: NumberSection
 	#post?: SymbolSection
 
+	trend: boolean | 'increasing' | 'decreasing' = true
+	#computedTrend?: Trend
+
+	getComputedTrend() {
+		return this.#computedTrend
+	}
+
+	#prevVal?: number | bigint
+
 	set parts(newVal: PartitionedParts | undefined) {
 		if (newVal == null) {
 			return
 		}
 
-		const { pre, integer, fraction, post } = newVal
+		const { pre, integer, fraction, post, value } = newVal
 
 		// Initialize if needed
 		if (!this.#created) {
@@ -106,6 +128,15 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
+			// Compute trend
+			if (this.trend === true) {
+				this.#computedTrend = getTrend(value, this.#prevVal)
+			} else if (this.trend === 'increasing') {
+				this.#computedTrend = Trend.UP
+			} else if (this.trend === 'decreasing') {
+				this.#computedTrend = Trend.DOWN
+			} else this.#computedTrend = Trend.NONE
+
 			if (!this.manual) this.willUpdate()
 
 			this.#pre!.update(pre)
@@ -117,6 +148,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		}
 
 		this.#created = true
+		this.#prevVal = value
 	}
 
 	willUpdate() {
@@ -520,7 +552,16 @@ class Digit extends Char<KeyedDigitPart> {
 		this.#roll = roll
 		this.#numbers = numbers
 	}
+
 	#prevValue?: KeyedDigitPart['value']
+
+	get trend() {
+		const rootTrend = this.flow.getComputedTrend()
+		if (rootTrend === Trend.NONE) {
+			return getTrend(this.value, this.#prevValue)
+		}
+		return rootTrend
+	}
 
 	// Relative to parent:
 	#prevCenter?: number
@@ -559,9 +600,14 @@ class Digit extends Char<KeyedDigitPart> {
 			}
 		)
 
+		const trend = this.trend
 		let diff = this.value - this.#prevValue!
-		// Loop around if we're going the other way:
-		if (this.#prevValue! > this.value) diff = 10 - this.#prevValue! + this.value
+		// Loop around if need be:
+		if (trend === Trend.DOWN && this.value > this.#prevValue!)
+			diff = this.value - 10 - this.#prevValue!
+		if (trend === Trend.UP && this.value < this.#prevValue!)
+			diff = 10 - this.#prevValue! + this.value
+
 		this.#roll.animate(
 			{
 				transform: [`rotateX(${diff * 36}deg)`, 'none']

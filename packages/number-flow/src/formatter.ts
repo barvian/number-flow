@@ -74,7 +74,14 @@ export function partitionParts(value: Value, formatter: Intl.NumberFormat) {
 		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
 	}
 
-	return { pre, integer, fraction, post, formatted }
+	return {
+		pre,
+		integer,
+		fraction,
+		post,
+		formatted,
+		value: typeof value == 'string' ? parseFloat(value) : value
+	}
 }
 
 export type PartitionedParts = ReturnType<typeof partitionParts>
