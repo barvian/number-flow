@@ -347,6 +347,7 @@ class NumberSection extends Section {
 			{
 				...this.flow.xTiming,
 				composite: 'accumulate'
+				composite: 'accumulate' // important, accumulate onto pre-scaled instead of add to scaled
 			}
 		)
 
