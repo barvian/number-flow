@@ -12,10 +12,20 @@ const repo = await fetch(`https://api.github.com/repos/${repoPath}`, {
 }).then((r) =>
 	r.ok ? r.json() : Promise.reject(`Could not fetch repo ${repoPath}: ${r.statusText}`)
 )
-const stargazers = repo.stargazers_count
+const stargazers: number = repo.stargazers_count
 ---
 
-<ReactNav client:load {stargazers} repo={pkg.repository.url} transition:persist="nav" />
+<ReactNav
+	client:load
+	stargazers={stargazers.toLocaleString('en-US', {
+		notation: 'compact',
+		compactDisplay: 'short',
+		// @ts-expect-error missing types
+		roundingMode: 'trunc'
+	})}
+	repo={pkg.repository.url}
+	transition:persist="nav"
+/>
 
 <style is:global>
 	::view-transition-old(nav) {

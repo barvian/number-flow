@@ -5,7 +5,7 @@ import * as React from 'react'
 import clsx from 'clsx/lite'
 
 type Props = JSX.IntrinsicElements['nav'] & {
-	stargazers: number
+	stargazers: number | string
 	repo?: string
 }
 
