@@ -13,16 +13,17 @@ const repo = await fetch(`https://api.github.com/repos/${repoPath}`, {
 	r.ok ? r.json() : Promise.reject(`Could not fetch repo ${repoPath}: ${r.statusText}`)
 )
 const stargazers: number = repo.stargazers_count
+const formattedStars = stargazers.toLocaleString('en-US', {
+	notation: 'compact',
+	compactDisplay: 'short'
+	// GitHub rounds these (Twitter truncates)
+	// roundingMode: 'trunc'
+})
 ---
 
 <ReactNav
 	client:load
-	stargazers={stargazers.toLocaleString('en-US', {
-		notation: 'compact',
-		compactDisplay: 'short',
-		// @ts-expect-error missing types
-		roundingMode: 'trunc'
-	})}
+	stargazers={formattedStars}
 	repo={pkg.repository.url}
 	transition:persist="nav"
 />
