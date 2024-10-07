@@ -49,9 +49,6 @@ export const defaultSpinTiming = defaultXTiming
 
 let styleSheet: CSSStyleSheet | undefined
 
-type AnimationsFinishedListener = () => void
-type OffAnimationsFinished = () => void
-
 // This one is used internally for framework wrappers, and
 // doesn't include things like i.e. attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement {
@@ -167,7 +164,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		this.#post!.willUpdate(rect)
 	}
 
-	#abortAnimationsFinished?: AbortController
+	#abortAnimationsFinish?: AbortController
 
 	didUpdate() {
 		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
@@ -176,13 +173,14 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		this.#fraction!.didUpdate(rect)
 		this.#post!.didUpdate(rect)
 
-		// Every update, abort any existing animations finished promise.all, then create a new one:
-		this.#abortAnimationsFinished?.abort()
+		// Because we use composited animations, they technically always finish.
+		// So abort the Promise.all on each update so we only emit an event at the very end:
+		this.#abortAnimationsFinish?.abort()
 		const controller = new AbortController()
 		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
-			if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinished'))
+			if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinish'))
 		})
-		this.#abortAnimationsFinished = controller
+		this.#abortAnimationsFinish = controller
 	}
 }
 
@@ -499,7 +497,7 @@ class AnimatePresence {
 		return this.#present
 	}
 
-	#handleRootAnimationsFinished = () => {
+	#handleRootAnimationsFinish = () => {
 		this.el.remove()
 		this.#onRemove?.()
 	}
@@ -517,9 +515,9 @@ class AnimatePresence {
 			}
 		)
 
-		if (val) this.flow.removeEventListener('animationsfinished', this.#handleRootAnimationsFinished)
+		if (val) this.flow.removeEventListener('animationsfinish', this.#handleRootAnimationsFinish)
 		else
-			this.flow.addEventListener('animationsfinished', this.#handleRootAnimationsFinished, {
+			this.flow.addEventListener('animationsfinish', this.#handleRootAnimationsFinish, {
 				once: true
 			})
 
