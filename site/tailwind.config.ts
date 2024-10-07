@@ -100,7 +100,7 @@ export default {
 
 						h3: {
 							'@apply font-semibold text-base': {},
-							'margin-top': '1.7em',
+							'margin-top': '2.4em',
 							'margin-bottom': '1em'
 						},
 
