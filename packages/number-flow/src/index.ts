@@ -598,6 +598,8 @@ class Digit extends Char<KeyedDigitPart> {
 	willUpdate(parentRect: DOMRect) {
 		const rect = this.el.getBoundingClientRect()
 
+		this.#prevValue = this.value
+
 		const prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		this.#prevCenter =
@@ -605,9 +607,7 @@ class Digit extends Char<KeyedDigitPart> {
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		// Keep this here not in willUpdate because it's not transition related:
-		this.#prevValue = this.value
-		this.#numbers[this.#prevValue]?.classList.remove('current')
+		this.#numbers[this.#prevValue!]?.classList.remove('current')
 		this.el.style.setProperty('--c', String(value))
 		this.#numbers[value]?.classList.add('current')
 		this.value = value
@@ -628,6 +628,8 @@ class Digit extends Char<KeyedDigitPart> {
 				composite: 'accumulate'
 			}
 		)
+
+		if (this.value === this.#prevValue) return
 
 		const trend = this.trend
 		let diff = this.value - this.#prevValue!
