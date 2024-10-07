@@ -37,7 +37,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
 }
 
-type NumberFlowPrivProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
+type NumberFlowImplProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
 	parts: PartitionedParts
 }
@@ -48,8 +48,8 @@ type NumberFlowPrivProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'>
 const formatters: Record<string, Intl.NumberFormat> = {}
 
 // We need a class component to use getSnapshotBeforeUpdate:
-class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
-	constructor(props: NumberFlowPrivProps) {
+class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
+	constructor(props: NumberFlowImplProps) {
 		super(props)
 		this.handleRef = this.handleRef.bind(this)
 	}
@@ -135,7 +135,7 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 		return partitionParts(value, formatter)
 	}, [value, localesString, formatString])
 
-	return <NumberFlowPriv {...props} parts={parts} innerRef={ref} />
+	return <NumberFlowImpl {...props} parts={parts} innerRef={ref} />
 })
 
 export default NumberFlow
