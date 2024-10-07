@@ -168,18 +168,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	#abortAnimationsFinished?: AbortController
-	#animationsFinishedListeners = new Set<AnimationsFinishedListener>()
-	onAnimationsFinished(fn: AnimationsFinishedListener) {
-		this.#animationsFinishedListeners.add(fn)
-		return () => {
-			this.#animationsFinishedListeners.delete(fn)
-		}
-	}
-
-	#handleAnimationsFinished = () => {
-		this.#animationsFinishedListeners.forEach((l) => l())
-		this.#animationsFinishedListeners.clear()
-	}
 
 	didUpdate() {
 		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
@@ -192,7 +180,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		this.#abortAnimationsFinished?.abort()
 		const controller = new AbortController()
 		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
-			if (!controller.signal.aborted) this.#handleAnimationsFinished()
+			if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinished'))
 		})
 		this.#abortAnimationsFinished = controller
 	}
@@ -511,8 +499,6 @@ class AnimatePresence {
 		return this.#present
 	}
 
-	#offRootAnimationsFinished?: OffAnimationsFinished
-
 	#handleRootAnimationsFinished = () => {
 		this.el.remove()
 		this.#onRemove?.()
@@ -531,12 +517,12 @@ class AnimatePresence {
 			}
 		)
 
-		// If making present, remove any root animations finished listener:
-		if (val) this.#offRootAnimationsFinished?.()
+		if (val) this.flow.removeEventListener('animationsfinished', this.#handleRootAnimationsFinished)
 		else
-			this.#offRootAnimationsFinished = this.flow.onAnimationsFinished(
-				this.#handleRootAnimationsFinished
-			)
+			this.flow.addEventListener('animationsfinished', this.#handleRootAnimationsFinished, {
+				once: true
+			})
+
 		this.#present = val
 	}
 }
