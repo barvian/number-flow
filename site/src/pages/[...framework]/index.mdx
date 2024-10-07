@@ -17,9 +17,9 @@ export { getStaticPaths } from '@/lib/framework'
 import NumberFlow from '@number-flow/react'
 
 <NumberFlow
-    value={value}
-    format={{ notation: 'compact' }} // Intl.NumberFormat options
-    locales="en-US" // Intl.NumberFormat locales
+	value={value}
+	format={{ notation: 'compact' }} // Intl.NumberFormat options
+	locales="en-US" // Intl.NumberFormat locales
 />
 ```
 </div>
@@ -34,12 +34,12 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 
 ```jsx
 <NumberFlow
-    // Used for x-related transforms:
-    xTiming={{ duration: 700, easing: 'linear(...)' }}
-    // Used for the digit spin animations:
-    spinTiming={{ duration: 700, easing: 'ease-out' }}
-    // Used for fading in/out characters:
-    fadeTiming={{ duration: 350, easing: 'ease' }}
+	// Used for x-related transforms:
+	xTiming={{ duration: 700, easing: 'linear(...)' }}
+	// Used for the digit spin animations:
+	spinTiming={{ duration: 700, easing: 'ease-out' }}
+	// Used for fading in/out characters:
+	fadeTiming={{ duration: 350, easing: 'ease' }}
 />
 ```
 
@@ -101,8 +101,8 @@ or full `EffectTiming` objects, i.e.
 ```ts
 // Use first timing if linear is supported, otherwise cubic-bezier one:
 const timing = useLinear(
-    { easing: `linear(...)`, duration: 900 },
-    { easing: `cubic-bezier(...)`, duration: 750 }
+	{ easing: `linear(...)`, duration: 900 },
+	{ easing: `cubic-bezier(...)`, duration: 750 }
 )
 ```
 
