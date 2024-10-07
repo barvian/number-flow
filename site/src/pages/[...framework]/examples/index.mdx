@@ -6,6 +6,8 @@ description: 'Ready-made examples of common patterns to get you started with Num
 export { getStaticPaths } from '@/lib/framework'
 import Slider from './_Slider'
 import SliderCode from './_Slider/Example?raw'
+// import Countdown from './_Countdown'
+// import CountdownCode from './_Countdown/Example?raw'
 import ColoredTrends from './_ColoredTrends'
 import ColoredTrendsCode from './_ColoredTrends/Example?raw'
 import FramerMotionLayoutAnimations from './_FramerMotion'
@@ -17,6 +19,14 @@ import Code from '@/components/Code.astro';
 <Slider client:visible>
 <Code code={SliderCode} lang="tsx" />
 </Slider>
+
+{/*
+## Countdown
+
+<Countdown client:visible>
+<Code code={CountdownCode} lang="tsx" />
+</Countdown>
+*/}
 
 ## Colored trends
 

@@ -16,17 +16,12 @@ export type DemoProps = {
 	title?: React.ReactNode
 }
 
-// const knowsToClickAtom = atom(false)
+type Props = DemoProps & { onClick?: () => void }
 
-export default function Demo({
-	children,
-	className,
-	prose = false,
-	defaultValue = 'preview',
-	code,
-	title,
-	onClick
-}: DemoProps & { onClick?: () => void }) {
+const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
+	{ children, className, prose = false, defaultValue = 'preview', code, title, onClick },
+	ref
+) {
 	// const [knowsToClick, setKnowsToClick] = useAtom(knowsToClickAtom)
 	const [knowsToClick, setKnowsToClick] = React.useState(false)
 	const [active, setActive] = React.useState(defaultValue)
@@ -47,6 +42,7 @@ export default function Demo({
 
 	return (
 		<Tabs.Root
+			ref={ref}
 			className={clsx(
 				!prose && 'text-primary not-prose',
 				active === 'code' && 'dark',
@@ -120,4 +116,6 @@ export default function Demo({
 			{code && <Tabs.Content value="code">{code}</Tabs.Content>}
 		</Tabs.Root>
 	)
-}
+})
+
+export default Demo
