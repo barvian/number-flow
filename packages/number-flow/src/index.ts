@@ -49,6 +49,9 @@ export const defaultSpinTiming = defaultXTiming
 
 let styleSheet: CSSStyleSheet | undefined
 
+type AnimationsFinishedListener = () => void
+type OffAnimationsFinished = () => void
+
 // This one is used internally for framework wrappers, and
 // doesn't include things like i.e. attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement {
@@ -164,12 +167,34 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		this.#post!.willUpdate(rect)
 	}
 
+	#abortAnimationsFinished?: AbortController
+	#animationsFinishedListeners = new Set<AnimationsFinishedListener>()
+	onAnimationsFinished(fn: AnimationsFinishedListener) {
+		this.#animationsFinishedListeners.add(fn)
+		return () => {
+			this.#animationsFinishedListeners.delete(fn)
+		}
+	}
+
+	#handleAnimationsFinished = () => {
+		this.#animationsFinishedListeners.forEach((l) => l())
+		this.#animationsFinishedListeners.clear()
+	}
+
 	didUpdate() {
 		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
 		this.#pre!.didUpdate(rect)
 		this.#integer!.didUpdate(rect)
 		this.#fraction!.didUpdate(rect)
 		this.#post!.didUpdate(rect)
+
+		// Every update, abort any existing animations finished promise.all, then create a new one:
+		this.#abortAnimationsFinished?.abort()
+		const controller = new AbortController()
+		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
+			if (!controller.signal.aborted) this.#handleAnimationsFinished()
+		})
+		this.#abortAnimationsFinished = controller
 	}
 }
 
@@ -486,6 +511,13 @@ class AnimatePresence {
 		return this.#present
 	}
 
+	#offRootAnimationsFinished?: OffAnimationsFinished
+
+	#handleRootAnimationsFinished = () => {
+		this.el.remove()
+		this.#onRemove?.()
+	}
+
 	set present(val) {
 		if (this.#present === val) return
 		this.el.style.setProperty('--_number-flow-d-opacity', val ? '0' : '-.999')
@@ -499,11 +531,12 @@ class AnimatePresence {
 			}
 		)
 
-		// if (!val)
-		// animation.onfinish = () => {
-		// 	this.el.remove()
-		// 	this.#onRemove?.()
-		// }
+		// If making present, remove any root animations finished listener:
+		if (val) this.#offRootAnimationsFinished?.()
+		else
+			this.#offRootAnimationsFinished = this.flow.onAnimationsFinished(
+				this.#handleRootAnimationsFinished
+			)
 		this.#present = val
 	}
 }
