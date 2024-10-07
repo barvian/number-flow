@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 
-const NUMBERS = [321, -3241.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
-const LOCALES = ['fr-FR', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
+const NUMBERS = [321, -3241.6, 42.8, 398.42, -32.435, 1435237.2, 12348.43, -3243.6, 54323.2]
+const LOCALES = ['fr-FR', 'en-US', 'en-US', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
 const FORMATS = [
 	{
 		// style: "unit",
@@ -21,10 +21,14 @@ const FORMATS = [
 	},
 	{},
 	{
-		style: 'percent',
 		signDisplay: 'always'
 	},
-	{},
+	{
+		style: 'percent',
+		signDisplay: 'always',
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1
+	},
 	{
 		style: 'unit',
 		unit: 'meter',
@@ -80,11 +84,12 @@ export default function Hero() {
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
-				A React component to transition &amp; format numbers. Dependency-free. Built on{' '}
+				An animated number component for React. Dependency-free. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
 					target="_blank"
 					aria-label="Intl.NumberFormat"
+					title="Intl.NumberFormat"
 				>
 					web
 				</a>{' '}
@@ -93,6 +98,7 @@ export default function Hero() {
 					href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API"
 					target="_blank"
 					aria-label="Web Animations API"
+					title="Web Animations API"
 				>
 					standards
 				</a>
