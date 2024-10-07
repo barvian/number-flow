@@ -11,7 +11,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			<div className="mb-4 h-5 space-x-1">
 				{on && <span>Increased:</span>}
 				<NumberFlow
-					className="font-[inherit]"
+					className="font-[inherit] tracking-tight"
 					isolate
 					value={on ? 1.2423 : 0.4175}
 					format={{ style: 'percent' }}
@@ -23,7 +23,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			<div className="h-5 space-x-1">
 				{on && <span>Increased:</span>}
 				<NumberFlow
-					className="font-[inherit]"
+					className="font-[inherit] tracking-tight"
 					value={on ? 1.2423 : 0.4175}
 					format={{ style: 'percent' }}
 				/>
