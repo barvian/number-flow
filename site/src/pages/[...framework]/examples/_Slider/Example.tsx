@@ -2,7 +2,7 @@ import NumberFlow from '@number-flow/react'
 import * as React from 'react'
 import * as Slider from '@radix-ui/react-slider'
 
-export default function RangeExample() {
+export default function SliderExample() {
 	const [value, setValue] = React.useState(50)
 
 	return (

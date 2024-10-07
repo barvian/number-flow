@@ -4,7 +4,7 @@ import Example from './Example'
 import type { Rename } from '@/lib/types'
 
 const NUMBERS = [124.23, 41.75, 2125.95]
-const DIFFS = [0.0564, -123.114, 0.0029]
+const DIFFS = [0.0564, -1.5912, 0.0029]
 
 export default function DemoHOC({
 	children,

@@ -5,6 +5,7 @@ description: A React component to transition & format numbers. Dependency-free. 
 ---
 import Pre from '@/components/Pre.astro';
 export const components = {pre: Pre}
+import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
 import Union from '@/components/Union.astro'
 export { getStaticPaths } from '@/lib/framework'
@@ -32,16 +33,18 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 NumberFlow accepts props to customize the transition timings. Each take an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
+<TimingsDemo client:visible defaultValue='code'>
 ```jsx
 <NumberFlow
 	// Used for x-related transforms:
 	xTiming={{ duration: 700, easing: 'linear(...)' }}
 	// Used for the digit spin animations:
-	spinTiming={{ duration: 700, easing: 'ease-out' }}
+	spinTiming={{ duration: 700, easing: 'linear(...)' }}
 	// Used for fading in/out characters:
-	fadeTiming={{ duration: 350, easing: 'ease' }}
+	fadeTiming={{ duration: 350, easing: 'ease-out' }}
 />
 ```
+</TimingsDemo>
 
 
 For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
@@ -75,14 +78,8 @@ These adjust the height and width of the gradient fade-out masks at the edges of
 
 ### `--number-flow-char-height`
 
-Sets the overall height of each character (default: `1em`). In my opinion, the transitions look better when this is set to
-the smallest number that fits all your component's characters, i.e.
-
-```jsx
-<NumberFlow style={{ '--number-flow-char-height': '0.85em' }} />
-```
-
-The exact value will depend on your font and formatting options.
+Sets the overall height of each character (default: `1em`). This can be used to adjust the 
+spacing between numbers in each stack.
 
 ## Hooks
 

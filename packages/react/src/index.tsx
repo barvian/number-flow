@@ -154,14 +154,7 @@ export function useSupportsLinear() {
 type LinearEasing = `linear(${string})`
 type LinearTiming = EffectTiming & { easing: LinearEasing }
 
-function useLinear(linear: LinearEasing, fallback: string): string
-function useLinear(linear: LinearTiming, fallback: EffectTiming): EffectTiming
-function useLinear(
-	linear: LinearEasing | LinearTiming,
-	fallback: string | EffectTiming
-): string | EffectTiming {
+export function useLinear<T = any>(linear: T, fallback: T): T {
 	const supported = useSupportsLinear()
 	return supported ? linear : fallback
 }
-
-export { useLinear }

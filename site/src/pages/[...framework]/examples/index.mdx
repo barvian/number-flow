@@ -4,28 +4,19 @@ title: 'NumberFlow Examples'
 description: 'Ready-made examples of common patterns to get you started with NumberFlow.'
 ---
 export { getStaticPaths } from '@/lib/framework'
-import CustomEasings from './_CustomEasings'
-import CustomEasingsCode from './_CustomEasings/Example?raw'
-import Range from './_Range'
-import RangeCode from './_Range/Example?raw'
+import Slider from './_Slider'
+import SliderCode from './_Slider/Example?raw'
 import ColoredTrends from './_ColoredTrends'
 import ColoredTrendsCode from './_ColoredTrends/Example?raw'
 import FramerMotionLayoutAnimations from './_FramerMotion'
 import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
 import Code from '@/components/Code.astro';
 
-## Custom timings
+## Slider
 
-<CustomEasings client:visible>
-<span aria-hidden="true" className='xl:hidden' slot="title">Custom timings</span>
-<Code code={CustomEasingsCode} class="xl:pre-first-line:hidden" firstLine='// Custom timings example' lang="tsx" />
-</CustomEasings>
-
-## Range
-
-<Range client:visible>
-<Code code={RangeCode} lang="tsx" />
-</Range>
+<Slider client:visible>
+<Code code={SliderCode} lang="tsx" />
+</Slider>
 
 ## Colored trends
 
