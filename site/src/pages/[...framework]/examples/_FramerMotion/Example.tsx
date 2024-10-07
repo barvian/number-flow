@@ -17,7 +17,7 @@ export default function FramerMotionExample({ value, diff }: Props) {
 	const layoutTransition = useTiming(defaultXTiming)
 
 	return (
-		<span style={{ '--number-flow-char-height': '0.85em' }} className="flex items-center gap-2">
+		<span style={{ '--number-flow-line-height': '0.85em' }} className="flex items-center gap-2">
 			<MotionNumberFlow
 				value={value}
 				className="~text-xl/4xl font-semibold"
