@@ -32,7 +32,6 @@ export default function Demo({
 	const id = useId()
 
 	function handleClick() {
-		if (!onClick) return
 		setKnowsToClick(true)
 		onClick()
 	}
@@ -88,8 +87,8 @@ export default function Demo({
 					className,
 					'relative flex min-h-[20rem] items-center justify-center rounded-lg border border-zinc-200 p-5 pb-6 data-[state=inactive]:hidden dark:border-zinc-800'
 				)}
-				onClick={handleClick}
-				onMouseDown={handleMouseDown}
+				onClick={onClick && handleClick}
+				onMouseDown={onClick && handleMouseDown}
 			>
 				{title && <div className="top-4.5 absolute left-5 text-sm">{title}</div>}
 				{children}
