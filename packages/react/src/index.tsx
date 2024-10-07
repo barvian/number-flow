@@ -11,7 +11,6 @@ import {
 	NumberFlowLite,
 	supportsLinear
 } from 'number-flow'
-export { defaultXTiming, defaultSpinTiming } from 'number-flow'
 export type * from 'number-flow'
 
 // Can't wait to not have to do this in React 19:
@@ -150,9 +149,6 @@ export function useSupportsLinear() {
 
 	return supported
 }
-
-type LinearEasing = `linear(${string})`
-type LinearTiming = EffectTiming & { easing: LinearEasing }
 
 export function useLinear<T = any>(linear: T, fallback: T): T {
 	const supported = useSupportsLinear()

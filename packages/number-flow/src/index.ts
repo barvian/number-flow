@@ -8,12 +8,7 @@ import {
 	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, {
-	maskHeight,
-	opacityDeltaVar,
-	supportsAnimationComposition,
-	supportsLinear
-} from './styles'
+import styles, { opacityDeltaVar, supportsLinear } from './styles'
 import { getDuration, frames, lerp } from './util/animate'
 import { BROWSER } from 'esm-env'
 
@@ -34,16 +29,23 @@ const getTrend = (val: number | bigint, prev?: number | bigint) => {
 }
 
 export const defaultFadeTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
+
+export const defaultXTimingLinearDuration = 900
+// prettier-ignore
+export const defaultXTimingLinearPoints = [0, .005, .019, .039, .066, .096, .129, .165, .202, .24, .278, .316, .354, .39, .426, .461, .494, .526, .557, .586, .614, .64, .665, .689, .711, .731, .751, .769, .786, .802, .817, .831, .844, .856, .867, .877, .887, .896, .904, .912, .919, .925, .931, .937, .942, .947, .951, .955, .959, .962, .965, .968, .971, .973, .976, .978, .98, .981, .983, .984, .986, .987, .988, .989, .99, .991, .992, .992, .993, .994, .994, .995, .995, .996, .996, .9963, .9967, .9969, .9972, .9975, .9977, .9979, .9981, .9982, .9984, .9985, .9987, .9988, .9989, 1]
+export const defaultXTimingFallbackDuration = 900
+// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
+// prettier-ignore
+export const defaultXTimingFallbackPoints = [0.32, 0.72, 0, 1]
+
 export const defaultXTiming: EffectTiming = supportsLinear
 	? {
-			duration: 900,
-			easing:
-				'linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)'
+			duration: defaultXTimingLinearDuration,
+			easing: `linear(${defaultXTimingLinearPoints.join(',')})`
 		}
 	: {
-			duration: 900,
-			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
-			easing: `cubic-bezier(.32,.72,0,1)`
+			duration: defaultXTimingFallbackDuration,
+			easing: `cubic-bezier(${defaultXTimingFallbackPoints.join(',')})`
 		}
 export const defaultSpinTiming = defaultXTiming
 
