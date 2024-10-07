@@ -52,7 +52,7 @@ const halfMaskHeight = `calc(${maskHeight} / 2)`
 
 const styles = css`
 	:host {
-		display: inline-block;
+		display: inline-flex; /* better for matching baselines with other inline elements */
 		direction: ltr;
 		user-select: none;
 		pointer-events: none;
@@ -74,10 +74,10 @@ const styles = css`
 	}
 
 	.section {
-		display: inline-block;
+		align-items: baseline;
+		display: inline-flex;
 		padding-bottom: ${halfMaskHeight};
 		padding-top: ${halfMaskHeight};
-		vertical-align: top; /* Safari needs this for some reason */
 		user-select: none;
 	}
 
@@ -89,7 +89,8 @@ const styles = css`
 	}
 
 	.section__inner {
-		display: inline-block;
+		align-items: baseline;
+		display: inline-flex;
 		transform-origin: inherit;
 		height: inherit;
 	}
@@ -152,11 +153,11 @@ const styles = css`
 	}
 
 	.digit {
-		display: inline-block;
+		display: block;
 	}
 
 	.digit__roll {
-		display: inline-block;
+		display: block;
 		position: relative;
 		transform-style: preserve-3d;
 		backface-visibility: hidden;
@@ -164,7 +165,7 @@ const styles = css`
 	}
 
 	.digit__num {
-		display: inline-block;
+		display: block;
 		padding: ${halfMaskHeight} 0;
 		backface-visibility: hidden;
 	}
@@ -178,19 +179,20 @@ const styles = css`
 	}
 
 	.empty {
-		display: inline-block;
+		display: block;
 		padding: ${halfMaskHeight} 0;
 	}
 
 	.symbol {
-		display: inline-block;
+		align-items: baseline;
+		display: inline-flex;
 		position: relative;
 		isolation: isolate;
 		padding: ${halfMaskHeight} 0;
 	}
 
 	.symbol__value {
-		display: inline-block;
+		display: block;
 		white-space: pre; /* some symbols are spaces or thin spaces */
 	}
 

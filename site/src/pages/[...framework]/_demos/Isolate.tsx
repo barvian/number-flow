@@ -8,16 +8,25 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 	return (
 		<Demo {...rest} onClick={() => setOn((o) => !o)}>
 			<code>{'isolate'}</code>
-			<div className="mb-4 flex items-center gap-3">
-				{on && <div className="w-18 bg-faint h-4 rounded-sm" />}
-				<NumberFlow isolate value={on ? 1.2423 : 0.4175} format={{ style: 'percent' }} />
+			<div className="mb-4 h-5 space-x-1">
+				{on && <span>Increased:</span>}
+				<NumberFlow
+					className="font-[inherit]"
+					isolate
+					value={on ? 1.2423 : 0.4175}
+					format={{ style: 'percent' }}
+				/>
 			</div>
 			<span className="text-center">
 				<code>{'isolate={false}'}</code> (default)
 			</span>
-			<div className="flex items-center gap-3">
-				{on && <div className="w-18 bg-faint h-4 rounded-sm" />}
-				<NumberFlow value={on ? 1.2423 : 0.4175} format={{ style: 'percent' }} />
+			<div className="h-5 space-x-1">
+				{on && <span>Increased:</span>}
+				<NumberFlow
+					className="font-[inherit]"
+					value={on ? 1.2423 : 0.4175}
+					format={{ style: 'percent' }}
+				/>
 			</div>
 		</Demo>
 	)
