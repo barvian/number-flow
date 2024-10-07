@@ -27,6 +27,7 @@ export default {
 	corePlugins: {
 		container: false
 	},
+	darkMode: ['variant', ['@media (prefers-color-scheme: dark) { & }', '&:where(.dark *)']],
 	theme: {
 		screens,
 		fontSize,
@@ -180,6 +181,7 @@ export default {
 			)
 
 			addVariant('pre-first-line', ['pre& .line:first-of-type', '& pre .line:first-of-type'])
+			addVariant('prefers-dark', ['@media (prefers-color-scheme: dark) { & }'])
 		})
 	]
 } satisfies Config
