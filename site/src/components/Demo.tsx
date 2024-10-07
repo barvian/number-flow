@@ -57,7 +57,7 @@ export default function Demo({
 		>
 			{code && (
 				<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
-					<Tabs.List className="absolute right-3 top-3 z-10 flex gap-1 rounded-full bg-zinc-200/90 p-1 backdrop-blur-lg dark:bg-black/60">
+					<Tabs.List className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
 						<Tabs.Trigger
 							value="preview"
 							className={clsx(

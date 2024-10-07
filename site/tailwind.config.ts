@@ -43,6 +43,8 @@ export default {
 			colors: {
 				framework: 'var(--color-framework)',
 				zinc: {
+					125: '##f0f0f1',
+					150: '#ececee',
 					850: '#1f1f22'
 				}
 			},

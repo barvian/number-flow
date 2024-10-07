@@ -3,18 +3,18 @@
 	"semanticHighlighting": true,
 	"colors": {
 		"editorLink.activeForeground": "#ca8a0488",
-		"foreground": "#fff8",
+		"foreground": "#fff9",
 		"button.background": "#fff",
 		"button.foreground": "#000",
 		"button.hoverBackground": "#fffb",
 		"list.highlightForeground": "#fff",
 		"textLink.foreground": "#fff",
 		"scrollbar.shadow": "#000",
-		"textLink.activeForeground": "#fff8",
+		"textLink.activeForeground": "#fff9",
 		"editor.lineHighlightBackground": "#8881",
 		"editor.lineHighlightBorder": "#8882",
 		"editorCursor.foreground": "#fff",
-		"editor.findMatchBackground": "#fff8",
+		"editor.findMatchBackground": "#fff9",
 		"editor.findMatchHighlightBackground": "#fff2",
 		"list.activeSelectionForeground": "#fff",
 		"list.focusForeground": "#fff",
@@ -46,39 +46,39 @@
 		"debugToolBar.background": "#000",
 		"commandCenter.background": "#000",
 		"sideBarSectionHeader.background": "#000",
-		"focusBorder": "#fff8",
+		"focusBorder": "#fff9",
 		"titleBar.activeBackground": "#000",
 		"titleBar.inactiveBackground": "#000",
 		"breadcrumb.background": "#000",
 		"activityBar.background": "#000",
-		"activityBar.foreground": "#fff8",
+		"activityBar.foreground": "#fff9",
 		"panel.background": "#000",
 		"sideBar.background": "#000",
-		"sideBarTitle.foreground": "#fff8",
+		"sideBarTitle.foreground": "#fff9",
 		"tab.hoverBackground": "#000",
 		"terminal.background": "#000",
 		"statusBar.background": "#000",
-		"statusBar.foreground": "#fff8",
+		"statusBar.foreground": "#fff9",
 		"selection.background": "#fff2",
 		"editorPane.background": "#000",
 		"badge.background": "#000",
 		"banner.background": "#000",
 		"menu.background": "#000",
 		"activityBarBadge.background": "#000",
-		"activityBarBadge.foreground": "#fff8",
+		"activityBarBadge.foreground": "#fff9",
 		"editorLineNumber.foreground": "#fff2",
-		"editorLineNumber.activeForeground": "#fff8",
+		"editorLineNumber.activeForeground": "#fff9",
 		"statusBarItem.errorBackground": "#f43f5e"
 	},
 	"semanticTokenColors": {
 		"comment": {
-			"foreground": "#fff4"
+			"foreground": "#fff5"
 		},
 		"keyword": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"string": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"selfKeyword": {
 			"foreground": "#fff",
@@ -112,7 +112,7 @@
 			"foreground": "#fff"
 		},
 		"enumMember": {
-			"foreground": "#fff8",
+			"foreground": "#fff9",
 			"bold": false
 		},
 		"enum": {
@@ -120,10 +120,10 @@
 			"bold": true
 		},
 		"boolean": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"number": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"type": {
 			"foreground": "#fff",
@@ -146,7 +146,7 @@
 			"bold": true
 		},
 		"interface": {
-			"foreground": "#fff8",
+			"foreground": "#fff9",
 			"bold": false
 		},
 		"typeParameter": {
@@ -154,7 +154,7 @@
 			"bold": true
 		},
 		"lifetime": {
-			"foreground": "#fff8",
+			"foreground": "#fff9",
 			"italic": false,
 			"bold": false
 		},
@@ -180,13 +180,13 @@
 			"foreground": "#fff"
 		},
 		"operator": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"variable": {
 			"foreground": "#fff"
 		},
 		"variable.readonly": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"parameter": {
 			"foreground": "#fff"
@@ -201,7 +201,7 @@
 			"underline": true
 		},
 		"variable.constant": {
-			"foreground": "#fff8"
+			"foreground": "#fff9"
 		},
 		"struct": {
 			"foreground": "#fff",
@@ -213,7 +213,7 @@
 			"name": "Fallback Operator",
 			"scope": ["keyword.operator"],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		},
 		{
@@ -227,14 +227,14 @@
 				"storage.modifier"
 			],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		},
 		{
 			"name": "Fallback strings",
 			"scope": ["string"],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		},
 		{
@@ -255,14 +255,14 @@
 			"name": "Fallback comments",
 			"scope": ["comment"],
 			"settings": {
-				"foreground": "#fff4"
+				"foreground": "#fff5"
 			}
 		},
 		{
 			"name": "Fallback constants",
 			"scope": ["constant"],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		},
 		{
@@ -311,7 +311,7 @@
 			"name": "Fallback enums & constants",
 			"scope": ["constant.enum", "constant.other"],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		},
 		{
@@ -349,7 +349,7 @@
 			"name": "HTML Attributes",
 			"scope": ["entity.other.attribute-name.html"],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		},
 		{
@@ -370,7 +370,7 @@
 			"name": "Punctuations",
 			"scope": ["punctuation", "meta.brace"],
 			"settings": {
-				"foreground": "#fff8"
+				"foreground": "#fff9"
 			}
 		}
 	]
