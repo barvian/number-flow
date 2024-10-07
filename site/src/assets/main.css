@@ -57,6 +57,14 @@
 		@apply text-zinc-500 dark:text-zinc-400;
 	}
 
+	.bg-muted {
+		@apply bg-zinc-500 dark:bg-zinc-400;
+	}
+
+	.bg-faint {
+		@apply bg-zinc-200 dark:bg-zinc-700;
+	}
+
 	.scrollbar-none {
 		-ms-overflow-style: none; /* IE */
 		scrollbar-width: none; /* Firefox */

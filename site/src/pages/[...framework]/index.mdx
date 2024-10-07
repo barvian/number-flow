@@ -5,7 +5,7 @@ description: A React component to transition & format numbers. Dependency-free. 
 ---
 import Pre from '@/components/Pre.astro';
 export const components = {pre: Pre}
-import Demo from '@/components/Demo'
+import IsolateDemo from './_demos/Isolate'
 import Union from '@/components/Union.astro'
 export { getStaticPaths } from '@/lib/framework'
 
@@ -57,15 +57,12 @@ Controls the direction of the digits.
 - `false`: Ignores the trend of the number; each digit goes up if it increases and down if it decreases. This can be useful if you
 want to animate number changes without conveying an overall increase or decrease ([example](https://x.com/pontusab/status/1825941664189526067)).
 
-### `root: `<code className="text-muted">boolean</code>
+### `isolate: `<code className="text-muted">boolean</code>
 
-This prop can be used to make the transitions relative to the `<NumberFlow>` itself, rather than the
-viewport (default). This can prevent unwanted animations when the `<NumberFlow>`
- moves around the page.
+If `isolate` is set, `<NumberFlow>`'s transitions are isolated from any other layout changes
+that may occur in the same update. This can prevent potentially unwanted animations:
 
-```tsx
-<NumberFlow root />
-```
+<IsolateDemo prose client:visible />
 
 ## Styling
 

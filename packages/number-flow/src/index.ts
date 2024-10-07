@@ -59,7 +59,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	xTiming = defaultXTiming
 	spinTiming = defaultSpinTiming
 	fadeTiming = defaultFadeTiming
-	root = false
 	manual = false
 
 	#created = false
@@ -157,21 +156,19 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	willUpdate() {
-		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
-		this.#pre!.willUpdate(rect)
-		this.#integer!.willUpdate(rect)
-		this.#fraction!.willUpdate(rect)
-		this.#post!.willUpdate(rect)
+		this.#pre!.willUpdate()
+		this.#integer!.willUpdate()
+		this.#fraction!.willUpdate()
+		this.#post!.willUpdate()
 	}
 
 	#abortAnimationsFinish?: AbortController
 
 	didUpdate() {
-		const rect = this.root ? this.getBoundingClientRect() : new DOMRect()
-		this.#pre!.didUpdate(rect)
-		this.#integer!.didUpdate(rect)
-		this.#fraction!.didUpdate(rect)
-		this.#post!.didUpdate(rect)
+		this.#pre!.didUpdate()
+		this.#integer!.didUpdate()
+		this.#fraction!.didUpdate()
+		this.#post!.didUpdate()
 
 		// Because we use composited animations, they technically always finish.
 		// So abort the Promise.all on each update so we only emit an event at the very end:
@@ -336,10 +333,10 @@ class NumberSection extends Section {
 	#prevWidth?: number
 	#prevOffset?: number
 
-	willUpdate(parentRect: DOMRect) {
+	willUpdate() {
 		const rect = this.el.getBoundingClientRect()
 		this.#prevWidth = rect.width
-		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
+		this.#prevOffset = rect[this.justify]
 
 		const innerRect = this.#inner.getBoundingClientRect()
 		this.children.forEach((comp) => comp.willUpdate(innerRect))
@@ -368,9 +365,9 @@ class NumberSection extends Section {
 		this.pop(removed)
 	}
 
-	didUpdate(parentRect: DOMRect) {
+	didUpdate() {
 		const rect = this.el.getBoundingClientRect()
-		const offset = rect[this.justify] - parentRect[this.justify]
+		const offset = rect[this.justify]
 
 		const dx = this.#prevOffset! - offset
 		const scale = Math.max(this.#prevWidth!, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
@@ -417,9 +414,9 @@ class NumberSection extends Section {
 class SymbolSection extends Section {
 	#prevOffset?: number
 
-	willUpdate(parentRect: DOMRect) {
+	willUpdate() {
 		const rect = this.el.getBoundingClientRect()
-		this.#prevOffset = rect[this.justify] - parentRect[this.justify]
+		this.#prevOffset = rect[this.justify]
 
 		this.children.forEach((comp) => comp.willUpdate(rect))
 	}
@@ -440,9 +437,9 @@ class SymbolSection extends Section {
 		this.addNewAndUpdateExisting(parts)
 	}
 
-	didUpdate(parentRect: DOMRect) {
+	didUpdate() {
 		const rect = this.el.getBoundingClientRect()
-		const offset = rect[this.justify] - parentRect[this.justify]
+		const offset = rect[this.justify]
 
 		// Make sure to pass this in before starting to animate:
 		this.children.forEach((comp) => comp.didUpdate(rect))

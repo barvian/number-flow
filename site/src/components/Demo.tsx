@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 // import { atom, useAtom } from 'jotai'
-import { clsx } from 'clsx'
+import { clsx } from 'clsx/lite'
 import { motion, MotionConfig } from 'framer-motion'
 import { useId } from 'react'
 
@@ -10,8 +10,9 @@ type TabValue = 'preview' | 'code'
 export type DemoProps = {
 	children: React.ReactNode
 	className?: string
+	prose?: boolean
 	defaultValue?: TabValue
-	code: React.ReactNode
+	code?: React.ReactNode
 	title?: React.ReactNode
 }
 
@@ -20,6 +21,7 @@ export type DemoProps = {
 export default function Demo({
 	children,
 	className,
+	prose = false,
 	defaultValue = 'preview',
 	code,
 	title,
@@ -33,7 +35,7 @@ export default function Demo({
 
 	function handleClick() {
 		setKnowsToClick(true)
-		onClick()
+		onClick?.()
 	}
 	function handleMouseDown(event: React.MouseEvent<HTMLElement>) {
 		// Prevent selection of text:
@@ -45,47 +47,49 @@ export default function Demo({
 
 	return (
 		<Tabs.Root
-			className="not-prose text-primary relative isolate" // reset text color if inside prose
+			className={clsx(!prose && 'text-primary not-prose', 'relative isolate')} // reset text color if inside prose
 			value={active}
 			onValueChange={(val) => setActive(val as TabValue)}
 		>
-			<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
-				<Tabs.List className="absolute right-3 top-3 z-10 flex gap-1 rounded-full bg-zinc-200/90 p-1 backdrop-blur-lg dark:bg-black/60">
-					<Tabs.Trigger
-						value="preview"
-						className="dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-[color]"
-					>
-						{active === 'preview' && (
-							<motion.div
-								className="absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/15"
-								style={{ borderRadius: 999 }}
-								layout
-								layoutId={`${id}active`}
-							></motion.div>
-						)}
-						Preview
-					</Tabs.Trigger>
-					<Tabs.Trigger
-						value="code"
-						className="dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-[color]"
-					>
-						{active === 'code' && (
-							<motion.div
-								className="absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/15"
-								style={{ borderRadius: 999 }}
-								layout
-								layoutId={`${id}active`}
-							></motion.div>
-						)}
-						Code
-					</Tabs.Trigger>
-				</Tabs.List>
-			</MotionConfig>
+			{code && (
+				<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
+					<Tabs.List className="absolute right-3 top-3 z-10 flex gap-1 rounded-full bg-zinc-200/90 p-1 backdrop-blur-lg dark:bg-black/60">
+						<Tabs.Trigger
+							value="preview"
+							className="dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-[color]"
+						>
+							{active === 'preview' && (
+								<motion.div
+									className="absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/15"
+									style={{ borderRadius: 999 }}
+									layout
+									layoutId={`${id}active`}
+								></motion.div>
+							)}
+							Preview
+						</Tabs.Trigger>
+						<Tabs.Trigger
+							value="code"
+							className="dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-[color]"
+						>
+							{active === 'code' && (
+								<motion.div
+									className="absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/15"
+									style={{ borderRadius: 999 }}
+									layout
+									layoutId={`${id}active`}
+								></motion.div>
+							)}
+							Code
+						</Tabs.Trigger>
+					</Tabs.List>
+				</MotionConfig>
+			)}
 			<Tabs.Content
 				value="preview"
 				className={clsx(
 					className,
-					'relative flex min-h-[20rem] items-center justify-center rounded-lg border border-zinc-200 p-5 pb-6 data-[state=inactive]:hidden dark:border-zinc-800'
+					'relative flex min-h-[20rem] flex-col items-center justify-center rounded-lg border border-zinc-200 p-5 pb-6 data-[state=inactive]:hidden dark:border-zinc-800'
 				)}
 				onClick={onClick && handleClick}
 				onMouseDown={onClick && handleMouseDown}
@@ -103,7 +107,7 @@ export default function Demo({
 					</span>
 				)}
 			</Tabs.Content>
-			<Tabs.Content value="code">{code}</Tabs.Content>
+			{code && <Tabs.Content value="code">{code}</Tabs.Content>}
 		</Tabs.Root>
 	)
 }

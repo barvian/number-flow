@@ -30,8 +30,8 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
+	isolate?: boolean
 	trend?: (typeof NumberFlowElement)['prototype']['trend']
-	root?: (typeof NumberFlowElement)['prototype']['root']
 	fadeTiming?: (typeof NumberFlowElement)['prototype']['fadeTiming']
 	xTiming?: (typeof NumberFlowElement)['prototype']['xTiming']
 	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
@@ -58,8 +58,8 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 	// Parts needs to be set in render still:
 	updateNonPartsProps() {
 		if (this.#el) {
+			this.#el.manual = !this.props.isolate
 			if (this.props.trend != null) this.#el.trend = this.props.trend
-			if (this.props.root != null) this.#el.root = this.props.root
 			if (this.props.fadeTiming) this.#el.fadeTiming = this.props.fadeTiming
 			if (this.props.xTiming) this.#el.xTiming = this.props.xTiming
 			if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
@@ -68,17 +68,16 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 
 	override componentDidMount() {
 		this.updateNonPartsProps()
-		if (this.#el) this.#el.manual = true
 	}
 
 	override getSnapshotBeforeUpdate() {
 		this.updateNonPartsProps()
-		this.#el?.willUpdate()
+		if (!this.props.isolate) this.#el?.willUpdate()
 		return null
 	}
 
 	override componentDidUpdate() {
-		this.#el?.didUpdate()
+		if (!this.props.isolate) this.#el?.didUpdate()
 	}
 
 	#el?: NumberFlowElement
@@ -94,7 +93,7 @@ class NumberFlowPriv extends React.Component<NumberFlowPrivProps> {
 			className,
 			parts,
 			// These are set in updateNonPartsProps, so ignore them here:
-			root,
+			isolate,
 			trend,
 			fadeTiming,
 			xTiming,
