@@ -1,11 +1,8 @@
 import * as React from 'react'
 import Demo, { type DemoProps } from '@/components/Demo'
-import useCycle from '@/hooks/useCycle'
 import Example from './Example'
 import type { Rename } from '@/lib/types'
 import { useInView } from 'framer-motion'
-
-const LIKES = [50, 96, 120]
 
 export default function DemoIndicator({
 	children,
@@ -14,13 +11,13 @@ export default function DemoIndicator({
 	const ref = React.useRef<HTMLDivElement>(null)
 	const inView = useInView(ref)
 
-	const [reposts, onRepost, reposted] = useCounter(2, inView)
-	const [likes, onLike, liked] = useCounter(50, inView, 5)
-	const [bookmarks, onBookmark, bookmarked] = useCounter(40, inView, 3)
-	const [views] = useCounter(995, inView, 50)
+	const [reposts, onRepost, reposted] = useCounter(2, inView, 0, 1)
+	const [likes, onLike, liked] = useCounter(50, inView, 0, 3, 5)
+	const [bookmarks, onBookmark, bookmarked] = useCounter(40, inView, 0, 3, 3)
+	const [views] = useCounter(995, inView, 1, 3, 50)
 
 	return (
-		<Demo ref={ref} {...rest} code={children}>
+		<Demo ref={ref} {...rest} minHeight="min-h-[13rem]" className="pt-5" code={children}>
 			<Example
 				likes={likes}
 				liked={liked}
@@ -42,7 +39,7 @@ function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function useCounter(initialValue: number, active: boolean, rate = 1) {
+function useCounter(initialValue: number, active: boolean, min: number, max: number, rate = 1) {
 	const [count, setCount] = React.useState(initialValue)
 	const [hasIncremented, setHasIncremented] = React.useState(false)
 
@@ -53,8 +50,8 @@ function useCounter(initialValue: number, active: boolean, rate = 1) {
 
 		const randomlyIncrease = (delay: number) => {
 			timeout = setTimeout(() => {
-				setCount((c) => c + randomBetween(1, 3) * rate)
-				randomlyIncrease(3000)
+				setCount((c) => c + randomBetween(min, max) * rate)
+				randomlyIncrease(3500)
 			}, delay)
 		}
 

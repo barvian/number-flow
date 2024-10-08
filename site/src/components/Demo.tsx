@@ -27,13 +27,22 @@ export type DemoProps = {
 	className?: string
 	defaultValue?: TabValue
 	code?: React.ReactNode
+	minHeight?: string
 	title?: React.ReactNode
 }
 
 type Props = DemoProps & { onClick?: () => void }
 
 const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
-	{ children, className, defaultValue = 'preview', code, title, onClick },
+	{
+		children,
+		className,
+		defaultValue = 'preview',
+		code,
+		title,
+		onClick,
+		minHeight = 'min-h-[20rem]'
+	},
 	ref
 ) {
 	// const [knowsToClick, setKnowsToClick] = useAtom(knowsToClickAtom)
@@ -110,7 +119,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 			>
 				{title && <div className="absolute left-3 top-3">{title}</div>}
 				<div
-					className="flex min-h-[20rem] flex-col items-center justify-center p-5 pb-6"
+					className={clsx(minHeight, 'flex flex-col items-center justify-center p-5 pb-6')}
 					onClick={onClick && handleClick}
 					onMouseDown={onClick && handleMouseDown}
 				>
