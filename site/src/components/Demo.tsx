@@ -216,7 +216,7 @@ export function DemoSwitch({
 				{...props}
 				className={clsx(
 					className,
-					'group relative flex h-6 w-11 cursor-pointer rounded-full bg-zinc-200 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none data-[checked]:bg-zinc-950 data-[focus]:outline-2 data-[focus]:outline-blue-500 dark:bg-zinc-800 dark:data-[checked]:bg-white'
+					'group relative flex h-6 w-11 cursor-pointer rounded-full bg-zinc-200 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none data-[checked]:bg-zinc-950 data-[focus]:outline-2 data-[focus]:outline-blue-500 dark:bg-zinc-800 dark:data-[checked]:bg-zinc-50'
 				)}
 			>
 				<span

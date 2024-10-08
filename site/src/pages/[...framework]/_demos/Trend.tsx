@@ -29,14 +29,14 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 						<DemoMenuItem onClick={() => setTrend(true)} disabled={trend === true}>
 							<code className="font-semibold">true</code>
 						</DemoMenuItem>
+						<DemoMenuItem onClick={() => setTrend(false)} disabled={trend === false}>
+							<code className="font-semibold">false</code>
+						</DemoMenuItem>
 						<DemoMenuItem onClick={() => setTrend('increasing')} disabled={trend === 'increasing'}>
 							<code className="font-semibold">"increasing"</code>
 						</DemoMenuItem>
 						<DemoMenuItem onClick={() => setTrend('decreasing')} disabled={trend === 'decreasing'}>
 							<code className="font-semibold">"decreasing"</code>
-						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setTrend(false)} disabled={trend === false}>
-							<code className="font-semibold">false</code>
 						</DemoMenuItem>
 					</DemoMenuItems>
 				</DemoMenu>
