@@ -51,14 +51,14 @@ function useCounter(initialValue: number, active: boolean, rate = 1) {
 
 		let timeout: NodeJS.Timeout | null = null
 
-		const randomlyIncrease = () => {
+		const randomlyIncrease = (delay: number) => {
 			timeout = setTimeout(() => {
 				setCount((c) => c + randomBetween(1, 3) * rate)
-				randomlyIncrease()
-			}, 3000)
+				randomlyIncrease(3000)
+			}, delay)
 		}
 
-		randomlyIncrease()
+		randomlyIncrease(1500)
 
 		return () => {
 			if (timeout) clearTimeout(timeout)

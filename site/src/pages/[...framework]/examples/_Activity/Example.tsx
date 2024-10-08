@@ -51,7 +51,7 @@ export default function ActivityExample({
 					<div className="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-emerald-500/10">
 						<Repeat
 							absoluteStrokeWidth
-							className="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 group-active:scale-[80%]"
+							className="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 group-active:scale-[85%]"
 						/>
 					</div>
 					<NumberFlow value={reposts} format={format} />
@@ -89,7 +89,7 @@ export default function ActivityExample({
 						<Bookmark
 							absoluteStrokeWidth
 							className={clsx(
-								'~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 group-active:scale-[80%]',
+								'~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 group-active:scale-[85%]',
 								bookmarked && 'fill-current'
 							)}
 						/>
