@@ -14,9 +14,9 @@ export default function DemoIndicator({
 	const ref = React.useRef<HTMLDivElement>(null)
 	const inView = useInView(ref)
 
-	const [reposts, incrementReposts, reposted] = useCounter(2, inView)
-	const [likes, incrementLikes, liked] = useCounter(50, inView, 5)
-	const [bookmarks, incrementBookmarks, bookmarked] = useCounter(40, inView, 3)
+	const [reposts, onRepost, reposted] = useCounter(2, inView)
+	const [likes, onLike, liked] = useCounter(50, inView, 5)
+	const [bookmarks, onBookmark, bookmarked] = useCounter(40, inView, 3)
 	const [views] = useCounter(995, inView, 50)
 
 	return (
@@ -25,12 +25,12 @@ export default function DemoIndicator({
 				likes={likes}
 				liked={liked}
 				reposts={reposts}
-				onRepost={incrementReposts}
+				onRepost={onRepost}
 				reposted={reposted}
 				bookmarks={bookmarks}
-				onBookmark={incrementBookmarks}
+				onBookmark={onBookmark}
 				bookmarked={bookmarked}
-				onLike={incrementLikes}
+				onLike={onLike}
 				views={views}
 			/>
 		</Demo>
@@ -65,10 +65,11 @@ function useCounter(initialValue: number, active: boolean, rate = 1) {
 		}
 	}, [active])
 
-	const increment = () => {
-		setCount((c) => c + 1)
-		setHasIncremented(true)
+	const toggle = () => {
+		if (hasIncremented) setCount((c) => c - 1)
+		else setCount((c) => c + 1)
+		setHasIncremented((i) => !i)
 	}
 
-	return [count, increment, hasIncremented] as const
+	return [count, toggle, hasIncremented] as const
 }
