@@ -9,6 +9,10 @@ import {
 	MenuButton,
 	MenuItem,
 	MenuItems,
+	Switch,
+	Field,
+	Label,
+	type SwitchProps,
 	type MenuButtonProps,
 	type MenuItemProps,
 	type MenuItemsProps,
@@ -198,5 +202,29 @@ export function DemoMenuItem({
 			{children}
 			{props.disabled && <Check className="ml-auto h-4 w-4" />}
 		</MenuItem>
+	)
+}
+
+export function DemoSwitch({
+	className,
+	children,
+	...props
+}: SwitchProps & { children: React.ReactNode }) {
+	return (
+		<Field className="flex items-center gap-2 p-1">
+			<Switch
+				{...props}
+				className={clsx(
+					className,
+					'group relative flex h-6 w-11 cursor-pointer rounded-full bg-zinc-200 p-0.5 transition-colors duration-200 ease-in-out focus:outline-none data-[checked]:bg-zinc-950 data-[focus]:outline-2 data-[focus]:outline-blue-500 dark:bg-zinc-800 dark:data-[checked]:bg-white'
+				)}
+			>
+				<span
+					aria-hidden="true"
+					className="spring-bounce-0 spring-duration-200 pointer-events-none inline-block size-5 rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[checked]:translate-x-5 dark:bg-zinc-950"
+				/>
+			</Switch>
+			<Label className="text-xs">{children}</Label>
+		</Field>
 	)
 }

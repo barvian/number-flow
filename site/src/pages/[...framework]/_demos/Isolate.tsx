@@ -1,10 +1,4 @@
-import Demo, {
-	DemoMenu,
-	DemoMenuButton,
-	DemoMenuItem,
-	DemoMenuItems,
-	type DemoProps
-} from '@/components/Demo'
+import Demo, { DemoSwitch, type DemoProps } from '@/components/Demo'
 import NumberFlow from '@number-flow/react'
 import * as React from 'react'
 
@@ -16,20 +10,9 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 		<Demo
 			{...rest}
 			title={
-				<DemoMenu>
-					<DemoMenuButton className="gap-1">
-						<code className="text-muted">isolate:</code>
-						<code className="font-semibold">{String(isolate)}</code>
-					</DemoMenuButton>
-					<DemoMenuItems>
-						<DemoMenuItem onClick={() => setIsolate(true)} disabled={isolate}>
-							<code className="font-semibold">true</code>
-						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setIsolate(false)} disabled={!isolate}>
-							<code className="font-semibold">false</code>
-						</DemoMenuItem>
-					</DemoMenuItems>
-				</DemoMenu>
+				<DemoSwitch checked={isolate} onChange={setIsolate}>
+					<code className="font-semibold">isolate</code>
+				</DemoSwitch>
 			}
 			onClick={() => setIncreased((o) => !o)}
 		>
