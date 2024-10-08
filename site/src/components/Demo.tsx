@@ -4,13 +4,23 @@ import * as Tabs from '@radix-ui/react-tabs'
 import { clsx } from 'clsx/lite'
 import { motion, MotionConfig } from 'framer-motion'
 import { useId } from 'react'
+import {
+	Menu,
+	MenuButton,
+	MenuItem,
+	MenuItems,
+	type MenuButtonProps,
+	type MenuItemProps,
+	type MenuItemsProps,
+	type MenuProps
+} from '@headlessui/react'
+import { Check, ChevronDown } from 'lucide-react'
 
 type TabValue = 'preview' | 'code'
 
 export type DemoProps = {
 	children: React.ReactNode
 	className?: string
-	prose?: boolean
 	defaultValue?: TabValue
 	code?: React.ReactNode
 	title?: React.ReactNode
@@ -19,7 +29,7 @@ export type DemoProps = {
 type Props = DemoProps & { onClick?: () => void }
 
 const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
-	{ children, className, prose = false, defaultValue = 'preview', code, title, onClick },
+	{ children, className, defaultValue = 'preview', code, title, onClick },
 	ref
 ) {
 	// const [knowsToClick, setKnowsToClick] = useAtom(knowsToClickAtom)
@@ -43,11 +53,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 	return (
 		<Tabs.Root
 			ref={ref}
-			className={clsx(
-				!prose && 'text-primary not-prose',
-				active === 'code' && 'dark',
-				'relative isolate'
-			)} // reset text color if inside prose
+			className={clsx(active === 'code' && 'dark', 'text-primary not-prose relative isolate')} // reset text color if inside prose
 			value={active}
 			onValueChange={(val) => setActive(val as TabValue)}
 		>
@@ -95,23 +101,27 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 				value="preview"
 				className={clsx(
 					className,
-					'relative flex min-h-[20rem] flex-col items-center justify-center rounded-lg border border-zinc-200 p-5 pb-6 data-[state=inactive]:hidden dark:border-zinc-800'
+					'relative rounded-lg border border-zinc-200 data-[state=inactive]:hidden dark:border-zinc-800'
 				)}
-				onClick={onClick && handleClick}
-				onMouseDown={onClick && handleMouseDown}
 			>
-				{title && <div className="top-4.5 absolute left-5 text-sm">{title}</div>}
-				{children}
-				{onClick && (
-					<span
-						className={clsx(
-							'text-muted absolute bottom-5 left-0 w-full text-center text-sm transition-opacity duration-200 ease-out',
-							knowsToClick && 'opacity-0'
-						)}
-					>
-						Click anywhere to change numbers
-					</span>
-				)}
+				{title && <div className="absolute left-3 top-3">{title}</div>}
+				<div
+					className="flex min-h-[20rem] flex-col items-center justify-center p-5 pb-6"
+					onClick={onClick && handleClick}
+					onMouseDown={onClick && handleMouseDown}
+				>
+					{children}
+					{onClick && (
+						<span
+							className={clsx(
+								'text-muted absolute bottom-5 left-0 w-full text-center text-sm transition-opacity duration-200 ease-out',
+								knowsToClick && 'opacity-0'
+							)}
+						>
+							Click anywhere to change numbers
+						</span>
+					)}
+				</div>
 			</Tabs.Content>
 			{code && <Tabs.Content value="code">{code}</Tabs.Content>}
 		</Tabs.Root>
@@ -119,3 +129,74 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 })
 
 export default Demo
+
+export function DemoTitle({
+	className,
+	children,
+	...rest
+}: JSX.IntrinsicElements['span'] & { children: string }) {
+	return (
+		<span {...rest} className={clsx(className, 'px-2 py-1.5 text-sm')}>
+			{children}
+		</span>
+	)
+}
+
+export function DemoMenu(props: MenuProps) {
+	return <Menu {...props} />
+}
+
+export function DemoMenuButton({
+	children,
+	className,
+	...props
+}: MenuButtonProps & { children: React.ReactNode }) {
+	return (
+		<MenuButton
+			{...props}
+			className={clsx(
+				className,
+				'group flex h-8 items-center rounded-full px-3 text-xs shadow-sm ring ring-black/[8%] dark:shadow-none dark:ring-white/10'
+			)}
+		>
+			{children}
+			<ChevronDown
+				className="spring-bounce-0 spring-duration-150 ml-1 size-4 shrink-0 group-data-[active]:rotate-180"
+				strokeWidth={2}
+			/>
+		</MenuButton>
+	)
+}
+
+export function DemoMenuItems({ className, ...props }: MenuItemsProps) {
+	return (
+		<MenuItems
+			{...props}
+			className={clsx(
+				className,
+				'animate-pop-in dark:ring-white/12.5 absolute left-0 top-full mt-2 min-w-full origin-top-left rounded-xl bg-white/90 p-1.5 shadow-sm ring ring-inset ring-black/[8%] backdrop-blur-xl backdrop-saturate-[140%] dark:bg-zinc-950/90 dark:shadow-none'
+			)}
+		/>
+	)
+}
+
+export function DemoMenuItem({
+	className,
+	children,
+	...props
+}: MenuItemProps<'button'> & { children: React.ReactNode }) {
+	return (
+		<MenuItem
+			{...props}
+			as="button"
+			className={clsx(
+				className,
+				props.disabled ? 'pr-2' : 'pr-4',
+				'dark:data-[focus]:bg-white/12.5 flex w-full items-center gap-2 rounded-lg py-2 pl-2 text-xs font-medium data-[disabled]:cursor-default data-[focus]:bg-black/5'
+			)}
+		>
+			{children}
+			{props.disabled && <Check className="ml-auto h-4 w-4" />}
+		</MenuItem>
+	)
+}

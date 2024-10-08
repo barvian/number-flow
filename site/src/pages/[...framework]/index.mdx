@@ -4,9 +4,11 @@ title: NumberFlow - Transition and format numbers
 description: A React component to transition & format numbers. Dependency-free. Built on web standards. Accessible. Customizable.
 ---
 import Pre from '@/components/Pre.astro';
+import NumberFlow from '@number-flow/react'
 export const components = {pre: Pre}
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
+import TrendDemo from './_demos/Trend'
 import Union from '@/components/Union.astro'
 export { getStaticPaths } from '@/lib/framework'
 
@@ -55,17 +57,19 @@ or [easing.dev](https://www.easing.dev/).
 Controls the direction of the digits.
 
 - `true` (default): The digits go up if the number increases, and down if the number decreases.
-- `'increasing':` The digits always go up.
-- `'decreasing':` The digits always go down.
+- `"increasing":` The digits always go up.
+- `"decreasing":` The digits always go down.
 - `false:` Ignores the trend of the number; each digit goes up if it increases and down if it decreases. This can be useful if you
 want to animate number changes without conveying an overall increase or decrease ([example](https://x.com/pontusab/status/1825941664189526067)).
+
+<TrendDemo client:visible />
 
 ### `isolate: `<code className="text-muted">boolean</code>
 
 If `isolate` is set, `<NumberFlow>`'s transitions are isolated from any other layout changes
 that may occur in the same update. This can prevent potentially unwanted animations:
 
-<IsolateDemo prose client:visible />
+<IsolateDemo client:visible />
 
 ## Styling
 

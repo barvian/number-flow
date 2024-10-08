@@ -15,6 +15,9 @@ import { BROWSER } from 'esm-env'
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
 export * from './formatter'
 
+type RawTrend = boolean | 'increasing' | 'decreasing'
+export { type RawTrend as Trend }
+
 enum Trend {
 	UP = 1,
 	DOWN = -1,
@@ -69,7 +72,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	#fraction?: NumberSection
 	#post?: SymbolSection
 
-	trend: boolean | 'increasing' | 'decreasing' = true
+	trend: RawTrend = true
 	#computedTrend?: Trend
 
 	getComputedTrend() {
