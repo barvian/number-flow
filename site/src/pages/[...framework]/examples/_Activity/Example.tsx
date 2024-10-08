@@ -35,7 +35,7 @@ export default function ActivityExample({
 	bookmarked
 }: Props) {
 	return (
-		<div className="text-muted ~px-0/14 ~text-[0.8125rem]/sm flex w-full select-none items-center">
+		<div className="text-muted ~px-0/16 ~text-[0.8125rem]/sm flex w-full select-none items-center">
 			<div className="flex flex-1 items-center gap-1.5">
 				<ChartNoAxesColumn absoluteStrokeWidth className="~size-4/5" />
 				<NumberFlow value={views} format={format} />
