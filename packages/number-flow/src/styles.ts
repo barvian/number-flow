@@ -159,15 +159,21 @@ const styles = css`
 	.digit__roll {
 		display: block;
 		position: relative;
+	}
+
+	.digit__roll.is-spinning {
 		transform-style: preserve-3d;
 		backface-visibility: hidden;
 		transform-origin: center center calc((${charHeight} + ${maskHeight}) / 0.649838);
 	}
 
+	.digit__roll.is-spinning .digit__num {
+		backface-visibility: hidden;
+	}
+
 	.digit__num {
 		display: block;
 		padding: ${halfMaskHeight} 0;
-		backface-visibility: hidden;
 	}
 
 	.digit__num:not(.is-current) {
