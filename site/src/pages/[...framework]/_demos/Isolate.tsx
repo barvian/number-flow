@@ -4,7 +4,7 @@ import * as React from 'react'
 
 export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'>) {
 	const [increased, setIncreased] = React.useState(false)
-	const [isolate, setIsolate] = React.useState(true)
+	const [isolate, setIsolate] = React.useState(false)
 
 	return (
 		<Demo

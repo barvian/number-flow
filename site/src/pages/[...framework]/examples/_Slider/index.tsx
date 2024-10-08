@@ -7,7 +7,7 @@ export default function DemoHOC({
 	...rest
 }: Rename<Omit<DemoProps, 'children'>, 'code', 'children'>) {
 	return (
-		<Demo {...rest} className="!~pt-16/18" code={children}>
+		<Demo {...rest} className="pt-12" code={children}>
 			<Example />
 		</Demo>
 	)
