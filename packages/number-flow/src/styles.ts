@@ -170,12 +170,16 @@ const styles = css`
 		backface-visibility: hidden;
 	}
 
-	.digit__num:not(.current) {
+	.digit__num:not(.is-current) {
 		position: absolute;
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%) rotateX(calc((var(--c) - var(--i)) * -36deg));
 		transform-origin: center center calc((${charHeight} + ${maskHeight}) / 0.649838);
+	}
+
+	.digit__roll:not(.is-spinning) .digit__num:not(.is-current) {
+		display: none;
 	}
 
 	.empty {

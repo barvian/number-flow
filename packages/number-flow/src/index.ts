@@ -557,7 +557,7 @@ class Digit extends Char<KeyedDigitPart> {
 		const numbers = Array.from({ length: 10 }).map((_, i) => {
 			const num = createElement(
 				'span',
-				{ className: `digit__num${i === value ? ' current' : ''}` },
+				{ className: `digit__num${i === value ? ' is-current' : ''}` },
 				[document.createTextNode(String(i))]
 			)
 			num.style.setProperty('--i', String(i))
@@ -610,9 +610,9 @@ class Digit extends Char<KeyedDigitPart> {
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		this.#numbers[this.#prevValue!]?.classList.remove('current')
+		this.#numbers[this.#prevValue!]?.classList.remove('is-current')
 		this.el.style.setProperty('--c', String(value))
-		this.#numbers[value]?.classList.add('current')
+		this.#numbers[value]?.classList.add('is-current')
 		this.value = value
 	}
 
@@ -642,6 +642,7 @@ class Digit extends Char<KeyedDigitPart> {
 		if (trend === Trend.UP && this.value < this.#prevValue!)
 			diff = 10 - this.#prevValue! + this.value
 
+		this.#roll.classList.add('is-spinning')
 		this.#roll.animate(
 			{
 				transform: [`rotateX(${diff * 36}deg)`, 'none']
@@ -651,6 +652,12 @@ class Digit extends Char<KeyedDigitPart> {
 				composite: 'accumulate'
 			}
 		)
+		// Hoisting the callback out prevents duplicates:
+		this.flow.addEventListener('animationsfinish', this.#onAnimationsFinish, { once: true })
+	}
+
+	#onAnimationsFinish = () => {
+		this.#roll.classList.remove('is-spinning')
 	}
 }
 
