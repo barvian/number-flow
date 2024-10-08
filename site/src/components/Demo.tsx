@@ -69,7 +69,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 						>
 							{active === 'preview' && (
 								<motion.div
-									className="prefers-dark:dark:bg-white/20 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
+									className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
 									style={{ borderRadius: 999 }}
 									layout
 									layoutId={`${id}active`}
@@ -86,7 +86,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 						>
 							{active === 'code' && (
 								<motion.div
-									className="prefers-dark:dark:bg-white/20 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
+									className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
 									style={{ borderRadius: 999 }}
 									layout
 									layoutId={`${id}active`}
