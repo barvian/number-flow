@@ -4,6 +4,9 @@ title: 'NumberFlow Examples'
 description: 'Ready-made examples of common patterns to get you started with NumberFlow.'
 ---
 export { getStaticPaths } from '@/lib/framework'
+import Activity from './_Activity'
+import ActivityCode from './_Activity/Example?raw'
+import { DemoTitle } from '@/components/Demo'
 import Slider from './_Slider'
 import SliderCode from './_Slider/Example?raw'
 // import Countdown from './_Countdown'
@@ -13,6 +16,12 @@ import ColoredTrendsCode from './_ColoredTrends/Example?raw'
 import FramerMotionLayoutAnimations from './_FramerMotion'
 import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
 import Code from '@/components/Code.astro';
+
+## Activity
+
+<Activity client:visible>
+<Code code={ActivityCode} lang="tsx" />
+</Activity>
 
 ## Slider
 
