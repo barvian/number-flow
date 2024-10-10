@@ -1,7 +1,7 @@
 import { useLinear } from '.'
 import { type Transition } from 'framer-motion'
 
-export const useDefaultXTransition = () =>
+export const useDefaultTransformTransition = () =>
 	useLinear<Transition>(
 		{
 			type: 'spring',

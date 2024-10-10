@@ -31,9 +31,9 @@ const getTrend = (val: number | bigint, prev?: number | bigint) => {
 	return Trend.NONE
 }
 
-export const defaultFadeTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
+export const defaultOpacityTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
 
-export const defaultXTiming: EffectTiming = supportsLinear
+export const defaultTransformTiming: EffectTiming = supportsLinear
 	? {
 			duration: 900,
 			// Make sure to keep this minified:
@@ -44,7 +44,6 @@ export const defaultXTiming: EffectTiming = supportsLinear
 			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
 			easing: `cubic-bezier(0.32,0.72,0,1)`
 		}
-export const defaultSpinTiming = defaultXTiming
 
 let styleSheet: CSSStyleSheet | undefined
 
@@ -55,9 +54,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		if (BROWSER) customElements.define('number-flow', this)
 	}
 
-	xTiming = defaultXTiming
-	spinTiming = defaultSpinTiming
-	fadeTiming = defaultFadeTiming
+	transformTiming = defaultTransformTiming
+	rotateTiming?: EffectTiming
+	opacityTiming = defaultOpacityTiming
 	manual = false
 
 	#created = false
@@ -380,7 +379,7 @@ class NumberSection extends Section {
 				transform: [`translateX(${dx}px)`, 'none']
 			},
 			{
-				...this.flow.xTiming,
+				...this.flow.transformTiming,
 				composite: 'accumulate' // important, accumulate onto pre-scaled instead of add to scaled
 			}
 		)
@@ -390,12 +389,12 @@ class NumberSection extends Section {
 				transform: [`scaleX(${scale})`, 'none']
 			},
 			{
-				...this.flow.xTiming,
+				...this.flow.transformTiming,
 				composite: 'add' // important
 			}
 		)
 
-		const duration = getDuration(this.flow.xTiming)
+		const duration = getDuration(this.flow.transformTiming)
 
 		this.#inner.animate(
 			{
@@ -403,7 +402,7 @@ class NumberSection extends Section {
 				transform: frames(duration, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
 			},
 			{
-				...this.flow.xTiming,
+				...this.flow.transformTiming,
 				composite: 'add' // important
 			}
 		)
@@ -448,7 +447,7 @@ class SymbolSection extends Section {
 				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
 			{
-				...this.flow.xTiming,
+				...this.flow.transformTiming,
 				composite: 'accumulate'
 			}
 		)
@@ -480,7 +479,7 @@ class AnimatePresence {
 					[opacityDeltaVar]: [-0.9999, 0]
 				},
 				{
-					...this.flow.fadeTiming,
+					...this.flow.opacityTiming,
 					composite: 'accumulate'
 				}
 			)
@@ -506,7 +505,7 @@ class AnimatePresence {
 				[opacityDeltaVar]: val ? [-0.9999, 0] : [0.999, 0]
 			},
 			{
-				...this.flow.fadeTiming,
+				...this.flow.opacityTiming,
 				composite: 'accumulate'
 			}
 		)
@@ -621,7 +620,7 @@ class Digit extends Char<KeyedDigitPart> {
 				transform: [`translateX(${this.#prevCenter! - center}px)`, 'none']
 			},
 			{
-				...this.flow.xTiming,
+				...this.flow.transformTiming,
 				composite: 'accumulate'
 			}
 		)
@@ -642,7 +641,7 @@ class Digit extends Char<KeyedDigitPart> {
 				transform: [`rotateX(${diff * 36}deg)`, 'none']
 			},
 			{
-				...this.flow.spinTiming,
+				...(this.flow.rotateTiming ?? this.flow.transformTiming),
 				composite: 'accumulate'
 			}
 		)
@@ -744,7 +743,7 @@ class Sym extends Char<KeyedSymbolPart> {
 			{
 				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
 			},
-			{ ...this.flow.xTiming, composite: 'accumulate' }
+			{ ...this.flow.transformTiming, composite: 'accumulate' }
 		)
 	}
 }

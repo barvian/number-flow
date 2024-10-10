@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 import NumberFlow from '@number-flow/react'
-import { useDefaultXTransition } from '@number-flow/react/framer-motion'
+import { useDefaultTransformTransition } from '@number-flow/react/framer-motion'
 import { ArrowUp } from 'lucide-react'
 
 const MotionNumberFlow = motion.create(NumberFlow)
@@ -13,7 +13,7 @@ type Props = {
 
 export default function FramerMotionExample({ value, diff }: Props) {
 	// Match NumberFlow's default x timing.
-	const layoutTransition = useDefaultXTransition()
+	const layoutTransition = useDefaultTransformTransition()
 
 	return (
 		<span style={{ '--number-flow-line-height': '0.85em' }} className="flex items-center gap-2">

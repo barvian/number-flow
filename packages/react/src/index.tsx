@@ -31,9 +31,9 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	format?: Format
 	isolate?: boolean
 	trend?: (typeof NumberFlowElement)['prototype']['trend']
-	fadeTiming?: (typeof NumberFlowElement)['prototype']['fadeTiming']
-	xTiming?: (typeof NumberFlowElement)['prototype']['xTiming']
-	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
+	opacityTiming?: (typeof NumberFlowElement)['prototype']['opacityTiming']
+	transformTiming?: (typeof NumberFlowElement)['prototype']['transformTiming']
+	rotateTiming?: (typeof NumberFlowElement)['prototype']['rotateTiming']
 }
 
 type NumberFlowImplProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
@@ -59,9 +59,9 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 		if (this.#el) {
 			this.#el.manual = !this.props.isolate
 			if (this.props.trend != null) this.#el.trend = this.props.trend
-			if (this.props.fadeTiming) this.#el.fadeTiming = this.props.fadeTiming
-			if (this.props.xTiming) this.#el.xTiming = this.props.xTiming
-			if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
+			if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
+			if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
+			if (this.props.rotateTiming) this.#el.rotateTiming = this.props.rotateTiming
 		}
 	}
 
@@ -94,9 +94,9 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 			// These are set in updateNonPartsProps, so ignore them here:
 			isolate,
 			trend,
-			fadeTiming,
-			xTiming,
-			spinTiming,
+			opacityTiming,
+			transformTiming,
+			rotateTiming,
 			...rest
 		} = this.props
 

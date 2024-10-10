@@ -38,12 +38,13 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 <TimingsDemo client:visible defaultValue='code'>
 ```jsx
 <NumberFlow
-	// Used for x-related transforms:
-	xTiming={{ duration: 700, easing: 'linear(...)' }}
-	// Used for the digit spin animations:
-	spinTiming={{ duration: 700, easing: 'linear(...)' }}
+	// Used for layout-related transforms:
+	transformTiming={{ duration: 700, easing: 'linear(...)' }}
+	// Used for the digit spin animations.
+	// Will fall back to `transformTiming` if unset:
+	rotateTiming={{ duration: 700, easing: 'linear(...)' }}
 	// Used for fading in/out characters:
-	fadeTiming={{ duration: 350, easing: 'ease-out' }}
+	opacityTiming={{ duration: 350, easing: 'ease-out' }}
 />
 ```
 </TimingsDemo>
