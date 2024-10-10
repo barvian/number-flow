@@ -27,7 +27,7 @@ export const supportsAnimationComposition =
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 
-export const charHeight = 'var(--number-flow-line-height, 1em)'
+export const charHeight = 'var(--number-flow-char-height, 1em)'
 
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'

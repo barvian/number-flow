@@ -28,7 +28,7 @@ export default function CountdownExamples({ active = true }: Props) {
 
 	return (
 		<div
-			style={{ fontVariantNumeric: 'tabular-nums', '--number-flow-line-height': '0.85em' }}
+			style={{ fontVariantNumeric: 'tabular-nums', '--number-flow-char-height': '0.85em' }}
 			className="~text-xl/4xl flex items-baseline font-semibold"
 		>
 			<NumberFlow trend="decreasing" value={hours} format={{ minimumIntegerDigits: 2 }} />

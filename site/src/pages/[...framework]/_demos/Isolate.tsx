@@ -20,7 +20,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 				{increased && <div className="bg-faint ~w-20/40 h-[1em] rounded-sm" />}
 				<NumberFlow
 					isolate={isolate}
-					style={{ '--number-flow-line-height': '0.85em' }}
+					style={{ '--number-flow-char-height': '0.85em' }}
 					value={increased ? 1.2423 : 0.4175}
 					format={{ style: 'percent' }}
 					className="font-semibold"

@@ -16,7 +16,7 @@ export default function FramerMotionExample({ value, diff }: Props) {
 	const layoutTransition = useDefaultTransformTransition()
 
 	return (
-		<span style={{ '--number-flow-line-height': '0.85em' }} className="flex items-center gap-2">
+		<span style={{ '--number-flow-char-height': '0.85em' }} className="flex items-center gap-2">
 			<NumberFlow
 				value={value}
 				className="~text-xl/4xl font-semibold"

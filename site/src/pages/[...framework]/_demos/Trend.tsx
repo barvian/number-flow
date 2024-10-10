@@ -9,7 +9,7 @@ import Demo, {
 import NumberFlow, { type Trend } from '@number-flow/react'
 import useCycle from '/src/hooks/useCycle'
 
-const NUMBERS = [20, 19]
+const NUMBERS = [21, 18]
 
 export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'>) {
 	const [value, cycleValue] = useCycle(NUMBERS)
@@ -47,7 +47,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 				trend={trend}
 				value={value}
 				className="~text-xl/4xl text-primary font-semibold"
-				style={{ '--number-flow-line-height': '0.85em' }}
+				style={{ '--number-flow-char-height': '0.85em' }}
 			/>
 		</Demo>
 	)
