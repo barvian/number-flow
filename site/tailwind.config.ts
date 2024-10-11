@@ -40,6 +40,9 @@ export default {
 			defaultScreens: [, theme('screens.md')]
 		})) satisfies FluidThemeConfig,
 		extend: {
+			boxShadow: {
+				px: '0 0 0 1px rgb(0 0 0 / 0.05)'
+			},
 			colors: {
 				framework: 'var(--color-framework)',
 				zinc: {

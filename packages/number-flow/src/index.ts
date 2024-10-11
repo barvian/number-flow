@@ -26,12 +26,6 @@ enum Trend {
 
 const getTrend = (val: number, prev?: number) => {
 	if (prev == null) return
-	if (val === 0 && prev === -1) return Trend.DOWN
-	if (val === -1 && prev === 0) return Trend.UP
-	if (Math.sign(val) === -1 && Math.sign(prev) === -1) {
-		if (val < prev) return Trend.UP
-		if (val > prev) return Trend.DOWN
-	}
 	if (val > prev) return Trend.UP
 	if (val < prev) return Trend.DOWN
 	return Trend.NONE
@@ -77,7 +71,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		return this.#computedTrend
 	}
 
-	#prevVal?: number | bigint
+	#value?: number
 
 	set parts(newVal: PartitionedParts | undefined) {
 		if (newVal == null) {
@@ -88,6 +82,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 		// Initialize if needed
 		if (!this.#created) {
+			this.#value = value
+
 			// Don't check for declarative shadow DOM because we'll recreate it anyway:
 			this.attachShadow({ mode: 'open' })
 
@@ -125,9 +121,12 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
+			const prev = this.#value!
+			this.#value = value
+
 			// Compute trend
 			if (this.trend === true) {
-				this.#computedTrend = getTrend(value, this.#prevVal)
+				this.#computedTrend = getTrend(value, prev)
 			} else if (this.trend === 'increasing') {
 				this.#computedTrend = Trend.UP
 			} else if (this.trend === 'decreasing') {
@@ -144,7 +143,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		}
 
 		this.#created = true
-		this.#prevVal = value
 	}
 
 	willUpdate() {
