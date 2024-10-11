@@ -21,7 +21,7 @@ export type Format = Omit<Intl.NumberFormatOptions, 'notation'> & {
 	notation?: Exclude<Intl.NumberFormatOptions['notation'], 'scientific' | 'engineering'>
 }
 
-export type Value = Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0]
+export type Value = Exclude<Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0], bigint>
 
 export function partitionParts(value: Value, formatter: Intl.NumberFormat) {
 	const parts = formatter.formatToParts(value)

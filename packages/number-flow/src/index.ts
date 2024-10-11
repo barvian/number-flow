@@ -24,8 +24,14 @@ enum Trend {
 	NONE = 0
 }
 
-const getTrend = (val: number | bigint, prev?: number | bigint) => {
-	if (!prev) return
+const getTrend = (val: number, prev?: number) => {
+	if (prev == null) return
+	if (val === 0 && prev === -1) return Trend.DOWN
+	if (val === -1 && prev === 0) return Trend.UP
+	if (Math.sign(val) === -1 && Math.sign(prev) === -1) {
+		if (val < prev) return Trend.UP
+		if (val > prev) return Trend.DOWN
+	}
 	if (val > prev) return Trend.UP
 	if (val < prev) return Trend.DOWN
 	return Trend.NONE
