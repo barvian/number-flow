@@ -9,7 +9,7 @@ import Demo, {
 import NumberFlow, { type Trend } from '@number-flow/react'
 import useCycle from '/src/hooks/useCycle'
 
-const NUMBERS = [21, 18]
+const NUMBERS = [20, 19]
 
 export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'>) {
 	const [value, cycleValue] = useCycle(NUMBERS)
