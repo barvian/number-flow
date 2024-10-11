@@ -1,4 +1,4 @@
-import { createElement, offset, replaceChildren, type HTMLProps, type Justify } from './util/dom'
+import { createElement, offset, type HTMLProps, type Justify } from './util/dom'
 import { forEach } from './util/iterable'
 import {
 	type KeyedDigitPart,
@@ -8,8 +8,7 @@ import {
 	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { dxVar, opacityDeltaVar, supportsLinear, widthDeltaVar } from './styles'
-import { getDuration, frames, lerp } from './util/animate'
+import styles, { dxVar, opacityDeltaVar, supportsLinear, widthDeltaVar, widthVar } from './styles'
 import { BROWSER } from 'esm-env'
 
 export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
@@ -259,7 +258,7 @@ class Num {
 		const width = this.el.offsetWidth
 		const dWidth = this.#prevWidth! - width
 
-		this.el.style.setProperty('--width', String(width))
+		this.el.style.setProperty(widthVar, String(width))
 
 		this.el.animate(
 			{

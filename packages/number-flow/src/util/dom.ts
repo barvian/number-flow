@@ -20,15 +20,6 @@ export const createElement = <K extends keyof HTMLElementTagNameMap>(
 	return element
 }
 
-export const replaceChildren = (el: HTMLElement, children: Node[]) => {
-	if (typeof Element.prototype.replaceChildren === 'undefined') {
-		el.innerHTML = ''
-		children.forEach((child) => el.appendChild(child))
-	} else {
-		el.replaceChildren(...children)
-	}
-}
-
 export type Justify = 'left' | 'right'
 
 // Makeshift .offsetRight
