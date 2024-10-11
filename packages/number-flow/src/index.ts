@@ -8,7 +8,7 @@ import {
 	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { opacityDeltaVar, supportsLinear } from './styles'
+import styles, { dxVar, opacityDeltaVar, supportsLinear, widthDeltaVar } from './styles'
 import { getDuration, frames, lerp } from './util/animate'
 import { BROWSER } from 'esm-env'
 
@@ -61,8 +61,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 	#created = false
 	#pre?: SymbolSection
-	#integer?: NumberSection
-	#fraction?: NumberSection
+	#num?: Num
 	#post?: SymbolSection
 
 	trend: RawTrend = true
@@ -108,20 +107,10 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 				justify: 'right'
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
-			this.#integer = new NumberSection(this, integer, {
-				// part: 'integer',
-				inert: true,
-				ariaHidden: 'true',
-				justify: 'right'
-			})
-			this.shadowRoot!.appendChild(this.#integer.el)
-			this.#fraction = new NumberSection(this, fraction, {
-				// part: 'fraction',
-				inert: true,
-				ariaHidden: 'true',
-				justify: 'left'
-			})
-			this.shadowRoot!.appendChild(this.#fraction.el)
+
+			this.#num = new Num(this, integer, fraction)
+			this.shadowRoot!.appendChild(this.#num.el)
+
 			this.#post = new SymbolSection(this, post, {
 				// part: 'post',
 				inert: true,
@@ -142,8 +131,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			if (!this.manual) this.willUpdate()
 
 			this.#pre!.update(pre)
-			this.#integer!.update(integer)
-			this.#fraction!.update(fraction)
+			this.#num!.update({ integer, fraction })
 			this.#post!.update(post)
 
 			if (!this.manual) this.didUpdate()
@@ -155,8 +143,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 	willUpdate() {
 		this.#pre!.willUpdate()
-		this.#integer!.willUpdate()
-		this.#fraction!.willUpdate()
+		this.#num!.willUpdate()
 		this.#post!.willUpdate()
 	}
 
@@ -164,8 +151,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 	didUpdate() {
 		this.#pre!.didUpdate()
-		this.#integer!.didUpdate()
-		this.#fraction!.didUpdate()
+		this.#num!.didUpdate()
 		this.#post!.didUpdate()
 
 		// Because we use composited animations, they technically always finish.
@@ -176,6 +162,90 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinish'))
 		})
 		this.#abortAnimationsFinish = controller
+	}
+}
+
+class Num {
+	readonly el: HTMLSpanElement
+	readonly #inner: HTMLSpanElement
+
+	#integer: NumberSection
+	#fraction: NumberSection
+
+	constructor(
+		readonly flow: NumberFlowLite,
+		integer: KeyedNumberPart[],
+		fraction: KeyedNumberPart[]
+	) {
+		this.#integer = new NumberSection(flow, integer, {
+			// part: 'integer',
+			inert: true,
+			ariaHidden: 'true',
+			justify: 'right'
+		})
+		this.#fraction = new NumberSection(flow, fraction, {
+			// part: 'fraction',
+			inert: true,
+			ariaHidden: 'true',
+			justify: 'left'
+		})
+
+		this.#inner = createElement(
+			'span',
+			{
+				className: `number__inner`
+			},
+			[this.#integer.el, this.#fraction.el]
+		)
+		this.el = createElement(
+			'span',
+			{
+				className: `number`
+			},
+			[this.#inner]
+		)
+	}
+
+	#prevWidth?: number
+	#prevLeft?: number
+
+	willUpdate() {
+		this.#prevWidth = this.el.offsetWidth
+		this.#prevLeft = this.el.getBoundingClientRect().left
+
+		this.#integer.willUpdate()
+		this.#fraction.willUpdate()
+	}
+
+	update({ integer, fraction }: Pick<PartitionedParts, 'integer' | 'fraction'>) {
+		this.#integer.update(integer)
+		this.#fraction.update(fraction)
+	}
+
+	didUpdate() {
+		const rect = this.el.getBoundingClientRect()
+
+		// Do this before starting to animate:
+		this.#integer.didUpdate()
+		this.#fraction.didUpdate()
+
+		const dx = this.#prevLeft! - rect.left
+
+		const width = this.el.offsetWidth
+		const dWidth = this.#prevWidth! - width
+
+		this.el.style.setProperty('--width', String(width))
+
+		this.el.animate(
+			{
+				[dxVar]: [dx, 0],
+				[widthDeltaVar]: [dWidth, 0]
+			},
+			{
+				...this.flow.transformTiming,
+				composite: 'accumulate'
+			}
+		)
 	}
 }
 
@@ -254,7 +324,7 @@ abstract class Section {
 		})
 	}
 
-	protected addNewAndUpdateExisting(parts: KeyedNumberPart[], parent: HTMLElement = this.el) {
+	protected addNewAndUpdateExisting(parts: KeyedNumberPart[]) {
 		const added = new Map<KeyedNumberPart, Char>()
 		const updated = new Map<KeyedNumberPart, Char>()
 
@@ -276,12 +346,12 @@ abstract class Section {
 					comp = this.addChar(part, { startDigitsAtZero: true, animateIn: true })
 					added.set(part, comp)
 				}
-				parent[op](comp.el)
+				this.el[op](comp.el)
 			},
 			{ reverse }
 		)
 
-		const rect = parent.getBoundingClientRect() // this should only cause a layout if there were added children
+		const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
 		added.forEach((comp) => {
 			comp.willUpdate(rect)
 		})
@@ -295,51 +365,38 @@ abstract class Section {
 			comp.update(part.value)
 		})
 	}
-}
 
-class NumberSection extends Section {
-	readonly #inner: HTMLSpanElement
-
-	constructor(
-		flow: NumberFlowLite,
-		parts: KeyedNumberPart[],
-		{ className, ...props }: SectionProps
-	) {
-		let inner: HTMLSpanElement
-		super(
-			flow,
-			parts,
-			{
-				...props,
-				className: `${className ?? ''} section--masked`
-			},
-			(parts) => [
-				(inner = createElement(
-					'span',
-					{
-						className: 'section__inner'
-					},
-					parts
-				))
-			]
-		)
-
-		// @ts-expect-error TS doesn't know the cb is invoked immediately
-		this.#inner = inner
-	}
-
-	#prevWidth?: number
 	#prevOffset?: number
 
 	willUpdate() {
 		const rect = this.el.getBoundingClientRect()
-		this.#prevWidth = rect.width
 		this.#prevOffset = rect[this.justify]
 
-		const innerRect = this.#inner.getBoundingClientRect()
-		this.children.forEach((comp) => comp.willUpdate(innerRect))
+		this.children.forEach((comp) => comp.willUpdate(rect))
 	}
 
+	didUpdate() {
+		const rect = this.el.getBoundingClientRect()
+
+		// Make sure to pass this in before starting to animate:
+		this.children.forEach((comp) => comp.didUpdate(rect))
+
+		const offset = rect[this.justify]
+		const dx = this.#prevOffset! - offset
+
+		this.el.animate(
+			{
+				transform: [`translateX(${dx}px)`, 'none']
+			},
+			{
+				...this.flow.transformTiming,
+				composite: 'accumulate'
+			}
+		)
+	}
+}
+
+class NumberSection extends Section {
 	update(parts: KeyedNumberPart[]) {
 		const removed = new Map<NumberPartKey, Char>()
 
@@ -352,7 +409,7 @@ class NumberSection extends Section {
 			this.unpop(comp)
 		})
 
-		this.addNewAndUpdateExisting(parts, this.#inner)
+		this.addNewAndUpdateExisting(parts)
 
 		// Set all removed digits to 0, for mathematical correctness:
 		removed.forEach((comp) => {
@@ -362,63 +419,9 @@ class NumberSection extends Section {
 		// Then end with them popped out again:
 		this.pop(removed)
 	}
-
-	didUpdate() {
-		const rect = this.el.getBoundingClientRect()
-		const offset = rect[this.justify]
-
-		const dx = this.#prevOffset! - offset
-		const scale = Math.max(this.#prevWidth!, 0.01) / Math.max(rect.width, 0.01) // can't properly compute scale if width is 0
-
-		// Make sure to pass this in before starting to animate:
-		const innerRect = this.#inner.getBoundingClientRect()
-		this.children.forEach((comp) => comp.didUpdate(innerRect))
-
-		this.el.animate(
-			{
-				transform: [`translateX(${dx}px)`, 'none']
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'accumulate' // important, accumulate onto pre-scaled instead of add to scaled
-			}
-		)
-
-		this.el.animate(
-			{
-				transform: [`scaleX(${scale})`, 'none']
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'add' // important
-			}
-		)
-
-		const duration = getDuration(this.flow.transformTiming)
-
-		this.#inner.animate(
-			{
-				// 1/x isn't linear so we need to sample:
-				transform: frames(duration, (t) => `scaleX(${1 / lerp(scale, 1, t)})`)
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'add' // important
-			}
-		)
-	}
 }
 
 class SymbolSection extends Section {
-	#prevOffset?: number
-
-	willUpdate() {
-		const rect = this.el.getBoundingClientRect()
-		this.#prevOffset = rect[this.justify]
-
-		this.children.forEach((comp) => comp.willUpdate(rect))
-	}
-
 	update(parts: KeyedNumberPart[]) {
 		const removed = new Map<NumberPartKey, Char>()
 
@@ -433,24 +436,6 @@ class SymbolSection extends Section {
 		this.pop(removed)
 
 		this.addNewAndUpdateExisting(parts)
-	}
-
-	didUpdate() {
-		const rect = this.el.getBoundingClientRect()
-		const offset = rect[this.justify]
-
-		// Make sure to pass this in before starting to animate:
-		this.children.forEach((comp) => comp.didUpdate(rect))
-
-		this.el.animate(
-			{
-				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'accumulate'
-			}
-		)
 	}
 }
 

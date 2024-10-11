@@ -4,48 +4,44 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 
-const NUMBERS = [12453982398, 4]
-const LOCALES = ['en-US']
+const NUMBERS = [312, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
+const LOCALES = ['fr-FR', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
 const FORMATS = [
-	// {
-	// 	// style: "unit",
-	// 	// unit: "meter",
-	// 	// notation: "compact",
-	// 	// signDisplay: "never",
-	// },
-	// {
-	// 	style: 'currency',
-	// 	currency: 'USD',
-	// 	currencySign: 'accounting',
-	// 	signDisplay: 'always'
-	// },
-	// {},
-	// {
-	// 	signDisplay: 'always'
-	// },
-	// {
-	// 	style: 'percent',
-	// 	signDisplay: 'always',
-	// 	minimumFractionDigits: 1,
-	// 	maximumFractionDigits: 1
-	// },
-	// {
-	// 	style: 'unit',
-	// 	unit: 'meter',
-	// 	notation: 'compact',
-	// 	minimumFractionDigits: 2,
-	// 	maximumFractionDigits: 2,
-	// 	signDisplay: 'never'
-	// },
-	// {
-	// 	style: 'currency',
-	// 	currency: 'USD'
-	// },
-	// {},
-	// {
-	// 	// style: "percent",
-	// 	signDisplay: 'always'
-	// }
+	{
+		// style: "unit",
+		// unit: "meter",
+		// notation: "compact",
+		// signDisplay: "never",
+	},
+	{
+		style: 'currency',
+		currency: 'USD',
+		currencySign: 'accounting',
+		signDisplay: 'always'
+	},
+	{},
+	{
+		style: 'percent',
+		signDisplay: 'always'
+	},
+	{},
+	{
+		style: 'unit',
+		unit: 'meter',
+		notation: 'compact',
+		minimumFractionDigits: 2,
+		maximumFractionDigits: 2,
+		signDisplay: 'never'
+	},
+	{
+		style: 'currency',
+		currency: 'USD'
+	},
+	{},
+	{
+		// style: "percent",
+		signDisplay: 'always'
+	}
 ] as Format[]
 
 export default function Hero() {
@@ -54,20 +50,20 @@ export default function Hero() {
 	const [format, cycleFormat] = useCycle(FORMATS)
 
 	const ref = useRef<HTMLElement>(null)
-	// const inView = useInView(ref, { once: true })
+	const inView = useInView(ref, { once: true })
 	const timeoutRef = useRef<NodeJS.Timeout>()
-	// useEffect(() => {
-	// 	if (!inView) return
-	// 	timeoutRef.current = setTimeout(() => {
-	// 		// Get off the initial "hello" easter egg:
-	// 		cycleValue()
-	// 		cycleLocale()
-	// 		cycleFormat()
-	// 	}, 750)
-	// 	return () => {
-	// 		clearTimeout(timeoutRef.current)
-	// 	}
-	// }, [inView])
+	useEffect(() => {
+		if (!inView) return
+		timeoutRef.current = setTimeout(() => {
+			// Get off the initial "hello" easter egg:
+			cycleValue()
+			cycleLocale()
+			cycleFormat()
+		}, 750)
+		return () => {
+			clearTimeout(timeoutRef.current)
+		}
+	}, [inView])
 
 	return (
 		<header
@@ -111,8 +107,8 @@ export default function Hero() {
 						clearTimeout(timeoutRef.current)
 
 						cycleValue()
-						// cycleLocale()
-						// cycleFormat()
+						cycleLocale()
+						cycleFormat()
 					}}
 				>
 					<svg className="size-4" strokeLinejoin="round" viewBox="0 0 16 16">

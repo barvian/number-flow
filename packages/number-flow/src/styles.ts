@@ -7,17 +7,36 @@ export const supportsLinear =
 	CSS.supports('transition-timing-function', 'linear(1, 2)')
 
 export const opacityDeltaVar = '--_number-flow-d-opacity'
+export const widthDeltaVar = '--_number-flow-d-width'
+export const dxVar = '--_number-flow-dx'
 
-try {
-	CSS.registerProperty({
-		name: opacityDeltaVar,
-		syntax: '<number>',
-		inherits: true,
-		initialValue: '0'
-	})
-} catch {
-	// Ignore if already registered
-}
+export const supportsAtProperty = (() => {
+	try {
+		CSS.registerProperty({
+			name: opacityDeltaVar,
+			syntax: '<number>',
+			inherits: false,
+			initialValue: '0'
+		})
+
+		CSS.registerProperty({
+			name: dxVar,
+			syntax: '<number>',
+			inherits: true,
+			initialValue: '0'
+		})
+
+		CSS.registerProperty({
+			name: widthDeltaVar,
+			syntax: '<number>',
+			inherits: true,
+			initialValue: '0'
+		})
+		return true
+	} catch {
+		return false
+	}
+})()
 
 export const supportsAnimationComposition =
 	BROWSER &&
@@ -32,12 +51,8 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 
-const sectionScaleXCorrection = 'calc(1/(1 + var(--_number-flow-scale-x-delta)))'
+const scaledMaskWidth = `calc(${maskWidth} / var(--scale))`
 
-// const scaledMaskWidth = `calc(${maskWidth} * ${sectionScaleXCorrection})`
-const scaledMaskWidth = maskWidth
-
-const verticalMask = `linear-gradient(to bottom, transparent 0, #000 ${maskHeight}, #000 calc(100% - ${maskHeight}), transparent 100%)`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
 export const SlottedTag = 'span'
@@ -73,26 +88,76 @@ const styles = css`
 		pointer-events: auto;
 	}
 
+	.number,
+	.number__inner {
+		align-items: baseline;
+		display: inline-flex;
+		transform-origin: left top;
+	}
+
+	.number {
+		--scale: calc(1 + var(${widthDeltaVar}) / var(--width));
+		transform: translateX(calc(1px * var(${dxVar}))) scaleX(var(--scale));
+
+		margin: 0 calc(-1 * ${maskWidth});
+		position: relative; /* for z-index */
+		z-index: -1; /* display underneath other sections */
+
+		overflow: clip; /* important so it doesn't affect page layout */
+		/* -webkit- prefixed properties have better support than unprefixed ones: */
+		-webkit-mask-image: 
+			/* Horizontal: */
+			linear-gradient(
+				to right,
+				transparent 0,
+				#000 ${scaledMaskWidth},
+				#000 calc(100% - ${scaledMaskWidth}),
+				transparent
+			),
+			/* Vertical: */
+				linear-gradient(
+					to bottom,
+					transparent 0,
+					#000 ${maskHeight},
+					#000 calc(100% - ${maskHeight}),
+					transparent 100%
+				),
+			/* TL corner */ radial-gradient(at bottom right, ${cornerGradient}),
+			/* TR corner */ radial-gradient(at bottom left, ${cornerGradient}),
+			/* BR corner */ radial-gradient(at top left, ${cornerGradient}),
+			/* BL corner */ radial-gradient(at top right, ${cornerGradient});
+		-webkit-mask-size:
+			100% calc(100% - ${maskHeight} * 2),
+			calc(100% - ${scaledMaskWidth} * 2) 100%,
+			${scaledMaskWidth} ${maskHeight},
+			${scaledMaskWidth} ${maskHeight},
+			${scaledMaskWidth} ${maskHeight},
+			${scaledMaskWidth} ${maskHeight};
+		-webkit-mask-position:
+			center,
+			center,
+			top left,
+			top right,
+			bottom right,
+			bottom left;
+		-webkit-mask-repeat: no-repeat;
+	}
+
+	.number__inner {
+		padding: 0 ${maskWidth};
+		/* invert parent's: */
+		transform: scaleX(calc(1 / var(--scale))) translateX(calc(-1px * var(${dxVar})));
+	}
+
 	.section {
 		align-items: baseline;
 		display: inline-flex;
 		padding-bottom: ${halfMaskHeight};
 		padding-top: ${halfMaskHeight};
 		user-select: none;
-	}
-
-	.section:not(.section--masked),
-	.section--masked .section__inner {
 		/* for .section__exiting: */
 		position: relative;
 		isolation: isolate;
-	}
-
-	.section__inner {
-		align-items: baseline;
-		display: inline-flex;
-		transform-origin: inherit;
-		height: inherit;
 	}
 
 	.section--justify-left {
@@ -101,49 +166,6 @@ const styles = css`
 
 	.section--justify-right {
 		transform-origin: center right;
-	}
-
-	.section--masked {
-		overflow: clip;
-		position: relative; /* for z-index */
-		z-index: -1; /* display underneath other sections */
-		/* -webkit prefixed versions have universally better support than non-prefixed */
-		-webkit-mask-repeat: no-repeat;
-		-webkit-mask-size:
-			calc(100% - ${scaledMaskWidth}) 100%,
-			100% calc(100% - ${maskHeight} * 2),
-			${scaledMaskWidth} ${maskHeight},
-			${scaledMaskWidth} ${maskHeight};
-	}
-
-	.section--masked.section--justify-left {
-		padding-right: ${maskWidth};
-		margin-right: calc(-1 * ${maskWidth});
-		-webkit-mask-image:
-			${verticalMask},
-			linear-gradient(to right, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%),
-			/* TR corner */ radial-gradient(at bottom left, ${cornerGradient}),
-			/* BR corner */ radial-gradient(at top left, ${cornerGradient});
-		-webkit-mask-position:
-			left,
-			center,
-			right top,
-			right bottom;
-	}
-
-	.section--masked.section--justify-right {
-		padding-left: ${maskWidth};
-		margin-left: calc(-1 * ${maskWidth});
-		-webkit-mask-image:
-			${verticalMask},
-			linear-gradient(to left, #000 0, #000 calc(100% - ${scaledMaskWidth}), transparent 100%),
-			/* TL corner */ radial-gradient(at bottom right, ${cornerGradient}),
-			/* BL corner */ radial-gradient(at top right, ${cornerGradient});
-		-webkit-mask-position:
-			right,
-			center,
-			left top,
-			left bottom;
 	}
 
 	.section__exiting {
