@@ -21,9 +21,9 @@ export const supportsAtProperty = (() => {
 
 		CSS.registerProperty({
 			name: dxVar,
-			syntax: '<number>',
+			syntax: '<length>',
 			inherits: true,
-			initialValue: '0'
+			initialValue: '0px'
 		})
 
 		CSS.registerProperty({
@@ -97,7 +97,7 @@ const styles = css`
 
 	.number {
 		--scale: calc(1 + var(${widthDeltaVar}) / var(--width));
-		transform: translateX(calc(1px * var(${dxVar}))) scaleX(var(--scale));
+		transform: translateX(var(${dxVar})) scaleX(var(--scale));
 
 		margin: 0 calc(-1 * ${maskWidth});
 		position: relative; /* for z-index */
@@ -146,7 +146,7 @@ const styles = css`
 	.number__inner {
 		padding: 0 ${maskWidth};
 		/* invert parent's: */
-		transform: scaleX(calc(1 / var(--scale))) translateX(calc(-1px * var(${dxVar})));
+		transform: scaleX(calc(1 / var(--scale))) translateX(calc(-1 * var(${dxVar})));
 	}
 
 	.section {

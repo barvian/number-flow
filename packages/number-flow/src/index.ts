@@ -238,7 +238,7 @@ class Num {
 
 		this.el.animate(
 			{
-				[dxVar]: [dx, 0],
+				[dxVar]: [`${dx}px`, '0px'],
 				[widthDeltaVar]: [dWidth, 0]
 			},
 			{
