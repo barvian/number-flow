@@ -5,7 +5,7 @@ import type { Rename } from '@/lib/types'
 
 const NUMBERS = [12398.432, -3243.6, 543.2]
 
-export default function DemoIndicator({
+export default function DemoHOC({
 	children,
 	...rest
 }: Rename<Omit<DemoProps, 'children'>, 'code', 'children'>) {

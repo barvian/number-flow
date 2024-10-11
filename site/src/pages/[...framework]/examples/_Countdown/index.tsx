@@ -4,7 +4,7 @@ import Example from './Example'
 import type { Rename } from '@/lib/types'
 import { useInView } from 'framer-motion'
 
-export default function DemoIndicator({
+export default function DemoHOC({
 	children,
 	...rest
 }: Rename<Omit<DemoProps, 'children'>, 'code', 'children'>) {
