@@ -21,7 +21,7 @@ type Props = {
 	onRepost: () => void
 }
 
-export default function ActivityExample({
+export default function Activity({
 	likes,
 	reposts,
 	views,
@@ -34,7 +34,7 @@ export default function ActivityExample({
 	bookmarked
 }: Props) {
 	return (
-		<div className="text-muted ~px-0/16 ~text-[0.8125rem]/sm flex w-full select-none items-center">
+		<div className="~px-0/16 ~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
 			<div className="flex flex-1 items-center gap-1.5">
 				<ChartNoAxesColumn absoluteStrokeWidth className="~size-4/5" />
 				<NumberFlow value={views} format={format} />

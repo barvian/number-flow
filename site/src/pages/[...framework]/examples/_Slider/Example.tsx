@@ -1,22 +1,22 @@
 import NumberFlow from '@number-flow/react'
 import * as React from 'react'
-import * as Slider from '@radix-ui/react-slider'
+import * as RadixSlider from '@radix-ui/react-slider'
 
-export default function SliderExample() {
+export default function Slider() {
 	const [value, setValue] = React.useState(50)
 
 	return (
-		<Slider.Root
+		<RadixSlider.Root
 			className="relative flex h-5 w-[200px] touch-none select-none items-center"
 			defaultValue={[value]}
 			onValueChange={([value]) => value != null && setValue(value)}
 			max={100}
 			step={1}
 		>
-			<Slider.Track className="relative h-[3px] grow rounded-full bg-zinc-100 dark:bg-zinc-800">
-				<Slider.Range className="absolute h-full rounded-full bg-black dark:bg-white" />
-			</Slider.Track>
-			<Slider.Thumb
+			<RadixSlider.Track className="relative h-[3px] grow rounded-full bg-zinc-100 dark:bg-zinc-800">
+				<RadixSlider.Range className="absolute h-full rounded-full bg-black dark:bg-white" />
+			</RadixSlider.Track>
+			<RadixSlider.Thumb
 				className="relative block h-5 w-5 rounded-[1rem] bg-white shadow-md ring ring-black/10"
 				aria-label="Volume"
 			>
@@ -33,7 +33,7 @@ export default function SliderExample() {
 					}}
 					className="absolute bottom-8 left-1/2 -translate-x-1/2 text-lg font-semibold"
 				/>
-			</Slider.Thumb>
-		</Slider.Root>
+			</RadixSlider.Thumb>
+		</RadixSlider.Root>
 	)
 }

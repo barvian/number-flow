@@ -5,7 +5,7 @@ type Props = {
 	active?: boolean
 }
 
-export default function CountdownExamples({ active = true }: Props) {
+export default function Countdown({ active = true }: Props) {
 	const [timeLeft, setTimeLeft] = React.useState(3600) // 1 hour in seconds
 
 	React.useEffect(() => {

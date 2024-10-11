@@ -11,7 +11,7 @@ type Props = {
 	diff: number
 }
 
-export default function FramerMotionExample({ value, diff }: Props) {
+export default function PriceWithDiff({ value, diff }: Props) {
 	// Match NumberFlow's default x timing.
 	const layoutTransition = useDefaultTransformTransition()
 

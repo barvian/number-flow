@@ -5,7 +5,7 @@ type Props = {
 	value: number
 }
 
-export default function ColoredTrendsExample({ value }: Props) {
+export default function PriceWithColoredTrend({ value }: Props) {
 	const ref = React.useRef<NumberFlowElement>(null)
 
 	const prevValue = React.useRef(value)
