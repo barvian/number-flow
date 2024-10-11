@@ -60,7 +60,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 					ref={inputRef}
 					className={clsx(
 						showCaret ? 'caret-primary' : 'caret-transparent',
-						'spin-hide bg-transparent text-center font-[inherit] text-transparent outline-none'
+						'spin-hide w-[1.5em] bg-transparent text-center font-[inherit] text-transparent outline-none'
 					)}
 					style={{ fontKerning: 'none' }}
 					type="number"
