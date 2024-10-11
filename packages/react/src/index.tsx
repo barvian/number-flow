@@ -30,6 +30,10 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	locales?: Intl.LocalesArgument
 	format?: Format
 	isolate?: boolean
+	animated?: boolean
+	// animateDependencies?: React.DependencyList
+	onAnimationsStart?: () => void
+	onAnimationsFinish?: () => void
 	trend?: (typeof NumberFlowElement)['prototype']['trend']
 	opacityTiming?: (typeof NumberFlowElement)['prototype']['opacityTiming']
 	transformTiming?: (typeof NumberFlowElement)['prototype']['transformTiming']
@@ -55,28 +59,39 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 
 	// Update the non-parts props to avoid JSON serialization
 	// Parts needs to be set in render still:
-	updateNonPartsProps() {
-		if (this.#el) {
-			this.#el.manual = !this.props.isolate
-			if (this.props.trend != null) this.#el.trend = this.props.trend
-			if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
-			if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
-			if (this.props.rotateTiming) this.#el.rotateTiming = this.props.rotateTiming
-		}
+	updateNonPartsProps(prevProps?: Readonly<NumberFlowImplProps>) {
+		if (!this.#el) return
+
+		this.#el.manual = !this.props.isolate
+		if (this.props.animated != null) this.#el.animated = this.props.animated
+		if (this.props.trend != null) this.#el.trend = this.props.trend
+		if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
+		if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
+		if (this.props.rotateTiming) this.#el.rotateTiming = this.props.rotateTiming
+
+		if (prevProps?.onAnimationsStart)
+			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart)
+		if (this.props.onAnimationsStart)
+			this.#el.addEventListener('animationsstart', this.props.onAnimationsStart)
+
+		if (prevProps?.onAnimationsFinish)
+			this.#el.removeEventListener('animationsfinish', prevProps.onAnimationsFinish)
+		if (this.props.onAnimationsFinish)
+			this.#el.addEventListener('animationsfinish', this.props.onAnimationsFinish)
 	}
 
 	override componentDidMount() {
 		this.updateNonPartsProps()
 	}
 
-	override getSnapshotBeforeUpdate() {
-		this.updateNonPartsProps()
-		if (!this.props.isolate) this.#el?.willUpdate()
+	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
+		this.updateNonPartsProps(prevProps)
+		if (!this.props.isolate && prevProps.parts !== this.props.parts) this.#el?.willUpdate()
 		return null
 	}
 
-	override componentDidUpdate() {
-		if (!this.props.isolate) this.#el?.didUpdate()
+	override componentDidUpdate(prevProps: Readonly<NumberFlowImplProps>) {
+		if (!this.props.isolate && prevProps.parts !== this.props.parts) this.#el?.didUpdate()
 	}
 
 	#el?: NumberFlowElement
@@ -92,6 +107,7 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 			className,
 			parts,
 			// These are set in updateNonPartsProps, so ignore them here:
+			animated,
 			isolate,
 			trend,
 			opacityTiming,

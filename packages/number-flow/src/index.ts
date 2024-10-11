@@ -57,6 +57,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	transformTiming = defaultTransformTiming
 	rotateTiming?: EffectTiming
 	opacityTiming = defaultOpacityTiming
+	#animated = true
 	manual = false
 
 	#created = false
@@ -103,18 +104,19 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			this.shadowRoot!.appendChild(createElement('slot'))
 
 			this.#pre = new SymbolSection(this, pre, {
-				// part: 'pre',
 				inert: true,
 				ariaHidden: 'true',
 				justify: 'right'
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
 
-			this.#num = new Num(this, integer, fraction)
+			this.#num = new Num(this, integer, fraction, {
+				inert: true,
+				ariaHidden: 'true'
+			})
 			this.shadowRoot!.appendChild(this.#num.el)
 
 			this.#post = new SymbolSection(this, post, {
-				// part: 'post',
 				inert: true,
 				ariaHidden: 'true',
 				justify: 'left'
@@ -146,6 +148,11 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	willUpdate() {
+		// In general this should be disable most animations except the ones that run
+		// during an update, i.e. new digits and AnimatePresence. So make sure to handle those
+		// separately:
+		if (!this.animated) return
+
 		this.#pre!.willUpdate()
 		this.#num!.willUpdate()
 		this.#post!.willUpdate()
@@ -154,20 +161,36 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	#abortAnimationsFinish?: AbortController
 
 	didUpdate() {
+		if (!this.animated) return
+
+		// If we're already animating, cancel the previous animationsfinish event:
+		if (this.#abortAnimationsFinish) this.#abortAnimationsFinish.abort()
+		// Otherwise, dispatch a start event:
+		else this.dispatchEvent(new Event('animationsstart'))
+
 		this.#pre!.didUpdate()
 		this.#num!.didUpdate()
 		this.#post!.didUpdate()
 
-		// Because we use composited animations, they technically always finish.
-		// So abort the Promise.all on each update so we only emit an event at the very end:
-		this.#abortAnimationsFinish?.abort()
 		const controller = new AbortController()
-		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished))
-			.then(() => {
-				if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinish'))
-			})
-			.catch(() => {}) // ignore animation cancellation
+		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
+			if (!controller.signal.aborted) {
+				this.dispatchEvent(new Event('animationsfinish'))
+				this.#abortAnimationsFinish = undefined
+			}
+		})
 		this.#abortAnimationsFinish = controller
+	}
+
+	get animated() {
+		return this.#animated
+	}
+
+	set animated(val: boolean) {
+		if (this.animated === val) return
+		this.#animated = val
+		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
+		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
 	}
 }
 
@@ -181,18 +204,13 @@ class Num {
 	constructor(
 		readonly flow: NumberFlowLite,
 		integer: KeyedNumberPart[],
-		fraction: KeyedNumberPart[]
+		fraction: KeyedNumberPart[],
+		{ className, ...props }: HTMLProps<'span'> = {}
 	) {
 		this.#integer = new NumberSection(flow, integer, {
-			// part: 'integer',
-			inert: true,
-			ariaHidden: 'true',
 			justify: 'right'
 		})
 		this.#fraction = new NumberSection(flow, fraction, {
-			// part: 'fraction',
-			inert: true,
-			ariaHidden: 'true',
 			justify: 'left'
 		})
 
@@ -206,7 +224,8 @@ class Num {
 		this.el = createElement(
 			'span',
 			{
-				className: `number`
+				...props,
+				className: `number ${className ?? ''}`
 			},
 			[this.#inner]
 		)
@@ -267,7 +286,7 @@ abstract class Section {
 	constructor(
 		readonly flow: NumberFlowLite,
 		parts: KeyedNumberPart[],
-		{ justify, className, ...opts }: SectionProps,
+		{ justify, className, ...props }: SectionProps,
 		children?: (chars: Node[]) => Node[]
 	) {
 		this.justify = justify
@@ -280,7 +299,7 @@ abstract class Section {
 		this.el = createElement(
 			'span',
 			{
-				...opts,
+				...props,
 				className: `section section--justify-${justify} ${className ?? ''}`
 			},
 			children ? children(chars) : chars
@@ -357,10 +376,12 @@ abstract class Section {
 			{ reverse }
 		)
 
-		const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
-		added.forEach((comp) => {
-			comp.willUpdate(rect)
-		})
+		if (this.flow.animated) {
+			const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
+			added.forEach((comp) => {
+				comp.willUpdate(rect)
+			})
+		}
 		// Update added children to their initial value (we start them at 0)
 		added.forEach((comp, part) => {
 			comp.update(part.value)
@@ -464,7 +485,7 @@ class AnimatePresence {
 		// This craziness is the only way I could figure out how to get the opacity
 		// accumulation to work in all browsers. Accumulating -1 onto opacity directly
 		// failed in both FF and Safari, and setting a delta to -1 still failed in FF
-		if (animateIn) {
+		if (this.flow.animated && animateIn) {
 			this.el.animate(
 				{
 					[opacityDeltaVar]: [-0.9999, 0]
@@ -483,13 +504,20 @@ class AnimatePresence {
 		return this.#present
 	}
 
-	#handleRootAnimationsFinish = () => {
+	#remove = () => {
 		this.el.remove()
 		this.#onRemove?.()
 	}
 
 	set present(val) {
 		if (this.#present === val) return
+		this.#present = val
+
+		if (!this.flow.animated) {
+			if (!val) this.#remove()
+			return
+		}
+
 		this.el.style.setProperty('--_number-flow-d-opacity', val ? '0' : '-.999')
 		this.el.animate(
 			{
@@ -501,26 +529,24 @@ class AnimatePresence {
 			}
 		)
 
-		if (val) this.flow.removeEventListener('animationsfinish', this.#handleRootAnimationsFinish)
+		if (val) this.flow.removeEventListener('animationsfinish', this.#remove)
 		else
-			this.flow.addEventListener('animationsfinish', this.#handleRootAnimationsFinish, {
+			this.flow.addEventListener('animationsfinish', this.#remove, {
 				once: true
 			})
-
-		this.#present = val
 	}
 }
 
-interface CharOptions extends AnimatePresenceProps {}
+interface CharProps extends AnimatePresenceProps {}
 
 abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends AnimatePresence {
 	constructor(
 		readonly section: Section,
 		protected value: P['value'],
 		override readonly el: HTMLSpanElement,
-		options?: AnimatePresenceProps
+		props?: AnimatePresenceProps
 	) {
-		super(section.flow, el, options)
+		super(section.flow, el, props)
 	}
 
 	abstract willUpdate(parentRect: DOMRect): void
@@ -536,7 +562,7 @@ class Digit extends Char<KeyedDigitPart> {
 		section: Section,
 		_: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
-		opts?: CharOptions
+		props?: CharProps
 	) {
 		const numbers = Array.from({ length: 10 }).map((_, i) => {
 			const num = createElement(
@@ -563,7 +589,7 @@ class Digit extends Char<KeyedDigitPart> {
 		)
 		el.style.setProperty('--c', String(value))
 
-		super(section, value, el, opts)
+		super(section, value, el, props)
 
 		this.#roll = roll
 		this.#numbers = numbers
@@ -594,7 +620,7 @@ class Digit extends Char<KeyedDigitPart> {
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		this.#numbers[this.#prevValue!]?.classList.remove('is-current')
+		this.#numbers[this.value]?.classList.remove('is-current')
 		this.el.style.setProperty('--c', String(value))
 		this.#numbers[value]?.classList.add('is-current')
 		this.value = value
@@ -650,7 +676,7 @@ class Sym extends Char<KeyedSymbolPart> {
 		section: Section,
 		private type: KeyedSymbolPart['type'],
 		value: KeyedSymbolPart['value'],
-		opts?: CharOptions
+		props?: CharProps
 	) {
 		const val = createElement('span', {
 			className: 'symbol__value',
@@ -666,7 +692,7 @@ class Sym extends Char<KeyedSymbolPart> {
 				},
 				[val]
 			),
-			opts
+			props
 		)
 		this.#children.set(
 			value,

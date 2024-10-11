@@ -69,8 +69,6 @@ const styles = css`
 	:host {
 		display: inline-flex; /* better for matching baselines with other inline elements */
 		direction: ltr;
-		user-select: none;
-		pointer-events: none;
 		white-space: nowrap;
 		/* for invisible slotted label used for screen readers and selecting: */
 		position: relative;
@@ -84,8 +82,12 @@ const styles = css`
 		top: 0;
 		color: transparent !important;
 		z-index: -1;
-		user-select: text;
-		pointer-events: auto;
+	}
+
+	:host > .number,
+	:host > .section {
+		pointer-events: none;
+		user-select: none;
 	}
 
 	.number,
@@ -154,7 +156,6 @@ const styles = css`
 		display: inline-flex;
 		padding-bottom: ${halfMaskHeight};
 		padding-top: ${halfMaskHeight};
-		user-select: none;
 		/* for .section__exiting: */
 		position: relative;
 		isolation: isolate;

@@ -9,6 +9,8 @@ import ActivityCode from './_Activity/Example?raw'
 import { DemoTitle } from '@/components/Demo'
 import Slider from './_Slider'
 import SliderCode from './_Slider/Example?raw'
+import Input from './_Input'
+import InputCode from './_Input/Example?raw'
 // import Countdown from './_Countdown'
 // import CountdownCode from './_Countdown/Example?raw'
 import ColoredTrends from './_ColoredTrends'
@@ -28,6 +30,12 @@ import Code from '@/components/Code.astro';
 <Slider client:visible>
 <Code code={SliderCode} lang="tsx" />
 </Slider>
+
+## Input
+
+<Input client:visible>
+<Code code={InputCode} lang="tsx" />
+</Input>
 
 {/*
 ## Countdown
