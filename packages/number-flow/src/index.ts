@@ -164,9 +164,11 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		// So abort the Promise.all on each update so we only emit an event at the very end:
 		this.#abortAnimationsFinish?.abort()
 		const controller = new AbortController()
-		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
-			if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinish'))
-		})
+		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished))
+			.then(() => {
+				if (!controller.signal.aborted) this.dispatchEvent(new Event('animationsfinish'))
+			})
+			.catch(() => {}) // ignore animation cancellation
 		this.#abortAnimationsFinish = controller
 	}
 }
