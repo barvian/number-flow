@@ -80,6 +80,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 					onAnimationsStart={() => setShowCaret(false)}
 					onAnimationsFinish={() => setShowCaret(true)}
 					className="pointer-events-none"
+					willChange
 				/>
 			</div>
 			<button

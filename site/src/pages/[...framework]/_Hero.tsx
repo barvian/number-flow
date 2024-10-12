@@ -77,6 +77,7 @@ export default function Hero() {
 					value={value}
 					locales={locale}
 					format={format}
+					willChange
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
