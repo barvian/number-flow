@@ -70,11 +70,11 @@
 	}
 
 	.bg-mask-white {
-		background-image: linear-gradient(to top, #fff, ease-out, transparent);
+		background-image: linear-gradient(to top, theme(colors.white), ease-out, transparent);
 	}
 
 	.bg-mask-zinc-950 {
-		background-image: linear-gradient(to top, #09090b, ease-out, transparent);
+		background-image: linear-gradient(to top, theme(colors.zinc.950), ease-out, transparent);
 	}
 
 	.scrollbar-none {

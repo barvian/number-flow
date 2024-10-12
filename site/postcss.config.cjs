@@ -1,3 +1,3 @@
 module.exports = {
-	plugins: [require('postcss-easing-gradients')]
+	plugins: [require('tailwindcss'), require('postcss-easing-gradients')]
 }

@@ -30,13 +30,7 @@ export default defineConfig({
 			}
 		}
 	},
-	integrations: [
-		tailwind({
-			applyBaseStyles: false
-		}),
-		react(),
-		mdx()
-	],
+	integrations: [react(), mdx()],
 	output: 'hybrid',
 	adapter: vercel({
 		webAnalytics: {
