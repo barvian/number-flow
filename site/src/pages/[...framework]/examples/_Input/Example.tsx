@@ -45,7 +45,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 		}
 
 	return (
-		<div className="animated-[box-shadow] group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800">
+		<div className="group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800">
 			<button
 				aria-hidden
 				tabIndex={-1}
