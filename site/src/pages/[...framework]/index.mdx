@@ -84,7 +84,7 @@ This can be useful if:
 * Your number is guaranteed to change frequently
 * You experience text misalignment when a transition completes
 
-Note that "excessive use of `will-change` will result in excessive memory use" (source: MDN).
+Note that "excessive use of `will-change` will result in excessive memory use" (source: [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change)).
 
 ## Styling
 
@@ -93,11 +93,11 @@ There's some CSS properties you can use to style the component:
 ### `--number-flow-mask-[height|width]`
 
 These adjust the height and width of the gradient fade-out masks at the edges of the number.
-`--number-flow-mask-height` also gets used as the vertical padding for the number.
+`--number-flow-mask-height` also gets used as the top and bottom padding for the number.
 
 ### `--number-flow-char-height`
 
-Sets the line height of each character (default: `1em`). This can be used to adjust the vertical 
+Sets the height of each character (default: `1em`). This can be used to adjust the vertical 
 spacing between numbers.
 
 ## Hooks

@@ -81,7 +81,7 @@ export default function Hero() {
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
-				An animated number component for React. Dependency-free. Built on{' '}
+				A React component to transition & format numbers. Dependency-free. Built on{' '}
 				<a
 					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
 					target="_blank"
