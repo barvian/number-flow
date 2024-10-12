@@ -109,7 +109,6 @@ const styles = css`
 
 	.number,
 	.number__inner {
-		align-items: baseline;
 		display: inline-flex;
 		transform-origin: left top;
 	}
@@ -174,10 +173,10 @@ const styles = css`
 	}
 
 	.section {
-		align-items: baseline;
 		display: inline-flex;
 		padding-bottom: ${halfMaskHeight};
 		padding-top: ${halfMaskHeight};
+		height: calc(${charHeight} + ${halfMaskHeight} * 2);
 		/* for .section__exiting: */
 		position: relative;
 		isolation: isolate;
@@ -245,13 +244,7 @@ const styles = css`
 		display: none;
 	}
 
-	.empty {
-		display: block;
-		padding: ${halfMaskHeight} 0;
-	}
-
 	.symbol {
-		align-items: baseline;
 		display: inline-flex;
 		position: relative;
 		isolation: isolate;

@@ -290,10 +290,6 @@ abstract class Section {
 	) {
 		this.justify = justify
 		const chars = parts.map<Node>((p) => this.addChar(p).el)
-		// Add zero-width space to prevent height from collapsing when empty:
-		// Can't use :empty because technically popped digits are still in the DOM, just
-		// absolutely positioned
-		chars.push(createElement('span', { className: 'empty', textContent: '\u200B' }))
 
 		this.el = createElement(
 			'span',
