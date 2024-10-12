@@ -49,19 +49,20 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 			<button
 				aria-hidden
 				tabIndex={-1}
-				className="flex items-center pl-[.375em] pr-[.25em]"
+				className="flex items-center pl-[.5em] pr-[.25em]"
 				disabled={min != null && value <= min}
 				onPointerDown={handlePointerDown(-1)}
 			>
 				<Minus className="size-[.5em]" absoluteStrokeWidth strokeWidth={3} />
 			</button>
-			<div className="relative grid justify-items-center text-center [grid-template-areas:'overlap'] *:[grid-area:overlap]">
+			<div className="relative grid items-center justify-items-center text-center [grid-template-areas:'overlap'] *:[grid-area:overlap]">
 				<input
 					ref={inputRef}
 					className={clsx(
 						showCaret ? 'caret-primary' : 'caret-transparent',
-						'spin-hide w-[1.5em] bg-transparent text-center font-[inherit] text-transparent outline-none'
+						'spin-hide w-[1.5em] bg-transparent py-2 text-center font-[inherit] text-transparent outline-none'
 					)}
+					// Make sure to disable kerning, to match NumberFlow:
 					style={{ fontKerning: 'none' }}
 					type="number"
 					min={min}
@@ -79,13 +80,12 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 					onAnimationsStart={() => setShowCaret(false)}
 					onAnimationsFinish={() => setShowCaret(true)}
 					className="pointer-events-none"
-					style={{ '--number-flow-char-height': '0.85em' }}
 				/>
 			</div>
 			<button
 				aria-hidden
 				tabIndex={-1}
-				className="flex items-center pl-[.25em] pr-[.375em]"
+				className="flex items-center pl-[.25em] pr-[.5em]"
 				disabled={max != null && value >= max}
 				onPointerDown={handlePointerDown(1)}
 			>
