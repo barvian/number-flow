@@ -73,12 +73,14 @@ const scaledMaskWidth = `calc(${maskWidth} / var(${scaleXVar}))`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
 export const SlottedTag = 'span'
-export const slottedStyles = {
-	fontKerning: 'none',
-	display: 'inline-block',
-	lineHeight: charHeight,
-	padding: `${maskHeight} 0`
-} as const
+export const slottedStyles = ({ willChange }: { willChange?: boolean }) =>
+	({
+		fontKerning: 'none',
+		display: 'inline-block',
+		lineHeight: charHeight,
+		padding: `${maskHeight} 0`,
+		willChange: willChange ? 'transform' : undefined
+	}) as const
 
 const styles = css`
 	:host {
@@ -110,6 +112,11 @@ const styles = css`
 		align-items: baseline;
 		display: inline-flex;
 		transform-origin: left top;
+	}
+
+	:host([data-will-change]) .number,
+	:host([data-will-change]) .number__inner {
+		will-change: transform;
 	}
 
 	.number {
@@ -176,6 +183,10 @@ const styles = css`
 		isolation: isolate;
 	}
 
+	:host([data-will-change]) .section {
+		will-change: transform;
+	}
+
 	.section--justify-left {
 		transform-origin: center left;
 	}
@@ -194,9 +205,17 @@ const styles = css`
 		display: block;
 	}
 
+	:host([data-will-change]) .digit {
+		will-change: transform;
+	}
+
 	.digit__roll {
 		display: block;
 		position: relative;
+	}
+
+	:host([data-will-change]) .digit_roll {
+		will-change: transform, transform-style;
 	}
 
 	.digit__roll.is-spinning {
@@ -237,6 +256,10 @@ const styles = css`
 		position: relative;
 		isolation: isolate;
 		padding: ${halfMaskHeight} 0;
+	}
+
+	:host([data-will-change]) .symbol {
+		will-change: transform;
 	}
 
 	.symbol__value {

@@ -31,6 +31,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	format?: Format
 	isolate?: boolean
 	animated?: boolean
+	willChange?: boolean
 	// animateDependencies?: React.DependencyList
 	onAnimationsStart?: () => void
 	onAnimationsFinish?: () => void
@@ -106,6 +107,7 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 			innerRef,
 			className,
 			parts,
+			willChange,
 			// These are set in updateNonPartsProps, so ignore them here:
 			animated,
 			isolate,
@@ -120,13 +122,14 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 			// @ts-expect-error missing types
 			<number-flow
 				ref={this.handleRef}
+				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:
 				class={className}
 				{...rest}
 				// Make sure parts are set last, everything else is updated:
 				parts={JSON.stringify(parts)}
 			>
-				<SlottedTag style={slottedStyles}>{parts.formatted}</SlottedTag>
+				<SlottedTag style={slottedStyles({ willChange })}>{parts.formatted}</SlottedTag>
 				{/* @ts-expect-error missing types */}
 			</number-flow>
 		)
