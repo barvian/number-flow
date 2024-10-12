@@ -40,7 +40,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 				)}
 				id="nav"
 			>
-				<div className="absolute -inset-[18px] top-auto h-[12rem] bg-gradient-to-t from-white to-white/0 blur-[10px] dark:from-zinc-950 dark:to-zinc-950/0"></div>
+				<div className="bg-mask-white dark:bg-mask-zinc-950 absolute bottom-0 left-0 h-[13rem] w-full"></div>
 				<div className="container flex justify-center">
 					{/* The backdrop blur broke with VTs when it was on the scrolling div: */}
 					<div className="max-w-full rounded-[1.375rem] bg-zinc-100/90 ring ring-black/[5%] backdrop-blur-xl backdrop-saturate-[140%] dark:border dark:border-white/[8%] dark:bg-zinc-950/90 dark:ring-0">

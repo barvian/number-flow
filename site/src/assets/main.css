@@ -69,6 +69,14 @@
 		@apply bg-zinc-200 dark:bg-zinc-700;
 	}
 
+	.bg-mask-white {
+		background-image: linear-gradient(to top, #fff, ease-out, transparent);
+	}
+
+	.bg-mask-zinc-950 {
+		background-image: linear-gradient(to top, #09090b, ease-out, transparent);
+	}
+
 	.scrollbar-none {
 		-ms-overflow-style: none; /* IE */
 		scrollbar-width: none; /* Firefox */
