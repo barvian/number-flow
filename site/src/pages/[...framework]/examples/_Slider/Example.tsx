@@ -18,6 +18,7 @@ export default function Slider({ value, className, ...props }: RadixSlider.Slide
 			>
 				{value?.[0] != null && (
 					<NumberFlow
+						willChange
 						value={value[0]}
 						isolate
 						opacityTiming={{
