@@ -14,7 +14,7 @@ const { headings, articleClass, ...props } = Astro.props
 ---
 
 <Layout {...props}>
-	<Supported client:load />
+	<Supported client:only="react" />
 	<slot name="hero" />
 	<div
 		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"

@@ -13,7 +13,7 @@ import {
 	prefersReducedMotion,
 	canAnimate as _canAnimate
 } from 'number-flow'
-export type { Value, Format } from 'number-flow'
+export type { Value, Format, Trend } from 'number-flow'
 
 // Can't wait to not have to do this in React 19:
 const OBSERVED_ATTRIBUTES = ['parts'] as const
@@ -166,7 +166,7 @@ export default NumberFlow
 
 // SSR-safe supportsLinear
 export function useSupportsLinear() {
-	const [supported, setSupported] = React.useState(false)
+	const [supported, setSupported] = React.useState(supportsLinear)
 
 	React.useEffect(() => {
 		setSupported(supportsLinear)
@@ -180,14 +180,16 @@ export function useLinear<T = any>(linear: T, fallback: T): T {
 	return supported ? linear : fallback
 }
 
-export function useCanAnimate({ respectMotionPreference = true, optimistic = true } = {}) {
-	const [canAnimate, setCanAnimate] = React.useState(optimistic)
-	const [reducedMotion, setReducedMotion] = React.useState(!optimistic)
+export function useCanAnimate({ respectMotionPreference = true } = {}) {
+	const [canAnimate, setCanAnimate] = React.useState(_canAnimate)
+	const [reducedMotion, setReducedMotion] = React.useState(false)
+
 	// Handle SSR:
 	React.useEffect(() => {
 		setCanAnimate(_canAnimate)
 		setReducedMotion(prefersReducedMotion?.matches ?? false)
 	}, [])
+
 	// Listen for reduced motion changes if needed:
 	React.useEffect(() => {
 		if (!respectMotionPreference) return
