@@ -1,5 +1,5 @@
 ---
-import PostLayout from '@/layouts/Post.astro'
+import DocsLayout from '@/layouts/Docs.astro'
 import type { MDXLayoutProps } from 'astro'
 import Hero from './_Hero'
 import Link from '@/components/Link.astro'
@@ -12,7 +12,7 @@ type Props = MDXLayoutProps<{
 const { frontmatter, headings } = Astro.props
 ---
 
-<PostLayout
+<DocsLayout
 	title={frontmatter.title}
 	description={frontmatter.description}
 	articleClass="[&>section:first-child>h2:first-child]:sr-only"
@@ -33,4 +33,4 @@ const { frontmatter, headings } = Astro.props
 			> from <Link href="https://x.com/artur_bien">Artur Bień</Link>.
 		</p>
 	</footer>
-</PostLayout>
+</DocsLayout>

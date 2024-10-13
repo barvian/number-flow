@@ -1,5 +1,5 @@
 ---
-import PostLayout from '@/layouts/Post.astro'
+import DocsLayout from '@/layouts/Docs.astro'
 import type { MDXLayoutProps } from 'astro'
 import { ArrowUpRight } from 'lucide-react'
 
@@ -11,7 +11,7 @@ type Props = MDXLayoutProps<{
 const { frontmatter, headings } = Astro.props
 ---
 
-<PostLayout
+<DocsLayout
 	title={frontmatter.title}
 	description={frontmatter.description}
 	articleClass="[&>section:first-child>h2:first-child]:sr-only"
@@ -38,4 +38,4 @@ const { frontmatter, headings } = Astro.props
 		</div>
 	</header>
 	<slot />
-</PostLayout>
+</DocsLayout>
