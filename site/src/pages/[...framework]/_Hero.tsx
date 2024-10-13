@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 
-const NUMBERS = [312, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
+const NUMBERS = [321, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
 const LOCALES = ['fr-FR', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
 const FORMATS = [
 	{
@@ -72,7 +72,7 @@ export default function Hero() {
 		>
 			<div className="~mt-1/2 ~mb-0.5/1 flex items-center">
 				<NumberFlow
-					className="~text-5xl/8xl font-medium [--number-flow-char-height:0.85em]"
+					className="~text-5xl/7xl font-medium [--number-flow-char-height:0.85em]"
 					trend={false}
 					value={value}
 					locales={locale}
