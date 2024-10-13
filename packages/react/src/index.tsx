@@ -189,5 +189,5 @@ export function useCanAnimate({
 			prefersReducedMotion?.removeEventListener('change', onChange)
 		}
 	}, [])
-	return canAnimate && !reducedMotion
+	return canAnimate && (!respectMotionPreference || !reducedMotion)
 }

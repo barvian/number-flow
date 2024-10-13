@@ -201,7 +201,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 	get animated() {
 		return (
-			canAnimate && this.#animated && this.respectMotionPreference && !prefersReducedMotion?.matches
+			canAnimate &&
+			this.#animated &&
+			(!this.respectMotionPreference || !prefersReducedMotion?.matches)
 		)
 	}
 
