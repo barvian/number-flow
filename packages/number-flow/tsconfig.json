@@ -1,4 +1,9 @@
 {
 	"extends": "../../tsconfig.json",
-	"compilerOptions": { "jsx": "react", "declaration": true, "outDir": "./dist" }
+	"compilerOptions": {
+		"jsx": "react",
+		"declaration": true,
+		"types": ["@vitest/browser/providers/playwright"],
+		"outDir": "./dist"
+	}
 }

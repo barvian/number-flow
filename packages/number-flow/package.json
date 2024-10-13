@@ -45,16 +45,22 @@
 	"scripts": {
 		"build": "vite build --mode production",
 		"dev": "vite build --mode development --watch",
-		"prepublishOnly": "pnpm run build"
+		"prepublishOnly": "pnpm run build",
+		"test:unit": "vitest",
+		"test:browser": "vitest --workspace=vitest.browser.ts"
 	},
 	"devDependencies": {
 		"@rollup/plugin-typescript": "^12.1.0",
+		"@testing-library/dom": "^10.4.0",
+		"@vitest/browser": "^2.1.2",
 		"babel-plugin-styled-components": "^2.1.4",
 		"magic-string": "^0.30.11",
 		"parse-literals": "^1.2.1",
-		"vite": "^5.4.3",
+		"playwright": "^1.48.0",
+		"tslib": "^2.7.0",
 		"typescript": "^5.6.2",
-		"tslib": "^2.7.0"
+		"vite": "^5.4.3",
+		"vitest": "^2.1.2"
 	},
 	"dependencies": {
 		"esm-env": "^1.0.0"

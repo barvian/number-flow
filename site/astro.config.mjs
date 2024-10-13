@@ -1,10 +1,9 @@
 import { defineConfig, envField } from 'astro/config'
-import tailwind from '@astrojs/tailwind'
 import react from '@astrojs/react'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
-import theme from './shiki-theme'
+import theme from './src/assets/shiki-theme'
 // @ts-expect-error missing types
 import sectionize from './remark-sectionize'
 

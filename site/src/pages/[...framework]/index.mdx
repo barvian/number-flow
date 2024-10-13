@@ -134,7 +134,7 @@ These adjust the height and width of the gradient fade-out masks at the edges of
 Sets the height of each character. This can be used to adjust the vertical 
 spacing between numbers.
 
-### <code>font-variant-numeric<span class="text-muted">:</span> tabular-nums</code>
+### <code>font-variant-numeric<span className="text-muted">:</span> tabular-nums</code>
 
 Ensures all numbers are the same size, which can prevent digits from shifting during transitions.
 See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#numeric-spacing-values) for more information.
@@ -166,7 +166,6 @@ const timing = useLinear<EffectTiming>(
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported
 * Selected text inside the number will not respect color changes from `::selection`, if any
-* Some locales that use non-English characters (e.g. `fa-IR`, `ar-OM`) [aren't supported yet](https://github.com/barvian/number-flow/issues/8), but will be soon
 * Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions. I'd recommend using
 Framer Motion for these, as it's more composable
 than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).

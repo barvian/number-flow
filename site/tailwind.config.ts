@@ -128,13 +128,13 @@ export default {
 						},
 
 						// We need to always use padding for the IntersectionObserver to work:
-						'&>section,&>footer': {
+						'&>section': {
 							'@apply py-10 first:pt-0 last:pb-0': {}
 						},
-						'section > :first-child, footer > :first-child': {
+						'section > :first-child': {
 							'margin-top': '0 !important'
 						},
-						'section > :last-child, footer > :last-child': {
+						'section > :last-child': {
 							'margin-bottom': '0 !important'
 						}
 					}
