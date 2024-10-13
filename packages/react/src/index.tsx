@@ -185,6 +185,7 @@ export function useCanAnimate({
 }: { respectMotionPreference?: boolean } = {}) {
 	const [reducedMotion, setReducedMotion] = React.useState(false)
 	React.useEffect(() => {
+		setReducedMotion(prefersReducedMotion?.matches ?? true)
 		const onChange = ({ matches }: MediaQueryListEvent) => {
 			setReducedMotion(matches)
 		}
