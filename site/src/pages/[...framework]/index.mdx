@@ -7,6 +7,7 @@ import Pre from '@/components/Pre.astro';
 import NumberFlow from '@number-flow/react'
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
+import TabularNumsDemo from './_demos/TabularNums'
 import TrendDemo from './_demos/Trend'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
@@ -132,6 +133,13 @@ These adjust the height and width of the gradient fade-out masks at the edges of
 
 Sets the height of each character. This can be used to adjust the vertical 
 spacing between numbers.
+
+### `font-variant-numeric: tabular-nums`
+
+Ensures all numbers are the same size, which can prevent digits from shifting during transitions.
+See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#numeric-spacing-values) for more information.
+
+<TabularNumsDemo client:visible />
 
 ## Hooks
 
