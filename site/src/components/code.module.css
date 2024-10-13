@@ -4,7 +4,7 @@
 	white-space: normal;
 	tab-size: 2;
 
-	@apply rounded-lg !bg-zinc-950 !p-5 !text-sm [scrollbar-color:theme(colors.white/.3)_transparent] [scrollbar-width:thin] dark:border dark:border-zinc-800 dark:!bg-zinc-900 dark:[scrollbar-color:theme(colors.white/.1)_transparent];
+	@apply dark:border-faint rounded-lg !bg-zinc-950 !p-5 !text-sm [scrollbar-color:theme(colors.white/.3)_transparent] [scrollbar-width:thin] dark:border dark:!bg-zinc-900 dark:[scrollbar-color:theme(colors.white/.1)_transparent];
 }
 
 .code :global(.line) {

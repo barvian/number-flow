@@ -20,10 +20,7 @@ const { frontmatter, headings } = Astro.props
 >
 	<Hero client:load slot="hero" />
 	<slot />
-	<footer
-		slot="footer"
-		class="prose prose-muted dark:prose-invert mt-20 border-t border-zinc-200 pt-20 dark:border-zinc-800"
-	>
+	<footer slot="footer" class="prose prose-muted dark:prose-invert border-faint mt-20 border-t">
 		<p>
 			Built by <Link href="https://x.com/mbarvian">Max Barvian</Link>. Heavily inspired by the
 			<Link href="https://family.co">Family</Link> iOS app. <Link

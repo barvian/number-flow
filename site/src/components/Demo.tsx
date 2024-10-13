@@ -114,7 +114,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 				value="preview"
 				className={clsx(
 					className,
-					'relative rounded-lg border border-zinc-200 data-[state=inactive]:hidden dark:border-zinc-800'
+					'border-faint relative rounded-lg border data-[state=inactive]:hidden'
 				)}
 			>
 				{title && <div className="absolute left-3 top-3">{title}</div>}

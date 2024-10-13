@@ -1,6 +1,8 @@
 <div
 	role="alert"
-	class="text-primary relative rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm dark:border-yellow-950 dark:bg-yellow-950/50"
+	class:list={[
+		'text-primary border-faint relative rounded-lg border px-4 py-3 text-sm' /*, 'border-amber-200 bg-amber-50  dark:border-yellow-950 dark:bg-yellow-950/50'*/
+	]}
 >
 	<slot />
 </div>

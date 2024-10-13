@@ -168,7 +168,7 @@ export default {
 		spring,
 		fluid,
 		typography,
-		plugin(({ matchUtilities, addVariant, theme }) => {
+		plugin(({ matchUtilities, addUtilities, addVariant, theme }) => {
 			matchUtilities(
 				{
 					vt: (_, { modifier }) => ({
@@ -195,6 +195,12 @@ export default {
 				},
 				{ values: { DEFAULT: '' }, modifiers: theme('opacity')! }
 			)
+
+			addUtilities({
+				'.border-faint': {
+					'@apply border-zinc-200 dark:border-zinc-800': {}
+				}
+			})
 
 			addVariant('pre-first-line', ['pre& .line:first-of-type', '& pre .line:first-of-type'])
 			addVariant('prefers-dark', ['@media (prefers-color-scheme: dark) { & }'])
