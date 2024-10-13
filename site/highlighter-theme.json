@@ -283,8 +283,7 @@
 				"entity.other.inherited-class"
 			],
 			"settings": {
-				"foreground": "#fff",
-				"fontStyle": "bold"
+				"foreground": "#fff9"
 			}
 		},
 		{

@@ -9,6 +9,8 @@ export const components = {pre: Pre}
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
 import TrendDemo from './_demos/Trend'
+import Meta from '@/components/Meta.astro'
+import Type from '@/components/Type.astro'
 import Union from '@/components/Union.astro'
 export { getStaticPaths } from '@/lib/framework'
 
@@ -53,11 +55,14 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
 or [easing.dev](https://www.easing.dev/).
 
-### `trend: `<Union class="text-muted" types={["boolean", "'increasing'", "'decreasing'"]} />
+<h3>
+	<code>trend<Type>: <Union types={["boolean", "'increasing'", "'decreasing'"]} /></Type></code>
+	<Meta>Default: `true`</Meta>
+</h3>
 
 Controls the direction of the digits.
 
-- `true` (default): The digits go up if the number increases, and down if the number decreases.
+- `true:` The digits go up if the number increases, and down if the number decreases.
 - `false:` Ignores the trend of the number; each digit goes up if it increases and down if it decreases. This can be useful if you
 want to animate number changes without conveying an overall increase or decrease ([example](https://x.com/pontusab/status/1825941664189526067)).
 - `"increasing":` The digits always go up.
@@ -65,19 +70,28 @@ want to animate number changes without conveying an overall increase or decrease
 
 <TrendDemo client:visible />
 
-### `isolate: `<code className="text-muted">boolean</code>
+<h3>
+	<code>isolate<Type>: boolean</Type></code>
+	<Meta>Default: `false`</Meta>
+</h3>
 
 If `isolate` is set, `<NumberFlow>`'s transitions are isolated from any other layout changes
 that may occur in the same update. This can prevent potentially unwanted animations:
 
 <IsolateDemo client:visible />
 
-### `animated: `<code className="text-muted">boolean</code>
+<h3>
+	<code>animated<Type>: boolean</Type></code>
+	<Meta>Default: `true`</Meta>
+</h3>
 
 Can be set to `false` to disable all animations and finish any current ones.
 See the [input example](/examples/#input) for a usage scenario.
 
-### `willChange: `<code className="text-muted">boolean</code>
+<h3>
+	<code>willChange<Type>: boolean</Type></code>
+	<Meta>Default: `false`</Meta>
+</h3>
 
 If set, NumberFlow applies [`will-change` properties](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change) to relevant elements.
 This can be useful if:
@@ -86,29 +100,53 @@ This can be useful if:
 
 Note that "excessive use of `will-change` will result in excessive memory use" (source: [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change)).
 
+<h3>
+	<code>respectMotionPreference<Type>: boolean</Type></code>
+	<Meta>Default: `true`</Meta>
+</h3>
+
+Can be set to `false` to animate regardless of the user's reduced motion preference.
+
 ## Styling
 
 There's some CSS properties you can use to style the component:
 
-### `--number-flow-mask-[height|width]`
+<h3>
+	<code>{'--'}number-flow-mask-[height|width]<Type>: {'<length>'}</Type></code>
+	<Meta>Default: `.25em` | `.5em`</Meta>
+</h3>
 
 These adjust the height and width of the gradient fade-out masks at the edges of the number.
 `--number-flow-mask-height` also gets used as the top and bottom padding for the number.
 
-### `--number-flow-char-height`
+<h3>
+	<code>{'--'}number-flow-char-height<Type>: {'<length>'}</Type></code>
+	<Meta>Default: `1em`</Meta>
+</h3>
 
-Sets the height of each character (default: `1em`). This can be used to adjust the vertical 
+Sets the height of each character. This can be used to adjust the vertical 
 spacing between numbers.
 
 ## Hooks
 
-### `useLinear(linearBased, fallback)`
+### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
+
+Returns `true` if NumerFlow can animate, i.e.:
+
+* The browser [supports composited animations](https://caniuse.com/mdn-api_element_animate_options_composite_parameter)
+* The browser [supports `@property` rules](https://caniuse.com/mdn-css_at-rules_property)
+* The user has not indicated a preference for reduced motion (can be bypassed with `respectMotionPreference: false`)
+
+See the [Framer Motion example](/examples#framer-motion) for a usage scenario.
+
+
+### <code>useLinear<Type>{'<T>'}</Type>(linearBased<Type>: T</Type>, fallback<Type>: T</Type>)<Type>: T</Type></code>
 
 An SSR-safe way to use a `linear()`-based value if the browser supports it, and a fallback value
 otherwise:
 
 ```ts
-// Use first timing if linear is supported, otherwise cubic-bezier one:
+// Use linear() timing if supported, otherwise cubic-bezier():
 const timing = useLinear<EffectTiming>(
 	{ easing: `linear(...)`, duration: 900 },
 	{ easing: `cubic-bezier(...)`, duration: 750 }
@@ -119,7 +157,7 @@ const timing = useLinear<EffectTiming>(
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported
 * Selected text inside the number will not respect color changes from `::selection`, if any
-* Some locales that use non-English characters (i.e. `fa-IR`, `ar-OM`) [aren't supported yet](https://github.com/barvian/number-flow/issues/8), but will be soon
+* Some locales that use non-English characters (e.g. `fa-IR`, `ar-OM`) [aren't supported yet](https://github.com/barvian/number-flow/issues/8), but will be soon
 * Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions. I'd recommend using
-Framer Motion for these, as it's more flexible and composable
+Framer Motion for these, as it's more composable
 than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).

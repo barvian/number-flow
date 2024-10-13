@@ -9,7 +9,9 @@ import {
 	partitionParts,
 	type PartitionedParts,
 	NumberFlowLite,
-	supportsLinear
+	supportsLinear,
+	prefersReducedMotion,
+	canAnimate
 } from 'number-flow'
 export type * from 'number-flow'
 
@@ -172,4 +174,20 @@ export function useSupportsLinear() {
 export function useLinear<T = any>(linear: T, fallback: T): T {
 	const supported = useSupportsLinear()
 	return supported ? linear : fallback
+}
+
+export function useCanAnimate({
+	respectMotionPreference = true
+}: { respectMotionPreference?: boolean } = {}) {
+	const [reducedMotion, setReducedMotion] = React.useState(false)
+	React.useEffect(() => {
+		const onChange = ({ matches }: MediaQueryListEvent) => {
+			setReducedMotion(matches)
+		}
+		prefersReducedMotion?.addEventListener('change', onChange)
+		return () => {
+			prefersReducedMotion?.removeEventListener('change', onChange)
+		}
+	}, [])
+	return canAnimate && !reducedMotion
 }

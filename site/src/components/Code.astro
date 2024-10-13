@@ -7,7 +7,7 @@ import type { ComponentProps } from 'astro/types'
 export type Props = ComponentProps<typeof AstroCode> & {
 	firstLine?: string
 }
-const { code: _code, firstLine, ...props } = Astro.props
+const { code: _code, inline, firstLine, ...props } = Astro.props
 
 // Clean up code a little bit:
 const code = _code
@@ -18,4 +18,10 @@ const code = _code
 if (firstLine) code.unshift(firstLine)
 ---
 
-<AstroCode {...props} code={code.join('\n')} class:list={[styles.code]} {theme} />
+<AstroCode
+	{...props}
+	code={code.join('\n')}
+	{inline}
+	class:list={[!inline && styles.code]}
+	{theme}
+/>

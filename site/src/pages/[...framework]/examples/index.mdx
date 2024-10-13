@@ -62,8 +62,10 @@ NumberFlow was designed to integrate well with [Framer Motion layout animations]
 <Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
 </FramerMotionLayoutAnimations>
 
-Note that we turned `NumberFlow` into a [`motion` component](https://www.framer.com/motion/component/#custom-components) so we could use the [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes) props.
-These are required whenever `NumberFlow` is used within a layout animation.
+Note that whenever `NumberFlow` is used within a layout animation it must be (or be in) a
+[`motion` component](https://www.framer.com/motion/component/#custom-components) with the
+[`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
+props.
 
 To synchronize NumberFlow's transitions with Framer Motion's layout animations,
 the package exports a `useDefaultTransformTransition` hook from `@number-flow/react/framer-motion` that

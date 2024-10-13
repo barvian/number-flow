@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import NumberFlow from '@number-flow/react'
+import NumberFlow, { useCanAnimate } from '@number-flow/react'
 import { useDefaultTransformTransition } from '@number-flow/react/framer-motion'
 import { ArrowUp } from 'lucide-react'
 
@@ -12,6 +12,8 @@ type Props = {
 }
 
 export default function PriceWithDiff({ value, diff }: Props) {
+	// Disable layout animations if NumberFlow can't animat:
+	const canAnimate = useCanAnimate()
 	// Match NumberFlow's default x timing.
 	const layoutTransition = useDefaultTransformTransition()
 
@@ -27,7 +29,7 @@ export default function PriceWithDiff({ value, diff }: Props) {
 				initial={false}
 				className="~text-base/2xl inline-flex items-center px-[0.3em] text-white"
 				style={{ borderRadius: 999 }}
-				layout
+				layout={canAnimate}
 				transition={{ layout: layoutTransition }}
 			>
 				<MotionArrowUp
@@ -44,8 +46,8 @@ export default function PriceWithDiff({ value, diff }: Props) {
 					format={{ style: 'percent', maximumFractionDigits: 2 }}
 					style={{ '--number-flow-mask-height': '0.3em' }}
 					// Important, see note below:
-					layout
-					layoutRoot
+					layout={canAnimate}
+					layoutRoot={canAnimate}
 				/>
 			</motion.span>
 		</span>

@@ -8,11 +8,28 @@ import {
 	type PartitionedParts
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
-import styles, { dxVar, opacityDeltaVar, supportsLinear, widthDeltaVar, widthVar } from './styles'
+import styles, {
+	dxVar,
+	opacityDeltaVar,
+	supportsAnimationComposition,
+	prefersReducedMotion,
+	supportsAtProperty,
+	supportsLinear,
+	widthDeltaVar,
+	widthVar
+} from './styles'
 import { BROWSER } from 'esm-env'
 
-export { SlottedTag, slottedStyles, supportsAnimationComposition, supportsLinear } from './styles'
+export {
+	SlottedTag,
+	slottedStyles,
+	supportsAnimationComposition,
+	supportsLinear,
+	prefersReducedMotion
+} from './styles'
 export * from './formatter'
+
+export const canAnimate = supportsAnimationComposition && supportsAtProperty
 
 type RawTrend = boolean | 'increasing' | 'decreasing'
 export { type RawTrend as Trend }
@@ -58,6 +75,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	opacityTiming = defaultOpacityTiming
 	#animated = true
 	manual = false
+	respectMotionPreference = true
 
 	#created = false
 	#pre?: SymbolSection
@@ -182,7 +200,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	get animated() {
-		return this.#animated
+		return (
+			canAnimate && this.#animated && this.respectMotionPreference && !prefersReducedMotion?.matches
+		)
 	}
 
 	set animated(val: boolean) {

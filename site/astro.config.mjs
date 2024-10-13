@@ -30,7 +30,18 @@ export default defineConfig({
 			}
 		}
 	},
-	integrations: [react(), mdx()],
+	integrations: [
+		react(),
+		mdx(),
+		{
+			name: 'watch-shiki-theme',
+			hooks: {
+				'astro:config:setup'({ addWatchFile, config }) {
+					addWatchFile(new URL('./highlighter-theme.json', config.root))
+				}
+			}
+		}
+	],
 	output: 'hybrid',
 	adapter: vercel({
 		webAnalytics: {

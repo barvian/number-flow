@@ -11,6 +11,8 @@ export const supportsAnimationComposition =
 	typeof CSS !== 'undefined' &&
 	typeof CSS.supports('animation-composition', 'accumulate') !== 'undefined'
 
+export const prefersReducedMotion = BROWSER ? matchMedia('(prefers-reduced-motion: reduce)') : null
+
 // Register vars needed for animation but not during SSR:
 export const opacityDeltaVar = '--_number-flow-d-opacity'
 export const widthDeltaVar = '--_number-flow-d-width'
