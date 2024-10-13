@@ -33,6 +33,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	format?: Format
 	isolate?: boolean
 	animated?: boolean
+	respectMotionPreference?: boolean
 	willChange?: boolean
 	// animateDependencies?: React.DependencyList
 	onAnimationsStart?: () => void
@@ -67,6 +68,8 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 
 		this.#el.manual = !this.props.isolate
 		if (this.props.animated != null) this.#el.animated = this.props.animated
+		if (this.props.respectMotionPreference != null)
+			this.#el.respectMotionPreference = this.props.respectMotionPreference
 		if (this.props.trend != null) this.#el.trend = this.props.trend
 		if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
 		if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
@@ -112,6 +115,7 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 			willChange,
 			// These are set in updateNonPartsProps, so ignore them here:
 			animated,
+			respectMotionPreference,
 			isolate,
 			trend,
 			opacityTiming,
