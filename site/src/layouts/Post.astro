@@ -1,7 +1,8 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import type { MDXLayoutProps } from 'astro'
-import TOC from '/src/components/TOC'
+import TOC from '@/components/TOC'
+import Supported from '@/components/Supported'
 import type { ComponentProps } from 'astro/types'
 
 type Props = ComponentProps<typeof Layout> & {
@@ -13,6 +14,7 @@ const { headings, articleClass, ...props } = Astro.props
 ---
 
 <Layout {...props}>
+	<Supported client:load />
 	<slot name="hero" />
 	<div
 		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"

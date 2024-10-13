@@ -1,7 +1,7 @@
 import Demo, { type DemoProps } from '@/components/Demo'
 import type { Rename } from '@/lib/types'
 import NumberFlow from '@number-flow/react'
-import useCycle from '/src/hooks/useCycle'
+import useCycle from '@/hooks/useCycle'
 
 const bouncySpring: EffectTiming = {
 	duration: 750,

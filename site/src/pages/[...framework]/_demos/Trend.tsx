@@ -7,7 +7,7 @@ import Demo, {
 	type DemoProps
 } from '@/components/Demo'
 import NumberFlow, { type Trend } from '@number-flow/react'
-import useCycle from '/src/hooks/useCycle'
+import useCycle from '@/hooks/useCycle'
 
 const NUMBERS = [20, 19]
 
