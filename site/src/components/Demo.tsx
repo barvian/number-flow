@@ -66,7 +66,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 	return (
 		<Tabs.Root
 			ref={ref}
-			className={clsx(active === 'code' && 'dark', 'text-primary not-prose relative isolate')} // reset text color if inside prose
+			className={clsx(active === 'code' && 'dark', 'Demo text-primary not-prose relative isolate')} // reset text color if inside prose
 			value={active}
 			onValueChange={(val) => setActive(val as TabValue)}
 		>

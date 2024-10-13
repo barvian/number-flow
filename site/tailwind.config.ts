@@ -116,6 +116,17 @@ export default {
 							'margin-top': '1.25em'
 						},
 
+						'[role=alert]': {
+							'@apply my-[1.25em]': {}
+						},
+
+						'[role=alert] > :first-child': {
+							'margin-top': '0 !important'
+						},
+						'[role=alert] > :last-child': {
+							'margin-bottom': '0 !important'
+						},
+
 						// We need to always use padding for the IntersectionObserver to work:
 						'&>section,&>footer': {
 							'@apply py-10 first:pt-0 last:pb-0': {}

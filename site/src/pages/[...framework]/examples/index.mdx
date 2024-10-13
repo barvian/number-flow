@@ -4,9 +4,10 @@ title: 'NumberFlow Examples'
 description: 'Ready-made examples of common patterns to get you started with NumberFlow.'
 ---
 export { getStaticPaths } from '@/lib/framework'
+import { DemoTitle } from '@/components/Demo'
+import Alert from '@/components/Alert.astro'
 import Activity from './_Activity'
 import ActivityCode from './_Activity/Example?raw'
-import { DemoTitle } from '@/components/Demo'
 import Slider from './_Slider'
 import SliderCode from './_Slider/Example?raw'
 import Input from './_Input'
@@ -62,10 +63,12 @@ NumberFlow was designed to integrate well with [Framer Motion layout animations]
 <Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
 </FramerMotionLayoutAnimations>
 
-Note that whenever `NumberFlow` is used within a layout animation it must be (or be in) a
+<Alert>
+**Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
 [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
 [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
 props.
+</Alert>
 
 To synchronize NumberFlow's transitions with Framer Motion's layout animations,
 the package exports a `useDefaultTransformTransition` hook from `@number-flow/react/framer-motion` that

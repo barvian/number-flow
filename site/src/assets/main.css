@@ -46,6 +46,11 @@
 	.btn-secondary {
 		@apply hover:bg-zinc-100 dark:hover:bg-zinc-900;
 	}
+
+	/* We can't define this in the tailwind config because .Demo has .not-prose on it: */
+	.prose .Demo {
+		@apply my-5;
+	}
 }
 
 @layer utilities {
