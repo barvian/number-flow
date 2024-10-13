@@ -49,7 +49,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 			<button
 				aria-hidden
 				tabIndex={-1}
-				className="flex items-center pl-[.5em] pr-[.25em]"
+				className="flex items-center pl-[.5em] pr-[.325em]"
 				disabled={min != null && value <= min}
 				onPointerDown={handlePointerDown(-1)}
 			>
@@ -86,7 +86,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 			<button
 				aria-hidden
 				tabIndex={-1}
-				className="flex items-center pl-[.25em] pr-[.5em]"
+				className="flex items-center pl-[.325em] pr-[.5em]"
 				disabled={max != null && value >= max}
 				onPointerDown={handlePointerDown(1)}
 			>

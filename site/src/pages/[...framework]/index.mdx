@@ -5,14 +5,15 @@ description: A React component to transition & format numbers. Dependency-free. 
 ---
 import Pre from '@/components/Pre.astro';
 import NumberFlow from '@number-flow/react'
-export const components = {pre: Pre}
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
 import TrendDemo from './_demos/Trend'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
 import Union from '@/components/Union.astro'
+import Link from '@/components/Link.astro'
 export { getStaticPaths } from '@/lib/framework'
+export const components = {a: Link, pre: Pre}
 
 ## Basic usage
 
@@ -33,7 +34,12 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 ## Transitions
 
-<h3 className="sr-only">Timings</h3>
+NumberFlow will animate if the following conditions are met:
+* The browser [supports composited animations](https://caniuse.com/mdn-api_element_animate_options_composite_parameter)
+* The browser [supports `@property` rules](https://caniuse.com/mdn-css_at-rules_property)
+* The user has not indicated a preference for reduced motion (this can be bypassed with the [`respectMotionPreference` prop](#respect-motion-preference))
+
+### Timings
 
 NumberFlow accepts props to customize the transition timings. Each take an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
@@ -100,7 +106,7 @@ This can be useful if:
 
 Note that "excessive use of `will-change` will result in excessive memory use" (source: [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change)).
 
-<h3>
+<h3 id="respect-motion-preference">
 	<code>respectMotionPreference<Type>: boolean</Type></code>
 	<Meta>Default: `true`</Meta>
 </h3>
@@ -131,12 +137,7 @@ spacing between numbers.
 
 ### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
 
-Returns `true` if NumerFlow can animate, i.e.:
-
-* The browser [supports composited animations](https://caniuse.com/mdn-api_element_animate_options_composite_parameter)
-* The browser [supports `@property` rules](https://caniuse.com/mdn-css_at-rules_property)
-* The user has not indicated a preference for reduced motion (can be bypassed with `respectMotionPreference: false`)
-
+Returns `true` if NumerFlow [can animate](#transitions).
 See the [Framer Motion example](/examples#framer-motion) for a usage scenario.
 
 

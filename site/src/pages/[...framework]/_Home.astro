@@ -2,6 +2,7 @@
 import PostLayout from '@/layouts/Post.astro'
 import type { MDXLayoutProps } from 'astro'
 import Hero from './_Hero'
+import Link from '@/components/Link.astro'
 
 type Props = MDXLayoutProps<{
 	title: string
@@ -24,14 +25,12 @@ const { frontmatter, headings } = Astro.props
 		class="prose prose-muted dark:prose-invert mt-20 border-t border-zinc-200 pt-20 dark:border-zinc-800"
 	>
 		<p>
-			Built by <a href="https://x.com/mbarvian" target="_blank">Max Barvian</a>. Heavily inspired by
-			the
-			<a href="https://family.co" target="_blank">Family</a> iOS app. <a
+			Built by <Link href="https://x.com/mbarvian">Max Barvian</Link>. Heavily inspired by the
+			<Link href="https://family.co">Family</Link> iOS app. <Link
 				href="https://expensive.toys/blog/blur-vignette"
-				target="_blank"
 				>Technique for the
-				<code>mask-image</code></a
-			> from <a href="https://x.com/artur_bien" target="_blank">Artur Bień</a>.
+				<code>mask-image</code></Link
+			> from <Link href="https://x.com/artur_bien">Artur Bień</Link>.
 		</p>
 	</footer>
 </PostLayout>
