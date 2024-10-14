@@ -47,7 +47,7 @@ const getTrend = (val: number, prev?: number) => {
 	return Trend.NONE
 }
 
-export const defaultOpacityTiming: EffectTiming = { duration: 500, easing: 'ease-out' }
+export const defaultOpacityTiming: EffectTiming = { duration: 450, easing: 'ease-out' }
 
 export const defaultTransformTiming: EffectTiming = supportsLinear
 	? {
