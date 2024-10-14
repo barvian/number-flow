@@ -35,14 +35,17 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 	}
 
 	const handlePointerDown =
-		(diff: number): React.PointerEventHandler<HTMLButtonElement> =>
-		(event) => {
+		(diff: number) =>
+		(event: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
 			setAnimated(true)
 			event?.preventDefault()
 			const newVal = Math.min(Math.max(value + diff, min), max)
 			inputRef.current?.focus()
 			onChange?.(newVal)
 		}
+
+	const handleDecrement = handlePointerDown(-1)
+	const handleIncrement = handlePointerDown(1)
 
 	return (
 		<div className="group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800">
@@ -51,7 +54,9 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 				tabIndex={-1}
 				className="flex items-center pl-[.5em] pr-[.325em]"
 				disabled={min != null && value <= min}
-				onPointerDown={handlePointerDown(-1)}
+				// onPointerDown doesn't seem to work with preventDefault() in iOS Safari:
+				onMouseDown={handleDecrement}
+				onTouchStart={handleDecrement}
 			>
 				<Minus className="size-[.5em]" absoluteStrokeWidth strokeWidth={3} />
 			</button>
@@ -88,7 +93,8 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 				tabIndex={-1}
 				className="flex items-center pl-[.325em] pr-[.5em]"
 				disabled={max != null && value >= max}
-				onPointerDown={handlePointerDown(1)}
+				onMouseDown={handleIncrement}
+				onTouchStart={handleIncrement}
 			>
 				<Plus className="size-[.5em]" absoluteStrokeWidth strokeWidth={3} />
 			</button>
