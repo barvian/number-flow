@@ -35,31 +35,26 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 		}
 	}
 
-	const handlePointerDown =
-		(diff: number) =>
-		(event: React.MouseEvent<HTMLButtonElement> | React.TouchEvent<HTMLButtonElement>) => {
-			setAnimated(true)
+	const handlePointerDown = (diff: number) => (event: React.PointerEvent<HTMLButtonElement>) => {
+		setAnimated(true)
+		if (event.pointerType === 'mouse') {
 			event?.preventDefault()
-			const newVal = Math.min(Math.max(value + diff, min), max)
 			inputRef.current?.focus()
-			onChange?.(newVal)
 		}
-
-	const handleDecrement = handlePointerDown(-1)
-	const handleIncrement = handlePointerDown(1)
+		const newVal = Math.min(Math.max(value + diff, min), max)
+		onChange?.(newVal)
+	}
 
 	return (
-		<div className="group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800">
+		<div className="group flex items-stretch rounded-md text-3xl font-medium ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800">
 			<button
 				aria-hidden
 				tabIndex={-1}
 				className="flex items-center pl-[.5em] pr-[.325em]"
 				disabled={min != null && value <= min}
-				// onPointerDown doesn't seem to work with preventDefault() in iOS Safari:
-				onMouseDown={handleDecrement}
-				onTouchStart={handleDecrement}
+				onPointerDown={handlePointerDown(-1)}
 			>
-				<Minus className="size-[.5em]" absoluteStrokeWidth strokeWidth={3} />
+				<Minus className="size-4" absoluteStrokeWidth strokeWidth={3.5} />
 			</button>
 			<div className="relative grid items-center justify-items-center text-center [grid-template-areas:'overlap'] *:[grid-area:overlap]">
 				<input
@@ -94,10 +89,9 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 				tabIndex={-1}
 				className="flex items-center pl-[.325em] pr-[.5em]"
 				disabled={max != null && value >= max}
-				onMouseDown={handleIncrement}
-				onTouchStart={handleIncrement}
+				onPointerDown={handlePointerDown(1)}
 			>
-				<Plus className="size-[.5em]" absoluteStrokeWidth strokeWidth={3} />
+				<Plus className="size-4" absoluteStrokeWidth strokeWidth={3.5} />
 			</button>
 		</div>
 	)
