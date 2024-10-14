@@ -17,19 +17,20 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 	// Hide the caret during transitions so you can't see it shifting around:
 	const [showCaret, setShowCaret] = React.useState(true)
 
-	const handleInput: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+	const handleInput: React.ChangeEventHandler<HTMLInputElement> = ({ currentTarget: el }) => {
 		setAnimated(false)
-		if (event.currentTarget.value === '') {
+		if (el.value === '') {
 			onChange?.(defaultValue.current)
+			return
 		}
-		const num = parseInt(event.currentTarget.value)
+		const num = parseInt(el.value)
 		if (isNaN(num) || (min != null && num < min) || (max != null && num > max)) {
 			// Revert input's value:
-			if (inputRef.current) inputRef.current.value = String(value)
+			el.value = String(value)
 		} else {
 			// Manually update value in case they i.e. start with a "0" or end with a "."
 			// which won't trigger a DOM update (because the number is the same):
-			if (inputRef.current) inputRef.current.value = String(num)
+			el.value = String(num)
 			onChange?.(num)
 		}
 	}

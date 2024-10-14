@@ -38,7 +38,7 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 NumberFlow will animate if the following conditions are met:
 * The browser [supports composited animations](https://caniuse.com/mdn-api_element_animate_options_composite_parameter)
 * The browser [supports `@property` rules](https://caniuse.com/mdn-css_at-rules_property)
-* The user has not indicated a preference for reduced motion (this can be bypassed with the [`respectMotionPreference` prop](#respect-motion-preference))
+* The user has not indicated a preference for reduced motion (optional, see [`respectMotionPreference`](#respect-motion-preference))
 
 ### Timings
 
@@ -145,7 +145,7 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 ### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
 
-Returns `true` if NumerFlow [can animate](#transitions).
+Returns `true` if NumerFlow can animate.
 See the [Framer Motion example](/examples#framer-motion) for a usage scenario.
 
 
