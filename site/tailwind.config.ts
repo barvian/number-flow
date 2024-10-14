@@ -180,19 +180,24 @@ export default {
 				{ values: { DEFAULT: '' }, modifiers: 'any' }
 			)
 
+			const resolveOpacity = (opacity: string | number) => {
+				const num = typeof opacity === 'string' ? parseFloat(opacity) : opacity
+				if (!isNaN(num)) return `${num * 100}%`
+				return opacity
+			}
 			matchUtilities(
 				{
 					'text-current': (_, { modifier }) =>
 						modifier && {
-							color: `color-mix(in srgb, currentColor, transparent ${(1 - modifier) * 100}%)`
+							color: `color-mix(in srgb, transparent, currentColor ${resolveOpacity(modifier)})`
 						},
 					'decoration-current': (_, { modifier }) =>
 						modifier && {
-							'text-decoration-color': `color-mix(in srgb, currentColor, transparent ${(1 - modifier) * 100}%)`
+							'text-decoration-color': `color-mix(in srgb, transparent, currentColor ${resolveOpacity(modifier)})`
 						},
 					'border-current': (_, { modifier }) =>
 						modifier && {
-							'border-color': `color-mix(in srgb, currentColor, transparent ${(1 - modifier) * 100}%)`
+							'border-color': `color-mix(in srgb, transparent, currentColor ${resolveOpacity(modifier)})`
 						}
 				},
 				{ values: { DEFAULT: '' }, modifiers: theme('opacity')! }

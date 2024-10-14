@@ -21,6 +21,10 @@
 }
 
 @layer base {
+	:root {
+		@apply [--link-underline-opacity:20%] dark:[--link-underline-opacity:35%];
+	}
+
 	number-flow {
 		@apply font-mac-ui;
 	}
@@ -32,7 +36,7 @@
 	}
 
 	.link-underline {
-		@apply ease-out-quad decoration-current/20 dark:decoration-current/35 hover:text-primary underline decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current;
+		@apply ease-out-quad decoration-current/[--link-underline-opacity] hover:text-primary underline decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current;
 	}
 
 	.btn {
