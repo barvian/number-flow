@@ -278,8 +278,9 @@ class Num {
 		const dx = this.#prevLeft! - rect.left
 
 		const width = this.el.offsetWidth
+		// We convert scale to width delta in px to better handle interruptions and keep them in
+		// sync with translations:
 		const dWidth = this.#prevWidth! - width
-
 		this.el.style.setProperty(widthVar, String(width))
 
 		this.el.animate(
