@@ -45,16 +45,6 @@
 				"types": "./dist/index.d.ts",
 				"default": "./dist/index.js"
 			}
-		},
-		"./framer-motion": {
-			"import": {
-				"types": "./dist/framer-motion.d.mts",
-				"default": "./dist/framer-motion.mjs"
-			},
-			"require": {
-				"types": "./dist/framer-motion.d.ts",
-				"default": "./dist/framer-motion.js"
-			}
 		}
 	},
 	"scripts": {

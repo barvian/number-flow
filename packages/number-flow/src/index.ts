@@ -9,27 +9,20 @@ import {
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, {
+	supportsMod,
 	dxVar,
 	opacityDeltaVar,
-	supportsAnimationComposition,
 	prefersReducedMotion,
 	supportsAtProperty,
-	supportsLinear,
 	widthDeltaVar,
-	widthVar
+	deltaVar
 } from './styles'
 import { BROWSER } from 'esm-env'
 
-export {
-	SlottedTag,
-	slottedStyles,
-	supportsAnimationComposition,
-	supportsLinear,
-	prefersReducedMotion
-} from './styles'
+export { SlottedTag, slottedStyles, prefersReducedMotion } from './styles'
 export * from './formatter'
 
-export const canAnimate = supportsAnimationComposition && supportsAtProperty
+export const canAnimate = supportsMod && supportsAtProperty
 
 type RawTrend = boolean | 'increasing' | 'decreasing'
 export { type RawTrend as Trend }
@@ -49,17 +42,11 @@ const getTrend = (val: number, prev?: number) => {
 
 export const defaultOpacityTiming: EffectTiming = { duration: 450, easing: 'ease-out' }
 
-export const defaultTransformTiming: EffectTiming = supportsLinear
-	? {
-			duration: 900,
-			// Make sure to keep this minified:
-			easing: `linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)`
-		}
-	: {
-			duration: 900,
-			// Spring-like cubic-bezier stolen from Vaul: https://vaul.emilkowal.ski/
-			easing: `cubic-bezier(0.32,0.72,0,1)`
-		}
+export const defaultTransformTiming: EffectTiming = {
+	duration: 900,
+	// Make sure to keep this minified:
+	easing: `linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)`
+}
 
 let styleSheet: CSSStyleSheet | undefined
 
@@ -71,7 +58,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	transformTiming = defaultTransformTiming
-	rotateTiming?: EffectTiming
+	spinTiming?: EffectTiming
 	opacityTiming = defaultOpacityTiming
 	#animated = true
 	manual = false
@@ -281,7 +268,7 @@ class Num {
 		// We convert scale to width delta in px to better handle interruptions and keep them in
 		// sync with translations:
 		const dWidth = this.#prevWidth! - width
-		this.el.style.setProperty(widthVar, String(width))
+		this.el.style.setProperty('--width', String(width))
 
 		this.el.animate(
 			{
@@ -573,7 +560,6 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends Animate
 }
 
 class Digit extends Char<KeyedDigitPart> {
-	#roll: HTMLSpanElement
 	#numbers: HTMLSpanElement[]
 
 	constructor(
@@ -588,28 +574,20 @@ class Digit extends Char<KeyedDigitPart> {
 				{ className: `digit__num${i === value ? ' is-current' : ''}` },
 				[document.createTextNode(String(i))]
 			)
-			num.style.setProperty('--i', String(i))
+			num.style.setProperty('--n', String(i))
 			return num
 		})
-		const roll = createElement(
-			'span',
-			{
-				className: `digit__roll`
-			},
-			numbers
-		)
 		const el = createElement(
 			'span',
 			{
 				className: `digit`
 			},
-			[roll]
+			numbers
 		)
-		el.style.setProperty('--c', String(value))
+		el.style.setProperty('--current', String(value))
 
 		super(section, value, el, props)
 
-		this.#roll = roll
 		this.#numbers = numbers
 	}
 
@@ -639,7 +617,7 @@ class Digit extends Char<KeyedDigitPart> {
 
 	update(value: KeyedDigitPart['value']) {
 		this.#numbers[this.value]?.classList.remove('is-current')
-		this.el.style.setProperty('--c', String(value))
+		this.el.style.setProperty('--current', String(value))
 		this.#numbers[value]?.classList.add('is-current')
 		this.value = value
 	}
@@ -670,13 +648,13 @@ class Digit extends Char<KeyedDigitPart> {
 		if (trend === Trend.UP && this.value < this.#prevValue!)
 			diff = 10 - this.#prevValue! + this.value
 
-		this.#roll.classList.add('is-spinning')
-		this.#roll.animate(
+		this.el.classList.add('is-spinning')
+		this.el.animate(
 			{
-				transform: [`rotateX(${diff * 36}deg)`, 'none']
+				[deltaVar]: [-diff, 0]
 			},
 			{
-				...(this.flow.rotateTiming ?? this.flow.transformTiming),
+				...(this.flow.spinTiming ?? this.flow.transformTiming),
 				composite: 'accumulate'
 			}
 		)
@@ -685,7 +663,7 @@ class Digit extends Char<KeyedDigitPart> {
 	}
 
 	#onAnimationsFinish = () => {
-		this.#roll.classList.remove('is-spinning')
+		this.el.classList.remove('is-spinning')
 	}
 }
 

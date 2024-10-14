@@ -24,7 +24,6 @@ export default function DemoHOC({
 			<NumberFlow
 				value={value}
 				transformTiming={bouncySpring}
-				rotateTiming={bouncySpring}
 				opacityTiming={opacityTiming}
 				className="~text-xl/4xl font-semibold"
 				style={{ '--number-flow-char-height': '0.85em' }}

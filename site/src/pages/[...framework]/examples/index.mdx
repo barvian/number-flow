@@ -56,7 +56,8 @@ we can add a simple animation to indicate whether numbers are increasing/decreas
 
 ## Framer Motion
 
-NumberFlow was designed to integrate well with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/):
+NumberFlow was designed to integrate with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
+You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
 
 <FramerMotionLayoutAnimations client:visible>
 <Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
@@ -66,7 +67,3 @@ NumberFlow was designed to integrate well with [Framer Motion layout animations]
 [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
 [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
 props.
-
-To synchronize NumberFlow's transitions with Framer Motion's layout animations,
-the package exports a `useDefaultTransformTransition` hook from `@number-flow/react/framer-motion` that
-returns a Framer transition to match NumberFlow's default `transformTiming`.

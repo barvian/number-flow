@@ -9,7 +9,6 @@ import {
 	partitionParts,
 	type PartitionedParts,
 	NumberFlowLite,
-	supportsLinear,
 	prefersReducedMotion,
 	canAnimate as _canAnimate
 } from 'number-flow'
@@ -41,7 +40,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	trend?: (typeof NumberFlowElement)['prototype']['trend']
 	opacityTiming?: (typeof NumberFlowElement)['prototype']['opacityTiming']
 	transformTiming?: (typeof NumberFlowElement)['prototype']['transformTiming']
-	rotateTiming?: (typeof NumberFlowElement)['prototype']['rotateTiming']
+	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
 }
 
 type NumberFlowImplProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
@@ -73,7 +72,7 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 		if (this.props.trend != null) this.#el.trend = this.props.trend
 		if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
 		if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
-		if (this.props.rotateTiming) this.#el.rotateTiming = this.props.rotateTiming
+		if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
 
 		if (prevProps?.onAnimationsStart)
 			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart)
@@ -120,7 +119,7 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 			trend,
 			opacityTiming,
 			transformTiming,
-			rotateTiming,
+			spinTiming,
 			...rest
 		} = this.props
 
@@ -164,22 +163,7 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 
 export default NumberFlow
 
-// SSR-safe supportsLinear
-export function useSupportsLinear() {
-	const [supported, setSupported] = React.useState(supportsLinear)
-
-	React.useEffect(() => {
-		setSupported(supportsLinear)
-	}, [])
-
-	return supported
-}
-
-export function useLinear<T = any>(linear: T, fallback: T): T {
-	const supported = useSupportsLinear()
-	return supported ? linear : fallback
-}
-
+// SSR-safe canAnimate
 export function useCanAnimate({ respectMotionPreference = true } = {}) {
 	const [canAnimate, setCanAnimate] = React.useState(_canAnimate)
 	const [reducedMotion, setReducedMotion] = React.useState(false)

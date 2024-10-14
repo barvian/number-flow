@@ -35,12 +35,7 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 ## Transitions
 
-NumberFlow will animate if the following conditions are met:
-* The browser [supports composited animations](https://caniuse.com/mdn-api_element_animate_options_composite_parameter)
-* The browser [supports `@property` rules](https://caniuse.com/mdn-css_at-rules_property)
-* The user has not indicated a preference for reduced motion (optional, see [`respectMotionPreference`](#respect-motion-preference))
-
-### Timings
+<h3 className="sr-only">Timings</h3>
 
 NumberFlow accepts props to customize the transition timings. Each take an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
@@ -51,7 +46,7 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 	transformTiming={{ duration: 700, easing: 'linear(...)' }}
 	// Used for the digit spin animations.
 	// Will fall back to `transformTiming` if unset:
-	rotateTiming={{ duration: 700, easing: 'linear(...)' }}
+	spinTiming={{ duration: 700, easing: 'linear(...)' }}
 	// Used for fading in/out characters:
 	opacityTiming={{ duration: 350, easing: 'ease-out' }}
 />
@@ -145,22 +140,9 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 ### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
 
-Returns `true` if NumerFlow can animate.
+Returns `true` if NumerFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
+and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
 See the [Framer Motion example](/examples#framer-motion) for a usage scenario.
-
-
-### <code>useLinear<Type>{'<T>'}</Type>(linearBased<Type>: T</Type>, fallback<Type>: T</Type>)<Type>: T</Type></code>
-
-An SSR-safe way to use a `linear()`-based value if the browser supports it, and a fallback value
-otherwise:
-
-```ts
-// Use linear() timing if supported, otherwise cubic-bezier():
-const timing = useLinear<EffectTiming>(
-	{ easing: `linear(...)`, duration: 900 },
-	{ easing: `cubic-bezier(...)`, duration: 750 }
-)
-```
 
 ## Limitations
 

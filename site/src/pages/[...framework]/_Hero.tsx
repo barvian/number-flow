@@ -81,25 +81,8 @@ export default function Hero() {
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
-				A React component to transition & format numbers. Dependency-free. Built on{' '}
-				<a
-					href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat"
-					target="_blank"
-					aria-label="Intl.NumberFormat"
-					title="Intl.NumberFormat"
-				>
-					web
-				</a>{' '}
-				<span className="sr-only">and</span>
-				<a
-					href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API"
-					target="_blank"
-					aria-label="Web Animations API"
-					title="Web Animations API"
-				>
-					standards
-				</a>
-				. Accessible. Customizable.
+				A React component to transition, localize, and format numbers. Dependency-free. Accessible.
+				Customizable.
 			</p>
 			<div className="~mt-3/5 flex w-full flex-wrap items-stretch justify-center gap-3">
 				<button
