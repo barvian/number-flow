@@ -71,7 +71,8 @@ export const slottedStyles = ({ willChange }: { willChange?: boolean }) =>
 
 const styles = css`
 	:host {
-		display: inline-flex; /* better for matching baselines with other inline elements */
+		display: inline-flex; /* seems better at matching baselines with other inline elements */
+		align-items: baseline; /* ^ */
 		direction: ltr;
 		white-space: nowrap;
 		/* for invisible slotted label used for screen readers and selecting: */
@@ -97,6 +98,7 @@ const styles = css`
 	.number,
 	.number__inner {
 		display: inline-flex;
+		align-items: baseline;
 		transform-origin: left top;
 	}
 
@@ -161,12 +163,22 @@ const styles = css`
 
 	.section {
 		display: inline-flex;
+		align-items: baseline;
 		padding-bottom: ${halfMaskHeight};
 		padding-top: ${halfMaskHeight};
-		height: calc(${charHeight} + ${halfMaskHeight} * 2);
 		/* for .section__exiting: */
 		position: relative;
 		isolation: isolate;
+	}
+
+	.section::after {
+		/*
+		 * We seem to need some type of character to ensure align-items: baseline continues working
+		 * even when empty
+		 */
+		content: '\200b'; /* zero-width space */
+		display: block;
+		padding: ${halfMaskHeight} 0;
 	}
 
 	:host([data-will-change]) .section {
@@ -221,6 +233,7 @@ const styles = css`
 
 	.symbol {
 		display: inline-flex;
+		align-items: baseline;
 		position: relative;
 		isolation: isolate;
 		padding: ${halfMaskHeight} 0;

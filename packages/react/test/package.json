@@ -1,0 +1,27 @@
+{
+	"name": "test",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev --port 3039",
+		"lint": "next lint",
+		"test": "playwright test",
+		"test:ui": "playwright test --ui"
+	},
+	"dependencies": {
+		"@number-flow/react": "workspace:^",
+		"next": "14.2.15",
+		"react": "^18",
+		"react-dom": "^18"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.48.0",
+		"@types/node": "^22.7.5",
+		"@types/react": "^18",
+		"@types/react-dom": "^18",
+		"postcss": "^8",
+		"tailwindcss": "^3.4.1",
+		"tw-reset": "^0.0.5",
+		"typescript": "^5"
+	}
+}

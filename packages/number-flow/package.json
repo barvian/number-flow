@@ -46,8 +46,7 @@
 		"build": "vite build --mode production",
 		"dev": "vite build --mode development --watch",
 		"prepublishOnly": "pnpm run build",
-		"test:unit": "vitest",
-		"test:browser": "vitest --workspace=vitest.browser.ts"
+		"test:unit": "vitest"
 	},
 	"devDependencies": {
 		"@rollup/plugin-typescript": "^12.1.0",

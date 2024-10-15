@@ -1,4 +1,4 @@
 packages:
   - 'packages/*'
-  - 'test'
+  - 'packages/react/test'
   - 'site'

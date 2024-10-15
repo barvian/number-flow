@@ -70,7 +70,8 @@ export default function Hero() {
 			ref={ref}
 			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
 		>
-			<div className="~mt-1/2 ~mb-0.5/1 flex items-center">
+			<div className="~mt-1/2 ~mb-0.5/1">
+				{/* import.meta.env.DEV && 'b' */}
 				<NumberFlow
 					className="~text-5xl/7xl font-medium [--number-flow-char-height:0.85em]"
 					trend={false}

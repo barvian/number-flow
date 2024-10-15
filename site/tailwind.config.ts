@@ -10,7 +10,7 @@ import type { PluginUtils } from 'tailwindcss/types/config'
 const sans = ['Inter', '_font_fallback_732902278794', 'sans-serif']
 
 export default {
-	presets: [reset()],
+	presets: [reset],
 	content: {
 		files: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
 		transform: {
