@@ -136,6 +136,18 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
+## Events
+
+### <code>onAnimationsStart<Type>: () => void</Type></code>
+
+Triggered when update animations start. Not to be confused with the built-in `onAnimationStart`, which
+would trigger for animations on the `<NumberFlow>` element itself.
+
+### <code>onAnimationsFinish<Type>: () => void</Type></code>
+
+Triggered when update animations finish.
+
+
 ## Hooks
 
 ### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
