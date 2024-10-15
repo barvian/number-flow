@@ -68,6 +68,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 					type="number"
 					min={min}
 					step={1}
+					autoComplete="off"
 					inputMode="numeric"
 					max={max}
 					value={value}
