@@ -19,6 +19,12 @@ import FramerMotionLayoutAnimations from './_FramerMotion'
 import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
 import Code from '@/components/Code.astro';
 
+## Input
+
+<Input client:visible>
+<Code code={InputCode} lang="tsx" />
+</Input>
+
 ## Activity
 
 <Activity client:visible>
@@ -30,12 +36,6 @@ import Code from '@/components/Code.astro';
 <Slider client:visible>
 <Code code={SliderCode} lang="tsx" />
 </Slider>
-
-## Input
-
-<Input client:visible>
-<Code code={InputCode} lang="tsx" />
-</Input>
 
 {/*
 ## Countdown
