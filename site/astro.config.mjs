@@ -3,7 +3,7 @@ import react from '@astrojs/react'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
-import theme from './src/assets/shiki-theme'
+import shikiTheme from './highlighter-theme.json'
 // @ts-expect-error missing types
 import sectionize from './remark-sectionize'
 
@@ -12,7 +12,7 @@ export default defineConfig({
 	site: pkg.homepage,
 	markdown: {
 		shikiConfig: {
-			theme
+			theme: shikiTheme
 		},
 		remarkPlugins: [sectionize]
 	},

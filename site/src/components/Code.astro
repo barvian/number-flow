@@ -1,7 +1,7 @@
 ---
 import styles from './code.module.css'
 import { Code as AstroCode } from 'astro:components'
-import theme from '@/assets/shiki-theme'
+import theme from '/highlighter-theme.json'
 import type { ComponentProps } from 'astro/types'
 
 export type Props = ComponentProps<typeof AstroCode> & {
@@ -23,5 +23,5 @@ if (firstLine) code.unshift(firstLine)
 	code={code.join('\n')}
 	{inline}
 	class:list={[!inline && styles.code]}
-	{theme}
+	theme={theme as any}
 />
