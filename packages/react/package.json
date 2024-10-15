@@ -50,7 +50,8 @@
 	"scripts": {
 		"build": "tsup --tsconfig tsconfig.build.json",
 		"dev": "tsup --watch",
-		"prepublishOnly": "pnpm run build"
+		"test": "pnpm -r --workspace-concurrency 1 --filter=\"./test\" test",
+		"prepublishOnly": "pnpm build && pnpm test"
 	},
 	"dependencies": {
 		"esm-env": "^1.0.0",

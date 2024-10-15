@@ -213,6 +213,7 @@ const styles = css`
 	.digit__num {
 		display: block;
 		padding: ${halfMaskHeight} 0;
+		/* Claude + https://buildui.com/recipes/animated-counter */
 		--offset-raw: mod(10 + var(--n) - mod(var(--c), 10), 10);
 		--offset: calc(var(--offset-raw) - 10 * round(down, var(--offset-raw) / 5, 1));
 		/* Technically we just need var(--offset)*100%, but clamping should reduce the layer size: */
