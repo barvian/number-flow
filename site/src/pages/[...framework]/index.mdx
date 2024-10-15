@@ -37,7 +37,7 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 <h3 className="sr-only">Timings</h3>
 
-NumberFlow accepts props to customize the transition timings. Each take an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
+The default animation timings can be customized via props that accept [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) objects:
 
 <TimingsDemo client:visible defaultValue='code'>
 ```jsx
@@ -53,8 +53,7 @@ NumberFlow accepts props to customize the transition timings. Each take an [`Eff
 ```
 </TimingsDemo>
 
-
-For spring-based `linear()` easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
+For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
 or [easing.dev](https://www.easing.dev/).
 
 <h3>
@@ -109,6 +108,15 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
+### <code>onAnimationsStart<Type>: () => void</Type></code>
+
+Triggered when update animations start. Not to be confused with the built-in `onAnimationStart`, which
+would trigger for animations on the `<NumberFlow>` element itself.
+
+### <code>onAnimationsFinish<Type>: () => void</Type></code>
+
+Triggered when update animations finish.
+
 ## Styling
 
 There's some CSS properties you can use to style the component:
@@ -135,18 +143,6 @@ Ensures all numbers are the same width, which can prevent digits from shifting d
 See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#numeric-spacing-values) for more information.
 
 {/* <TabularNumsDemo client:visible /> */}
-
-## Events
-
-### <code>onAnimationsStart<Type>: () => void</Type></code>
-
-Triggered when update animations start. Not to be confused with the built-in `onAnimationStart`, which
-would trigger for animations on the `<NumberFlow>` element itself.
-
-### <code>onAnimationsFinish<Type>: () => void</Type></code>
-
-Triggered when update animations finish.
-
 
 ## Hooks
 
