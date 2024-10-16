@@ -1,15 +1,23 @@
 import * as React from 'react'
-import { useInView } from 'framer-motion'
+import { inView } from 'framer-motion'
 
 const all = new Map<string, HTMLVideoElement>()
 
 export default function TweetMediaVideo(props: JSX.IntrinsicElements['video']) {
 	const ref = React.useRef<HTMLVideoElement | null>(null)
-	const inView = useInView(ref, { amount: 'all' })
 	React.useEffect(() => {
-		if (!inView) return
-		ref.current?.play()
-	}, [inView])
+		if (!ref.current) return
+		const io = new IntersectionObserver(
+			([{ isIntersecting, target }]) => {
+				if (isIntersecting) (target as HTMLVideoElement).play()
+			},
+			{ threshold: 1 }
+		)
+		io.observe(ref.current)
+		return () => {
+			io.disconnect()
+		}
+	}, [])
 	const id = React.useId()
 
 	return (
