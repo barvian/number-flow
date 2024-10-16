@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { inView } from 'framer-motion'
 
 const all = new Map<string, HTMLVideoElement>()
 
@@ -8,7 +7,9 @@ export default function TweetMediaVideo(props: JSX.IntrinsicElements['video']) {
 	React.useEffect(() => {
 		if (!ref.current) return
 		const io = new IntersectionObserver(
-			([{ isIntersecting, target }]) => {
+			(entry) => {
+				if (!entry?.[0]) return
+				const { isIntersecting, target } = entry[0]
 				if (isIntersecting) (target as HTMLVideoElement).play()
 			},
 			{ threshold: 1 }
