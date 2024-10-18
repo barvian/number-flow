@@ -243,6 +243,7 @@ class Num {
 	#prevLeft?: number
 
 	willUpdate() {
+		// Don't try caching this or something b/c it's px and the font size could change:
 		this.#prevWidth = this.el.offsetWidth
 		this.#prevLeft = this.el.getBoundingClientRect().left
 

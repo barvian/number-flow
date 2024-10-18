@@ -3,25 +3,43 @@ import styles from './code.module.css'
 import { Code as AstroCode } from 'astro:components'
 import theme from '/highlighter-theme.json'
 import type { ComponentProps } from 'astro/types'
+import CopyButton from '@/components/CopyButton'
 
 export type Props = ComponentProps<typeof AstroCode> & {
 	firstLine?: string
+	copyable?: boolean
 }
-const { code: _code, inline, firstLine, ...props } = Astro.props
+const { code: _code, inline, firstLine, copyable = false, ...props } = Astro.props
 
 // Clean up code a little bit:
-const code = _code
+const lines = _code
 	.split('\n')
 	// Remove prettier-ignore comments:
 	.filter((line) => !/^\s*\/\/ prettier-ignore\s*$/.test(line))
 
-if (firstLine) code.unshift(firstLine)
+if (firstLine) lines.unshift(firstLine)
+const code = lines.join('\n')
 ---
 
-<AstroCode
-	{...props}
-	code={code.join('\n')}
-	{inline}
-	class:list={[!inline && styles.code]}
-	theme={theme as any}
-/>
+{
+	copyable ? (
+		<div class="Code relative">
+			<AstroCode
+				{...props}
+				{code}
+				{inline}
+				class:list={[!inline && styles.code]}
+				theme={theme as any}
+			/>
+			<CopyButton className="absolute right-3 top-3 p-3" value={code} client:load />
+		</div>
+	) : (
+		<AstroCode
+			{...props}
+			{code}
+			{inline}
+			class:list={[!inline && styles.code]}
+			theme={theme as any}
+		/>
+	)
+}

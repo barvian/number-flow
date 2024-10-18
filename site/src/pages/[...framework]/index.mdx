@@ -3,6 +3,7 @@ layout: './_Home.astro'
 title: NumberFlow - Transition and format numbers
 description: A React component to transition & format numbers. Dependency-free. Built on web standards. Accessible. Customizable.
 ---
+import Code from '@/components/Code.astro';
 import Pre from '@/components/Pre.astro';
 import NumberFlow from '@number-flow/react'
 import TimingsDemo from './_demos/Timings'
@@ -16,9 +17,12 @@ import Link from '@/components/Link.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
-## Basic usage
 
-<div className='xl:pre-first-line:hidden first:*:mt-0'>
+## Quick start
+
+<Code lang="sh" code="npm install @number-flow/react" copyable />
+
+<div className='xl:pre-first-line:hidden'>
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'

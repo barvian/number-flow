@@ -40,7 +40,11 @@
 	}
 
 	.btn {
-		@apply inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full px-5 text-sm font-medium transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] active:scale-[98%] active:brightness-[98%] active:duration-[25ms] dark:hover:brightness-125;
+		@apply inline-flex items-center rounded-full transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)] active:scale-[98%] active:brightness-[98%] active:duration-[25ms] dark:hover:brightness-125;
+	}
+
+	.btn:not(.btn-icon) {
+		@apply h-11 gap-2 whitespace-nowrap px-5 text-sm font-medium;
 	}
 
 	.btn-primary {
@@ -54,6 +58,10 @@
 	/* We can't define this in the tailwind config because .Demo has .not-prose on it: */
 	.prose .Demo {
 		@apply my-5;
+	}
+
+	.overlap {
+		@apply grid [grid-template-areas:'overlap'] *:[grid-area:overlap];
 	}
 }
 

@@ -102,8 +102,24 @@ export default {
 							content: 'none'
 						},
 
+						'pre, .Code': {
+							'margin-top': '1.7142857em',
+							'margin-bottom': '1.7142857em'
+						},
+
+						'.Code > :first-child': {
+							'margin-top': '0 !important'
+						},
+						'.Code > :last-child': {
+							'margin-bottom': '0 !important'
+						},
+
 						h2: {
 							'@apply font-semibold text-xl': {}
+						},
+
+						'h2 + *': {
+							'margin-top': '0 !important'
 						},
 
 						h3: {
