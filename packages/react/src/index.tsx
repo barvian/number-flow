@@ -14,6 +14,8 @@ import {
 } from 'number-flow'
 export type { Value, Format, Trend } from 'number-flow'
 
+const isReact19 = React.version.startsWith('19.')
+
 // Can't wait to not have to do this in React 19:
 const OBSERVED_ATTRIBUTES = ['parts'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
@@ -53,8 +55,17 @@ type NumberFlowImplProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'>
 // Serialize to strings b/c React:
 const formatters: Record<string, Intl.NumberFormat> = {}
 
+// Tiny workaround to support React 19 until it's released:
+const serializeParts = isReact19 ? (p: PartitionedParts) => p : JSON.stringify
+
+type NumberFlowImplState = {}
+type NumberFlowImplSnapshot = boolean
 // We need a class component to use getSnapshotBeforeUpdate:
-class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
+class NumberFlowImpl extends React.Component<
+	NumberFlowImplProps,
+	NumberFlowImplState,
+	NumberFlowImplSnapshot
+> {
 	constructor(props: NumberFlowImplProps) {
 		super(props)
 		this.handleRef = this.handleRef.bind(this)
@@ -86,17 +97,27 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 	}
 
 	override componentDidMount() {
+		if (isReact19 && this.#el) {
+			// React 19 doesn't seem to hydrate custom elements the same way, and these need to be set before being updated:
+			this.#el.parts = this.props.parts
+		}
 		this.updateNonPartsProps()
 	}
 
 	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
 		this.updateNonPartsProps(prevProps)
-		if (!this.props.isolate && prevProps.parts !== this.props.parts) this.#el?.willUpdate()
-		return null
+		if (this.props.isolate) return false
+		if (prevProps.parts === this.props.parts) return false
+		this.#el?.willUpdate()
+		return true
 	}
 
-	override componentDidUpdate(prevProps: Readonly<NumberFlowImplProps>) {
-		if (!this.props.isolate && prevProps.parts !== this.props.parts) this.#el?.didUpdate()
+	override componentDidUpdate(
+		_: Readonly<NumberFlowImplProps>,
+		__: NumberFlowImplState,
+		snapshot: NumberFlowImplSnapshot
+	) {
+		if (snapshot) this.#el?.didUpdate()
 	}
 
 	#el?: NumberFlowElement
@@ -132,7 +153,7 @@ class NumberFlowImpl extends React.Component<NumberFlowImplProps> {
 				class={className}
 				{...rest}
 				// Make sure parts are set last, everything else is updated:
-				parts={JSON.stringify(parts)}
+				parts={serializeParts(parts)}
 			>
 				<SlottedTag style={slottedStyles({ willChange })}>{parts.formatted}</SlottedTag>
 				{/* @ts-expect-error missing types */}
