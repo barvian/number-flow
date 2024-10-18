@@ -6,7 +6,8 @@
 		"dev": "next dev --port 3039",
 		"lint": "next lint",
 		"test": "playwright test",
-		"test:ui": "playwright test --ui"
+		"test:ui": "playwright test --ui",
+		"test:update": "playwright test --update-snapshots"
 	},
 	"dependencies": {
 		"@number-flow/react": "workspace:^",
