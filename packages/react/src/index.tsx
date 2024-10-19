@@ -98,7 +98,7 @@ class NumberFlowImpl extends React.Component<
 
 	override componentDidMount() {
 		if (isReact19 && this.#el) {
-			// React 19 doesn't seem to hydrate custom elements the same way, and these need to be set before being updated:
+			// React 19 needs this because the attributeChangedCallback isn't called:
 			this.#el.parts = this.props.parts
 		}
 		this.updateNonPartsProps()
