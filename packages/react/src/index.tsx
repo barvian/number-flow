@@ -97,11 +97,11 @@ class NumberFlowImpl extends React.Component<
 	}
 
 	override componentDidMount() {
+		this.updateNonPartsProps()
 		if (isReact19 && this.#el) {
 			// React 19 needs this because the attributeChangedCallback isn't called:
 			this.#el.parts = this.props.parts
 		}
-		this.updateNonPartsProps()
 	}
 
 	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
