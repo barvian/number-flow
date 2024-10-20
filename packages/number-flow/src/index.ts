@@ -67,7 +67,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	#computedTrend?: Trend
 	continuous = false
 
-	#startingPlace?: number
+	#startingPlace?: number | null
 
 	get startingPlace() {
 		return this.#startingPlace
