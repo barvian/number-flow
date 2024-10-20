@@ -40,6 +40,7 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
 	onAnimationsStart?: () => void
 	onAnimationsFinish?: () => void
 	trend?: (typeof NumberFlowElement)['prototype']['trend']
+	continuous?: (typeof NumberFlowElement)['prototype']['continuous']
 	opacityTiming?: (typeof NumberFlowElement)['prototype']['opacityTiming']
 	transformTiming?: (typeof NumberFlowElement)['prototype']['transformTiming']
 	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
@@ -81,6 +82,7 @@ class NumberFlowImpl extends React.Component<
 		if (this.props.respectMotionPreference != null)
 			this.#el.respectMotionPreference = this.props.respectMotionPreference
 		if (this.props.trend != null) this.#el.trend = this.props.trend
+		if (this.props.continuous != null) this.#el.continuous = this.props.continuous
 		if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
 		if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
 		if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
@@ -138,6 +140,7 @@ class NumberFlowImpl extends React.Component<
 			respectMotionPreference,
 			isolate,
 			trend,
+			continuous,
 			opacityTiming,
 			transformTiming,
 			spinTiming,

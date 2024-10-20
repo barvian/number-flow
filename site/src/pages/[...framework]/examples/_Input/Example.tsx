@@ -28,7 +28,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 			// Revert input's value:
 			el.value = String(value)
 		} else {
-			// Manually update value in case they i.e. start with a "0" or end with a "."
+			// Manually update value in case they e.g. start with a "0" or end with a "."
 			// which won't trigger a DOM update (because the number is the same):
 			el.value = String(num)
 			onChange?.(num)

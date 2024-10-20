@@ -21,6 +21,7 @@ export default function Slider({ value, className, ...props }: RadixSlider.Slide
 						willChange
 						value={value[0]}
 						isolate
+						continuous
 						opacityTiming={{
 							duration: 250,
 							easing: 'ease-out'

@@ -7,6 +7,7 @@ import Pre from '@/components/Pre.astro';
 import NumberFlow from '@number-flow/react'
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
+import ContinuousDemo from './_demos/Continuous'
 import TabularNumsDemo from './_demos/TabularNums'
 import TrendDemo from './_demos/Trend'
 import Meta from '@/components/Meta.astro'
@@ -70,6 +71,15 @@ want to animate number changes without conveying an overall increase or decrease
 - `"decreasing":` The digits always go down.
 
 <TrendDemo client:visible />
+
+<h3>
+	<code>continuous<Type>: boolean</Type></code>
+	<Meta>Default: `false`</Meta>
+</h3>
+
+If set, number transitions will appear to pass through in-between numbers. Has no effect if `trend` is `false`.
+
+<ContinuousDemo client:visible />
 
 <h3>
 	<code>isolate<Type>: boolean</Type></code>

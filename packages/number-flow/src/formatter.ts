@@ -9,11 +9,10 @@ type SymbolPart = {
 	type: Exclude<NumberPartType, 'integer' | 'fraction'>
 	value: string
 }
-export type NumberPart = DigitPart | SymbolPart
 
 export type NumberPartKey = string
 type KeyedPart = { key: NumberPartKey }
-export type KeyedDigitPart = DigitPart & KeyedPart
+export type KeyedDigitPart = DigitPart & KeyedPart & { place: number }
 export type KeyedSymbolPart = SymbolPart & KeyedPart
 export type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
 
@@ -27,14 +26,14 @@ export function partitionParts(value: Value, formatter: Intl.NumberFormat) {
 	const parts = formatter.formatToParts(value)
 
 	const pre: KeyedNumberPart[] = []
-	const _integer: NumberPart[] = [] // we do a second pass to key these from RTL
+	const _integer: Array<IntegerPart | SymbolPart> = [] // we do a second pass to key these from RTL
 	const fraction: KeyedNumberPart[] = []
 	const post: KeyedNumberPart[] = []
 
 	const counts: Partial<Record<NumberPartType, number>> = {}
 	const generateKey = (type: NumberPartType) => {
-		if (!counts[type]) counts[type] = 0
-		return `${type}:${counts[type]++}`
+		const n = counts[type] == null ? (counts[type] = 0) : ++counts[type]
+		return `${type}:${n}`
 	}
 
 	let formatted = ''
@@ -57,7 +56,12 @@ export function partitionParts(value: Value, formatter: Intl.NumberFormat) {
 			fraction.push({ type, value: part.value, key: generateKey(type) })
 		} else if (type === 'fraction') {
 			fraction.push(
-				...part.value.split('').map((d) => ({ type, value: parseInt(d), key: generateKey(type) }))
+				...part.value.split('').map((d) => ({
+					type,
+					value: parseInt(d),
+					key: generateKey(type),
+					place: -1 - counts[type]!
+				}))
 			)
 		} else {
 			;(seenInteger || seenDecimal ? post : pre).push({
@@ -71,7 +75,19 @@ export function partitionParts(value: Value, formatter: Intl.NumberFormat) {
 	const integer: KeyedNumberPart[] = []
 	// Key the integer parts RTL, for better layout animations
 	for (let i = _integer.length - 1; i >= 0; i--) {
-		integer.unshift({ ..._integer[i]!, key: generateKey(_integer[i]!.type) })
+		const p = _integer[i]!
+		integer.unshift(
+			p.type === 'integer'
+				? {
+						...p,
+						key: generateKey(p.type),
+						place: counts[p.type]!
+					}
+				: {
+						...p,
+						key: generateKey(p.type)
+					}
+		)
 	}
 
 	return {

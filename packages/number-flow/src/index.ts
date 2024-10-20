@@ -18,6 +18,7 @@ import styles, {
 	deltaVar
 } from './styles'
 import { BROWSER } from 'esm-env'
+import { max } from './util/math'
 
 export { SlottedTag, slottedStyles, prefersReducedMotion } from './styles'
 export * from './formatter'
@@ -33,13 +34,6 @@ enum Trend {
 	NONE = 0
 }
 
-const getTrend = (val: number, prev?: number) => {
-	if (prev == null) return
-	if (val > prev) return Trend.UP
-	if (val < prev) return Trend.DOWN
-	return Trend.NONE
-}
-
 export const defaultOpacityTiming: EffectTiming = { duration: 450, easing: 'ease-out' }
 
 export const defaultTransformTiming: EffectTiming = {
@@ -51,7 +45,7 @@ export const defaultTransformTiming: EffectTiming = {
 let styleSheet: CSSStyleSheet | undefined
 
 // This one is used internally for framework wrappers, and
-// doesn't include things like i.e. attribute support:
+// doesn't include things like attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement {
 	static define() {
 		if (BROWSER) customElements.define('number-flow', this)
@@ -71,23 +65,29 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 	trend: RawTrend = true
 	#computedTrend?: Trend
+	continuous = false
 
-	getComputedTrend() {
+	#startingPlace?: number
+
+	get startingPlace() {
+		return this.#startingPlace
+	}
+	get computedTrend() {
 		return this.#computedTrend
 	}
 
-	#value?: number
+	#parts?: PartitionedParts
 
-	set parts(newVal: PartitionedParts | undefined) {
-		if (newVal == null) {
+	set parts(parts: PartitionedParts | undefined) {
+		if (parts == null) {
 			return
 		}
 
-		const { pre, integer, fraction, post, value } = newVal
+		const { pre, integer, fraction, post, value } = parts
 
 		// Initialize if needed
 		if (!this.#created) {
-			this.#value = value
+			this.#parts = parts
 
 			// Don't check for declarative shadow DOM because we'll recreate it anyway:
 			this.attachShadow({ mode: 'open' })
@@ -127,17 +127,37 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
-			const prev = this.#value!
-			this.#value = value
+			const prev = this.#parts!
+			this.#parts = parts
 
 			// Compute trend
 			if (this.trend === true) {
-				this.#computedTrend = getTrend(value, prev)
+				this.#computedTrend = Math.sign(value - prev.value)
 			} else if (this.trend === 'increasing') {
 				this.#computedTrend = Trend.UP
 			} else if (this.trend === 'decreasing') {
 				this.#computedTrend = Trend.DOWN
 			} else this.#computedTrend = Trend.NONE
+
+			// Compute starting place for continuous
+			this.#startingPlace = undefined
+			if (this.#computedTrend !== Trend.NONE && this.continuous) {
+				// Find the starting place based on the parts, not the value,
+				// to handle e.g. compact notation where value = 1000 and integer part = 1
+				const prevNumber = prev.integer
+					.concat(prev.fraction)
+					.filter((p) => p.type === 'integer' || p.type === 'fraction')
+				const number = parts.integer
+					.concat(parts.fraction)
+					.filter((p) => p.type === 'integer' || p.type === 'fraction')
+				const firstChangedPrev = prevNumber.find(
+					(pp) => !number.find((p) => p.place === pp.place && p.value === pp.value)
+				)
+				const firstChanged = number.find(
+					(p) => !prevNumber.find((pp) => p.place === pp.place && p.value === pp.value)
+				)
+				this.#startingPlace = max(firstChangedPrev?.place, firstChanged?.place)
+			}
 
 			if (!this.manual) this.willUpdate()
 
@@ -320,7 +340,7 @@ abstract class Section {
 	) {
 		const comp =
 			part.type === 'integer' || part.type === 'fraction'
-				? new Digit(this, part.type, startDigitsAtZero ? 0 : part.value, {
+				? new Digit(this, part.type, startDigitsAtZero ? 0 : part.value, part.place, {
 						...props,
 						onRemove: this.onCharRemove(part.key)
 					})
@@ -566,6 +586,7 @@ class Digit extends Char<KeyedDigitPart> {
 		section: Section,
 		_: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
+		readonly place: number,
 		props?: CharProps
 	) {
 		const numbers = Array.from({ length: 10 }).map((_, i) => {
@@ -592,14 +613,6 @@ class Digit extends Char<KeyedDigitPart> {
 	}
 
 	#prevValue?: KeyedDigitPart['value']
-
-	get trend() {
-		const rootTrend = this.flow.getComputedTrend()
-		if (rootTrend === Trend.NONE) {
-			return getTrend(this.value, this.#prevValue)
-		}
-		return rootTrend
-	}
 
 	// Relative to parent:
 	#prevCenter?: number
@@ -638,15 +651,8 @@ class Digit extends Char<KeyedDigitPart> {
 			}
 		)
 
-		if (this.value === this.#prevValue) return
-
-		const trend = this.trend
-		let diff = this.value - this.#prevValue!
-		// Loop around if need be:
-		if (trend === Trend.DOWN && this.value > this.#prevValue!)
-			diff = this.value - 10 - this.#prevValue!
-		if (trend === Trend.UP && this.value < this.#prevValue!)
-			diff = 10 - this.#prevValue! + this.value
+		const diff = this.diff
+		if (!diff) return
 
 		this.el.classList.add('is-spinning')
 		this.el.animate(
@@ -660,6 +666,25 @@ class Digit extends Char<KeyedDigitPart> {
 		)
 		// Hoisting the callback out prevents duplicates:
 		this.flow.addEventListener('animationsfinish', this.#onAnimationsFinish, { once: true })
+	}
+
+	get diff() {
+		let trend = this.flow.computedTrend
+		const diff = this.value - this.#prevValue!
+		// Loop once if it's continuous:
+		if (!diff && this.flow.startingPlace != null && this.flow.startingPlace >= this.place) {
+			return 10 * trend! // trend must exist if there's a startingPlace
+		}
+
+		// Make it per-digit if no root trend:
+		trend ||= Math.sign(diff)
+		// Loop around if need be:
+		if (trend === Trend.DOWN && this.value > this.#prevValue!)
+			return this.value - 10 - this.#prevValue!
+		else if (trend === Trend.UP && this.value < this.#prevValue!)
+			return 10 - this.#prevValue! + this.value
+
+		return diff
 	}
 
 	#onAnimationsFinish = () => {
