@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Get Help
+    url: https://github.com/barvian/number-flow/discussions/new?category=help
+    about: If you can't get something to work the way you expect, open a question in the discussion forums.
+  - name: Feature Request
+    url: https://github.com/barvian/number-flow/discussions/new?category=ideas
+    about: 'Suggest any ideas you have using the discussion forums.'
+  - name: Bug Report
+    url: https://github.com/barvian/number-flow/issues/new
+    about: If you've already asked for help with a problem and confirmed something is broken with NumberFlow itself, create a bug report.
+  # - name: Documentation Issue
+  #   url: https://github.com/tailwindlabs/tailwindcss.com
+  #   about: 'For documentation issues, suggest changes on our documentation repository.'
