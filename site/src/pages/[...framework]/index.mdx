@@ -1,7 +1,7 @@
 ---
 layout: './_Home.astro'
 title: NumberFlow - Transition and format numbers
-description: A React component to transition & format numbers. Dependency-free. Built on web standards. Accessible. Customizable.
+description: A component to transition & format numbers. Dependency-free. Built on web standards. Accessible. Customizable.
 ---
 import Pre from '@/components/Pre.astro';
 import NumberFlow from '@number-flow/react'
@@ -19,7 +19,7 @@ import Link from '@/components/Link.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
-<Heading class="sr-only" default="Basic usage" />
+<Heading class="sr-only" value="Basic usage" />
 
 <Match class='xl:pre-first-line:hidden first:*:mt-0'>
 <Fragment slot="react">
@@ -53,7 +53,7 @@ import NumberFlow from '@number-flow/vue'
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
-<Heading default="Transitions" />
+<Heading value="Transitions" />
 
 <h3 className="sr-only">Timings</h3>
 
@@ -169,7 +169,7 @@ would trigger for animations on the `<NumberFlow>` element itself.
 
 Triggered when update animations finish.
 
-<Heading default="Styling" />
+<Heading value="Styling" />
 
 There's some CSS properties you can use to style the component:
 
@@ -196,7 +196,10 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
-<Heading default="Hooks" vue="Composables" />
+<Match>
+<Heading slot="react" value="Hooks" />
+<Heading slot="vue" value="Composables" />
+</Match>
 
 <Match as="h3">
 <code slot="react">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
@@ -207,7 +210,7 @@ Returns `true` if NumerFlow can animate, i.e. the browser supports the [required
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
 <Match><Fragment slot="react">See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Fragment></Match>
 
-<Heading default="Limitations" />
+<Heading value="Limitations" />
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
 * Selected text inside the number will not respect color changes from `::selection`, if any.

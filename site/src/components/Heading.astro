@@ -2,28 +2,20 @@
 import { getTOCContext } from '@/context/toc.ts'
 import type { HTMLAttributes } from 'astro/types'
 import { slug } from 'github-slugger'
-import { FRAMEWORKS, getFramework, type Framework } from '@/lib/framework'
-import omit from 'lodash/omit'
-const framework = getFramework(Astro.params)
 
 type Props = HTMLAttributes<'h2'> & {
-	[framework in Framework]?: string
-} & {
-	default: string
+	value: string
 }
 
-let { default: DEFAULT, ...props } = Astro.props
-props = omit(props, Object.keys(FRAMEWORKS))
+let { value, ...props } = Astro.props
 
 const context = getTOCContext()
 
-const title = framework ? (Astro.props[framework] ?? DEFAULT) : DEFAULT
+const id = slug(value)
 
-const id = slug(title)
-
-context.headings.push({ title, id })
+context.headings.push({ title: value, id })
 ---
 
 <h2 {...props} {id}>
-	{Astro.slots.default ? <slot /> : title}
+	{Astro.slots.default ? <slot /> : value}
 </h2>

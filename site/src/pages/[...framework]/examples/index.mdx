@@ -21,19 +21,19 @@ import Heading from '@/components/Heading.astro';
 import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
 
-<Heading default="Input" />
+<Heading class="sr-only" value="Input" />
 
 <Input client:visible rootClassName="!mt-0">
 <Code code={InputCode} lang="tsx" />
 </Input>
 
-<Heading default="Activity" />
+<Heading value="Activity" />
 
 <Activity client:visible>
 <Code code={ActivityCode} lang="tsx" />
 </Activity>
 
-<Heading default="Slider" />
+<Heading value="Slider" />
 
 <Slider client:visible>
 <Code code={SliderCode} lang="tsx" />
@@ -58,7 +58,7 @@ we can add a simple animation to indicate whether numbers are increasing/decreas
 
 <Match>
 <Fragment slot="react">
-<Heading default="Framer Motion" />
+<Heading value="Framer Motion" />
 
 NumberFlow was designed to integrate with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
 You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
