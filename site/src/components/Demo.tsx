@@ -25,6 +25,7 @@ type TabValue = 'preview' | 'code'
 export type DemoProps = {
 	children: React.ReactNode
 	className?: string
+	rootClassName?: string
 	defaultValue?: TabValue
 	code?: React.ReactNode
 	minHeight?: string
@@ -36,6 +37,7 @@ type Props = DemoProps & { onClick?: () => void }
 const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 	{
 		children,
+		rootClassName,
 		className,
 		defaultValue = 'preview',
 		code,
@@ -66,7 +68,11 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 	return (
 		<Tabs.Root
 			ref={ref}
-			className={clsx(active === 'code' && 'dark', 'Demo text-primary not-prose relative isolate')} // reset text color if inside prose
+			className={clsx(
+				active === 'code' && 'dark',
+				rootClassName,
+				'Demo text-primary not-prose relative isolate'
+			)} // reset text color if inside prose
 			value={active}
 			onValueChange={(val) => setActive(val as TabValue)}
 		>
