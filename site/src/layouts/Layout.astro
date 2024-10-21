@@ -2,8 +2,8 @@
 import '@/assets/main.css'
 import preview from '@/assets/preview.png'
 import { getImage } from 'astro:assets'
-import pkg from '/../packages/number-flow/package.json'
-// import FrameworkMenu from '@/components/FrameworkMenu'
+// import pkg from '/../packages/number-flow/package.json'
+import FrameworkMenu from '@/components/FrameworkMenu'
 import Link from '@/components/Link.astro'
 import Nav from '@/components/Nav.astro'
 // import { AstroFont } from 'astro-font'
@@ -83,33 +83,26 @@ const app = {
 		<ViewTransitions />
 	</head>
 	<body class="~pt-12/28 ~pb-40/56">
-		<div class="container whitespace-nowrap text-center">
+		<div class="container inline-flex items-baseline justify-center whitespace-nowrap text-center">
 			{
 				isActive('/', Astro.url) ? (
 					<h1 class="font-medium">
-						<span class="inline-block">NumberFlow</span>
-						<span class="text-muted text-sm font-medium">v{pkg.version}</span>
+						NumberFlow
+						{/* <span class="text-muted text-sm font-medium">v{pkg.version}</span> */}
 					</h1>
 				) : (
-					<Link className="inline-block font-medium" href="/">
+					<Link className="font-medium" href="/">
 						NumberFlow
 					</Link>
 				)
 			}
 			{
-				/*
 				frameworkId && (
 					<>
 						&nbsp;for
-						<FrameworkMenu
-							className="ml-0 relative top-[.1875rem]"
-							url={Astro.url}
-							value={frameworkId}
-							client:load
-						/>
+						<FrameworkMenu className="ml-0" url={Astro.url} value={frameworkId} client:load />
 					</>
 				)
-			 */
 			}
 		</div>
 		<Nav />

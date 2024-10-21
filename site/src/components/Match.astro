@@ -1,30 +1,30 @@
 ---
 import { getFramework } from '@/lib/framework'
-import type { HTMLAttributes } from 'astro/types'
+import type { HTMLTag, Polymorphic } from 'astro/types'
 
-export interface Props extends HTMLAttributes<'div'> {
-	children: Array<Element | JSX.Element> | string
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
 	react?: string
 	vue?: string
 	svelte?: string
 	vanilla?: string
 }
-const { react, vue, svelte, vanilla, ...props } = Astro.props
+
+const { as: _Tag, react, vue, svelte, vanilla, ...props } = Astro.props
+let Tag = _Tag ?? (Object.keys(props).length ? 'div' : Fragment)
 const framework = getFramework(Astro.params)
-const Comp = props.class ? 'div' : Fragment
 ---
 
-<Comp {...props}>
+<Tag {...props}>
 	{/* We can't use a loop here because Astro needs the slot names to be static strings */}
 	{
 		framework === 'react' &&
 			(react != null ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
 	}
-	<!-- {
+	{
 		framework === 'vue' &&
 			(vue != null ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)
 	}
-	{
+	<!--{
 		framework === 'svelte' &&
 			(svelte != null ? svelte : Astro.slots.has('svelte') ? <slot name="svelte" /> : <slot />)
 	}
@@ -32,4 +32,4 @@ const Comp = props.class ? 'div' : Fragment
 		framework === 'vanilla' &&
 			(vanilla != null ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
 	} -->
-</Comp>
+</Tag>

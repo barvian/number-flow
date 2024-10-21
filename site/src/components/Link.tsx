@@ -24,8 +24,8 @@ export default function Link({
 	const pageFramework = useStore(pageFrameworkAtom)
 	const url = useStore(urlAtom)
 
-	const href = frameworked ? toFrameworkPath(_href, pageFramework) : _href
-	const isExternal = href && url && new URL(href, url.origin).origin !== url.origin
+	const isExternal = _href && url && new URL(_href, url.origin).origin !== url.origin
+	const href = !isExternal && frameworked ? toFrameworkPath(_href, pageFramework) : _href
 
 	const active = isActive(href, url)
 

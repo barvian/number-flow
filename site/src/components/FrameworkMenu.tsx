@@ -22,20 +22,20 @@ export default function FrameworkMenu({
 	url: URL
 	className?: string
 }) {
-	const ValueIcon = icons[`./icons/frameworks/${value}.tsx`]!
+	const Icon = icons[`./icons/frameworks/${value}.tsx`]!
 
 	return (
 		<Menu>
 			<MenuButton
 				className={clsx(
 					className,
-					'group -mx-3 -my-3 inline-flex items-center rounded-full px-3 py-2 font-medium text-zinc-50 transition duration-[.16s] ease-out hover:brightness-125 active:brightness-[98%] active:duration-[25ms]'
+					'group -mx-3 inline-flex items-baseline rounded-full px-3 py-2 font-medium text-zinc-50 transition duration-[.16s] ease-out hover:brightness-125 active:brightness-[98%] active:duration-[25ms]'
 				)}
 			>
-				<ValueIcon className="size-4.5 mr-2 shrink-0" />
+				<Icon className="size-4.5 relative -top-[.0625em] mr-2 shrink-0 self-center" />
 				{FRAMEWORKS[value].name}
 				<ChevronDown
-					className="spring-bounce-0 spring-duration-150 ml-1 size-4 shrink-0 group-data-[active]:rotate-180"
+					className="spring-bounce-0 spring-duration-150 ml-1 size-4 shrink-0 self-center group-data-[active]:rotate-180"
 					strokeWidth={2}
 				/>
 			</MenuButton>

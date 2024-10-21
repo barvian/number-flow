@@ -10,6 +10,7 @@ import IsolateDemo from './_demos/Isolate'
 import ContinuousDemo from './_demos/Continuous'
 import TabularNumsDemo from './_demos/TabularNums'
 import TrendDemo from './_demos/Trend'
+import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
 import Union from '@/components/Union.astro'
@@ -19,7 +20,8 @@ export const components = {a: Link, pre: Pre}
 
 ## Basic usage
 
-<div className='xl:pre-first-line:hidden first:*:mt-0'>
+<Match class='xl:pre-first-line:hidden first:*:mt-0'>
+<Fragment slot="react">
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'
@@ -30,7 +32,23 @@ import NumberFlow from '@number-flow/react'
 	locales="en-US" // Intl.NumberFormat locales
 />
 ```
-</div>
+</Fragment>
+<Fragment slot="vue">
+```vue
+<!-- Basic usage -->
+<script setup>
+import NumberFlow from '@number-flow/vue'
+</script>
+<template>
+	<NumberFlow
+		:value="value"
+		:format="{ notation: 'compact' } /* Intl.NumberFormat options */"
+		:locales="'en-US' /* Intl.NumberFormat locales */"
+	/>
+</template>
+```
+</Fragment>
+</Match>
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
@@ -41,6 +59,8 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 The default animation timings can be customized via props that accept [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) objects:
 
 <TimingsDemo client:visible defaultValue='code'>
+<Match>
+<Fragment slot="react">
 ```jsx
 <NumberFlow
 	// Used for layout-related transforms:
@@ -52,6 +72,27 @@ The default animation timings can be customized via props that accept [`EffectTi
 	opacityTiming={{ duration: 350, easing: 'ease-out' }}
 />
 ```
+</Fragment>
+<Fragment slot="vue">
+```vue
+<NumberFlow
+	:transformTiming="{
+		// Used for layout-related transforms:
+		duration: 700, easing: 'linear(...)'
+	}"
+	:spinTiming="{
+		// Used for the digit spin animations.
+		// Will fall back to `transformTiming` if unset:
+		duration: 700, easing: 'linear(...)'
+	}"
+	:opacityTiming="{
+		// Used for fading in/out characters:
+		duration: 350, easing: 'ease-out'
+	}"
+/>
+```
+</Fragment>
+</Match>
 </TimingsDemo>
 
 For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
@@ -154,18 +195,27 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
+<Match>
+<Fragment slot="react">
 ## Hooks
+</Fragment>
+<Fragment slot="vue">
+## Composables
+</Fragment>
+</Match>
 
-### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
+<Match as="h3">
+<code slot="react">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
+<code slot="vue">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: {'MaybeRefOrGetter<boolean> }'}</Type>)<Type>: {'Ref<boolean>'}</Type></code>
+</Match>
 
 Returns `true` if NumerFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
-See the [Framer Motion example](/examples#framer-motion) for a usage scenario.
+<Match><Fragment slot="react">See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Fragment></Match>
 
 ## Limitations
 
-* [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported
-* Selected text inside the number will not respect color changes from `::selection`, if any
-* Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions. I'd recommend using
-Framer Motion for these, as it's more composable
-than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).
+* [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
+* Selected text inside the number will not respect color changes from `::selection`, if any.
+* Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions.
+<Match><Fragment slot="react">I'd recommend using Framer Motion for these, as it's more composable than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).</Fragment></Match>
