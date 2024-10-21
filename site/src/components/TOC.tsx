@@ -58,7 +58,7 @@ export default function TOC({ headings, ...props }: Props) {
 					<li key={h.id}>
 						<a
 							data-active={h.id === active || undefined}
-							className="opacity-40 data-[active]:opacity-100 dark:opacity-50"
+							className="opacity-40 transition-opacity hover:opacity-70 data-[active]:opacity-100 dark:opacity-50"
 							href={`#${h.id}`}
 						>
 							{h.title}
