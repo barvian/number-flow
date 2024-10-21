@@ -47,7 +47,7 @@ export default function TOC({ headings, ...props }: Props) {
 						<a
 							ref={(el) => (linkRefs.current[h.slug] = el)}
 							data-active={h.slug === activeSlug || undefined}
-							className="opacity-40 data-[active]:opacity-100 dark:opacity-50"
+							className="opacity-40 transition-opacity hover:opacity-70 data-[active]:opacity-100 dark:opacity-50"
 							href={`#${h.slug}`}
 						>
 							{h.text}
