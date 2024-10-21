@@ -235,12 +235,18 @@ importers:
       '@astrojs/vercel':
         specifier: ^7.8.1
         version: 7.8.1(astro@4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2))(next@14.2.15(@babel/core@7.25.2)(@playwright/test@1.48.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+      '@astropub/context':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@tailwindcss/typography':
         specifier: ^0.5.15
         version: 0.5.15(tailwindcss@3.4.13)
       fluid-tailwind:
         specifier: ^1.0.3
         version: 1.0.3(tailwindcss@3.4.13)
+      github-slugger:
+        specifier: ^2.0.0
+        version: 2.0.0
       postcss-easing-gradients:
         specifier: ^3.0.1
         version: 3.0.1
@@ -330,6 +336,9 @@ packages:
 
   '@astrojs/yaml2ts@0.2.1':
     resolution: {integrity: sha512-CBaNwDQJz20E5WxzQh4thLVfhB3JEEGz72wRA+oJp6fQR37QLAqXZJU0mHC+yqMOQ6oj0GfRPJrz6hjf+zm6zA==}
+
+  '@astropub/context@0.1.0':
+    resolution: {integrity: sha512-6VRX3z9mhFvw9RN4hrQCrcFhcdom9lk2FUJuFOab9Vg9chInlY2LNFhHXF4HjTELIwAk3ABpUQrPpHXQ4Pf2Vw==}
 
   '@babel/code-frame@7.24.7':
     resolution: {integrity: sha512-BcYH1CVJBO9tvyIZ2jVeXgSIMvGZ2FDRvDdOIVQyuklNKSsx+eppDEBq/g47Ayw+RqNFE+URvOShmf+f/qwAlA==}
@@ -4552,6 +4561,8 @@ snapshots:
   '@astrojs/yaml2ts@0.2.1':
     dependencies:
       yaml: 2.5.0
+
+  '@astropub/context@0.1.0': {}
 
   '@babel/code-frame@7.24.7':
     dependencies:

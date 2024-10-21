@@ -1,0 +1,8 @@
+<!-- Flip the order -->{
+	(async function () {
+		// Render TOC last (for context to work) but return its markup first
+		const def = await Astro.slots.render('default')
+		const toc = await Astro.slots.render('toc')
+		return <Fragment set:html={toc + def} />
+	})()
+}

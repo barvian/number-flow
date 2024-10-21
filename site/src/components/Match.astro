@@ -1,12 +1,9 @@
 ---
-import { getFramework } from '@/lib/framework'
+import { getFramework, type Framework } from '@/lib/framework'
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
-	react?: string
-	vue?: string
-	svelte?: string
-	vanilla?: string
+	[framework in Framework]?: string
 }
 
 const { as: _Tag, react, vue, svelte, vanilla, ...props } = Astro.props

@@ -3,7 +3,7 @@ import NumberFlow from '@number-flow/react'
 import * as React from 'react'
 import useCycle from '@/hooks/useCycle'
 
-const NUMBERS = [120, 140]
+const NUMBERS = [0, 9000]
 
 export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'>) {
 	const [value, cycleValue] = useCycle(NUMBERS)

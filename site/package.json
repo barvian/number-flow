@@ -35,8 +35,10 @@
 	},
 	"devDependencies": {
 		"@astrojs/vercel": "^7.8.1",
+		"@astropub/context": "^0.1.0",
 		"@tailwindcss/typography": "^0.5.15",
 		"fluid-tailwind": "^1.0.3",
+		"github-slugger": "^2.0.0",
 		"postcss-easing-gradients": "^3.0.1",
 		"sharp": "^0.33.5",
 		"sharp-cli": "^5.0.0",

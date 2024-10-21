@@ -17,21 +17,23 @@ import InputCode from './_Input/Example?raw'
 // import ColoredTrendsCode from './_ColoredTrends/Example?raw'
 import FramerMotionLayoutAnimations from './_FramerMotion'
 import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
+import Heading from '@/components/Heading.astro';
+import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
 
-## Input
+<Heading default="Input" />
 
 <Input client:visible>
 <Code code={InputCode} lang="tsx" />
 </Input>
 
-## Activity
+<Heading default="Activity" />
 
 <Activity client:visible>
 <Code code={ActivityCode} lang="tsx" />
 </Activity>
 
-## Slider
+<Heading default="Slider" />
 
 <Slider client:visible>
 <Code code={SliderCode} lang="tsx" />
@@ -54,7 +56,9 @@ we can add a simple animation to indicate whether numbers are increasing/decreas
 <Code code={ColoredTrendsCode} lang="tsx" />
 </ColoredTrends> */}
 
-## Framer Motion
+<Match>
+<Fragment slot="react">
+<Heading default="Framer Motion" />
 
 NumberFlow was designed to integrate with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
 You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
@@ -67,3 +71,5 @@ You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match
 [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
 [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
 props.
+</Fragment>
+</Match>

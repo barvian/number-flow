@@ -103,7 +103,7 @@ export default {
 						},
 
 						h2: {
-							'@apply font-semibold text-xl': {}
+							'@apply mt-20 font-semibold text-xl': {}
 						},
 
 						h3: {
@@ -126,17 +126,6 @@ export default {
 							'margin-top': '0 !important'
 						},
 						'[role=alert] > :last-child': {
-							'margin-bottom': '0 !important'
-						},
-
-						// We need to always use padding for the IntersectionObserver to work:
-						'&>section': {
-							'@apply py-10 first:pt-0 last:pb-0': {}
-						},
-						'section > :first-child': {
-							'margin-top': '0 !important'
-						},
-						'section > :last-child': {
 							'margin-bottom': '0 !important'
 						}
 					}

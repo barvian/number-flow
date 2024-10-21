@@ -4,8 +4,6 @@ import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
 import shikiTheme from './highlighter-theme.json'
-// @ts-expect-error missing types
-import sectionize from './remark-sectionize'
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,8 +11,7 @@ export default defineConfig({
 	markdown: {
 		shikiConfig: {
 			theme: shikiTheme
-		},
-		remarkPlugins: [sectionize]
+		}
 	},
 	vite: {
 		ssr: {

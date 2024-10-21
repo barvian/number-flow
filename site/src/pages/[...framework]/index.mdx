@@ -13,12 +13,13 @@ import TrendDemo from './_demos/Trend'
 import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
+import Heading from '@/components/Heading.astro'
 import Union from '@/components/Union.astro'
 import Link from '@/components/Link.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
-## Basic usage
+<Heading class="sr-only" default="Basic usage" />
 
 <Match class='xl:pre-first-line:hidden first:*:mt-0'>
 <Fragment slot="react">
@@ -52,7 +53,7 @@ import NumberFlow from '@number-flow/vue'
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
-## Transitions
+<Heading default="Transitions" />
 
 <h3 className="sr-only">Timings</h3>
 
@@ -168,7 +169,7 @@ would trigger for animations on the `<NumberFlow>` element itself.
 
 Triggered when update animations finish.
 
-## Styling
+<Heading default="Styling" />
 
 There's some CSS properties you can use to style the component:
 
@@ -195,14 +196,7 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
-<Match>
-<Fragment slot="react">
-## Hooks
-</Fragment>
-<Fragment slot="vue">
-## Composables
-</Fragment>
-</Match>
+<Heading default="Hooks" vue="Composables" />
 
 <Match as="h3">
 <code slot="react">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
@@ -213,7 +207,7 @@ Returns `true` if NumerFlow can animate, i.e. the browser supports the [required
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
 <Match><Fragment slot="react">See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Fragment></Match>
 
-## Limitations
+<Heading default="Limitations" />
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
 * Selected text inside the number will not respect color changes from `::selection`, if any.
