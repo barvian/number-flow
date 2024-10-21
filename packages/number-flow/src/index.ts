@@ -10,6 +10,7 @@ import {
 import { ServerSafeHTMLElement } from './ssr'
 import styles, {
 	supportsMod,
+	supportsLinear,
 	dxVar,
 	opacityDeltaVar,
 	prefersReducedMotion,
@@ -23,7 +24,7 @@ import { max } from './util/math'
 export { SlottedTag, slottedStyles, prefersReducedMotion } from './styles'
 export * from './formatter'
 
-export const canAnimate = supportsMod && supportsAtProperty
+export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
 
 type RawTrend = boolean | 'increasing' | 'decreasing'
 export { type RawTrend as Trend }
