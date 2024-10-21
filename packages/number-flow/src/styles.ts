@@ -1,6 +1,9 @@
 import { BROWSER } from 'esm-env'
 import { css } from './util/css'
 
+export const supportsLinear =
+	BROWSER && typeof CSS !== 'undefined' && CSS.supports('animation-timing-function', 'linear(1,2)')
+
 export const supportsMod =
 	BROWSER && typeof CSS !== 'undefined' && CSS.supports('line-height', 'mod(1,1)')
 
