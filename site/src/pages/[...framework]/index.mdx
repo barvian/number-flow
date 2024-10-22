@@ -160,13 +160,23 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
-### <code>onAnimationsStart<Type>: () => void</Type></code>
+<Match>
+<Heading slot="vue" value="Events"/>
+</Match>
 
-Triggered when update animations start. Not to be confused with the built-in `onAnimationStart`, which
+<Match>
+<h3 slot="react"><code>onAnimationsStart<Type>: () => void</Type></code></h3>
+<h3 slot="vue"><code>animationsstart</code></h3>
+</Match>
+
+Triggered when update animations start. Not to be confused with the built-in
+<Match><Fragment slot="react">`onAnimationStart`</Fragment><Fragment slot="vue">[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Fragment></Match>, which
 would trigger for animations on the `<NumberFlow>` element itself.
 
-### <code>onAnimationsFinish<Type>: () => void</Type></code>
-
+<Match>
+<h3 slot="react"><code>onAnimationsFinish<Type>: () => void</Type></code></h3>
+<h3 slot="vue"><code>animationsfinish</code></h3>
+</Match>
 Triggered when update animations finish.
 
 <Heading value="Styling" />
