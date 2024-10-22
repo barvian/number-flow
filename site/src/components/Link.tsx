@@ -36,7 +36,7 @@ export default function Link({
 	const isExternal = _href && url && new URL(_href, url.origin).origin !== url.origin
 	const href = !isExternal && frameworked && framework ? toFrameworkPath(_href, framework) : _href
 	React.useEffect(() => {
-		// Workaround for a weird Astro VT bug I think:
+		// Double-set for a weird Astro VT bug I think:
 		if (href) ref.current?.setAttribute('href', href)
 	}, [href])
 
@@ -49,6 +49,7 @@ export default function Link({
 			className={clsx(className, 'group/link')}
 			target={isExternal ? '_blank' : target}
 			data-active={active ? '' : undefined}
+			href={href}
 			data-framework={framework}
 		>
 			{active && activeChildren}
