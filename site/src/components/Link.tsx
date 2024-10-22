@@ -22,6 +22,7 @@ export default function Link({
 	...props
 }: Props) {
 	const pageFramework = useStore(pageFrameworkAtom)
+	const ref = React.useRef<HTMLAnchorElement>(null)
 	const [savedFramework, setSavedFramework] = React.useState<Framework | null>(null)
 	React.useEffect(() => {
 		if (!pageFramework) setSavedFramework(localStorage.getItem('framework') as Framework)
@@ -33,16 +34,28 @@ export default function Link({
 	const url = useStore(urlAtom)
 
 	const isExternal = _href && url && new URL(_href, url.origin).origin !== url.origin
-	const href = !isExternal && frameworked ? toFrameworkPath(_href, framework) : _href
+	const href = !isExternal && frameworked && framework ? toFrameworkPath(_href, framework) : _href
+	React.useEffect(() => {
+		// Workaround for a weird Astro VT bug I think:
+		if (href) ref.current?.setAttribute('href', href)
+	}, [href])
 
 	const active = isActive(href, url)
 
 	return (
-		// prettier-ignore
-		<a {...props} className={clsx(className, 'group/link')} target={isExternal ? '_blank' : target} data-active={active ? '' : undefined} href={href}>
+		<a
+			{...props}
+			ref={ref}
+			className={clsx(className, 'group/link')}
+			target={isExternal ? '_blank' : target}
+			data-active={active ? '' : undefined}
+			data-framework={framework}
+		>
 			{active && activeChildren}
 			{children}
-			{isExternal && <ArrowUpRight className='inline-block ml-[0.125em] size-[1em] no-underline transition-transform group-hover/link:-translate-y-px group-hover/link:translate-x-px' />}
+			{isExternal && (
+				<ArrowUpRight className="ml-[0.125em] inline-block size-[1em] no-underline transition-transform group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
+			)}
 		</a>
 	)
 }
