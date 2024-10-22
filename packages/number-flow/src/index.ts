@@ -49,7 +49,22 @@ let styleSheet: CSSStyleSheet | undefined
 // doesn't include things like attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement {
 	static define() {
-		if (BROWSER) customElements.define('number-flow', this)
+		if (BROWSER) {
+			const registeredElement = customElements.get('number-flow')
+
+			// If an element is already registered with the same name by another library, warn the user.
+			if (registeredElement && registeredElement.constructor !== this.constructor) {
+				console.error(
+					'An element has already been defined under the name `number-flow`. NumberFlow is not compatible in this case.'
+				)
+				return
+			}
+
+			// If the element is not registered, register it.
+			if (!registeredElement) {
+				customElements.define('number-flow', this)
+			}
+		}
 	}
 
 	transformTiming = defaultTransformTiming
