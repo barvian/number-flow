@@ -102,8 +102,8 @@ const app = {
 			{
 				frameworkId && (
 					<>
-						&nbsp;for
-						<FrameworkMenu className="ml-0" url={Astro.url} value={frameworkId} client:load />
+						&nbsp;<span class="text-muted">for</span>&nbsp;
+						<FrameworkMenu className="-ml-2" url={Astro.url} value={frameworkId} client:load />
 					</>
 				)
 			}
