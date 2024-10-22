@@ -103,7 +103,7 @@ export default {
 						},
 
 						h2: {
-							'@apply mt-20 font-semibold text-xl': {}
+							'@apply mt-20 mb-[1.25em] font-semibold text-xl': {}
 						},
 
 						h3: {
