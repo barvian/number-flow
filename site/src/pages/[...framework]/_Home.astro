@@ -13,7 +13,7 @@ const { frontmatter } = Astro.props
 ---
 
 <DocsLayout title={frontmatter.title} description={frontmatter.description}>
-	<Hero client:load slot="hero" />
+	<Hero transition:persist="home-hero" client:load slot="hero" />
 	<slot />
 	<footer
 		slot="footer"
