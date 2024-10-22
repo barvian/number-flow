@@ -10,9 +10,10 @@ import Nav from '@/components/Nav.astro'
 // import * as path from 'node:path'
 import { ViewTransitions } from 'astro:transitions'
 import { isActive } from '@/lib/url'
-import { getFramework } from '@/lib/framework'
+import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
 const frameworkId = getFramework(Astro.params)
+const framework = frameworkId && FRAMEWORKS[frameworkId]
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
@@ -53,7 +54,9 @@ const app = {
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta property="twitter:image" content={image} />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<title>
+			{title.replaceAll('{{name}}', 'NumberFlow' + (framework ? ' for ' + framework.name : ''))}
+		</title>
 		<!-- <AstroFont
 			config={[
 				{

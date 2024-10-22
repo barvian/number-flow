@@ -1,6 +1,6 @@
 ---
 layout: './_Examples.astro'
-title: 'NumberFlow Examples'
+title: '{{name}} Examples'
 description: 'Ready-made examples of common patterns to get you started with NumberFlow.'
 ---
 export { getStaticPaths } from '@/lib/framework'
@@ -20,6 +20,9 @@ import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
 import Heading from '@/components/Heading.astro';
 import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
+import Link from '@/components/Link.astro'
+import Pre from '@/components/Pre.astro'
+export const components = {a: Link, pre: Pre}
 
 <Heading class="sr-only" value="Input" />
 
