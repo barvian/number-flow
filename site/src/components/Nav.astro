@@ -3,7 +3,7 @@ import { GITHUB_TOKEN } from 'astro:env/server'
 import ReactNav from './Nav'
 import pkg from '/../packages/number-flow/package.json'
 
-const repoPath = 'barvian/motion-number'
+const repoPath = 'barvian/number-flow'
 const repo = await fetch(`https://api.github.com/repos/${repoPath}`, {
 	headers: {
 		Authorization: `Bearer ${GITHUB_TOKEN}`,
