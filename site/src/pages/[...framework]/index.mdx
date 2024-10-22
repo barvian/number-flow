@@ -53,11 +53,13 @@ import NumberFlow from '@number-flow/vue'
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
-<Heading value="Transitions" />
+<Heading value="Props" />
 
-<h3 className="sr-only">Timings</h3>
+NumberFlow accepts additional props to customize its transitions:
 
-The default animation timings can be customized via props that accept [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) objects:
+### Timings
+
+There are three props to customize the animation timings. Each accept an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
 <TimingsDemo client:visible defaultValue='code'>
 <Match>
@@ -161,22 +163,17 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
 <Match>
-<Heading slot="vue" value="Events"/>
+<Heading slot="vue" value="Emits"/>
 </Match>
 
-<Match>
-<h3 slot="react"><code>onAnimationsStart<Type>: () => void</Type></code></h3>
-<h3 slot="vue"><code>animationsstart</code></h3>
-</Match>
+<h3><code><Match react="onAnimationsStart" vue="animationsstart" /><Type>: () => void</Type></code></h3>
 
 Triggered when update animations start. Not to be confused with the built-in
 <Match><Fragment slot="react">`onAnimationStart`</Fragment><Fragment slot="vue">[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Fragment></Match>, which
 would trigger for animations on the `<NumberFlow>` element itself.
 
-<Match>
-<h3 slot="react"><code>onAnimationsFinish<Type>: () => void</Type></code></h3>
-<h3 slot="vue"><code>animationsfinish</code></h3>
-</Match>
+<h3><code><Match react="onAnimationsFinish" vue="animationsfinish" /><Type>: () => void</Type></code></h3>
+
 Triggered when update animations finish.
 
 <Heading value="Styling" />

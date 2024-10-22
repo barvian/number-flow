@@ -2,7 +2,7 @@
 import '@/assets/main.css'
 import preview from '@/assets/preview.png'
 import { getImage } from 'astro:assets'
-// import pkg from '/../packages/number-flow/package.json'
+import pkg from '/../packages/number-flow/package.json'
 import FrameworkMenu from '@/components/FrameworkMenu'
 import Link from '@/components/Link.astro'
 import Nav from '@/components/Nav.astro'
@@ -93,7 +93,10 @@ const app = {
 						<Link className="font-medium" href="/">
 							NumberFlow
 						</Link>
-						{/* <span class="text-muted text-sm font-medium">v{pkg.version}</span> */}
+						{/* <span class="inline-block rounded-sm border px-1 py-0.5 align-top text-[10px] font-medium"> */}
+						{/* <span class="text-muted"> */}
+						{/* v{pkg.version} */}
+						{/* </span> */}
 					</h1>
 				) : (
 					<Link className="font-medium" href="/">
