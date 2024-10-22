@@ -90,7 +90,9 @@ const app = {
 			{
 				isActive('/', Astro.url) ? (
 					<h1 class="font-medium">
-						NumberFlow
+						<Link className="font-medium" href="/">
+							NumberFlow
+						</Link>
 						{/* <span class="text-muted text-sm font-medium">v{pkg.version}</span> */}
 					</h1>
 				) : (

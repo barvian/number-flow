@@ -30,7 +30,7 @@ export default function FrameworkMenu({
 			<MenuButton
 				className={clsx(
 					className,
-					'text-primary group -mx-3 -my-2 inline-flex items-baseline rounded-full px-3 py-2 font-medium transition duration-[.16s] ease-out hover:brightness-[1.1] active:brightness-[.98] active:duration-[25ms]'
+					'text-primary group -mx-3 -my-2 -mr-4 inline-flex items-baseline rounded-full px-3 py-2 font-medium transition duration-[.16s] ease-out hover:brightness-[1.1] active:brightness-[.98] active:duration-[25ms]'
 				)}
 			>
 				<Icon className="size-4.5 relative -top-[.0625em] mr-2 shrink-0 self-center" />
