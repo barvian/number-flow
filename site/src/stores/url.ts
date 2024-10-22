@@ -3,6 +3,7 @@ import { atom } from 'nanostores'
 import type { Framework } from '../lib/framework'
 
 export const urlAtom = atom<URL | Location | undefined>(
+	// Set in middleware:
 	import.meta.env.SSR ? undefined : window.location
 )
 if (!import.meta.env.SSR)
@@ -12,5 +13,6 @@ if (!import.meta.env.SSR)
 	})
 
 export const pageFrameworkAtom = atom<Framework | null>(
+	// Set in middleware:
 	import.meta.env.SSR ? null : (document.documentElement.dataset.framework as Framework)
 )

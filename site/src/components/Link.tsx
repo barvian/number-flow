@@ -3,7 +3,7 @@ import { useStore } from '@nanostores/react'
 import { urlAtom, pageFrameworkAtom } from '@/stores/url'
 import type { AnchorHTMLAttributes } from 'react'
 import { isActive } from '../lib/url'
-import { toFrameworkPath } from '@/lib/framework'
+import { type Framework, toFrameworkPath } from '@/lib/framework'
 import { ArrowUpRight } from 'lucide-react'
 import clsx from 'clsx/lite'
 
@@ -22,10 +22,18 @@ export default function Link({
 	...props
 }: Props) {
 	const pageFramework = useStore(pageFrameworkAtom)
+	const [savedFramework, setSavedFramework] = React.useState<Framework | null>(null)
+	React.useEffect(() => {
+		if (!pageFramework) setSavedFramework(localStorage.getItem('framework') as Framework)
+	}, [pageFramework])
+	const framework = React.useMemo(
+		() => pageFramework ?? savedFramework,
+		[pageFramework, savedFramework]
+	)
 	const url = useStore(urlAtom)
 
 	const isExternal = _href && url && new URL(_href, url.origin).origin !== url.origin
-	const href = !isExternal && frameworked ? toFrameworkPath(_href, pageFramework) : _href
+	const href = !isExternal && frameworked ? toFrameworkPath(_href, framework) : _href
 
 	const active = isActive(href, url)
 
