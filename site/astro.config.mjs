@@ -5,6 +5,8 @@ import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
 import shikiTheme from './highlighter-theme.json'
 
+import vue from '@astrojs/vue'
+
 // https://astro.build/config
 export default defineConfig({
 	site: pkg.homepage,
@@ -36,7 +38,15 @@ export default defineConfig({
 					addWatchFile(new URL('./highlighter-theme.json', config.root))
 				}
 			}
-		}
+		},
+		vue({
+			template: {
+				compilerOptions: {
+					// isCustomElement: (tag) => tag === 'number-flow'
+				}
+			}
+			// ...
+		})
 	],
 	output: 'hybrid',
 	adapter: vercel({
