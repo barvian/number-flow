@@ -106,7 +106,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			this.#parts = parts
 
 			// Don't check for declarative shadow DOM because we'll recreate it anyway:
-			this.attachShadow({ mode: 'open' })
+			if (!this.shadowRoot) {
+				this.attachShadow({ mode: 'open' })
+			}
 
 			// Add stylesheet
 			if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
