@@ -14,11 +14,11 @@ type Props = ComponentProps<typeof Layout> & {}
 	<Supported transition:persist="supported" client:only="react" />
 	<slot name="hero" />
 	<div
-		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
+		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(auto,theme(maxWidth.2xl))_1fr] xl:items-start"
 	>
 		<TOCProvider headings={[]} slugger={new GitHubSlugger()}>
 			<TOCLayout>
-				<article class="container max-w-2xl">
+				<article class="container max-w-none">
 					<div class="prose prose-zinc dark:prose-invert">
 						<slot />
 					</div>
