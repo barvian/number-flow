@@ -9,10 +9,10 @@ type Props = MDXLayoutProps<{
 	description: string
 }>
 
-const { frontmatter, headings } = Astro.props
+const { frontmatter } = Astro.props
 ---
 
-<DocsLayout title={frontmatter.title} description={frontmatter.description} {headings}>
+<DocsLayout title={frontmatter.title} description={frontmatter.description}>
 	<Hero client:load slot="hero" />
 	<slot />
 	<footer
