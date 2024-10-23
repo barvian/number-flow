@@ -1,7 +1,5 @@
 ---
 import { getFramework, type Framework } from '@/lib/framework'
-// This had to be external or it somehow messed with Astro's type inference:
-import type { SingleTrueKey } from '@/lib/types'
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> &
@@ -9,7 +7,9 @@ type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> &
 		| {
 				[framework in Framework]?: string
 		  }
-		| SingleTrueKey<Framework>
+		| {
+				[framework in Framework]?: true
+		  }
 	)
 
 const { as: _Tag, react, vue, svelte, vanilla, ...props } = Astro.props
