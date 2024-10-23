@@ -45,7 +45,6 @@
 	"scripts": {
 		"build": "vite build --mode production",
 		"dev": "vite build --mode development --watch",
-		"prepublishOnly": "pnpm run build",
 		"test:unit": "vitest"
 	},
 	"devDependencies": {

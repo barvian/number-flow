@@ -10,11 +10,10 @@
 		"typescript": "^5.6.2"
 	},
 	"scripts": {
-		"build": "pnpm -r build",
-		"dev": "pnpm -r --parallel dev",
+		"build:packages": "pnpm -r --filter=!site build",
 		"format": "prettier --write .",
 		"version": "changeset version && git add --all",
-		"release": "changeset publish"
+		"release": "pnpm build:packages && changeset publish"
 	},
 	"packageManager": "pnpm@9.12.1",
 	"engines": {
