@@ -40,7 +40,7 @@ importers:
         version: 10.4.0
       '@vitest/browser':
         specifier: ^2.1.2
-        version: 2.1.2(@vitest/spy@2.1.2)(playwright@1.48.0)(typescript@5.6.2)(vite@5.4.3(@types/node@22.7.5))(vitest@2.1.2)
+        version: 2.1.2(@vitest/spy@2.1.2)(playwright@1.48.0)(typescript@5.6.2)(vite@5.4.3(@types/node@22.7.9))(vitest@2.1.2)
       babel-plugin-styled-components:
         specifier: ^2.1.4
         version: 2.1.4(@babel/core@7.25.2)(styled-components@6.1.13(react-dom@19.0.0-rc-cd22717c-20241013(react@19.0.0-rc-cd22717c-20241013))(react@19.0.0-rc-cd22717c-20241013))
@@ -61,10 +61,10 @@ importers:
         version: 5.6.2
       vite:
         specifier: ^5.4.3
-        version: 5.4.3(@types/node@22.7.5)
+        version: 5.4.3(@types/node@22.7.9)
       vitest:
         specifier: ^2.1.2
-        version: 2.1.2(@types/node@22.7.5)(@vitest/browser@2.1.2)(msw@2.4.10(typescript@5.6.2))
+        version: 2.1.2(@types/node@22.7.9)(@vitest/browser@2.1.2)(msw@2.4.10(typescript@5.6.2))
 
   packages/react:
     dependencies:
@@ -72,6 +72,12 @@ importers:
         specifier: workspace:*
         version: link:../number-flow
     devDependencies:
+      '@playwright/test':
+        specifier: ^1.48.0
+        version: 1.48.0
+      '@types/node':
+        specifier: ^22.7.9
+        version: 22.7.9
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.3
@@ -169,10 +175,10 @@ importers:
         version: 0.9.3(prettier-plugin-astro@0.14.1)(prettier@3.3.3)(typescript@5.6.2)
       '@astrojs/mdx':
         specifier: ^3.1.3
-        version: 3.1.3(astro@4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2))
+        version: 3.1.3(astro@4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2))
       '@astrojs/react':
         specifier: ^3.6.2
-        version: 3.6.2(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vite@5.4.3(@types/node@22.7.5))
+        version: 3.6.2(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vite@5.4.3(@types/node@22.7.9))
       '@headlessui/react':
         specifier: ^2.1.8
         version: 2.1.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -199,7 +205,7 @@ importers:
         version: 18.3.0
       astro:
         specifier: ^4.15.9
-        version: 4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2)
+        version: 4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2)
       astro-font:
         specifier: ^0.1.81
         version: 0.1.81
@@ -236,7 +242,7 @@ importers:
     devDependencies:
       '@astrojs/vercel':
         specifier: ^7.8.1
-        version: 7.8.1(astro@4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2))(next@14.2.15(@babel/core@7.25.2)(@playwright/test@1.48.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        version: 7.8.1(astro@4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2))(next@14.2.15(@babel/core@7.25.2)(@playwright/test@1.48.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@tailwindcss/typography':
         specifier: ^0.5.15
         version: 0.5.15(tailwindcss@3.4.13)
@@ -1797,6 +1803,9 @@ packages:
 
   '@types/node@22.7.5':
     resolution: {integrity: sha512-jML7s2NAzMWc//QSJ1a3prpk78cOPchGvXJsC3C6R6PSMoooztvRVQEz89gmBTBY1SPMaqo5teB4uNHPdetShQ==}
+
+  '@types/node@22.7.9':
+    resolution: {integrity: sha512-jrTfRC7FM6nChvU7X2KqcrgquofrWLFDeYC1hKfwNWomVvrn7JIksqf344WN2X/y8xrgqBd2dJATZV4GbatBfg==}
 
   '@types/prop-types@15.7.12':
     resolution: {integrity: sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q==}
@@ -4687,12 +4696,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/mdx@3.1.3(astro@4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2))':
+  '@astrojs/mdx@3.1.3(astro@4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2))':
     dependencies:
       '@astrojs/markdown-remark': 5.2.0
       '@mdx-js/mdx': 3.0.1
       acorn: 8.12.1
-      astro: 4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2)
+      astro: 4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2)
       es-module-lexer: 1.5.4
       estree-util-visit: 2.0.0
       github-slugger: 2.0.0
@@ -4712,11 +4721,11 @@ snapshots:
     dependencies:
       prismjs: 1.29.0
 
-  '@astrojs/react@3.6.2(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vite@5.4.3(@types/node@22.7.5))':
+  '@astrojs/react@3.6.2(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vite@5.4.3(@types/node@22.7.9))':
     dependencies:
       '@types/react': 18.3.3
       '@types/react-dom': 18.3.0
-      '@vitejs/plugin-react': 4.3.1(vite@5.4.3(@types/node@22.7.5))
+      '@vitejs/plugin-react': 4.3.1(vite@5.4.3(@types/node@22.7.9))
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       ultrahtml: 1.5.3
@@ -4736,13 +4745,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/vercel@7.8.1(astro@4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2))(next@14.2.15(@babel/core@7.25.2)(@playwright/test@1.48.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@astrojs/vercel@7.8.1(astro@4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2))(next@14.2.15(@babel/core@7.25.2)(@playwright/test@1.48.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@astrojs/internal-helpers': 0.4.1
       '@vercel/analytics': 1.3.1(next@14.2.15(@babel/core@7.25.2)(@playwright/test@1.48.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@vercel/edge': 1.1.2
       '@vercel/nft': 0.27.4
-      astro: 4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2)
+      astro: 4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2)
       esbuild: 0.21.5
       fast-glob: 3.3.2
       web-vitals: 3.5.2
@@ -6141,6 +6150,10 @@ snapshots:
     dependencies:
       undici-types: 6.19.8
 
+  '@types/node@22.7.9':
+    dependencies:
+      undici-types: 6.19.8
+
   '@types/prop-types@15.7.12': {}
 
   '@types/react-dom@18.3.0':
@@ -6193,28 +6206,28 @@ snapshots:
       - encoding
       - supports-color
 
-  '@vitejs/plugin-react@4.3.1(vite@5.4.3(@types/node@22.7.5))':
+  '@vitejs/plugin-react@4.3.1(vite@5.4.3(@types/node@22.7.9))':
     dependencies:
       '@babel/core': 7.25.2
       '@babel/plugin-transform-react-jsx-self': 7.24.7(@babel/core@7.25.2)
       '@babel/plugin-transform-react-jsx-source': 7.24.7(@babel/core@7.25.2)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.3(@types/node@22.7.5)
+      vite: 5.4.3(@types/node@22.7.9)
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/browser@2.1.2(@vitest/spy@2.1.2)(playwright@1.48.0)(typescript@5.6.2)(vite@5.4.3(@types/node@22.7.5))(vitest@2.1.2)':
+  '@vitest/browser@2.1.2(@vitest/spy@2.1.2)(playwright@1.48.0)(typescript@5.6.2)(vite@5.4.3(@types/node@22.7.9))(vitest@2.1.2)':
     dependencies:
       '@testing-library/dom': 10.4.0
       '@testing-library/user-event': 14.5.2(@testing-library/dom@10.4.0)
-      '@vitest/mocker': 2.1.2(@vitest/spy@2.1.2)(msw@2.4.10(typescript@5.6.2))(vite@5.4.3(@types/node@22.7.5))
+      '@vitest/mocker': 2.1.2(@vitest/spy@2.1.2)(msw@2.4.10(typescript@5.6.2))(vite@5.4.3(@types/node@22.7.9))
       '@vitest/utils': 2.1.2
       magic-string: 0.30.11
       msw: 2.4.10(typescript@5.6.2)
       sirv: 2.0.4
       tinyrainbow: 1.2.0
-      vitest: 2.1.2(@types/node@22.7.5)(@vitest/browser@2.1.2)(msw@2.4.10(typescript@5.6.2))
+      vitest: 2.1.2(@types/node@22.7.9)(@vitest/browser@2.1.2)(msw@2.4.10(typescript@5.6.2))
       ws: 8.18.0
     optionalDependencies:
       playwright: 1.48.0
@@ -6232,14 +6245,14 @@ snapshots:
       chai: 5.1.1
       tinyrainbow: 1.2.0
 
-  '@vitest/mocker@2.1.2(@vitest/spy@2.1.2)(msw@2.4.10(typescript@5.6.2))(vite@5.4.3(@types/node@22.7.5))':
+  '@vitest/mocker@2.1.2(@vitest/spy@2.1.2)(msw@2.4.10(typescript@5.6.2))(vite@5.4.3(@types/node@22.7.9))':
     dependencies:
       '@vitest/spy': 2.1.2
       estree-walker: 3.0.3
       magic-string: 0.30.11
     optionalDependencies:
       msw: 2.4.10(typescript@5.6.2)
-      vite: 5.4.3(@types/node@22.7.5)
+      vite: 5.4.3(@types/node@22.7.9)
 
   '@vitest/pretty-format@2.1.2':
     dependencies:
@@ -6403,7 +6416,7 @@ snapshots:
 
   astro-font@0.1.81: {}
 
-  astro@4.15.9(@types/node@22.7.5)(rollup@4.21.0)(typescript@5.6.2):
+  astro@4.15.9(@types/node@22.7.9)(rollup@4.21.0)(typescript@5.6.2):
     dependencies:
       '@astrojs/compiler': 2.10.3
       '@astrojs/internal-helpers': 0.4.1
@@ -6462,8 +6475,8 @@ snapshots:
       tsconfck: 3.1.3(typescript@5.6.2)
       unist-util-visit: 5.0.0
       vfile: 6.0.3
-      vite: 5.4.3(@types/node@22.7.5)
-      vitefu: 1.0.2(vite@5.4.3(@types/node@22.7.5))
+      vite: 5.4.3(@types/node@22.7.9)
+      vitefu: 1.0.2(vite@5.4.3(@types/node@22.7.9))
       which-pm: 3.0.0
       xxhash-wasm: 1.0.2
       yargs-parser: 21.1.1
@@ -9109,12 +9122,12 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
-  vite-node@2.1.2(@types/node@22.7.5):
+  vite-node@2.1.2(@types/node@22.7.9):
     dependencies:
       cac: 6.7.14
       debug: 4.3.7
       pathe: 1.1.2
-      vite: 5.4.3(@types/node@22.7.5)
+      vite: 5.4.3(@types/node@22.7.9)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -9126,23 +9139,23 @@ snapshots:
       - supports-color
       - terser
 
-  vite@5.4.3(@types/node@22.7.5):
+  vite@5.4.3(@types/node@22.7.9):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.45
       rollup: 4.21.0
     optionalDependencies:
-      '@types/node': 22.7.5
+      '@types/node': 22.7.9
       fsevents: 2.3.3
 
-  vitefu@1.0.2(vite@5.4.3(@types/node@22.7.5)):
+  vitefu@1.0.2(vite@5.4.3(@types/node@22.7.9)):
     optionalDependencies:
-      vite: 5.4.3(@types/node@22.7.5)
+      vite: 5.4.3(@types/node@22.7.9)
 
-  vitest@2.1.2(@types/node@22.7.5)(@vitest/browser@2.1.2)(msw@2.4.10(typescript@5.6.2)):
+  vitest@2.1.2(@types/node@22.7.9)(@vitest/browser@2.1.2)(msw@2.4.10(typescript@5.6.2)):
     dependencies:
       '@vitest/expect': 2.1.2
-      '@vitest/mocker': 2.1.2(@vitest/spy@2.1.2)(msw@2.4.10(typescript@5.6.2))(vite@5.4.3(@types/node@22.7.5))
+      '@vitest/mocker': 2.1.2(@vitest/spy@2.1.2)(msw@2.4.10(typescript@5.6.2))(vite@5.4.3(@types/node@22.7.9))
       '@vitest/pretty-format': 2.1.2
       '@vitest/runner': 2.1.2
       '@vitest/snapshot': 2.1.2
@@ -9157,12 +9170,12 @@ snapshots:
       tinyexec: 0.3.0
       tinypool: 1.0.1
       tinyrainbow: 1.2.0
-      vite: 5.4.3(@types/node@22.7.5)
-      vite-node: 2.1.2(@types/node@22.7.5)
+      vite: 5.4.3(@types/node@22.7.9)
+      vite-node: 2.1.2(@types/node@22.7.9)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 22.7.5
-      '@vitest/browser': 2.1.2(@vitest/spy@2.1.2)(playwright@1.48.0)(typescript@5.6.2)(vite@5.4.3(@types/node@22.7.5))(vitest@2.1.2)
+      '@types/node': 22.7.9
+      '@vitest/browser': 2.1.2(@vitest/spy@2.1.2)(playwright@1.48.0)(typescript@5.6.2)(vite@5.4.3(@types/node@22.7.9))(vitest@2.1.2)
     transitivePeerDependencies:
       - less
       - lightningcss

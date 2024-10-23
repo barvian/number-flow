@@ -12,7 +12,7 @@
 	},
 	"scripts": {
 		"build": "pnpm -r build",
-		"build:packages": "pnpm -r --filter=!site build",
+		"build:packages": "pnpm -r --filter=\"./packages/*\" build",
 		"test": "pnpm -r test",
 		"format": "prettier --write .",
 		"version": "changeset version && git add --all",
