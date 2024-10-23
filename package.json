@@ -15,5 +15,9 @@
 		"format": "prettier --write .",
 		"version": "changeset version && git add --all",
 		"release": "changeset publish"
+	},
+	"packageManager": "pnpm@9.12.1",
+	"engines": {
+		"pnpm": "^9.0.0"
 	}
 }
