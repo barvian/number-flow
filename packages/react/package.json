@@ -54,7 +54,6 @@
 		"prepublishOnly": "pnpm build && pnpm test"
 	},
 	"dependencies": {
-		"esm-env": "^1.0.0",
 		"number-flow": "workspace:*"
 	},
 	"devDependencies": {
