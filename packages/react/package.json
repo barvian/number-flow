@@ -50,8 +50,7 @@
 	"scripts": {
 		"build": "tsup --tsconfig tsconfig.build.json",
 		"dev": "tsup --watch",
-		"test": "pnpm -r --workspace-concurrency 1 --filter=\"./test/apps/*\" test",
-		"prepublishOnly": "pnpm test"
+		"test": "pnpm -r --workspace-concurrency 1 --filter=\"./test/apps/*\" test"
 	},
 	"dependencies": {
 		"number-flow": "workspace:*"
