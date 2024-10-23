@@ -32,7 +32,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm playwright install --with-deps
-      - run: pnpm build
+      - run: pnpm build:packages
       - run: pnpm test || exit 1
 
       - uses: actions/upload-artifact@v4
