@@ -188,6 +188,9 @@ importers:
       '@nanostores/react':
         specifier: ^0.8.0
         version: 0.8.0(nanostores@0.11.3)(react@18.3.1)
+      '@nanostores/vue':
+        specifier: ^0.10.0
+        version: 0.10.0(nanostores@0.11.3)(vue@3.5.12(typescript@5.6.2))
       '@number-flow/react':
         specifier: workspace:*
         version: link:../packages/react
@@ -1285,6 +1288,20 @@ packages:
     peerDependencies:
       nanostores: ^0.9.0 || ^0.10.0 || ^0.11.0
       react: '>=18.0.0'
+
+  '@nanostores/vue@0.10.0':
+    resolution: {integrity: sha512-832RAUbzRfHPs1CdqVEwfvgB2+RD/INji4Zo8bUSEfRO2pQRMMeq479gydnohGpRaa0oNwlfKo7TGFXCghq/1g==}
+    engines: {node: ^18.0.0 || >=20.0.0}
+    peerDependencies:
+      '@nanostores/logger': '>=0.2.3'
+      '@vue/devtools-api': '>=6.5.0'
+      nanostores: '>=0.9.2'
+      vue: '>=3.3.1'
+    peerDependenciesMeta:
+      '@nanostores/logger':
+        optional: true
+      '@vue/devtools-api':
+        optional: true
 
   '@next/env@14.2.15':
     resolution: {integrity: sha512-S1qaj25Wru2dUpcIZMjxeMVSwkt8BK4dmWHHiBuRstcIyOsMapqT4A4jSB6onvqeygkSSmOkyny9VVx8JIGamQ==}
@@ -6113,6 +6130,11 @@ snapshots:
       nanostores: 0.11.3
       react: 18.3.1
 
+  '@nanostores/vue@0.10.0(nanostores@0.11.3)(vue@3.5.12(typescript@5.6.2))':
+    dependencies:
+      nanostores: 0.11.3
+      vue: 3.5.12(typescript@5.6.2)
+
   '@next/env@14.2.15': {}
 
   '@next/env@15.0.0-rc.1': {}
@@ -9073,7 +9095,7 @@ snapshots:
     dependencies:
       nanoid: 3.3.7
       picocolors: 1.1.1
-      source-map-js: 1.2.0
+      source-map-js: 1.2.1
 
   postcss@8.4.45:
     dependencies:

@@ -16,6 +16,7 @@
 		"@astrojs/vue": "^4.5.2",
 		"@headlessui/react": "^2.1.8",
 		"@nanostores/react": "^0.8.0",
+		"@nanostores/vue": "^0.10.0",
 		"@number-flow/react": "workspace:*",
 		"@radix-ui/react-slider": "^1.2.0",
 		"@radix-ui/react-tabs": "^1.1.0",

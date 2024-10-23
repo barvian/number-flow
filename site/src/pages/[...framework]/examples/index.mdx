@@ -15,13 +15,12 @@ import InputCode from './_Input/Example?raw'
 // import CountdownCode from './_Countdown/Example?raw'
 // import ColoredTrends from './_ColoredTrends'
 // import ColoredTrendsCode from './_ColoredTrends/Example?raw'
-import FramerMotionLayoutAnimations from './_FramerMotion'
-import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
 import Heading from '@/components/Heading.astro';
 import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
 import Link from '@/components/Link.astro'
 import Pre from '@/components/Pre.astro'
+import Group from './_Group/index.astro'
 export const components = {a: Link, pre: Pre}
 
 <Heading class="sr-only" value="Input" />
@@ -50,29 +49,22 @@ export const components = {a: Link, pre: Pre}
 </Countdown>
 */}
 
-{/* ## Colored trends
-
-By storing the previous value,
-we can add a simple animation to indicate whether numbers are increasing/decreasing:
-
-<ColoredTrends client:visible>
-<Code code={ColoredTrendsCode} lang="tsx" />
-</ColoredTrends> */}
 
 <Match>
-<Fragment slot="react">
-<Heading value="Framer Motion" />
+    <Fragment slot="react">
+        <Heading value="Framer Motion" />
 
-NumberFlow was designed to work with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
-You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
+        NumberFlow was designed to work with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
+        You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
 
-<FramerMotionLayoutAnimations client:visible>
-<Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
-</FramerMotionLayoutAnimations>
+        <Group />
 
-**Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
-[`motion` component](https://www.framer.com/motion/component/#custom-components) with the
-[`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
-props.
-</Fragment>
+        **Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
+        [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
+        [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
+        props.
+    </Fragment>
+
+    <Heading value="Group" />
+    <Group />
 </Match>

@@ -118,6 +118,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 			)}
 			<Tabs.Content
 				value="preview"
+				forceMount
 				className={clsx(
 					className,
 					'border-faint relative rounded-lg border data-[state=inactive]:hidden'

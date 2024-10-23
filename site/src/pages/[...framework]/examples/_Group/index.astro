@@ -1,0 +1,21 @@
+---
+import Group from '.'
+import Code from '@/components/Code.astro'
+import { getFramework } from '@/lib/framework'
+import React from './react'
+import { extname } from 'node:path'
+import Vue from './vue/index.vue'
+import Match from '@/components/Match.astro'
+const codes = import.meta.glob<string>('./*/Component.*', {
+	query: '?raw',
+	import: 'default',
+	eager: true
+})
+const framework = getFramework(Astro.params)
+const [codePath, code] = Object.entries(codes).find(([path]) => path.startsWith(`./${framework}/`))!
+---
+
+<Group client:visible>
+	<Match><React slot="react" client:load /><Vue slot="vue" client:load /></Match>
+	<Code {code} slot="code" lang={extname(codePath).slice(1)} />
+</Group>

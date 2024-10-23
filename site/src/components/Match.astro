@@ -1,10 +1,16 @@
 ---
 import { getFramework, type Framework } from '@/lib/framework'
+// This had to be external or it somehow messed with Astro's type inference:
+import type { SingleTrueKey } from '@/lib/types'
 import type { HTMLTag, Polymorphic } from 'astro/types'
 
-type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> & {
-	[framework in Framework]?: string
-}
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> &
+	(
+		| {
+				[framework in Framework]?: string
+		  }
+		| SingleTrueKey<Framework>
+	)
 
 const { as: _Tag, react, vue, svelte, vanilla, ...props } = Astro.props
 let Tag = _Tag ?? (Object.keys(props).length ? 'div' : Fragment)
@@ -18,20 +24,18 @@ const framework = getFramework(Astro.params)
 	*/
 	}{
 		framework === 'react' &&
-			(react != null ? react : Astro.slots.has('react') ? <slot name="react" /> : <slot />)
+			(typeof react == 'string' ? (
+				react
+			) : Astro.slots.has('react') ? (
+				<slot name="react" />
+			) : (
+				<slot />
+			))
 	}{
 		framework === 'vue' &&
-			(vue != null ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)
+			(typeof vue == 'string' ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)
 	}{
 		/*
-	<!--{
-		framework === 'svelte' &&
-			(svelte != null ? svelte : Astro.slots.has('svelte') ? <slot name="svelte" /> : <slot />)
-	}
-	{
-		framework === 'vanilla' &&
-			(vanilla != null ? vanilla : Astro.slots.has('vanilla') ? <slot name="vanilla" /> : <slot />)
-	} -->
-*/
+		 */
 	}</Tag
 >
