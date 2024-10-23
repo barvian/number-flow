@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => ({
 			fileName: 'index'
 		},
 		rollupOptions: {
-			external: ['esm-env'],
+			external: [],
 			plugins: [
 				typescript({
 					tsconfig: resolve(__dirname, `./tsconfig${mode === 'production' ? '.build' : ''}.json`)

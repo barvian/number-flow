@@ -2,6 +2,9 @@
 	"private": true,
 	"type": "module",
 	"devDependencies": {
+		"@changesets/cli": "^2.27.9",
+		"@svitejs/changesets-changelog-github-compact": "^1.2.0",
+		"playwright": "^1.48.0",
 		"prettier": "^3.3.3",
 		"prettier-plugin-astro": "^0.14.0",
 		"prettier-plugin-tailwindcss": "^0.6.5",
@@ -9,7 +12,14 @@
 	},
 	"scripts": {
 		"build": "pnpm -r build",
-		"dev": "pnpm -r --parallel dev",
-		"format": "prettier --write ."
+		"build:packages": "pnpm -r --filter=\"./packages/*\" build",
+		"test": "pnpm -r test",
+		"format": "prettier --write .",
+		"version": "changeset version && git add --all",
+		"release": "pnpm build:packages && changeset publish"
+	},
+	"packageManager": "pnpm@9.12.1",
+	"engines": {
+		"pnpm": "^9.0.0"
 	}
 }
