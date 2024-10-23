@@ -28,10 +28,6 @@ importers:
         version: 5.6.2
 
   packages/number-flow:
-    dependencies:
-      esm-env:
-        specifier: ^1.0.0
-        version: 1.0.0
     devDependencies:
       '@rollup/plugin-typescript':
         specifier: ^12.1.0
