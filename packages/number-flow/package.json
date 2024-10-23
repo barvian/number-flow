@@ -60,8 +60,5 @@
 		"typescript": "^5.6.2",
 		"vite": "^5.4.3",
 		"vitest": "^2.1.2"
-	},
-	"dependencies": {
-		"esm-env": "^1.0.0"
 	}
 }

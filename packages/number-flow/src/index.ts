@@ -18,7 +18,7 @@ import styles, {
 	widthDeltaVar,
 	deltaVar
 } from './styles'
-import { BROWSER } from 'esm-env'
+import { BROWSER } from './util/env'
 import { max } from './util/math'
 
 export { SlottedTag, slottedStyles, prefersReducedMotion } from './styles'

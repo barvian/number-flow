@@ -1,4 +1,4 @@
-import { BROWSER } from 'esm-env'
+import { BROWSER } from './util/env'
 import { css } from './util/css'
 
 export const supportsLinear =

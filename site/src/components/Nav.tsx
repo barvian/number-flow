@@ -93,7 +93,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 									Showcase
 								</Link>
 								<a
-									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium lowercase outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									href={repo}
 									target="_blank"
 									aria-label="Star on GitHub"

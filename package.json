@@ -2,6 +2,8 @@
 	"private": true,
 	"type": "module",
 	"devDependencies": {
+		"@changesets/cli": "^2.27.9",
+		"@svitejs/changesets-changelog-github-compact": "^1.2.0",
 		"prettier": "^3.3.3",
 		"prettier-plugin-astro": "^0.14.0",
 		"prettier-plugin-tailwindcss": "^0.6.5",
@@ -10,6 +12,8 @@
 	"scripts": {
 		"build": "pnpm -r build",
 		"dev": "pnpm -r --parallel dev",
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"version": "changeset version && git add --all",
+		"release": "changeset publish"
 	}
 }
