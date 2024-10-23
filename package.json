@@ -10,6 +10,7 @@
 		"typescript": "^5.6.2"
 	},
 	"scripts": {
+		"build": "pnpm -r build",
 		"build:packages": "pnpm -r --filter=!site build",
 		"test": "pnpm -r test",
 		"format": "prettier --write .",
