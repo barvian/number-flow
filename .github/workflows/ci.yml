@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  # we call `pnpm playwright install` instead
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
+
+# cancel in-progress runs on new commits to same PR (gitub.event.number)
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+test:
+  timeout-minutes: 60
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+
+    - run: pnpm install --frozen-lockfile
+    - run: pnpm playwright install --with-deps
+    - run: pnpm build:packages
+    - run: pnpm test || exit 1
+
+    - uses: actions/upload-artifact@v4
+      if: ${{ !cancelled() }}
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30

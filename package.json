@@ -11,6 +11,7 @@
 	},
 	"scripts": {
 		"build:packages": "pnpm -r --filter=!site build",
+		"test": "pnpm -r test",
 		"format": "prettier --write .",
 		"version": "changeset version && git add --all",
 		"release": "pnpm build:packages && changeset publish"
