@@ -4,8 +4,8 @@ import * as React from 'react'
 import {
 	type Value,
 	type Format,
-	SlottedTag,
-	slottedStyles,
+	type Props,
+	render,
 	partitionParts,
 	type PartitionedParts,
 	NumberFlowLite,
@@ -28,25 +28,15 @@ export class NumberFlowElement extends NumberFlowLite {
 
 NumberFlowElement.define()
 
-export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
-	value: Value
-	locales?: Intl.LocalesArgument
-	format?: Format
-	isolate?: boolean
-	animated?: boolean
-	respectMotionPreference?: boolean
-	willChange?: boolean
-	// animateDependencies?: React.DependencyList
-	onAnimationsStart?: () => void
-	onAnimationsFinish?: () => void
-	trend?: (typeof NumberFlowElement)['prototype']['trend']
-	continuous?: (typeof NumberFlowElement)['prototype']['continuous']
-	opacityTiming?: (typeof NumberFlowElement)['prototype']['opacityTiming']
-	transformTiming?: (typeof NumberFlowElement)['prototype']['transformTiming']
-	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
-}
+type BaseProps = React.HTMLAttributes<NumberFlowElement> &
+	Omit<Props, 'manual'> & {
+		isolate?: boolean
+		willChange?: boolean
+		onAnimationsStart?: () => void
+		onAnimationsFinish?: () => void
+	}
 
-type NumberFlowImplProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
+type NumberFlowImplProps = BaseProps & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
 	parts: PartitionedParts
 }
@@ -72,7 +62,7 @@ class NumberFlowImpl extends React.Component<
 		this.handleRef = this.handleRef.bind(this)
 	}
 
-	// Update the non-parts props to avoid JSON serialization
+	// Update the non-`parts` props to avoid JSON serialization
 	// Parts needs to be set in render still:
 	updateNonPartsProps(prevProps?: Readonly<NumberFlowImplProps>) {
 		if (!this.#el) return
@@ -155,14 +145,18 @@ class NumberFlowImpl extends React.Component<
 				// Have to rename this:
 				class={className}
 				{...rest}
+				dangerouslySetInnerHTML={{ __html: render({ formatted: parts.formatted, willChange }) }}
 				// Make sure parts are set last, everything else is updated:
 				parts={serializeParts(parts)}
-			>
-				<SlottedTag style={slottedStyles({ willChange })}>{parts.formatted}</SlottedTag>
-				{/* @ts-expect-error missing types */}
-			</number-flow>
+			/>
 		)
 	}
+}
+
+export type NumberFlowProps = BaseProps & {
+	value: Value
+	locales?: Intl.LocalesArgument
+	format?: Format
 }
 
 const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
