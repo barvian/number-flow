@@ -162,17 +162,17 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
-<Match>
-<Heading slot="vue" value="Emits"/>
+<Match vue>
+<Heading value="Emits"/>
 </Match>
 
-<h3><code><Match react="onAnimationsStart" vue="animationsstart" /><Type>: () => void</Type></code></h3>
+<h3><code><Match react="onAnimationsStart" vue="animationsStart" /><Type>: () => void</Type></code></h3>
 
 Triggered when update animations start. Not to be confused with the built-in
 <Match><Fragment slot="react">`onAnimationStart`</Fragment><Fragment slot="vue">[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Fragment></Match>, which
 would trigger for animations on the `<NumberFlow>` element itself.
 
-<h3><code><Match react="onAnimationsFinish" vue="animationsfinish" /><Type>: () => void</Type></code></h3>
+<h3><code><Match react="onAnimationsFinish" vue="animationsFinish" /><Type>: () => void</Type></code></h3>
 
 Triggered when update animations finish.
 
