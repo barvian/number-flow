@@ -23,7 +23,7 @@ export function hydratable<T>($atom: CyclableAtom<T>) {
 		const beforeSwap = () => {
 			$atom.reset()
 		}
-		document.addEventListener('astro:before-swap', beforeSwap)
+		typeof document !== 'undefined' && document.addEventListener('astro:before-swap', beforeSwap)
 		return () => {
 			document.removeEventListener('astro:before-swap', beforeSwap)
 		}
