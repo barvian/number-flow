@@ -1,21 +1,25 @@
 ---
 import Group from '.'
-import Code from '@/components/Code.astro'
-import { getFramework } from '@/lib/framework'
-import React from './react'
-import { extname } from 'node:path'
-import Vue from './vue/index.vue'
 import Match from '@/components/Match.astro'
-const codes = import.meta.glob<string>('./*/Component.*', {
-	query: '?raw',
-	import: 'default',
-	eager: true
-})
-const framework = getFramework(Astro.params)
-const [codePath, code] = Object.entries(codes).find(([path]) => path.startsWith(`./${framework}/`))!
+import Code from '@/components/Code.astro'
+
+// Can't glob these b/c Astro needs the import :/
+// Could probably do a client:only={framework} but then we'd lose SSR:
+import React from './react'
+import react from './react/Component.tsx?raw'
+import Vue from './vue/index.vue'
+import vue from './vue/Component.vue?raw'
 ---
 
 <Group client:visible>
-	<Match><React slot="react" client:load /><Vue slot="vue" client:load /></Match>
-	<Code {code} slot="code" lang={extname(codePath).slice(1)} />
+	<!-- @ts-ignore too complex -->
+	<Match>
+		<!-- Wrap in fragments to avoid extraneous prop warnings (probably an Astro bug?): -->
+		<Fragment slot="react"><React client:load /></Fragment>
+		<Fragment slot="vue"><Vue client:load /></Fragment>
+	</Match>
+	<Match slot="code">
+		<Code code={react} slot="react" lang="tsx" />
+		<Code code={vue} slot="vue" lang="vue" />
+	</Match>
 </Group>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useStore } from '@nanostores/react'
-import { urlAtom, pageFrameworkAtom } from '@/stores/url'
+import { $url, $pageFramework } from '@/stores/url'
 import type { AnchorHTMLAttributes } from 'react'
 import { isActive } from '../lib/url'
 import { type Framework, toFrameworkPath } from '@/lib/framework'
@@ -21,7 +21,7 @@ export default function Link({
 	active: activeChildren,
 	...props
 }: Props) {
-	const pageFramework = useStore(pageFrameworkAtom)
+	const pageFramework = useStore($pageFramework)
 	const ref = React.useRef<HTMLAnchorElement>(null)
 	const [savedFramework, setSavedFramework] = React.useState<Framework | null>(null)
 	React.useEffect(() => {
@@ -31,7 +31,7 @@ export default function Link({
 		() => pageFramework ?? savedFramework,
 		[pageFramework, savedFramework]
 	)
-	const url = useStore(urlAtom)
+	const url = useStore($url)
 
 	const isExternal = _href && url && new URL(_href, url.origin).origin !== url.origin
 	const href = !isExternal && frameworked && framework ? toFrameworkPath(_href, framework) : _href

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import NumberFlow, { useCanAnimate } from '@number-flow/react'
 import { ArrowUp } from 'lucide-react'
+import clsx from 'clsx/lite'
 
 const MotionNumberFlow = motion.create(NumberFlow)
 const MotionArrowUp = motion.create(ArrowUp)
@@ -22,9 +23,10 @@ export default function PriceWithDiff({ value, diff }: Props) {
 				format={{ style: 'currency', currency: 'USD' }}
 			/>
 			<motion.span
-				animate={{ backgroundColor: diff > 0 ? '#34d399' : '#ef4444' }}
-				initial={false}
-				className="~text-base/2xl inline-flex items-center px-[0.3em] text-white"
+				className={clsx(
+					diff > 0 ? 'bg-emerald-400' : 'bg-red-500',
+					'~text-base/2xl inline-flex items-center px-[0.3em] text-white transition-colors duration-300'
+				)}
 				style={{ borderRadius: 999 }}
 				layout={canAnimate}
 				transition={{ layout: { duration: 0.9, bounce: 0, type: 'spring' } }}

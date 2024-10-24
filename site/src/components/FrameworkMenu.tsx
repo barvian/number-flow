@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-react'
 import * as React from 'react'
 import { Check } from 'lucide-react'
 import clsx from 'clsx/lite'
-import { pageFrameworkAtom } from '../stores/url'
+import { $pageFramework } from '@/stores/url'
 
 const icons = import.meta.glob<React.FC<React.HTMLAttributes<SVGElement>>>(
 	'./icons/frameworks/*.tsx',
@@ -58,7 +58,7 @@ export default function FrameworkMenu({
 							href={toFrameworkPath(url.pathname, id as Framework)}
 							onClick={() => {
 								localStorage.setItem('framework', id)
-								pageFrameworkAtom.set(id as Framework)
+								$pageFramework.set(id as Framework)
 							}}
 						>
 							<Icon className="size-4.5" />
