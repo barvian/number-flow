@@ -1,0 +1,65 @@
+{
+	"name": "@number-flow/vue",
+	"publishConfig": {
+		"access": "public"
+	},
+	"version": "0.1.0",
+	"author": {
+		"name": "Maxwell Barvian",
+		"email": "max@barvian.me",
+		"url": "https://barvian.me"
+	},
+	"description": "A component to transition and format numbers.",
+	"license": "MIT",
+	"homepage": "https://number-flow.barvian.me/vue",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/barvian/number-flow",
+		"directory": "src"
+	},
+	"bugs": {
+		"url": "https://github.com/barvian/number-flow/issues"
+	},
+	"keywords": [
+		"accessible",
+		"odometer",
+		"animation",
+		"number-format",
+		"number-animation",
+		"animated-number"
+	],
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"build": "vite build --mode production",
+		"dev": "vite build --mode development --watch",
+		"test": "pnpm -r --workspace-concurrency 1 --filter=\"./test/apps/*\" test"
+	},
+	"dependencies": {
+		"number-flow": "workspace:*"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.48.0",
+		"@types/node": "^22.7.9",
+		"@vitejs/plugin-vue": "^5.1.4",
+		"typescript": "^5.6.2",
+		"vite": "^5.4.3",
+		"vite-plugin-dts": "^4.3.0",
+		"vue": "^3.5.12"
+	},
+	"peerDependencies": {
+		"vue": "^3"
+	}
+}

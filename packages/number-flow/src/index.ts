@@ -21,7 +21,8 @@ import styles, {
 import { BROWSER } from './util/env'
 import { max } from './util/math'
 
-export { SlottedTag, slottedStyles, prefersReducedMotion } from './styles'
+export { prefersReducedMotion } from './styles'
+export { render, type RenderProps } from './ssr'
 export * from './formatter'
 
 export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
@@ -45,11 +46,39 @@ export const defaultTransformTiming: EffectTiming = {
 
 let styleSheet: CSSStyleSheet | undefined
 
+// Don't use Partial<> for this b/c it messes up Vue:
+export type Props = {
+	transformTiming?: EffectTiming
+	spinTiming?: EffectTiming
+	opacityTiming?: EffectTiming
+	animated?: boolean
+	manual?: boolean
+	respectMotionPreference?: boolean
+	trend?: RawTrend
+	continuous?: boolean
+}
+
 // This one is used internally for framework wrappers, and
 // doesn't include things like attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement {
 	static define() {
-		if (BROWSER) customElements.define('number-flow', this)
+		if (!BROWSER) return
+		const RegisteredElement = customElements.get('number-flow')
+		if (
+			RegisteredElement &&
+			!(RegisteredElement === this || RegisteredElement.prototype instanceof this)
+		) {
+			console.log(
+				this,
+				'registered',
+				RegisteredElement,
+				RegisteredElement === this,
+				RegisteredElement.prototype instanceof this
+			)
+			console.error('An element has already been defined under the name `number-flow`.')
+		} else if (!RegisteredElement) {
+			customElements.define('number-flow', this)
+		}
 	}
 
 	transformTiming = defaultTransformTiming

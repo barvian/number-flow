@@ -18,6 +18,7 @@
 		"@nanostores/react": "^0.8.0",
 		"@nanostores/vue": "^0.10.0",
 		"@number-flow/react": "workspace:*",
+		"@number-flow/vue": "workspace:*",
 		"@radix-ui/react-slider": "^1.2.0",
 		"@radix-ui/react-tabs": "^1.1.0",
 		"@types/lodash": "^4.17.9",
