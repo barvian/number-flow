@@ -215,11 +215,11 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 Returns `true` if NumerFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
-<Match><Fragment slot="react">See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Fragment></Match>
+<Match react>See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Match>
 
 <Heading value="Limitations" />
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
 * Selected text inside the number will not respect color changes from `::selection`, if any.
 * Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions.
-<Match><Fragment slot="react">I'd recommend using Framer Motion for these, as it's more composable than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).</Fragment></Match>
+<Match react>I'd recommend using Framer Motion for these, as it's more composable than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).</Match>

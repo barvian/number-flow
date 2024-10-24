@@ -29,11 +29,17 @@ const framework = getFramework(Astro.params)
 			) : Astro.slots.has('react') ? (
 				<slot name="react" />
 			) : (
-				<slot />
+				react && <slot />
 			))
 	}{
 		framework === 'vue' &&
-			(typeof vue == 'string' ? vue : Astro.slots.has('vue') ? <slot name="vue" /> : <slot />)
+			(typeof vue == 'string' ? (
+				vue
+			) : Astro.slots.has('vue') ? (
+				<slot name="vue" />
+			) : (
+				vue && <slot />
+			))
 	}{
 		/*
 		 */
