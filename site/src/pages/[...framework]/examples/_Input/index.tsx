@@ -12,7 +12,7 @@ export default function DemoHOC({
 	const [value, setValue] = React.useState(0)
 	return (
 		<Demo {...rest} code={children} className={clsx(className, 'font-mac-ui')}>
-			<Example value={value} min={0} max={99} onChange={setValue} />
+			<Example value={value} min={-99} max={99} onChange={setValue} />
 		</Demo>
 	)
 }

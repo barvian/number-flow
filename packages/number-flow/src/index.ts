@@ -133,7 +133,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 
 			// Compute trend
 			if (this.trend === true) {
-				this.#computedTrend = Math.sign(value - prev.value)
+				this.#computedTrend = Math.sign(Math.abs(value) - Math.abs(prev.value))
 			} else if (this.trend === 'increasing') {
 				this.#computedTrend = Trend.UP
 			} else if (this.trend === 'decreasing') {
