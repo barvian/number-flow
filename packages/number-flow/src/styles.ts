@@ -89,6 +89,7 @@ const styles = css`
 		left: 0;
 		top: 0;
 		color: transparent !important;
+		will-change: unset !important;
 		z-index: -5;
 	}
 
