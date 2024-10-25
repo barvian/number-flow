@@ -26,7 +26,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-	<div class="~px-0/16 ~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
+	<div class="~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
 		<div class="flex flex-1 items-center gap-1.5">
 			<ChartNoAxesColumn absoluteStrokeWidth class="~size-4/5" />
 			<NumberFlow willChange continuous :value="views" :format />

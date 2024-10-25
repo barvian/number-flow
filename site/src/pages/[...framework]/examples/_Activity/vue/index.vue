@@ -11,6 +11,7 @@ const views = useStore($views)
 
 <template>
 	<Component
+		class="~px-0/16"
 		:likes="likes.count"
 		@like="$likes.toggle"
 		:liked="likes.hasIncremented"

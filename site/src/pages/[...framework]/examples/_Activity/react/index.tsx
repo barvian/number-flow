@@ -10,6 +10,7 @@ export default function () {
 
 	return (
 		<Component
+			className="~px-0/16"
 			likes={likes.count}
 			onLike={$likes.toggle}
 			liked={likes.hasIncremented}
