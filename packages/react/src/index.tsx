@@ -125,8 +125,8 @@ class NumberFlowImpl extends React.Component<
 
 	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
 		this.updateNonPartsProps(prevProps)
-		if (this.props.isolate) return false
-		if (prevProps.parts === this.props.parts) return false
+		if (this.props.isolate || this.props.animated === false || prevProps.parts === this.props.parts)
+			return false
 		this.#el?.willUpdate()
 		return true
 	}

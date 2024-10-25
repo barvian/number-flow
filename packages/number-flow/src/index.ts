@@ -1,4 +1,4 @@
-import { createElement, offset, type HTMLProps, type Justify } from './util/dom'
+import { createElement, offset, visible, type HTMLProps, type Justify } from './util/dom'
 import { forEach } from './util/iterable'
 import {
 	type KeyedDigitPart,
@@ -93,11 +93,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 
 	#animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
 	get animated() {
-		return (
-			canAnimate &&
-			this.#animated &&
-			(!this.respectMotionPreference || !prefersReducedMotion?.matches)
-		)
+		return this.#animated
 	}
 	set animated(val: boolean) {
 		if (this.animated === val) return
@@ -119,6 +115,11 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	#startingPlace?: number | null
 	get startingPlace() {
 		return this.#startingPlace
+	}
+
+	#computedAnimated = this.#animated
+	get computedAnimated() {
+		return this.#computedAnimated
 	}
 
 	#parts?: PartitionedParts
@@ -203,6 +204,13 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				this.#startingPlace = max(firstChangedPrev?.place, firstChanged?.place)
 			}
 
+			this.#computedAnimated =
+				canAnimate &&
+				this.#animated &&
+				(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
+				// https://github.com/barvian/number-flow/issues/9
+				visible(this)
+
 			if (!this.manual) this.willUpdate()
 
 			this.#pre!.update(pre)
@@ -216,11 +224,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	}
 
 	willUpdate() {
-		// In general this should be disable most animations except the ones that run
-		// during an update, i.e. new digits and AnimatePresence. So make sure to handle those
-		// separately:
-		if (!this.animated) return
-
+		// Not super safe to check animated here, b/c the prop may not have been updated yet:
 		this.#pre!.willUpdate()
 		this.#num!.willUpdate()
 		this.#post!.willUpdate()
@@ -229,7 +233,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	#abortAnimationsFinish?: AbortController
 
 	didUpdate() {
-		if (!this.animated) return
+		// Safe to call this here because we know the animated prop is up-to-date
+		if (!this.#computedAnimated) return
 
 		// If we're already animating, cancel the previous animationsfinish event:
 		if (this.#abortAnimationsFinish) this.#abortAnimationsFinish.abort()
@@ -430,7 +435,7 @@ abstract class Section {
 			{ reverse }
 		)
 
-		if (this.flow.animated) {
+		if (this.flow.computedAnimated) {
 			const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
 			added.forEach((comp) => {
 				comp.willUpdate(rect)
@@ -539,7 +544,7 @@ class AnimatePresence {
 		// This craziness is the only way I could figure out how to get the opacity
 		// accumulation to work in all browsers. Accumulating -1 onto opacity directly
 		// failed in both FF and Safari, and setting a delta to -1 still failed in FF
-		if (this.flow.animated && animateIn) {
+		if (this.flow.computedAnimated && animateIn) {
 			this.el.animate(
 				{
 					[opacityDeltaVar]: [-0.9999, 0]
@@ -567,7 +572,7 @@ class AnimatePresence {
 		if (this.#present === val) return
 		this.#present = val
 
-		if (!this.flow.animated) {
+		if (!this.flow.computedAnimated) {
 			if (!val) this.#remove()
 			return
 		}

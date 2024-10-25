@@ -30,3 +30,5 @@ export const offset = (el: HTMLElement, justify: Justify) => {
 				el.offsetWidth -
 				el.offsetLeft
 }
+
+export const visible = (el: HTMLElement) => el.offsetWidth > 0 && el.offsetHeight > 0
