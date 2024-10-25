@@ -18,7 +18,7 @@ type Props = ComponentProps<typeof Layout> & {}
 	>
 		<TOCProvider headings={[]} slugger={new GitHubSlugger()}>
 			<TOCLayout>
-				<article class="container max-w-none">
+				<article class="container max-w-2xl">
 					<div class="prose prose-zinc dark:prose-invert">
 						<slot />
 					</div>
