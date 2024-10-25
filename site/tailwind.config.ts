@@ -91,7 +91,7 @@ export default {
 						},
 
 						hr: {
-							'@apply my-[2em]': {}
+							'@apply my-16 border-faint': {}
 						},
 
 						'code::before': {
@@ -103,7 +103,7 @@ export default {
 						},
 
 						h2: {
-							'@apply mt-20 mb-[1.25em] font-semibold text-xl': {}
+							'@apply mt-16 mb-[1.25em] font-semibold text-xl': {}
 						},
 
 						h3: {

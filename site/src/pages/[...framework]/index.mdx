@@ -53,6 +53,8 @@ import NumberFlow from '@number-flow/vue'
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
+---
+
 <Heading value="Props" />
 
 NumberFlow accepts additional props to customize its transitions:
@@ -163,6 +165,7 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
 <Match vue>
+---
 <Heading value="Emits"/>
 </Match>
 
@@ -175,6 +178,8 @@ would trigger for animations on the `<NumberFlow>` element itself.
 <h3><code><Match react="onAnimationsFinish" vue="animationsFinish" /><Type>: () => void</Type></code></h3>
 
 Triggered when update animations finish.
+
+---
 
 <Heading value="Styling" />
 
@@ -203,6 +208,8 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
+---
+
 <Match>
 <Heading slot="react" value="Hooks" />
 <Heading slot="vue" value="Composables" />
@@ -216,6 +223,8 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 Returns `true` if NumerFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
 <Match react>See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Match>
+
+---
 
 <Heading value="Limitations" />
 
