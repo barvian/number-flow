@@ -1,0 +1,23 @@
+{
+	"name": "nuxt-app",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"postinstall": "nuxt prepare",
+		"test": "playwright test",
+		"test:ui": "playwright test --ui",
+		"test:update": "playwright test --update-snapshots"
+	},
+	"dependencies": {
+		"@number-flow/vue": "workspace:*",
+		"@nuxt/fonts": "^0.10.2",
+		"nuxt": "^3.13.2",
+		"vue": "latest",
+		"vue-router": "latest"
+	},
+	"devDependencies": {
+		"@playwright/test": "^1.48.0"
+	}
+}
