@@ -28,8 +28,10 @@ export class NumberFlowElement extends NumberFlowLite {
 
 NumberFlowElement.define()
 
+type NonPartsProps = Omit<Props, 'manual'>
+
 type BaseProps = React.HTMLAttributes<NumberFlowElement> &
-	Partial<Omit<Props, 'manual'>> & {
+	Partial<NonPartsProps> & {
 		isolate?: boolean
 		willChange?: boolean
 		onAnimationsStart?: () => void
@@ -48,6 +50,34 @@ const formatters: Record<string, Intl.NumberFormat> = {}
 
 // Tiny workaround to support React 19 until it's released:
 const serializeParts = isReact19 ? (p: PartitionedParts) => p : JSON.stringify
+
+function splitProps<T extends Record<string, any>>(
+	props: T
+): [NonPartsProps, Omit<T, keyof NonPartsProps>] {
+	const {
+		transformTiming,
+		spinTiming,
+		opacityTiming,
+		animated,
+		respectMotionPreference,
+		trend,
+		continuous,
+		...rest
+	} = props
+
+	return [
+		{
+			transformTiming,
+			spinTiming,
+			opacityTiming,
+			animated,
+			respectMotionPreference,
+			trend,
+			continuous
+		},
+		rest
+	]
+}
 
 type NumberFlowImplState = {}
 type NumberFlowImplSnapshot = boolean
@@ -68,14 +98,11 @@ class NumberFlowImpl extends React.Component<
 		if (!this.#el) return
 
 		this.#el.manual = !this.props.isolate
-		if (this.props.animated != null) this.#el.animated = this.props.animated
-		if (this.props.respectMotionPreference != null)
-			this.#el.respectMotionPreference = this.props.respectMotionPreference
-		if (this.props.trend != null) this.#el.trend = this.props.trend
-		if (this.props.continuous != null) this.#el.continuous = this.props.continuous
-		if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
-		if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
-		if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
+		const [nonParts] = splitProps(this.props)
+		Object.assign(
+			this.#el,
+			Object.fromEntries(Object.entries(nonParts).filter(([_, v]) => v != null))
+		)
 
 		if (prevProps?.onAnimationsStart)
 			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart)
@@ -120,22 +147,7 @@ class NumberFlowImpl extends React.Component<
 	}
 
 	override render() {
-		const {
-			innerRef,
-			className,
-			parts,
-			willChange,
-			// These are set in updateNonPartsProps, so ignore them here:
-			animated,
-			respectMotionPreference,
-			isolate,
-			trend,
-			continuous,
-			opacityTiming,
-			transformTiming,
-			spinTiming,
-			...rest
-		} = this.props
+		const [_, { innerRef, className, parts, willChange, isolate, ...rest }] = splitProps(this.props)
 
 		return (
 			// @ts-expect-error missing types
