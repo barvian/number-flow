@@ -6,7 +6,7 @@ export default defineNuxtConfig({
 	devServer: {
 		port: 3039
 	},
-	modules: ['@nuxt/fonts'],
+	modules: ['@nuxtjs/tailwindcss', '@nuxt/fonts'],
 	fonts: {
 		defaults: {
 			weights: [400],

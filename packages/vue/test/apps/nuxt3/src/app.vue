@@ -11,9 +11,3 @@ const value = ref(123)
 	</div>
 	<button @click="value = 234">Change</button>
 </template>
-
-<style scoped>
-div {
-	font-family: Inter, sans-serif;
-}
-</style>
