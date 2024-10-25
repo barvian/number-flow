@@ -24,7 +24,6 @@ function countable(
 		let timeout: NodeJS.Timeout | null = null
 		const unsubscribe = active.subscribe((active) => {
 			if (timeout != null) clearTimeout(timeout)
-			console.log('active', active)
 			if (!active) return
 			const randomlyIncrease = (delay: number) => {
 				timeout = setTimeout(() => {

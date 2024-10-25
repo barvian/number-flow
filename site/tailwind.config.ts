@@ -169,6 +169,15 @@ export default {
 				{ values: { DEFAULT: '' }, modifiers: 'any' }
 			)
 
+			matchUtilities(
+				{
+					fluid: (val) => ({
+						'--fluid': val
+					})
+				},
+				{ values: theme('spacing') }
+			)
+
 			const resolveOpacity = (opacity: string | number) => {
 				const num = typeof opacity === 'string' ? parseFloat(opacity) : opacity
 				if (!isNaN(num)) return `${num * 100}%`
