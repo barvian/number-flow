@@ -5,8 +5,7 @@ description: 'Ready-made examples of common patterns to get you started with Num
 ---
 export { getStaticPaths } from '@/lib/framework'
 import { DemoTitle } from '@/components/Demo'
-import Activity from './_Activity'
-import ActivityCode from './_Activity/Example?raw'
+import Activity from './_Activity/index.astro'
 import Slider from './_Slider'
 import SliderCode from './_Slider/Example?raw'
 import Input from './_Input'
@@ -31,9 +30,7 @@ export const components = {a: Link, pre: Pre}
 
 <Heading value="Activity" />
 
-<Activity client:visible>
-<Code code={ActivityCode} lang="tsx" />
-</Activity>
+<Activity />
 
 <Heading value="Slider" />
 
@@ -49,21 +46,16 @@ export const components = {a: Link, pre: Pre}
 </Countdown>
 */}
 
-<Match>
-    <Fragment slot="react">
-        <Heading value="Framer Motion" />
+<Match react>
+    <Heading value="Framer Motion" />
 
-        NumberFlow was designed to work with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
-        You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
+    NumberFlow was designed to work with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
+    You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
 
-        <Group />
-
-        **Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
-        [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
-        [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
-        props.
-    </Fragment>
-
-    <Heading value="Group" />
     <Group />
+
+    **Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
+    [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
+    [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
+    props.
 </Match>

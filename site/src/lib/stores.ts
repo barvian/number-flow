@@ -1,4 +1,10 @@
-import { atom, computed, onStart, type ReadableAtom } from 'nanostores'
+import {
+	atom,
+	computed,
+	onStart,
+	type PreinitializedWritableAtom,
+	type ReadableAtom
+} from 'nanostores'
 
 export const isCyclableAtom = Symbol()
 
@@ -18,10 +24,14 @@ export function cyclable<T>(...options: Array<T>): CyclableAtom<T> {
 	} as const)
 }
 
-export function hydratable<T>($atom: CyclableAtom<T>) {
+export function hydratable<T, A extends CyclableAtom<T> | PreinitializedWritableAtom<T>>(
+	$atom: A
+): A {
+	const initial = $atom.get()
 	onStart($atom, () => {
 		const beforeSwap = () => {
-			$atom.reset()
+			if (isCyclableAtom in $atom) $atom.reset()
+			else $atom.set(initial)
 		}
 		typeof document !== 'undefined' && document.addEventListener('astro:before-swap', beforeSwap)
 		return () => {
