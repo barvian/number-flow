@@ -1,27 +1,47 @@
 <script lang="ts" setup>
 import {
 	type Value,
-	type Props as NumberFlowProps,
 	type Format,
 	render,
 	partitionParts,
-	NumberFlowLite
+	NumberFlowLite,
+	type Props as NumberFlowProps
 } from 'number-flow'
 import { computed, ref } from 'vue'
 
-type Props = {
+type Props = Partial<NumberFlowProps> & {
 	locales?: Intl.LocalesArgument
 	format?: Format
 	value: Value
 	willChange?: boolean
-} & Partial<NumberFlowProps>
+}
 
-const { locales, format, value, willChange, ...props } = defineProps<Props>()
+// This is repetitive but I couldn't get it any cleaner using `withDefaults`,
+// because then you can't destructure,
+// and if you don't set defaults Vue will use its own for i.e. booleans.
+const {
+	locales,
+	format,
+	value,
+	trend = NumberFlowLite.defaultProps.trend,
+	continuous = NumberFlowLite.defaultProps.continuous,
+	animated = NumberFlowLite.defaultProps.animated,
+	transformTiming = NumberFlowLite.defaultProps.transformTiming,
+	spinTiming = NumberFlowLite.defaultProps.spinTiming,
+	opacityTiming = NumberFlowLite.defaultProps.opacityTiming,
+	respectMotionPreference = NumberFlowLite.defaultProps.respectMotionPreference,
+	willChange = false
+} = defineProps<Props>()
 
 const el = ref<NumberFlowLite>()
 
 defineExpose({ el })
 
+defineOptions({
+	inheritAttrs: false // set them manually to ensure `parts` updates last
+})
+
+// Technically the original animationsstart still emits but ah well:
 const emit = defineEmits<{
 	(e: 'animationsStart'): void
 	(e: 'animationsFinish'): void
@@ -55,7 +75,14 @@ const parts = computed(() => partitionParts(value, formatter.value))
 	<!-- Make sure parts is set last: -->
 	<number-flow
 		ref="el"
-		v-bind="props"
+		v-bind="$attrs"
+		:trend
+		:continuous
+		:animated
+		:transformTiming
+		:spinTiming
+		:opacityTiming
+		:respectMotionPreference
 		:data-will-change="willChange ? '' : undefined"
 		v-html="render({ formatted: parts.formatted, willChange })"
 		@animationsstart="emit('animationsStart')"

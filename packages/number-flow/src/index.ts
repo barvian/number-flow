@@ -36,31 +36,37 @@ enum Trend {
 	NONE = 0
 }
 
-export const defaultOpacityTiming: EffectTiming = { duration: 450, easing: 'ease-out' }
-
-export const defaultTransformTiming: EffectTiming = {
-	duration: 900,
-	// Make sure to keep this minified:
-	easing: `linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)`
-}
-
 let styleSheet: CSSStyleSheet | undefined
 
-// Don't use Partial<> for this b/c it messes up Vue:
-export type Props = {
-	transformTiming?: EffectTiming
-	spinTiming?: EffectTiming
-	opacityTiming?: EffectTiming
-	animated?: boolean
-	manual?: boolean
-	respectMotionPreference?: boolean
-	trend?: RawTrend
-	continuous?: boolean
+export interface Props {
+	transformTiming: EffectTiming
+	spinTiming: EffectTiming | undefined
+	opacityTiming: EffectTiming
+	animated: boolean
+	manual: boolean
+	respectMotionPreference: boolean
+	trend: RawTrend
+	continuous: boolean
 }
 
 // This one is used internally for framework wrappers, and
 // doesn't include things like attribute support:
-export class NumberFlowLite extends ServerSafeHTMLElement {
+export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
+	static defaultProps: Props = {
+		transformTiming: {
+			duration: 900,
+			// Make sure to keep this minified:
+			easing: `linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)`
+		},
+		spinTiming: undefined,
+		opacityTiming: { duration: 450, easing: 'ease-out' },
+		animated: true,
+		manual: false,
+		trend: true,
+		continuous: false,
+		respectMotionPreference: true
+	}
+
 	static define() {
 		if (!BROWSER) return
 		const RegisteredElement = customElements.get('number-flow')
@@ -68,42 +74,51 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			RegisteredElement &&
 			!(RegisteredElement === this || RegisteredElement.prototype instanceof this)
 		) {
-			console.log(
-				this,
-				'registered',
-				RegisteredElement,
-				RegisteredElement === this,
-				RegisteredElement.prototype instanceof this
-			)
 			console.error('An element has already been defined under the name `number-flow`.')
 		} else if (!RegisteredElement) {
 			customElements.define('number-flow', this)
 		}
 	}
 
-	transformTiming = defaultTransformTiming
-	spinTiming?: EffectTiming
-	opacityTiming = defaultOpacityTiming
-	#animated = true
-	manual = false
-	respectMotionPreference = true
+	// Kinda gross but can't do e.g. Object.assign in constructor because TypeScript
+	// can't determine if they're definitively assigned that way:
+	transformTiming = (this.constructor as typeof NumberFlowLite).defaultProps.transformTiming
+	spinTiming = (this.constructor as typeof NumberFlowLite).defaultProps.spinTiming
+	opacityTiming = (this.constructor as typeof NumberFlowLite).defaultProps.opacityTiming
+	manual = (this.constructor as typeof NumberFlowLite).defaultProps.manual
+	respectMotionPreference = (this.constructor as typeof NumberFlowLite).defaultProps
+		.respectMotionPreference
+	trend = (this.constructor as typeof NumberFlowLite).defaultProps.trend
+	continuous = (this.constructor as typeof NumberFlowLite).defaultProps.continuous
+
+	#animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
+	get animated() {
+		return (
+			canAnimate &&
+			this.#animated &&
+			(!this.respectMotionPreference || !prefersReducedMotion?.matches)
+		)
+	}
+	set animated(val: boolean) {
+		if (this.animated === val) return
+		this.#animated = val
+		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
+		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
+	}
 
 	#created = false
 	#pre?: SymbolSection
 	#num?: Num
 	#post?: SymbolSection
 
-	trend: RawTrend = true
 	#computedTrend?: Trend
-	continuous = false
-
-	#startingPlace?: number | null
-
-	get startingPlace() {
-		return this.#startingPlace
-	}
 	get computedTrend() {
 		return this.#computedTrend
+	}
+
+	#startingPlace?: number | null
+	get startingPlace() {
+		return this.#startingPlace
 	}
 
 	#parts?: PartitionedParts
@@ -119,7 +134,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		if (!this.#created) {
 			this.#parts = parts
 
-			// Don't check for declarative shadow DOM because we'll recreate it anyway:
 			this.attachShadow({ mode: 'open' })
 
 			// Add stylesheet
@@ -234,21 +248,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			}
 		})
 		this.#abortAnimationsFinish = controller
-	}
-
-	get animated() {
-		return (
-			canAnimate &&
-			this.#animated &&
-			(!this.respectMotionPreference || !prefersReducedMotion?.matches)
-		)
-	}
-
-	set animated(val: boolean) {
-		if (this.animated === val) return
-		this.#animated = val
-		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
-		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
 	}
 }
 
