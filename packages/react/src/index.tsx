@@ -29,7 +29,7 @@ export class NumberFlowElement extends NumberFlowLite {
 NumberFlowElement.define()
 
 type BaseProps = React.HTMLAttributes<NumberFlowElement> &
-	Omit<Props, 'manual'> & {
+	Partial<Omit<Props, 'manual'>> & {
 		isolate?: boolean
 		willChange?: boolean
 		onAnimationsStart?: () => void
