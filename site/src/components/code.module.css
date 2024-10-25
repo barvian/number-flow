@@ -1,5 +1,6 @@
 .code {
-	max-height: 40rem;
+	/* Make sure there's space to scroll around it: */
+	max-height: min(100vh - 14rem, 40rem);
 	overflow-x: auto;
 	white-space: normal;
 	tab-size: 2;
