@@ -34,8 +34,8 @@ type BaseProps = React.HTMLAttributes<NumberFlowElement> &
 	Partial<NonPartsProps> & {
 		isolate?: boolean
 		willChange?: boolean
-		onAnimationsStart?: () => void
-		onAnimationsFinish?: () => void
+		onAnimationsStart?: (e: CustomEvent<undefined>) => void
+		onAnimationsFinish?: (e: CustomEvent<undefined>) => void
 	}
 
 type NumberFlowImplProps = BaseProps & {
@@ -105,14 +105,17 @@ class NumberFlowImpl extends React.Component<
 		)
 
 		if (prevProps?.onAnimationsStart)
-			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart)
+			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart as EventListener)
 		if (this.props.onAnimationsStart)
-			this.#el.addEventListener('animationsstart', this.props.onAnimationsStart)
+			this.#el.addEventListener('animationsstart', this.props.onAnimationsStart as EventListener)
 
 		if (prevProps?.onAnimationsFinish)
-			this.#el.removeEventListener('animationsfinish', prevProps.onAnimationsFinish)
+			this.#el.removeEventListener(
+				'animationsfinish',
+				prevProps.onAnimationsFinish as EventListener
+			)
 		if (this.props.onAnimationsFinish)
-			this.#el.addEventListener('animationsfinish', this.props.onAnimationsFinish)
+			this.#el.addEventListener('animationsfinish', this.props.onAnimationsFinish as EventListener)
 	}
 
 	override componentDidMount() {
