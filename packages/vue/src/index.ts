@@ -7,7 +7,8 @@ import {
 } from 'number-flow'
 export type { Value, Format, Trend, NumberFlowLite } from 'number-flow'
 
-define('number-flow-lite', NumberFlowLite)
+// In case we ever need a subclass:
+define('number-flow-vue', NumberFlowLite)
 
 export { default } from './index.vue'
 

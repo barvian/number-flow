@@ -73,7 +73,7 @@ const parts = computed(() => partitionParts(value, formatter.value))
 </script>
 <template>
 	<!-- Make sure parts is set last: -->
-	<number-flow-lite
+	<number-flow-vue
 		ref="el"
 		v-bind="$attrs"
 		:trend
