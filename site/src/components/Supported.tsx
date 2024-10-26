@@ -21,7 +21,7 @@ export default function Supported() {
 					role="alert"
 					className={clsx(
 						canAnimate ? 'h-11.5' : 'h-16.5',
-						'~top-4/8 prose dark:prose-invert fixed left-1/2 z-50 -ml-36 w-72 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-800 dark:border-amber-800/30 dark:bg-[#271202] dark:text-amber-50'
+						'~top-4/8 prose prose-current fixed left-1/2 z-50 -ml-36 w-72 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center text-sm text-amber-800 dark:border-amber-800/30 dark:bg-[#271202] dark:text-amber-50'
 					)}
 				>
 					{!canAnimate ? (

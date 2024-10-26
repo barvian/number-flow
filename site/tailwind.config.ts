@@ -152,6 +152,12 @@ export default {
 						'--tw-prose-links': theme('colors.zinc.600'),
 						'--tw-prose-invert-links': theme('colors.zinc.400')
 					}
+				},
+				current: {
+					css: {
+						'--tw-prose-links': 'currentColor',
+						'--tw-prose-invert-links': 'currentColor'
+					}
 				}
 			})
 		}
