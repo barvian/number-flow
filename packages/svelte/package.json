@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"version": "0.1.0",
+	"version": "0.0.1",
 	"description": "A component to transition and format numbers.",
 	"license": "MIT",
 	"homepage": "https://number-flow.barvian.me/svelte",
@@ -27,6 +27,7 @@
 		"dev": "vite dev",
 		"build": "vite build && pnpm package",
 		"package": "svelte-kit sync && svelte-package && publint",
+		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "playwright test",
