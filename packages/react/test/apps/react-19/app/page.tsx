@@ -8,8 +8,7 @@ export default function Page() {
 	return (
 		<>
 			<div>
-				Text node
-				<NumberFlow value={value} />
+				Text node <NumberFlow value={value} />
 			</div>
 			<button onClick={() => setValue(234)}>Change</button>
 		</>

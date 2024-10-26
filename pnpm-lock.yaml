@@ -142,6 +142,9 @@ importers:
 
   packages/react/test/apps/react-19:
     dependencies:
+      '@number-flow/react':
+        specifier: workspace:^
+        version: link:../../..
       next:
         specifier: 15.0.0-rc.1
         version: 15.0.0-rc.1(@playwright/test@1.48.0)(react-dom@19.0.0-rc-cd22717c-20241013(react@19.0.0-rc-cd22717c-20241013))(react@19.0.0-rc-cd22717c-20241013)

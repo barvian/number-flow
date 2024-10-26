@@ -9,4 +9,8 @@ test('updates correctly', async ({ page }) => {
 	const btn = page.getByRole('button', { name: 'Change' })
 	await btn.click()
 	await expect(page).toHaveScreenshot()
+
+	// Ensure shadow DOM was correctly attached:
+	const digit = await page.getByText('9', { exact: true }).count()
+	await expect(digit).toBe(3)
 })
