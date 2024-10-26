@@ -78,8 +78,7 @@ NumberFlow accepts additional props to customize its transitions:
 There are three props to customize the animation timings. Each accept an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
 <TimingsDemo client:visible defaultValue='code'>
-<Match>
-<Fragment slot="react">
+<Match react>
 ```jsx
 <NumberFlow
 	// Used for layout-related transforms:
@@ -91,8 +90,8 @@ There are three props to customize the animation timings. Each accept an [`Effec
 	opacityTiming={{ duration: 350, easing: 'ease-out' }}
 />
 ```
-</Fragment>
-<Fragment slot="vue">
+</Match>
+<Match vue>
 ```vue
 <NumberFlow
 	:transformTiming="{
@@ -110,7 +109,25 @@ There are three props to customize the animation timings. Each accept an [`Effec
 	}"
 />
 ```
-</Fragment>
+</Match>
+<Match svelte>
+```svelte
+<NumberFlow
+	transformTiming={{
+		// Used for layout-related transforms:
+		duration: 700, easing: 'linear(...)'
+	}}
+	spinTiming={{
+		// Used for the digit spin animations.
+		// Will fall back to `transformTiming` if unset:
+		duration: 700, easing: 'linear(...)'
+	}}
+	opacityTiming={{
+		// Used for fading in/out characters:
+		duration: 350, easing: 'ease-out'
+	}}
+/>
+```
 </Match>
 </TimingsDemo>
 
