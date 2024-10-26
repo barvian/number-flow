@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => ({
 		vue({
 			template: {
 				compilerOptions: {
-					isCustomElement: (tag) => tag === 'number-flow-lite'
+					isCustomElement: (tag) => tag === 'number-flow-vue'
 				}
 			}
 		}),
