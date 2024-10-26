@@ -38,7 +38,7 @@
 	// Svelte only supports setters, not properties, so remap them:
 	$: rest = Object.fromEntries(
 		Object.entries($$restProps).map(([key, value]) =>
-			key in NumberFlowLite.defaultProps ? [`__${key}`, value] : [key, value]
+			key in NumberFlowLite.defaultProps ? [`__svelte_${key}`, value] : [key, value]
 		)
 	)
 </script>

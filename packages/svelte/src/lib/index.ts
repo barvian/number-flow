@@ -12,7 +12,7 @@ export type { Value, Format, Trend } from 'number-flow'
 // Svelte only supports setters, not properties:
 export class NumberFlowSvelte extends NumberFlowLite {}
 Object.keys(NumberFlowLite.defaultProps).forEach((key) => {
-	Object.defineProperty(NumberFlowSvelte.prototype, `__${key}`, {
+	Object.defineProperty(NumberFlowSvelte.prototype, `__svelte_${key}`, {
 		set(value) {
 			this[key] = value
 		},

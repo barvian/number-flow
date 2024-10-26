@@ -44,7 +44,7 @@ export default {
 				px: '0 0 0 1px rgb(0 0 0 / 0.05)'
 			},
 			colors: {
-				framework: 'var(--color-framework)',
+				accent: 'var(--accent)',
 				zinc: {
 					125: '##f0f0f1',
 					150: '#ececee',
