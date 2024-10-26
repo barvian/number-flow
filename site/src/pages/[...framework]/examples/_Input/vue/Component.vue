@@ -22,6 +22,7 @@ function handleInput({ currentTarget }: Event) {
 	animated.value = false
 	if (el.value === '') {
 		modelValue.value = defaultValue
+		el.value = String(defaultValue)
 		return
 	}
 	const num = parseInt(el.value)
