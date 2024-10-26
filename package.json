@@ -14,7 +14,7 @@
 	"scripts": {
 		"build": "pnpm -r build",
 		"build:packages": "pnpm -r --filter=\"./packages/*\" build",
-		"test": "pnpm -r test",
+		"test": "pnpm -r test --workspace-concurrency=1",
 		"format": "prettier --write .",
 		"version": "changeset version && git add --all",
 		"release": "pnpm build:packages && changeset publish"
