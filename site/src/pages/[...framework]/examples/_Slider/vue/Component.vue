@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import NumberFlow from '@number-flow/vue'
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'radix-vue'
-
-const modelValue = defineModel({ default: [50] })
 </script>
 
 <template>
 	<SliderRoot
-		v-model="modelValue"
 		class="relative flex h-5 w-[200px] touch-none select-none items-center"
+		v-slot="{ modelValue }"
 	>
 		<SliderTrack class="relative h-[3px] grow rounded-full bg-zinc-100 dark:bg-zinc-800">
 			<SliderRange class="absolute h-full rounded-full bg-black dark:bg-white" />
