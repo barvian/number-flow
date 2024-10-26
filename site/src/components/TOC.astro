@@ -1,0 +1,10 @@
+---
+import TOCReact from './TOC'
+import { getTOCContext } from '@/context/toc.ts'
+
+export type { Props } from './TOC'
+
+const context = getTOCContext()
+---
+
+<TOCReact client:load {...Astro.props} headings={context.headings} />

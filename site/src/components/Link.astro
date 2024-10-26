@@ -3,4 +3,4 @@ import ReactLink from './Link'
 export type { Props } from './Link'
 ---
 
-<ReactLink {...Astro.props}><slot /></ReactLink>
+<ReactLink {...Astro.props} client:load><slot /></ReactLink>

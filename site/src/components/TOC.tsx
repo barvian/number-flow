@@ -1,56 +1,67 @@
-import type { MarkdownHeading } from 'astro'
+import type { Heading } from '@/context/toc'
 import * as React from 'react'
 
-type Props = JSX.IntrinsicElements['nav'] & {
-	headings: MarkdownHeading[]
+export type Props = JSX.IntrinsicElements['nav'] & {
+	headings: Heading[]
 }
-export default function TOC({ headings, ...props }: Props) {
-	const h2s = React.useMemo(() => headings.filter((h) => h.depth <= 2), [headings])
-	const linkRefs = React.useRef<Record<string, HTMLAnchorElement | null>>({})
 
-	const [activeSlug, setActiveSlug] = React.useState(headings[0]?.slug)
+const tops = new WeakMap<Heading, number>()
+
+function getTop(id: Heading['id']) {
+	let el = document.getElementById(id)
+	return el ? el.getBoundingClientRect().top + window.scrollY : 0
+}
+
+export default function TOC({ headings, ...props }: Props) {
+	const [active, setActive] = React.useState(headings[0]?.id)
 
 	React.useEffect(() => {
-		const io = new IntersectionObserver(
-			(entries) => {
-				for (const entry of entries) {
-					if (entry.isIntersecting) {
-						const section = entry.target as HTMLElement
-						setActiveSlug(section.dataset.slug)
-						break
-					}
-				}
-			},
-			{
-				rootMargin: '-20% 0% -80%' // a sliver near the top of the viewport
+		let scrollPt = 0
+		function onResize() {
+			for (const heading of headings) {
+				tops.set(heading, getTop(heading.id))
 			}
-		)
+			const rootStyle = window.getComputedStyle(document.documentElement)
+			scrollPt = parseFloat(rootStyle.getPropertyValue('scroll-padding-top').match(/[\d.]+/)?.[0]!)
+		}
+		window.addEventListener('resize', onResize)
+		onResize()
 
-		h2s.forEach((h) => {
-			const section = document.getElementById(h.slug)?.closest('section')
-			if (section) {
-				section.dataset.slug = h.slug
-				io.observe(section)
-			}
+		function onScroll() {
+			// let fontSize = parseFloat(style.fontSize.match(/[\d.]+/)?.[0] ?? 16)
+			// scrollMt = scrollMt * fontSize
+
+			// let sortedHeadings = headings.sort((a, b) => tops.get(a)! - tops.get(b)!)
+			let top = window.scrollY // + scrollMt + 1
+			const current = headings.findLast((h) => top >= tops.get(h)! - scrollPt - 1) ?? headings[0]
+			setActive(current!.id)
+		}
+
+		window.addEventListener('scroll', onScroll, {
+			capture: true
+			// passive: true
 		})
+		onScroll()
 
 		return () => {
-			io.disconnect()
+			window.removeEventListener('resize', onResize)
+			window.removeEventListener('scroll', onScroll, {
+				capture: true
+			})
 		}
 	}, [])
 
 	return (
 		<nav {...props} id="toc" aria-label="Table Of Contents">
 			<ol className="space-y-4 text-sm">
-				{h2s.map((h) => (
-					<li key={h.slug}>
+				{headings.map((h) => (
+					<li key={h.id}>
 						<a
-							ref={(el) => (linkRefs.current[h.slug] = el)}
-							data-active={h.slug === activeSlug || undefined}
+							data-active={h.id === active || undefined}
 							className="opacity-40 transition-opacity hover:opacity-70 data-[active]:opacity-100 dark:opacity-50"
-							href={`#${h.slug}`}
+							href={`#${h.id}`}
 						>
-							{h.text}
+							{h.title}
 						</a>
 					</li>
 				))}

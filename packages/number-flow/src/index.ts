@@ -1,4 +1,4 @@
-import { createElement, offset, type HTMLProps, type Justify } from './util/dom'
+import { createElement, offset, visible, type HTMLProps, type Justify } from './util/dom'
 import { forEach } from './util/iterable'
 import {
 	type KeyedDigitPart,
@@ -21,7 +21,8 @@ import styles, {
 import { BROWSER } from './util/env'
 import { max } from './util/math'
 
-export { SlottedTag, slottedStyles, prefersReducedMotion } from './styles'
+export { prefersReducedMotion } from './styles'
+export { render, type RenderProps } from './ssr'
 export * from './formatter'
 
 export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
@@ -35,46 +36,90 @@ enum Trend {
 	NONE = 0
 }
 
-export const defaultOpacityTiming: EffectTiming = { duration: 450, easing: 'ease-out' }
-
-export const defaultTransformTiming: EffectTiming = {
-	duration: 900,
-	// Make sure to keep this minified:
-	easing: `linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)`
-}
-
 let styleSheet: CSSStyleSheet | undefined
+
+export interface Props {
+	transformTiming: EffectTiming
+	spinTiming: EffectTiming | undefined
+	opacityTiming: EffectTiming
+	animated: boolean
+	manual: boolean
+	respectMotionPreference: boolean
+	trend: RawTrend
+	continuous: boolean
+}
 
 // This one is used internally for framework wrappers, and
 // doesn't include things like attribute support:
-export class NumberFlowLite extends ServerSafeHTMLElement {
-	static define() {
-		if (BROWSER) customElements.define('number-flow', this)
+export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
+	static defaultProps: Props = {
+		transformTiming: {
+			duration: 900,
+			// Make sure to keep this minified:
+			easing: `linear(0,.005,.019,.039,.066,.096,.129,.165,.202,.24,.278,.316,.354,.39,.426,.461,.494,.526,.557,.586,.614,.64,.665,.689,.711,.731,.751,.769,.786,.802,.817,.831,.844,.856,.867,.877,.887,.896,.904,.912,.919,.925,.931,.937,.942,.947,.951,.955,.959,.962,.965,.968,.971,.973,.976,.978,.98,.981,.983,.984,.986,.987,.988,.989,.99,.991,.992,.992,.993,.994,.994,.995,.995,.996,.996,.9963,.9967,.9969,.9972,.9975,.9977,.9979,.9981,.9982,.9984,.9985,.9987,.9988,.9989,1)`
+		},
+		spinTiming: undefined,
+		opacityTiming: { duration: 450, easing: 'ease-out' },
+		animated: true,
+		manual: false,
+		trend: true,
+		continuous: false,
+		respectMotionPreference: true
 	}
 
-	transformTiming = defaultTransformTiming
-	spinTiming?: EffectTiming
-	opacityTiming = defaultOpacityTiming
-	#animated = true
-	manual = false
-	respectMotionPreference = true
+	static define() {
+		if (!BROWSER) return
+		const RegisteredElement = customElements.get('number-flow')
+		if (
+			RegisteredElement &&
+			!(RegisteredElement === this || RegisteredElement.prototype instanceof this)
+		) {
+			console.error('An element has already been defined under the name `number-flow`.')
+		} else if (!RegisteredElement) {
+			customElements.define('number-flow', this)
+		}
+	}
+
+	// Kinda gross but can't do e.g. Object.assign in constructor because TypeScript
+	// can't determine if they're definitively assigned that way:
+	transformTiming = (this.constructor as typeof NumberFlowLite).defaultProps.transformTiming
+	spinTiming = (this.constructor as typeof NumberFlowLite).defaultProps.spinTiming
+	opacityTiming = (this.constructor as typeof NumberFlowLite).defaultProps.opacityTiming
+	manual = (this.constructor as typeof NumberFlowLite).defaultProps.manual
+	respectMotionPreference = (this.constructor as typeof NumberFlowLite).defaultProps
+		.respectMotionPreference
+	trend = (this.constructor as typeof NumberFlowLite).defaultProps.trend
+	continuous = (this.constructor as typeof NumberFlowLite).defaultProps.continuous
+
+	#animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
+	get animated() {
+		return this.#animated
+	}
+	set animated(val: boolean) {
+		if (this.animated === val) return
+		this.#animated = val
+		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
+		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
+	}
 
 	#created = false
 	#pre?: SymbolSection
 	#num?: Num
 	#post?: SymbolSection
 
-	trend: RawTrend = true
 	#computedTrend?: Trend
-	continuous = false
+	get computedTrend() {
+		return this.#computedTrend
+	}
 
 	#startingPlace?: number | null
-
 	get startingPlace() {
 		return this.#startingPlace
 	}
-	get computedTrend() {
-		return this.#computedTrend
+
+	#computedAnimated = this.#animated
+	get computedAnimated() {
+		return this.#computedAnimated
 	}
 
 	#parts?: PartitionedParts
@@ -90,7 +135,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 		if (!this.#created) {
 			this.#parts = parts
 
-			// Don't check for declarative shadow DOM because we'll recreate it anyway:
 			this.attachShadow({ mode: 'open' })
 
 			// Add stylesheet
@@ -160,6 +204,13 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 				this.#startingPlace = max(firstChangedPrev?.place, firstChanged?.place)
 			}
 
+			this.#computedAnimated =
+				canAnimate &&
+				this.#animated &&
+				(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
+				// https://github.com/barvian/number-flow/issues/9
+				visible(this)
+
 			if (!this.manual) this.willUpdate()
 
 			this.#pre!.update(pre)
@@ -173,11 +224,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	}
 
 	willUpdate() {
-		// In general this should be disable most animations except the ones that run
-		// during an update, i.e. new digits and AnimatePresence. So make sure to handle those
-		// separately:
-		if (!this.animated) return
-
+		// Not super safe to check animated here, b/c the prop may not have been updated yet:
 		this.#pre!.willUpdate()
 		this.#num!.willUpdate()
 		this.#post!.willUpdate()
@@ -186,7 +233,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 	#abortAnimationsFinish?: AbortController
 
 	didUpdate() {
-		if (!this.animated) return
+		// Safe to call this here because we know the animated prop is up-to-date
+		if (!this.#computedAnimated) return
 
 		// If we're already animating, cancel the previous animationsfinish event:
 		if (this.#abortAnimationsFinish) this.#abortAnimationsFinish.abort()
@@ -205,21 +253,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement {
 			}
 		})
 		this.#abortAnimationsFinish = controller
-	}
-
-	get animated() {
-		return (
-			canAnimate &&
-			this.#animated &&
-			(!this.respectMotionPreference || !prefersReducedMotion?.matches)
-		)
-	}
-
-	set animated(val: boolean) {
-		if (this.animated === val) return
-		this.#animated = val
-		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
-		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
 	}
 }
 
@@ -402,7 +435,7 @@ abstract class Section {
 			{ reverse }
 		)
 
-		if (this.flow.animated) {
+		if (this.flow.computedAnimated) {
 			const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
 			added.forEach((comp) => {
 				comp.willUpdate(rect)
@@ -511,7 +544,7 @@ class AnimatePresence {
 		// This craziness is the only way I could figure out how to get the opacity
 		// accumulation to work in all browsers. Accumulating -1 onto opacity directly
 		// failed in both FF and Safari, and setting a delta to -1 still failed in FF
-		if (this.flow.animated && animateIn) {
+		if (this.flow.computedAnimated && animateIn) {
 			this.el.animate(
 				{
 					[opacityDeltaVar]: [-0.9999, 0]
@@ -539,7 +572,7 @@ class AnimatePresence {
 		if (this.#present === val) return
 		this.#present = val
 
-		if (!this.flow.animated) {
+		if (!this.flow.computedAnimated) {
 			if (!val) this.#remove()
 			return
 		}

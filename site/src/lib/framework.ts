@@ -9,12 +9,12 @@ export const FRAMEWORKS = {
 		name: 'React',
 		lightColor: '#0A7EA4',
 		darkColor: '#58C4DC'
+	},
+	vue: {
+		name: 'Vue',
+		lightColor: '#42B883',
+		darkColor: '#42B883'
 	}
-	// vue: {
-	// 	name: 'Vue',
-	// 	lightColor: '#42B883',
-	// 	darkColor: '#42B883'
-	// }
 	// svelte: {
 	// 	name: 'Svelte',
 	// 	lightColor: '#FF3E00',

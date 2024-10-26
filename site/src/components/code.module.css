@@ -1,10 +1,11 @@
 .code {
-	max-height: 40rem;
+	/* Make sure there's space to scroll around it: */
+	max-height: clamp(5rem, 100vh - var(--fluid), 40rem);
 	overflow-x: auto;
 	white-space: normal;
 	tab-size: 2;
 
-	@apply dark:border-faint rounded-lg !bg-zinc-950 !p-5 !text-sm [scrollbar-color:theme(colors.white/.3)_transparent] [scrollbar-width:thin] dark:border dark:!bg-zinc-900 dark:[scrollbar-color:theme(colors.white/.1)_transparent];
+	@apply dark:border-faint ~fluid-[13rem]/[15rem] rounded-lg !bg-zinc-950 !p-5 !text-sm [scrollbar-color:theme(colors.white/.3)_transparent] [scrollbar-width:thin] dark:border dark:!bg-zinc-900 dark:[scrollbar-color:theme(colors.white/.1)_transparent];
 }
 
 .code :global(.line) {

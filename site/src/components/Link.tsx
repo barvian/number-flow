@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { useStore } from '@nanostores/react'
-import { urlAtom, pageFrameworkAtom } from '@/stores/url'
+import { $url, $pageFramework } from '@/stores/url'
 import type { AnchorHTMLAttributes } from 'react'
 import { isActive } from '../lib/url'
-import { toFrameworkPath } from '@/lib/framework'
+import { type Framework, toFrameworkPath } from '@/lib/framework'
 import { ArrowUpRight } from 'lucide-react'
 import clsx from 'clsx/lite'
 
@@ -21,20 +21,42 @@ export default function Link({
 	active: activeChildren,
 	...props
 }: Props) {
-	const pageFramework = useStore(pageFrameworkAtom)
-	const url = useStore(urlAtom)
+	const pageFramework = useStore($pageFramework)
+	const ref = React.useRef<HTMLAnchorElement>(null)
+	const [savedFramework, setSavedFramework] = React.useState<Framework | null>(null)
+	React.useEffect(() => {
+		if (!pageFramework) setSavedFramework(localStorage.getItem('framework') as Framework)
+	}, [pageFramework])
+	const framework = React.useMemo(
+		() => pageFramework ?? savedFramework,
+		[pageFramework, savedFramework]
+	)
+	const url = useStore($url)
 
-	const href = frameworked ? toFrameworkPath(_href, pageFramework) : _href
-	const isExternal = href && url && new URL(href, url.origin).origin !== url.origin
+	const isExternal = _href && url && new URL(_href, url.origin).origin !== url.origin
+	const href = !isExternal && frameworked && framework ? toFrameworkPath(_href, framework) : _href
+	React.useEffect(() => {
+		// Double-set for a weird Astro VT bug I think:
+		if (href) ref.current?.setAttribute('href', href)
+	}, [href])
 
 	const active = isActive(href, url)
 
 	return (
-		// prettier-ignore
-		<a {...props} className={clsx(className, 'group/link')} target={isExternal ? '_blank' : target} data-active={active ? '' : undefined} href={href}>
+		<a
+			{...props}
+			ref={ref}
+			className={clsx(className, 'group/link')}
+			target={isExternal ? '_blank' : target}
+			data-active={active ? '' : undefined}
+			href={href}
+			data-framework={framework}
+		>
 			{active && activeChildren}
 			{children}
-			{isExternal && <ArrowUpRight className='inline-block ml-[0.125em] size-[1em] no-underline transition-transform group-hover/link:-translate-y-px group-hover/link:translate-x-px' />}
+			{isExternal && (
+				<ArrowUpRight className="ml-[0.125em] inline-block size-[1em] no-underline transition-transform group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
+			)}
 		</a>
 	)
 }

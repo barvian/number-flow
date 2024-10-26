@@ -8,7 +8,7 @@ const format: Format = {
 	roundingMode: 'trunc'
 }
 
-type Props = {
+type Props = JSX.IntrinsicElements['div'] & {
 	likes: number
 	reposts: number
 	views: number
@@ -22,6 +22,7 @@ type Props = {
 }
 
 export default function Activity({
+	className,
 	likes,
 	reposts,
 	views,
@@ -31,10 +32,17 @@ export default function Activity({
 	onBookmark,
 	liked,
 	reposted,
-	bookmarked
+	bookmarked,
+	...rest
 }: Props) {
 	return (
-		<div className="~px-0/16 ~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
+		<div
+			{...rest}
+			className={clsx(
+				className,
+				'~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
+			)}
+		>
 			<div className="flex flex-1 items-center gap-1.5">
 				<ChartNoAxesColumn absoluteStrokeWidth className="~size-4/5" />
 				<NumberFlow willChange continuous value={views} format={format} />

@@ -63,14 +63,6 @@ const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
 export const SlottedTag = 'span'
-export const slottedStyles = ({ willChange }: { willChange?: boolean }) =>
-	({
-		fontKerning: 'none',
-		display: 'inline-block',
-		lineHeight: charHeight,
-		padding: `${maskHeight} 0`,
-		willChange: willChange ? 'transform' : undefined
-	}) as const
 
 const styles = css`
 	:host {

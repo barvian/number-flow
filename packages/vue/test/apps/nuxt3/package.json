@@ -1,0 +1,25 @@
+{
+	"name": "nuxt-app",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "nuxt dev",
+		"generate": "nuxt generate",
+		"postinstall": "nuxt prepare",
+		"test": "playwright test",
+		"test:ui": "playwright test --ui",
+		"test:update": "playwright test --update-snapshots"
+	},
+	"dependencies": {
+		"@number-flow/vue": "workspace:*",
+		"@nuxt/fonts": "^0.10.2",
+		"nuxt": "^3.13.2",
+		"vue": "latest",
+		"vue-router": "latest"
+	},
+	"devDependencies": {
+		"@nuxtjs/tailwindcss": "^6.12.2",
+		"@playwright/test": "^1.48.0"
+	},
+	"packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
+}

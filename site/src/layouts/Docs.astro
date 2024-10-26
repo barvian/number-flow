@@ -1,30 +1,31 @@
 ---
 import Layout from '@/layouts/Layout.astro'
-import type { MDXLayoutProps } from 'astro'
-import TOC from '@/components/TOC'
+import TOCLayout from '@/layouts/TOC.astro'
 import Supported from '@/components/Supported'
+import TOC from '@/components/TOC.astro'
 import type { ComponentProps } from 'astro/types'
+import { TOCProvider } from '@/context/toc'
+import GitHubSlugger from 'github-slugger'
 
-type Props = ComponentProps<typeof Layout> & {
-	articleClass?: string
-	headings: MDXLayoutProps<{}>['headings']
-}
-
-const { headings, articleClass, ...props } = Astro.props
+type Props = ComponentProps<typeof Layout> & {}
 ---
 
-<Layout {...props}>
+<Layout {...Astro.props}>
 	<Supported transition:persist="supported" client:only="react" />
 	<slot name="hero" />
 	<div
-		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_auto_1fr] xl:items-start"
+		class="contents xl:container xl:grid xl:max-w-7xl xl:grid-cols-[1fr_minmax(auto,theme(maxWidth.2xl))_1fr] xl:items-start"
 	>
-		<TOC client:load className="~top-6/10 sticky max-xl:hidden" {headings} />
-		<article class="container max-w-2xl">
-			<div class:list={['prose prose-zinc dark:prose-invert', articleClass]}>
-				<slot />
-			</div>
-			<slot name="footer" />
-		</article>
+		<TOCProvider headings={[]} slugger={new GitHubSlugger()}>
+			<TOCLayout>
+				<article class="container max-w-2xl">
+					<div class="prose prose-zinc dark:prose-invert">
+						<slot />
+					</div>
+					<slot name="footer" />
+				</article>
+				<TOC className="~top-6/10 sticky max-xl:hidden" slot="toc" />
+			</TOCLayout>
+		</TOCProvider>
 	</div>
 </Layout>

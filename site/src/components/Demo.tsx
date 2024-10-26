@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 // import { atom, useAtom } from 'jotai'
 import { clsx } from 'clsx/lite'
-import { motion, MotionConfig } from 'framer-motion'
+import { inView, motion, MotionConfig } from 'framer-motion'
 import { useId } from 'react'
 import {
 	Menu,
@@ -32,7 +32,10 @@ export type DemoProps = {
 	title?: React.ReactNode
 }
 
-type Props = DemoProps & { onClick?: () => void }
+type Props = DemoProps & {
+	onClick?: () => void
+	onIntersect?: (entry: IntersectionObserverEntry) => void
+}
 
 const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 	{
@@ -43,6 +46,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 		code,
 		title,
 		onClick,
+		onIntersect,
 		minHeight = 'min-h-[20rem]'
 	},
 	ref
@@ -64,6 +68,15 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 			event.preventDefault()
 		}
 	}
+
+	const demoRef = React.useRef<HTMLDivElement>(null)
+	React.useEffect(() => {
+		if (!onIntersect || !demoRef.current) return
+		return inView(demoRef.current, (e) => {
+			onIntersect(e)
+			return onIntersect
+		})
+	}, [onIntersect])
 
 	return (
 		<Tabs.Root
@@ -118,6 +131,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 			)}
 			<Tabs.Content
 				value="preview"
+				forceMount
 				className={clsx(
 					className,
 					'border-faint relative rounded-lg border data-[state=inactive]:hidden'
@@ -126,6 +140,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 				{title && <div className="absolute left-3 top-3">{title}</div>}
 				<div
 					className={clsx(minHeight, 'flex flex-col items-center justify-center p-5 pb-6')}
+					ref={demoRef}
 					onClick={onClick && handleClick}
 					onMouseDown={onClick && handleMouseDown}
 				>
@@ -193,7 +208,7 @@ export function DemoMenuItems({ className, ...props }: MenuItemsProps) {
 			{...props}
 			className={clsx(
 				className,
-				'animate-pop-in dark:ring-white/12.5 absolute left-0 top-full mt-2 min-w-full origin-top-left rounded-xl bg-white/90 p-1.5 shadow-sm ring ring-inset ring-black/[8%] backdrop-blur-xl backdrop-saturate-[140%] dark:bg-zinc-950/90 dark:shadow-none'
+				'animate-pop-in absolute left-0 top-full mt-2 min-w-full origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
 		/>
 	)

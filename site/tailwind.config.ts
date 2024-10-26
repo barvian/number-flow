@@ -68,6 +68,7 @@ export default {
 			},
 			spacing: {
 				'4.5': '1.125rem',
+				'5.5': '1.375rem',
 				'11.5': '2.875rem',
 				'16.5': '4.125rem',
 				18: '4.5rem'
@@ -91,7 +92,7 @@ export default {
 						},
 
 						hr: {
-							'@apply my-[2em]': {}
+							'@apply my-16 border-faint': {}
 						},
 
 						'code::before': {
@@ -103,7 +104,7 @@ export default {
 						},
 
 						h2: {
-							'@apply font-semibold text-xl': {}
+							'@apply mt-16 mb-[1.25em] font-semibold text-xl': {}
 						},
 
 						h3: {
@@ -126,17 +127,6 @@ export default {
 							'margin-top': '0 !important'
 						},
 						'[role=alert] > :last-child': {
-							'margin-bottom': '0 !important'
-						},
-
-						// We need to always use padding for the IntersectionObserver to work:
-						'&>section': {
-							'@apply py-10 first:pt-0 last:pb-0': {}
-						},
-						'section > :first-child': {
-							'margin-top': '0 !important'
-						},
-						'section > :last-child': {
 							'margin-bottom': '0 !important'
 						}
 					}
@@ -162,6 +152,12 @@ export default {
 						'--tw-prose-links': theme('colors.zinc.600'),
 						'--tw-prose-invert-links': theme('colors.zinc.400')
 					}
+				},
+				current: {
+					css: {
+						'--tw-prose-links': 'currentColor',
+						'--tw-prose-invert-links': 'currentColor'
+					}
 				}
 			})
 		}
@@ -178,6 +174,15 @@ export default {
 					})
 				},
 				{ values: { DEFAULT: '' }, modifiers: 'any' }
+			)
+
+			matchUtilities(
+				{
+					fluid: (val) => ({
+						'--fluid': val
+					})
+				},
+				{ values: theme('spacing') }
 			)
 
 			const resolveOpacity = (opacity: string | number) => {

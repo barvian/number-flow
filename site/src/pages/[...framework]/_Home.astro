@@ -9,20 +9,15 @@ type Props = MDXLayoutProps<{
 	description: string
 }>
 
-const { frontmatter, headings } = Astro.props
+const { frontmatter } = Astro.props
 ---
 
-<DocsLayout
-	title={frontmatter.title}
-	description={frontmatter.description}
-	articleClass="[&>section:first-child>h2:first-child]:sr-only"
-	{headings}
->
-	<Hero client:load slot="hero" />
+<DocsLayout title={frontmatter.title} description={frontmatter.description}>
+	<Hero transition:persist="home-hero" client:load slot="hero" />
 	<slot />
 	<footer
 		slot="footer"
-		class="prose prose-muted dark:prose-invert border-faint mt-20 border-t pt-20"
+		class="prose prose-muted dark:prose-invert border-faint mt-16 border-t pt-16"
 	>
 		<p>
 			Built by <Link href="https://x.com/mbarvian">Max Barvian</Link>. Heavily inspired by the

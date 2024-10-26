@@ -1,1 +1,1 @@
-export { config as default } from '../../util'
+export { config as default } from '../../../../../lib/playwright'

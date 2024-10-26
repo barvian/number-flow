@@ -1,7 +1,7 @@
 ---
 layout: './_Home.astro'
-title: NumberFlow - Transition and format numbers
-description: A React component to transition & format numbers. Dependency-free. Built on web standards. Accessible. Customizable.
+title: '{{name}} - Transition and format numbers'
+description: A component to transition & format numbers. Dependency-free. Built on web standards. Accessible. Customizable.
 ---
 import Pre from '@/components/Pre.astro';
 import NumberFlow from '@number-flow/react'
@@ -10,16 +10,19 @@ import IsolateDemo from './_demos/Isolate'
 import ContinuousDemo from './_demos/Continuous'
 import TabularNumsDemo from './_demos/TabularNums'
 import TrendDemo from './_demos/Trend'
+import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
+import Heading from '@/components/Heading.astro'
 import Union from '@/components/Union.astro'
 import Link from '@/components/Link.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
-## Basic usage
+<Heading class="sr-only" value="Basic usage" />
 
-<div className='xl:pre-first-line:hidden first:*:mt-0'>
+<Match class='xl:pre-first-line:hidden first:*:mt-0'>
+<Fragment slot="react">
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'
@@ -30,17 +33,39 @@ import NumberFlow from '@number-flow/react'
 	locales="en-US" // Intl.NumberFormat locales
 />
 ```
-</div>
+</Fragment>
+<Fragment slot="vue">
+```vue
+<!-- Basic usage -->
+<script setup>
+import NumberFlow from '@number-flow/vue'
+</script>
+<template>
+	<NumberFlow
+		:value="value"
+		:format="{ notation: 'compact' } /* Intl.NumberFormat options */"
+		:locales="'en-US' /* Intl.NumberFormat locales */"
+	/>
+</template>
+```
+</Fragment>
+</Match>
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
-## Transitions
+---
 
-<h3 className="sr-only">Timings</h3>
+<Heading value="Props" />
 
-The default animation timings can be customized via props that accept [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) objects:
+NumberFlow accepts additional props to customize its transitions:
+
+### Timings
+
+There are three props to customize the animation timings. Each accept an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
 <TimingsDemo client:visible defaultValue='code'>
+<Match>
+<Fragment slot="react">
 ```jsx
 <NumberFlow
 	// Used for layout-related transforms:
@@ -52,6 +77,27 @@ The default animation timings can be customized via props that accept [`EffectTi
 	opacityTiming={{ duration: 350, easing: 'ease-out' }}
 />
 ```
+</Fragment>
+<Fragment slot="vue">
+```vue
+<NumberFlow
+	:transformTiming="{
+		// Used for layout-related transforms:
+		duration: 700, easing: 'linear(...)'
+	}"
+	:spinTiming="{
+		// Used for the digit spin animations.
+		// Will fall back to `transformTiming` if unset:
+		duration: 700, easing: 'linear(...)'
+	}"
+	:opacityTiming="{
+		// Used for fading in/out characters:
+		duration: 350, easing: 'ease-out'
+	}"
+/>
+```
+</Fragment>
+</Match>
 </TimingsDemo>
 
 For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
@@ -81,6 +127,7 @@ If set, number transitions will appear to pass through in-between numbers. Has n
 
 <ContinuousDemo client:visible />
 
+<Match react>
 <h3>
 	<code>isolate<Type>: boolean</Type></code>
 	<Meta>Default: `false`</Meta>
@@ -90,6 +137,7 @@ If `isolate` is set, `<NumberFlow>`'s transitions are isolated from any other la
 that may occur in the same update. This can prevent potentially unwanted animations:
 
 <IsolateDemo client:visible />
+</Match>
 
 <h3>
 	<code>animated<Type>: boolean</Type></code>
@@ -118,16 +166,24 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
-### <code>onAnimationsStart<Type>: () => void</Type></code>
+<Match vue>
+---
+<Heading value="Emits"/>
+</Match>
 
-Triggered when update animations start. Not to be confused with the built-in `onAnimationStart`, which
+<h3><code><Match react="onAnimationsStart" vue="animationsStart" /><Type>: () => void</Type></code></h3>
+
+Triggered when update animations start. Not to be confused with the built-in
+<Match><Fragment slot="react">`onAnimationStart`</Fragment><Fragment slot="vue">[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Fragment></Match>, which
 would trigger for animations on the `<NumberFlow>` element itself.
 
-### <code>onAnimationsFinish<Type>: () => void</Type></code>
+<h3><code><Match react="onAnimationsFinish" vue="animationsFinish" /><Type>: () => void</Type></code></h3>
 
 Triggered when update animations finish.
 
-## Styling
+---
+
+<Heading value="Styling" />
 
 There's some CSS properties you can use to style the component:
 
@@ -154,18 +210,27 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
-## Hooks
+---
 
-### <code>useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
+<Match>
+<Heading slot="react" value="Hooks" />
+<Heading slot="vue" value="Composables" />
+</Match>
+
+<Match as="h3">
+<code slot="react">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
+<code slot="vue">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: {'MaybeRefOrGetter<boolean> }'}</Type>)<Type>: {'ComputedRef<boolean>'}</Type></code>
+</Match>
 
 Returns `true` if NumerFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
-See the [Framer Motion example](/examples#framer-motion) for a usage scenario.
+<Match react>See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Match>
 
-## Limitations
+---
 
-* [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported
-* Selected text inside the number will not respect color changes from `::selection`, if any
-* Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions. I'd recommend using
-Framer Motion for these, as it's more composable
-than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).
+<Heading value="Limitations" />
+
+* [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
+* Selected text inside the number will not respect color changes from `::selection`, if any.
+* Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions.
+<Match react>I'd recommend using Framer Motion for these, as it's more composable than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).</Match>

@@ -4,8 +4,8 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
 
-const NUMBERS = [321, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
-const LOCALES = ['fr-FR', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
+const NUMBERS = [43110, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
+const LOCALES = ['en-US', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
 const FORMATS = [
 	{
 		// style: "unit",
@@ -54,8 +54,9 @@ export default function Hero() {
 	const timeoutRef = useRef<NodeJS.Timeout>()
 	useEffect(() => {
 		if (!inView) return
+		if (sessionStorage.getItem('hero-did-animate')) return
 		timeoutRef.current = setTimeout(() => {
-			// Get off the initial "hello" easter egg:
+			sessionStorage.setItem('hero-did-animate', 'true')
 			cycleValue()
 			cycleLocale()
 			cycleFormat()
@@ -70,8 +71,7 @@ export default function Hero() {
 			ref={ref}
 			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
 		>
-			<div className="~mt-1/2 ~mb-0.5/1">
-				{/* import.meta.env.DEV && 'b' */}
+			<div className="~my-2/3.5">
 				<NumberFlow
 					className="~text-5xl/7xl font-medium [--number-flow-char-height:0.85em]"
 					trend={false}
@@ -82,7 +82,7 @@ export default function Hero() {
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
-				A React component to transition, localize, and format numbers. Dependency-free. Accessible.
+				A component to transition, localize, and format numbers. Dependency-free. Accessible.
 				Customizable.
 			</p>
 			<div className="~mt-3/5 flex w-full flex-wrap items-stretch justify-center gap-3">

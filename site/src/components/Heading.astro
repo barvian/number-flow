@@ -1,0 +1,21 @@
+---
+import { getTOCContext } from '@/context/toc.ts'
+import type { HTMLAttributes } from 'astro/types'
+import { slug } from 'github-slugger'
+
+type Props = HTMLAttributes<'h2'> & {
+	value: string
+}
+
+let { value, ...props } = Astro.props
+
+const context = getTOCContext()
+
+const id = slug(value)
+
+context.headings.push({ title: value, id })
+---
+
+<h2 {...props} {id}>
+	{Astro.slots.default ? <slot /> : value}
+</h2>

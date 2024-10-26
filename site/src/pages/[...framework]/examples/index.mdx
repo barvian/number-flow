@@ -1,41 +1,36 @@
 ---
 layout: './_Examples.astro'
-title: 'NumberFlow Examples'
-description: 'Ready-made examples of common patterns to get you started with NumberFlow.'
+title: '{{name}} Examples'
+description: 'Official templates to get you started.'
 ---
 export { getStaticPaths } from '@/lib/framework'
 import { DemoTitle } from '@/components/Demo'
-import Activity from './_Activity'
-import ActivityCode from './_Activity/Example?raw'
-import Slider from './_Slider'
-import SliderCode from './_Slider/Example?raw'
-import Input from './_Input'
-import InputCode from './_Input/Example?raw'
+import Activity from './_Activity/index.astro'
+import Slider from './_Slider/index.astro'
+import Input from './_Input/index.astro'
 // import Countdown from './_Countdown'
 // import CountdownCode from './_Countdown/Example?raw'
 // import ColoredTrends from './_ColoredTrends'
 // import ColoredTrendsCode from './_ColoredTrends/Example?raw'
-import FramerMotionLayoutAnimations from './_FramerMotion'
-import FramerMotionLayoutAnimationsCode from './_FramerMotion/Example?raw'
+import Heading from '@/components/Heading.astro';
+import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
+import Link from '@/components/Link.astro'
+import Pre from '@/components/Pre.astro'
+import Group from './_Group/index.astro'
+export const components = {a: Link, pre: Pre}
 
-## Input
+<Heading class="sr-only" value="Input" />
 
-<Input client:visible rootClassName="!mt-0">
-<Code code={InputCode} lang="tsx" />
-</Input>
+<Input rootClassName="!mt-0" />
 
-## Activity
+<Heading value="Activity" />
 
-<Activity client:visible>
-<Code code={ActivityCode} lang="tsx" />
-</Activity>
+<Activity />
 
-## Slider
+<Heading value="Slider" />
 
-<Slider client:visible>
-<Code code={SliderCode} lang="tsx" />
-</Slider>
+<Slider />
 
 {/*
 ## Countdown
@@ -45,25 +40,16 @@ import Code from '@/components/Code.astro';
 </Countdown>
 */}
 
-{/* ## Colored trends
+<Match react>
+    <Heading value="Framer Motion" />
 
-By storing the previous value,
-we can add a simple animation to indicate whether numbers are increasing/decreasing:
+    NumberFlow was designed to work with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
+    You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
 
-<ColoredTrends client:visible>
-<Code code={ColoredTrendsCode} lang="tsx" />
-</ColoredTrends> */}
+    <Group />
 
-## Framer Motion
-
-NumberFlow was designed to integrate with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
-You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
-
-<FramerMotionLayoutAnimations client:visible>
-<Code code={FramerMotionLayoutAnimationsCode} lang="tsx" />
-</FramerMotionLayoutAnimations>
-
-**Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
-[`motion` component](https://www.framer.com/motion/component/#custom-components) with the
-[`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
-props.
+    **Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
+    [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
+    [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
+    props.
+</Match>

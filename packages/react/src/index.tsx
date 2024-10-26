@@ -4,8 +4,8 @@ import * as React from 'react'
 import {
 	type Value,
 	type Format,
-	SlottedTag,
-	slottedStyles,
+	type Props,
+	render,
 	partitionParts,
 	type PartitionedParts,
 	NumberFlowLite,
@@ -28,25 +28,17 @@ export class NumberFlowElement extends NumberFlowLite {
 
 NumberFlowElement.define()
 
-export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> & {
-	value: Value
-	locales?: Intl.LocalesArgument
-	format?: Format
-	isolate?: boolean
-	animated?: boolean
-	respectMotionPreference?: boolean
-	willChange?: boolean
-	// animateDependencies?: React.DependencyList
-	onAnimationsStart?: () => void
-	onAnimationsFinish?: () => void
-	trend?: (typeof NumberFlowElement)['prototype']['trend']
-	continuous?: (typeof NumberFlowElement)['prototype']['continuous']
-	opacityTiming?: (typeof NumberFlowElement)['prototype']['opacityTiming']
-	transformTiming?: (typeof NumberFlowElement)['prototype']['transformTiming']
-	spinTiming?: (typeof NumberFlowElement)['prototype']['spinTiming']
-}
+type NonPartsProps = Omit<Props, 'manual'>
 
-type NumberFlowImplProps = Omit<NumberFlowProps, 'value' | 'locales' | 'format'> & {
+type BaseProps = React.HTMLAttributes<NumberFlowElement> &
+	Partial<NonPartsProps> & {
+		isolate?: boolean
+		willChange?: boolean
+		onAnimationsStart?: () => void
+		onAnimationsFinish?: () => void
+	}
+
+type NumberFlowImplProps = BaseProps & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
 	parts: PartitionedParts
 }
@@ -58,6 +50,34 @@ const formatters: Record<string, Intl.NumberFormat> = {}
 
 // Tiny workaround to support React 19 until it's released:
 const serializeParts = isReact19 ? (p: PartitionedParts) => p : JSON.stringify
+
+function splitProps<T extends Record<string, any>>(
+	props: T
+): [NonPartsProps, Omit<T, keyof NonPartsProps>] {
+	const {
+		transformTiming,
+		spinTiming,
+		opacityTiming,
+		animated,
+		respectMotionPreference,
+		trend,
+		continuous,
+		...rest
+	} = props
+
+	return [
+		{
+			transformTiming,
+			spinTiming,
+			opacityTiming,
+			animated,
+			respectMotionPreference,
+			trend,
+			continuous
+		},
+		rest
+	]
+}
 
 type NumberFlowImplState = {}
 type NumberFlowImplSnapshot = boolean
@@ -72,20 +92,17 @@ class NumberFlowImpl extends React.Component<
 		this.handleRef = this.handleRef.bind(this)
 	}
 
-	// Update the non-parts props to avoid JSON serialization
+	// Update the non-`parts` props to avoid JSON serialization
 	// Parts needs to be set in render still:
 	updateNonPartsProps(prevProps?: Readonly<NumberFlowImplProps>) {
 		if (!this.#el) return
 
 		this.#el.manual = !this.props.isolate
-		if (this.props.animated != null) this.#el.animated = this.props.animated
-		if (this.props.respectMotionPreference != null)
-			this.#el.respectMotionPreference = this.props.respectMotionPreference
-		if (this.props.trend != null) this.#el.trend = this.props.trend
-		if (this.props.continuous != null) this.#el.continuous = this.props.continuous
-		if (this.props.opacityTiming) this.#el.opacityTiming = this.props.opacityTiming
-		if (this.props.transformTiming) this.#el.transformTiming = this.props.transformTiming
-		if (this.props.spinTiming) this.#el.spinTiming = this.props.spinTiming
+		const [nonParts] = splitProps(this.props)
+		Object.assign(
+			this.#el,
+			Object.fromEntries(Object.entries(nonParts).filter(([_, v]) => v != null))
+		)
 
 		if (prevProps?.onAnimationsStart)
 			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart)
@@ -108,8 +125,8 @@ class NumberFlowImpl extends React.Component<
 
 	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
 		this.updateNonPartsProps(prevProps)
-		if (this.props.isolate) return false
-		if (prevProps.parts === this.props.parts) return false
+		if (this.props.isolate || this.props.animated === false || prevProps.parts === this.props.parts)
+			return false
 		this.#el?.willUpdate()
 		return true
 	}
@@ -130,22 +147,7 @@ class NumberFlowImpl extends React.Component<
 	}
 
 	override render() {
-		const {
-			innerRef,
-			className,
-			parts,
-			willChange,
-			// These are set in updateNonPartsProps, so ignore them here:
-			animated,
-			respectMotionPreference,
-			isolate,
-			trend,
-			continuous,
-			opacityTiming,
-			transformTiming,
-			spinTiming,
-			...rest
-		} = this.props
+		const [_, { innerRef, className, parts, willChange, isolate, ...rest }] = splitProps(this.props)
 
 		return (
 			// @ts-expect-error missing types
@@ -155,14 +157,18 @@ class NumberFlowImpl extends React.Component<
 				// Have to rename this:
 				class={className}
 				{...rest}
+				dangerouslySetInnerHTML={{ __html: render({ formatted: parts.formatted, willChange }) }}
 				// Make sure parts are set last, everything else is updated:
 				parts={serializeParts(parts)}
-			>
-				<SlottedTag style={slottedStyles({ willChange })}>{parts.formatted}</SlottedTag>
-				{/* @ts-expect-error missing types */}
-			</number-flow>
+			/>
 		)
 	}
+}
+
+export type NumberFlowProps = BaseProps & {
+	value: Value
+	locales?: Intl.LocalesArgument
+	format?: Format
 }
 
 const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(

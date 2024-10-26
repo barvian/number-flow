@@ -3,6 +3,7 @@
 	"type": "module",
 	"devDependencies": {
 		"@changesets/cli": "^2.27.9",
+		"@playwright/test": "^1.48.0",
 		"@svitejs/changesets-changelog-github-compact": "^1.2.0",
 		"playwright": "^1.48.0",
 		"prettier": "^3.3.3",

@@ -2,17 +2,18 @@
 import '@/assets/main.css'
 import preview from '@/assets/preview.png'
 import { getImage } from 'astro:assets'
-import pkg from '/../packages/number-flow/package.json'
-// import FrameworkMenu from '@/components/FrameworkMenu'
+// import pkg from '/../packages/number-flow/package.json'
+import FrameworkMenu from '@/components/FrameworkMenu'
 import Link from '@/components/Link.astro'
 import Nav from '@/components/Nav.astro'
 // import { AstroFont } from 'astro-font'
 // import * as path from 'node:path'
 import { ViewTransitions } from 'astro:transitions'
 import { isActive } from '@/lib/url'
-import { getFramework } from '@/lib/framework'
+import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
 const frameworkId = getFramework(Astro.params)
+const framework = frameworkId && FRAMEWORKS[frameworkId]
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
 
@@ -53,7 +54,9 @@ const app = {
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta property="twitter:image" content={image} />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+		<title>
+			{title.replaceAll('{{name}}', 'NumberFlow' + (framework ? ' for ' + framework.name : ''))}
+		</title>
 		<!-- <AstroFont
 			config={[
 				{
@@ -82,34 +85,32 @@ const app = {
 
 		<ViewTransitions />
 	</head>
-	<body class="~pt-12/28 ~pb-40/56">
-		<div class="container whitespace-nowrap text-center">
+	<body class="~pt-12/28 ~pb-40/52">
+		<div class="container inline-flex items-baseline justify-center whitespace-nowrap text-center">
 			{
 				isActive('/', Astro.url) ? (
 					<h1 class="font-medium">
-						<span class="inline-block">NumberFlow</span>
-						<span class="text-muted text-sm font-medium">v{pkg.version}</span>
+						<Link className="font-medium" href="/">
+							NumberFlow
+						</Link>
+						{/* <span class="inline-block rounded-sm border px-1 py-0.5 align-top text-[10px] font-medium"> */}
+						{/* <span class="text-muted"> */}
+						{/* v{pkg.version} */}
+						{/* </span> */}
 					</h1>
 				) : (
-					<Link className="inline-block font-medium" href="/">
+					<Link className="font-medium" href="/">
 						NumberFlow
 					</Link>
 				)
 			}
 			{
-				/*
 				frameworkId && (
 					<>
-						&nbsp;for
-						<FrameworkMenu
-							className="ml-0 relative top-[.1875rem]"
-							url={Astro.url}
-							value={frameworkId}
-							client:load
-						/>
+						&nbsp;<span class="text-muted">for</span>&nbsp;
+						<FrameworkMenu className="-ml-2" url={Astro.url} value={frameworkId} client:load />
 					</>
 				)
-			 */
 			}
 		</div>
 		<Nav />

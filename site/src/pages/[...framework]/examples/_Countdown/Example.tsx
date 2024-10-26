@@ -24,8 +24,6 @@ export default function Countdown({ active = true }: Props) {
 	const minutes = Math.floor((timeLeft % 3600) / 60)
 	const seconds = timeLeft % 60
 
-	console.log(`${hours}:${minutes}:${seconds}`)
-
 	return (
 		<div
 			style={{ fontVariantNumeric: 'tabular-nums', '--number-flow-char-height': '0.85em' }}

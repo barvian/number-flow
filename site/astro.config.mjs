@@ -4,8 +4,8 @@ import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
 import shikiTheme from './highlighter-theme.json'
-// @ts-expect-error missing types
-import sectionize from './remark-sectionize'
+
+import vue from '@astrojs/vue'
 
 // https://astro.build/config
 export default defineConfig({
@@ -13,8 +13,7 @@ export default defineConfig({
 	markdown: {
 		shikiConfig: {
 			theme: shikiTheme
-		},
-		remarkPlugins: [sectionize]
+		}
 	},
 	vite: {
 		ssr: {
@@ -39,7 +38,15 @@ export default defineConfig({
 					addWatchFile(new URL('./highlighter-theme.json', config.root))
 				}
 			}
-		}
+		},
+		vue({
+			template: {
+				compilerOptions: {
+					// isCustomElement: (tag) => tag === 'number-flow'
+				}
+			}
+			// ...
+		})
 	],
 	output: 'hybrid',
 	adapter: vercel({
