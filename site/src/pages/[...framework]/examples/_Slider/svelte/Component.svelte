@@ -8,7 +8,7 @@
 <div class="flex items-center gap-6">
 	<Slider.Root
 		{...props}
-		class="relative flex h-5 w-[200px] touch-none select-none items-center"
+		class="relative flex h-5 w-[10rem] touch-none select-none items-center"
 		bind:value
 		let:thumbs
 	>
@@ -23,10 +23,11 @@
 		{/each}
 	</Slider.Root>
 	{#if value[0] != null}
-		<div class="w-12 shrink-0">
+		<div class="w-8 shrink-0 text-center">
 			<NumberFlow
 				willChange
 				value={value[0]}
+				aria-hidden
 				continuous
 				opacityTiming={{
 					duration: 250,
