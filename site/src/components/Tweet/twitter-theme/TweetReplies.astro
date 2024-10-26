@@ -1,23 +1,23 @@
 ---
-import { type EnrichedTweet, formatNumber } from "../utils.js";
-import s from "./tweet-replies.module.css";
+import { type EnrichedTweet, formatNumber } from '../utils.js'
+import s from './tweet-replies.module.css'
 
 interface Props {
-  tweet: EnrichedTweet;
+	tweet: EnrichedTweet
 }
-const { tweet } = Astro.props;
+const { tweet } = Astro.props
 ---
 
 <div class={s.replies}>
-  <a class={s.link} href={tweet.url} target="_blank" rel="noopener noreferrer">
-    <span class={s.text}>
-      {
-        tweet.conversation_count === 0
-          ? "Read more on Twitter"
-          : tweet.conversation_count === 1
-          ? `Read ${formatNumber(tweet.conversation_count)} reply`
-          : `Read ${formatNumber(tweet.conversation_count)} replies`
-      }
-    </span>
-  </a>
+	<a class={s.link} href={tweet.url} target="_blank" rel="noopener noreferrer">
+		<span class={s.text}>
+			{
+				tweet.conversation_count === 0
+					? 'Read more on Twitter'
+					: tweet.conversation_count === 1
+						? `Read ${formatNumber(tweet.conversation_count)} reply`
+						: `Read ${formatNumber(tweet.conversation_count)} replies`
+			}
+		</span>
+	</a>
 </div>
