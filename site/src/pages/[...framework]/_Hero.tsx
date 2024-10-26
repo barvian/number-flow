@@ -44,7 +44,7 @@ const FORMATS = [
 	}
 ] as Format[]
 
-export default function Hero() {
+export default function Hero({ sandbox }: { sandbox: string }) {
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
 	const [format, cycleFormat] = useCycle(FORMATS)
@@ -106,11 +106,7 @@ export default function Hero() {
 					</svg>
 					Shuffle
 				</button>
-				<a
-					href="https://codesandbox.io/p/sandbox/r47dcw"
-					target="_blank"
-					className="btn btn-secondary"
-				>
+				<a href={sandbox} target="_blank" className="btn btn-secondary">
 					Open sandbox
 					<ArrowUpRight className="size-4" />
 				</a>

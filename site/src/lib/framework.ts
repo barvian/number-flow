@@ -1,5 +1,6 @@
 export type FrameworkData = {
 	name: string | undefined
+	sandbox: string
 	lightColor: string
 	darkColor: string
 }
@@ -7,11 +8,13 @@ export type FrameworkData = {
 export const FRAMEWORKS = {
 	react: {
 		name: 'React',
+		sandbox: 'https://codesandbox.io/p/sandbox/r47dcw',
 		lightColor: '#0A7EA4',
 		darkColor: '#58C4DC'
 	},
 	vue: {
 		name: 'Vue',
+		sandbox: 'https://codesandbox.io/p/devbox/number-flow-vue-7t7y6y',
 		lightColor: '#42B883',
 		darkColor: '#42B883'
 	}

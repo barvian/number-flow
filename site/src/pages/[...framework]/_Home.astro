@@ -3,17 +3,20 @@ import DocsLayout from '@/layouts/Docs.astro'
 import type { MDXLayoutProps } from 'astro'
 import Hero from './_Hero'
 import Link from '@/components/Link.astro'
+import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
 type Props = MDXLayoutProps<{
 	title: string
 	description: string
 }>
 
+const { sandbox } = FRAMEWORKS[getFramework(Astro.params)!]
+
 const { frontmatter } = Astro.props
 ---
 
 <DocsLayout title={frontmatter.title} description={frontmatter.description}>
-	<Hero transition:persist="home-hero" client:load slot="hero" />
+	<Hero transition:persist="home-hero" client:load {sandbox} slot="hero" />
 	<slot />
 	<footer
 		slot="footer"

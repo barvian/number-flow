@@ -2,11 +2,14 @@
 import DocsLayout from '@/layouts/Docs.astro'
 import type { MDXLayoutProps } from 'astro'
 import { ArrowUpRight } from 'lucide-react'
+import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
 type Props = MDXLayoutProps<{
 	title: string
 	description: string
 }>
+
+const { sandbox } = FRAMEWORKS[getFramework(Astro.params)!]
 
 const { frontmatter } = Astro.props
 ---
@@ -18,7 +21,7 @@ const { frontmatter } = Astro.props
 			<p>{frontmatter.description}</p>
 		</div>
 		<div class="~mt-6/8 flex w-full flex-wrap items-stretch justify-center gap-3">
-			<a href="https://codesandbox.io/p/sandbox/r47dcw" target="_blank" class="btn btn-primary">
+			<a href={sandbox} target="_blank" class="btn btn-primary">
 				Open sandbox
 				<ArrowUpRight className="size-4" />
 			</a>
