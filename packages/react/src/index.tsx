@@ -10,27 +10,29 @@ import {
 	type PartitionedParts,
 	NumberFlowLite,
 	prefersReducedMotion,
-	canAnimate as _canAnimate
+	canAnimate as _canAnimate,
+	define
 } from 'number-flow'
 export type { Value, Format, Trend } from 'number-flow'
 
-const isReact19 = React.version.startsWith('19.')
+const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
+const isReact19 = REACT_MAJOR >= 19
 
 // Can't wait to not have to do this in React 19:
 const OBSERVED_ATTRIBUTES = ['parts'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
-export class NumberFlowElement extends NumberFlowLite {
-	static observedAttributes = OBSERVED_ATTRIBUTES
+export class NumberFlowReact extends NumberFlowLite {
+	static observedAttributes = isReact19 ? [] : OBSERVED_ATTRIBUTES
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
 		this[attr] = JSON.parse(newValue)
 	}
 }
 
-NumberFlowElement.define()
+define('number-flow-react', NumberFlowReact)
 
 type NonPartsProps = Omit<Props, 'manual'>
 
-type BaseProps = React.HTMLAttributes<NumberFlowElement> &
+type BaseProps = React.HTMLAttributes<NumberFlowReact> &
 	Partial<NonPartsProps> & {
 		isolate?: boolean
 		willChange?: boolean
@@ -39,7 +41,7 @@ type BaseProps = React.HTMLAttributes<NumberFlowElement> &
 	}
 
 type NumberFlowImplProps = BaseProps & {
-	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
+	innerRef: React.MutableRefObject<NumberFlowReact | undefined>
 	parts: PartitionedParts
 }
 
@@ -146,9 +148,9 @@ class NumberFlowImpl extends React.Component<
 		if (snapshot) this.#el?.didUpdate()
 	}
 
-	#el?: NumberFlowElement
+	#el?: NumberFlowReact
 
-	handleRef(el: NumberFlowElement) {
+	handleRef(el: NumberFlowReact) {
 		if (this.props.innerRef) this.props.innerRef.current = el
 		this.#el = el
 	}
@@ -158,7 +160,7 @@ class NumberFlowImpl extends React.Component<
 
 		return (
 			// @ts-expect-error missing types
-			<number-flow
+			<number-flow-react
 				ref={this.handleRef}
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:
@@ -178,12 +180,12 @@ export type NumberFlowProps = BaseProps & {
 	format?: Format
 }
 
-const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
+const NumberFlow = React.forwardRef<NumberFlowReact, NumberFlowProps>(function NumberFlow(
 	{ value, locales, format, ...props },
 	_ref
 ) {
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const ref = React.useRef<NumberFlowElement>()
+	const ref = React.useRef<NumberFlowReact>()
 
 	const localesString = React.useMemo(() => (locales ? JSON.stringify(locales) : ''), [locales])
 	const formatString = React.useMemo(() => (format ? JSON.stringify(format) : ''), [format])

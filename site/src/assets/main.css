@@ -25,7 +25,8 @@
 		@apply [--link-underline-opacity:20%] dark:[--link-underline-opacity:35%];
 	}
 
-	number-flow {
+	number-flow-lite,
+	number-flow-react {
 		@apply font-mac-ui;
 	}
 }

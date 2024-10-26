@@ -36,7 +36,7 @@
 	$: parts = partitionParts(value, formatter)
 </script>
 
-<number-flow
+<number-flow-lite
 	bind:this={el}
 	{...$$restProps}
 	data-will-change={willChange ? '' : undefined}
@@ -45,4 +45,4 @@
 	{parts}
 >
 	{@html renderFlow({ formatted: parts.formatted, willChange })}
-</number-flow>
+</number-flow-lite>

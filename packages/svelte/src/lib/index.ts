@@ -1,13 +1,14 @@
 import {
 	NumberFlowLite,
 	canAnimate as _canAnimate,
-	prefersReducedMotion as _prefersReducedMotion
+	prefersReducedMotion as _prefersReducedMotion,
+	define
 } from 'number-flow'
 import { onMount } from 'svelte'
 import { derived, readable } from 'svelte/store'
 export type { Value, Format, Trend, NumberFlowLite } from 'number-flow'
 
-NumberFlowLite.define()
+define('number-flow-lite', NumberFlowLite)
 
 export { default } from './NumberFlow.svelte'
 

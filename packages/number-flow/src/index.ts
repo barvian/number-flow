@@ -18,8 +18,8 @@ import styles, {
 	widthDeltaVar,
 	deltaVar
 } from './styles'
-import { BROWSER } from './util/env'
 import { max } from './util/math'
+export { define } from './util/dom'
 
 export { prefersReducedMotion } from './styles'
 export { render, type RenderProps } from './ssr'
@@ -65,19 +65,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		trend: true,
 		continuous: false,
 		respectMotionPreference: true
-	}
-
-	static define() {
-		if (!BROWSER) return
-		const RegisteredElement = customElements.get('number-flow')
-		if (
-			RegisteredElement &&
-			!(RegisteredElement === this || RegisteredElement.prototype instanceof this)
-		) {
-			console.error('An element has already been defined under the name `number-flow`.')
-		} else if (!RegisteredElement) {
-			customElements.define('number-flow', this)
-		}
 	}
 
 	// Kinda gross but can't do e.g. Object.assign in constructor because TypeScript
