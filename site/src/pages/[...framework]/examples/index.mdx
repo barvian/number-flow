@@ -6,8 +6,7 @@ description: 'Official templates to get you started.'
 export { getStaticPaths } from '@/lib/framework'
 import { DemoTitle } from '@/components/Demo'
 import Activity from './_Activity/index.astro'
-import Slider from './_Slider'
-import SliderCode from './_Slider/Example?raw'
+import Slider from './_Slider/index.astro'
 import Input from './_Input'
 import InputCode from './_Input/Example?raw'
 // import Countdown from './_Countdown'
@@ -34,9 +33,7 @@ export const components = {a: Link, pre: Pre}
 
 <Heading value="Slider" />
 
-<Slider client:visible>
-<Code code={SliderCode} lang="tsx" />
-</Slider>
+<Slider />
 
 {/*
 ## Countdown
