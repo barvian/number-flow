@@ -14,16 +14,6 @@
 	export let value: Value
 	export let willChange = false
 
-	// Svelte only supports setters, not properties, so we can't use $$restProps
-	// because we have to remap them::
-	export let trend = NumberFlowLite.defaultProps.trend
-	export let continuous = NumberFlowLite.defaultProps.continuous
-	export let animated = NumberFlowLite.defaultProps.animated
-	export let transformTiming = NumberFlowLite.defaultProps.transformTiming
-	export let spinTiming = NumberFlowLite.defaultProps.spinTiming
-	export let opacityTiming = NumberFlowLite.defaultProps.opacityTiming
-	export let respectMotionPreference = NumberFlowLite.defaultProps.respectMotionPreference
-
 	type $$Props = HTMLAttributes<HTMLElement> &
 		Partial<NumberFlowProps> & {
 			el?: NumberFlowLite
@@ -44,19 +34,19 @@
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 	$: formatter = new Intl.NumberFormat(locales, format)
 	$: parts = partitionParts(value, formatter)
+
+	// Svelte only supports setters, not properties, so remap them:
+	$: rest = Object.fromEntries(
+		Object.entries($$restProps).map(([key, value]) =>
+			key in NumberFlowLite.defaultProps ? [`__${key}`, value] : [key, value]
+		)
+	)
 </script>
 
 <number-flow-svelte
 	bind:this={el}
-	{...$$restProps}
+	{...rest}
 	data-will-change={willChange ? '' : undefined}
-	__trend={trend}
-	__continuous={continuous}
-	__animated={animated}
-	__transformTiming={transformTiming}
-	__spinTiming={spinTiming}
-	__opacityTiming={opacityTiming}
-	__respectMotionPreference={respectMotionPreference}
 	on:animationsstart
 	on:animationsfinish
 	{parts}
