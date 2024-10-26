@@ -8,18 +8,16 @@
 	} from '../stores'
 </script>
 
-<template>
-	<Component
-		class="~px-0/16"
-		likes={$likes.count}
-		onlike={likes.toggle}
-		liked={$likes.hasIncremented}
-		reposts={$reposts.count}
-		onrepost={reposts.toggle}
-		reposted={$reposts.hasIncremented}
-		bookmarks={$bookmarks.count}
-		onbookmark={bookmarks.toggle}
-		bookmarked={$bookmarks.hasIncremented}
-		views={$views.count}
-	/>
-</template>
+<Component
+	class="~px-0/16"
+	likes={$likes.count}
+	onlike={likes.toggle}
+	liked={$likes.hasIncremented}
+	reposts={$reposts.count}
+	onrepost={reposts.toggle}
+	reposted={$reposts.hasIncremented}
+	bookmarks={$bookmarks.count}
+	onbookmark={bookmarks.toggle}
+	bookmarked={$bookmarks.hasIncremented}
+	views={$views.count}
+/>

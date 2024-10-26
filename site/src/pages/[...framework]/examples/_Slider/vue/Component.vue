@@ -12,14 +12,13 @@ import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'radix-vue'
 			<SliderRange class="absolute h-full rounded-full bg-black dark:bg-white" />
 		</SliderTrack>
 		<SliderThumb
-			className="relative block h-5 w-5 rounded-[1rem] bg-white shadow-md ring ring-black/10"
+			class="relative block h-5 w-5 rounded-[1rem] bg-white shadow-md ring ring-black/10"
 			aria-label="Volume"
 		>
 			<NumberFlow
 				v-if="modelValue[0] != null"
 				willChange
 				:value="modelValue[0]"
-				isolate
 				continuous
 				:opacityTiming="{
 					duration: 250,

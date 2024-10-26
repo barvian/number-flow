@@ -9,7 +9,7 @@ import React from './react'
 import react from './react/Component.tsx?raw'
 import Vue from './vue/index.vue'
 import vue from './vue/Component.vue?raw'
-import Svelte from './vue/index.vue'
+import Svelte from './svelte/index.svelte'
 import svelte from './svelte/Component.svelte?raw'
 ---
 
@@ -18,7 +18,7 @@ import svelte from './svelte/Component.svelte?raw'
 	<Match>
 		<!-- Wrap in fragments to avoid extraneous prop warnings (probably an Astro bug?): -->
 		<Fragment slot="react"><React client:load /></Fragment>
-		<Fragment slot="vue"><Svelte client:load /></Fragment>
+		<Fragment slot="vue"><Vue client:load /></Fragment>
 		<Fragment slot="svelte"><Svelte client:load /></Fragment>
 	</Match>
 	<Match slot="code">
