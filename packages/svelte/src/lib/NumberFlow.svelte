@@ -14,6 +14,16 @@
 	export let value: Value
 	export let willChange = false
 
+	// Svelte only supports setters, not properties, so we can't use $$restProps
+	// because we have to remap them::
+	export let trend = NumberFlowLite.defaultProps.trend
+	export let continuous = NumberFlowLite.defaultProps.continuous
+	export let animated = NumberFlowLite.defaultProps.animated
+	export let transformTiming = NumberFlowLite.defaultProps.transformTiming
+	export let spinTiming = NumberFlowLite.defaultProps.spinTiming
+	export let opacityTiming = NumberFlowLite.defaultProps.opacityTiming
+	export let respectMotionPreference = NumberFlowLite.defaultProps.respectMotionPreference
+
 	type $$Props = HTMLAttributes<HTMLElement> &
 		Partial<NumberFlowProps> & {
 			el?: NumberFlowLite
@@ -36,13 +46,20 @@
 	$: parts = partitionParts(value, formatter)
 </script>
 
-<number-flow-lite
+<number-flow-svelte
 	bind:this={el}
 	{...$$restProps}
 	data-will-change={willChange ? '' : undefined}
+	__trend={trend}
+	__continuous={continuous}
+	__animated={animated}
+	__transformTiming={transformTiming}
+	__spinTiming={spinTiming}
+	__opacityTiming={opacityTiming}
+	__respectMotionPreference={respectMotionPreference}
 	on:animationsstart
 	on:animationsfinish
 	{parts}
 >
 	{@html renderFlow({ formatted: parts.formatted, willChange })}
-</number-flow-lite>
+</number-flow-svelte>

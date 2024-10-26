@@ -2,13 +2,26 @@ import {
 	NumberFlowLite,
 	canAnimate as _canAnimate,
 	prefersReducedMotion as _prefersReducedMotion,
-	define
+	define,
+	type Props
 } from 'number-flow'
 import { onMount } from 'svelte'
 import { derived, readable } from 'svelte/store'
-export type { Value, Format, Trend, NumberFlowLite } from 'number-flow'
+export type { Value, Format, Trend } from 'number-flow'
 
-define('number-flow-lite', NumberFlowLite)
+// Svelte only supports setters, not properties:
+export class NumberFlowSvelte extends NumberFlowLite {}
+Object.keys(NumberFlowLite.defaultProps).forEach((key) => {
+	Object.defineProperty(NumberFlowSvelte.prototype, `__${key}`, {
+		set(value) {
+			this[key] = value
+		},
+		enumerable: true,
+		configurable: true
+	})
+})
+
+define('number-flow-svelte', NumberFlowSvelte)
 
 export { default } from './NumberFlow.svelte'
 
