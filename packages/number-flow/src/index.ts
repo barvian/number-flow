@@ -43,7 +43,6 @@ export interface Props {
 	spinTiming: EffectTiming | undefined
 	opacityTiming: EffectTiming
 	animated: boolean
-	manual: boolean
 	respectMotionPreference: boolean
 	trend: RawTrend
 	continuous: boolean
@@ -61,7 +60,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		spinTiming: undefined,
 		opacityTiming: { duration: 450, easing: 'ease-out' },
 		animated: true,
-		manual: false,
 		trend: true,
 		continuous: false,
 		respectMotionPreference: true
@@ -72,7 +70,6 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	transformTiming = (this.constructor as typeof NumberFlowLite).defaultProps.transformTiming
 	spinTiming = (this.constructor as typeof NumberFlowLite).defaultProps.spinTiming
 	opacityTiming = (this.constructor as typeof NumberFlowLite).defaultProps.opacityTiming
-	manual = (this.constructor as typeof NumberFlowLite).defaultProps.manual
 	respectMotionPreference = (this.constructor as typeof NumberFlowLite).defaultProps
 		.respectMotionPreference
 	trend = (this.constructor as typeof NumberFlowLite).defaultProps.trend
@@ -110,6 +107,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	}
 
 	#parts?: PartitionedParts
+
+	manual = false
 
 	set parts(parts: PartitionedParts | undefined) {
 		if (parts == null) {

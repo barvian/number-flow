@@ -30,10 +30,8 @@ export class NumberFlowReact extends NumberFlowLite {
 
 define('number-flow-react', NumberFlowReact)
 
-type NonPartsProps = Omit<Props, 'manual'>
-
 type BaseProps = React.HTMLAttributes<NumberFlowReact> &
-	Partial<NonPartsProps> & {
+	Partial<Props> & {
 		isolate?: boolean
 		willChange?: boolean
 		onAnimationsStart?: (e: CustomEvent<undefined>) => void
@@ -53,9 +51,7 @@ const formatters: Record<string, Intl.NumberFormat> = {}
 // Tiny workaround to support React 19 until it's released:
 const serializeParts = isReact19 ? (p: PartitionedParts) => p : JSON.stringify
 
-function splitProps<T extends Record<string, any>>(
-	props: T
-): [NonPartsProps, Omit<T, keyof NonPartsProps>] {
+function splitProps<T extends Record<string, any>>(props: T): [Props, Omit<T, keyof Props>] {
 	const {
 		transformTiming,
 		spinTiming,
