@@ -7,8 +7,7 @@ export { getStaticPaths } from '@/lib/framework'
 import { DemoTitle } from '@/components/Demo'
 import Activity from './_Activity/index.astro'
 import Slider from './_Slider/index.astro'
-import Input from './_Input'
-import InputCode from './_Input/Example?raw'
+import Input from './_Input/index.astro'
 // import Countdown from './_Countdown'
 // import CountdownCode from './_Countdown/Example?raw'
 // import ColoredTrends from './_ColoredTrends'
@@ -23,9 +22,7 @@ export const components = {a: Link, pre: Pre}
 
 <Heading class="sr-only" value="Input" />
 
-<Input client:visible rootClassName="!mt-0">
-<Code code={InputCode} lang="tsx" />
-</Input>
+<Input rootClassName="!mt-0" />
 
 <Heading value="Activity" />
 

@@ -1,0 +1,26 @@
+---
+export { type Props } from '@/components/Demo'
+
+import Demo from '@/components/Demo'
+import Match from '@/components/Match.astro'
+import Code from '@/components/Code.astro'
+
+// Can't glob these b/c Astro needs the import :/
+import React from './react'
+import react from './react/Component.tsx?raw'
+import Vue from './vue/index.vue'
+import vue from './vue/Component.vue?raw'
+---
+
+<Demo {...Astro.props} className="font-mac-ui" client:visible>
+	<!-- @ts-ignore too complex -->
+	<Match>
+		<!-- Wrap in fragments to avoid extraneous prop warnings (probably an Astro bug?): -->
+		<Fragment slot="react"><React client:load /></Fragment>
+		<Fragment slot="vue"><Vue client:load /></Fragment>
+	</Match>
+	<Match slot="code">
+		<Code code={react} slot="react" lang="tsx" />
+		<Code code={vue} slot="vue" lang="vue" />
+	</Match>
+</Demo>
