@@ -21,16 +21,16 @@ const isReact19 = REACT_MAJOR >= 19
 // Can't wait to not have to do this in React 19:
 const OBSERVED_ATTRIBUTES = ['parts'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
-export class NumberFlowReact extends NumberFlowLite {
+export class NumberFlowElement extends NumberFlowLite {
 	static observedAttributes = isReact19 ? [] : OBSERVED_ATTRIBUTES
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
 		this[attr] = JSON.parse(newValue)
 	}
 }
 
-define('number-flow-react', NumberFlowReact)
+define('number-flow-react', NumberFlowElement)
 
-type BaseProps = React.HTMLAttributes<NumberFlowReact> &
+type BaseProps = React.HTMLAttributes<NumberFlowElement> &
 	Partial<Props> & {
 		isolate?: boolean
 		willChange?: boolean
@@ -39,7 +39,7 @@ type BaseProps = React.HTMLAttributes<NumberFlowReact> &
 	}
 
 type NumberFlowImplProps = BaseProps & {
-	innerRef: React.MutableRefObject<NumberFlowReact | undefined>
+	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
 	parts: PartitionedParts
 }
 
@@ -144,9 +144,9 @@ class NumberFlowImpl extends React.Component<
 		if (snapshot) this.#el?.didUpdate()
 	}
 
-	#el?: NumberFlowReact
+	#el?: NumberFlowElement
 
-	handleRef(el: NumberFlowReact) {
+	handleRef(el: NumberFlowElement) {
 		if (this.props.innerRef) this.props.innerRef.current = el
 		this.#el = el
 	}
@@ -176,12 +176,12 @@ export type NumberFlowProps = BaseProps & {
 	format?: Format
 }
 
-const NumberFlow = React.forwardRef<NumberFlowReact, NumberFlowProps>(function NumberFlow(
+const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
 	{ value, locales, format, ...props },
 	_ref
 ) {
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const ref = React.useRef<NumberFlowReact>()
+	const ref = React.useRef<NumberFlowElement>()
 
 	const localesString = React.useMemo(() => (locales ? JSON.stringify(locales) : ''), [locales])
 	const formatString = React.useMemo(() => (format ? JSON.stringify(format) : ''), [format])

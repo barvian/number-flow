@@ -2,45 +2,29 @@
 	import NumberFlow, { type Format } from '@number-flow/svelte'
 	import clsx from 'clsx/lite'
 	import { Bookmark, ChartNoAxesColumn, Heart, Repeat, Share } from 'lucide-svelte'
-	import type { HTMLAttributes } from 'svelte/elements'
 
-	type Props = HTMLAttributes<HTMLDivElement> & {
-		likes: number
-		reposts: number
-		views: number
-		bookmarks: number
-		liked: boolean
-		reposted: boolean
-		bookmarked: boolean
-		onlike: () => void
-		onrepost: () => void
-		onbookmark: () => void
-	}
+	let cls = ''
+	export { cls as class }
+
+	export let likes: number
+	export let reposts: number
+	export let views: number
+	export let bookmarks: number
+	export let liked: boolean
+	export let reposted: boolean
+	export let bookmarked: boolean
+	export let onlike: () => void
+	export let onrepost: () => void
+	export let onbookmark: () => void
 
 	const format: Format = {
 		notation: 'compact',
 		compactDisplay: 'short',
 		roundingMode: 'trunc'
 	}
-
-	const {
-		likes,
-		reposts,
-		views,
-		bookmarks,
-		liked,
-		reposted,
-		bookmarked,
-		onlike,
-		onrepost,
-		onbookmark,
-		class: cls,
-		...props
-	}: Props = $props()
 </script>
 
 <div
-	{...props}
 	class={clsx(
 		cls,
 		'~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
@@ -54,7 +38,7 @@
 		<button
 			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-emerald-500"
 			class:text-emerald-500={reposted}
-			onclick={onrepost}
+			on:click={onrepost}
 		>
 			<div
 				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-emerald-500/10"
@@ -71,7 +55,7 @@
 		<button
 			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-pink-500"
 			class:text-pink-500={liked}
-			onclick={onlike}
+			on:click={onlike}
 		>
 			<div
 				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-pink-500/10"
@@ -91,7 +75,7 @@
 		<button
 			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-blue-500"
 			class:text-blue-500={bookmarked}
-			onclick={onbookmark}
+			on:click={onbookmark}
 		>
 			<div
 				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-blue-500/10"

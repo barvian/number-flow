@@ -1,23 +1,21 @@
 <script lang="ts">
-	import NumberFlow from '@number-flow/svelte'
+	import NumberFlow, { NumberFlowElement } from '@number-flow/svelte'
 	import clsx from 'clsx/lite'
 	import { Minus, Plus } from 'lucide-svelte'
 
-	let {
-		min = 0,
-		value = $bindable(0),
-		max = 99
-	}: { min?: number; value?: number; max?: number } = $props()
+	export let min = 0
+	export let value = 0
+	export let max = 99
 	const defaultValue = value
 
+	let flow: NumberFlowElement
 	let input: HTMLInputElement
 
-	let animated = $state(true)
 	// Hide the caret during transitions so you can't see it shifting around:
-	let showCaret = $state(true)
+	let showCaret = true
 
 	function handleInput() {
-		animated = false
+		flow.animated = false // addresses race condition with updating
 		let next = value
 		if (input.value === '') {
 			next = defaultValue
@@ -31,7 +29,7 @@
 	}
 
 	function handlePointerDown(event: PointerEvent, diff: number) {
-		animated = true
+		flow.animated = true
 		if (event.pointerType === 'mouse') {
 			event?.preventDefault()
 			input.focus()
@@ -49,7 +47,7 @@
 		tabindex={-1}
 		class="flex items-center pl-[.5em] pr-[.325em]"
 		disabled={min != null && value <= min}
-		onpointerdown={(event) => handlePointerDown(event, -1)}
+		on:pointerdown={(event) => handlePointerDown(event, -1)}
 	>
 		<Minus class="size-4" absoluteStrokeWidth strokeWidth="3.5" />
 	</button>
@@ -70,13 +68,13 @@
 			inputmode="numeric"
 			{max}
 			bind:value
-			oninput={handleInput}
+			on:input={handleInput}
 		/>
 		<NumberFlow
+			bind:el={flow}
 			{value}
 			format={{ useGrouping: false }}
 			aria-hidden
-			{animated}
 			on:animationsstart={() => (showCaret = false)}
 			on:animationsfinish={() => (showCaret = true)}
 			class="pointer-events-none"
@@ -88,7 +86,7 @@
 		tabindex="-1"
 		class="flex items-center pl-[.325em] pr-[.5em]"
 		disabled={max != null && value >= max}
-		onpointerdown={(event) => handlePointerDown(event, 1)}
+		on:pointerdown={(event) => handlePointerDown(event, 1)}
 	>
 		<Plus class="size-4" absoluteStrokeWidth strokeWidth="3.5" />
 	</button>
