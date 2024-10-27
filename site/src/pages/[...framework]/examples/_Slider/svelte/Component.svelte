@@ -2,14 +2,12 @@
 	import { Slider, type SliderProps } from 'bits-ui'
 	import NumberFlow from '@number-flow/svelte'
 
-	type $$Props = SliderProps
-
-	export let value = [0]
+	let { value = $bindable([0]), ...props }: SliderProps = $props()
 </script>
 
 <div class="flex items-center gap-6">
 	<Slider.Root
-		{...$$restProps}
+		{...props}
 		class="relative flex h-5 w-[10rem] touch-none select-none items-center"
 		bind:value
 		let:thumbs
