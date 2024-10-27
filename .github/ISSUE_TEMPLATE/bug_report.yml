@@ -1,5 +1,5 @@
 name: '🐛 Bug report'
-description: Report a reproducible bug or regression
+description: Report a reproducible bug or regression.
 body:
   - type: markdown
     attributes:
