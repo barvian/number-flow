@@ -6,7 +6,7 @@ body:
       value: |
         Thank you for reporting an issue :pray:.
 
-        This issue tracker is for reporting reproducible bugs or regression's found in [NumberFlow](https://github.com/barvian/number-flow)
+        This issue tracker is for reporting reproducible bugs or regressions found in [NumberFlow](https://github.com/barvian/number-flow).
         If you have a question about how to achieve or implement something and are struggling, please post a question
         inside of NumberFlow's [Discussions tab](https://github.com/barvian/number-flow/discussions) instead of filing an issue.
 
@@ -57,7 +57,7 @@ body:
             - Links to starter sandboxes can be found on the [site](https://number-flow.barvian.me/) in the header
           - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
       placeholder: |
-        e.g. Code Sandbox, Stackblitz, etc.
+        https://codesandbox.io/p/...
     validations:
       required: false
 
