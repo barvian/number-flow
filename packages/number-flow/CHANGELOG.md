@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.3.5
+
+### Patch Changes
+
+- Rename number-flow element to avoid conflicts between wrappers ([`19abcf8`](https://github.com/barvian/number-flow/commit/19abcf88f7d7bd34332f5e1c42e647a0e81725ac))
+
 ## 0.3.4
 
 ### Patch Changes
