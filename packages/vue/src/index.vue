@@ -43,8 +43,8 @@ defineOptions({
 
 // Technically the original animationsstart still emits but ah well:
 const emit = defineEmits<{
-	(e: 'animationsStart'): void
-	(e: 'animationsFinish'): void
+	(e: 'animationsstart'): void
+	(e: 'animationsfinish'): void
 }>()
 
 // You're supposed to cache these between uses:
@@ -85,8 +85,8 @@ const parts = computed(() => partitionParts(value, formatter.value))
 		:respectMotionPreference
 		:data-will-change="willChange ? '' : undefined"
 		v-html="render({ formatted: parts.formatted, willChange })"
-		@animationsstart="emit('animationsStart')"
-		@animationsfinish="emit('animationsFinish')"
+		@animationsstart="emit('animationsstart')"
+		@animationsfinish="emit('animationsfinish')"
 		:parts
 	/>
 </template>

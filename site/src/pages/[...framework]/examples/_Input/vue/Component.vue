@@ -80,8 +80,8 @@ function handlePointerDown(event: PointerEvent, diff: number) {
 				:format="{ useGrouping: false }"
 				aria-hidden
 				:animated
-				@animations-start="showCaret = false"
-				@animations-finish="showCaret = true"
+				@animationsstart="showCaret = false"
+				@animationsfinish="showCaret = true"
 				class="pointer-events-none"
 				willChange
 			/>
