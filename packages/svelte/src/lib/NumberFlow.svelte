@@ -64,18 +64,11 @@
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 	$: formatter = new Intl.NumberFormat(locales, format)
 	$: parts = partitionParts(value, formatter)
-
-	// Svelte only supports setters, not properties, so remap them:
-	$: rest = Object.fromEntries(
-		Object.entries($$restProps).map(([key, value]) =>
-			key in NumberFlowElement.defaultProps ? [`__svelte_${key}`, value] : [key, value]
-		)
-	)
 </script>
 
 <number-flow-svelte
 	bind:this={el}
-	{...rest}
+	{...$$restProps}
 	data-will-change={willChange ? '' : undefined}
 	on:animationsstart
 	on:animationsfinish
