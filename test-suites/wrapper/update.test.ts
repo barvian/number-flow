@@ -3,14 +3,18 @@ import { test, expect } from '@playwright/test'
 test.skip(({ javaScriptEnabled }) => !javaScriptEnabled)
 
 test('updates correctly', async ({ page }) => {
-	// Not sure why this is necessary for Chromium/Safari but I couldn't get it to work without it:
+	// Not sure why this is necessary for Svelte Chromium/Safari but I couldn't get it to work without it:
 	// https://www.reddit.com/r/sveltejs/comments/15m9jch/how_do_you_wait_for_sveltekit_to_be_completely/
 	await page.goto('/', { waitUntil: 'networkidle' })
-	const btn = page.getByRole('button', { name: 'Change' })
-	await btn.click()
-	await expect(page).toHaveScreenshot()
 
-	// Ensure shadow DOM was correctly attached:
-	const digit = await page.getByText('9', { exact: true }).count()
-	await expect(digit).toBe(3)
+	const logs: string[] = []
+	page.on('console', (msg) => logs.push(msg.text()))
+
+	await page.getByRole('button', { name: 'Change and pause' }).click()
+	await expect(page).toHaveScreenshot({ animations: 'allow' })
+
+	await page.getByRole('button', { name: 'Resume' }).click()
+	await expect(page).toHaveScreenshot({ animations: 'allow' })
+
+	expect(logs).toEqual(['start', 'finish'])
 })
