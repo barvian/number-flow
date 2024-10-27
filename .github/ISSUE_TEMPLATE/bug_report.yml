@@ -49,13 +49,11 @@ body:
   - type: input
     id: link
     attributes:
-      label: Your Minimal, Reproducible Example - (Sandbox Highly Recommended)
+      label: Minimal reproduction (highly recommended)
       description: |
-        Please add a link to a minimal reproduction.
-        Note:
-          - Your bug may get fixed much faster if we can run your code and it doesn't have dependencies other than NumberFlow and a framework
-            - Links to starter sandboxes can be found on the [site](https://number-flow.barvian.me/) in the header
-          - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
+        - Your bug may get fixed much faster if we can run your code and it doesn't have dependencies other than NumberFlow and a framework
+          - Links to starter sandboxes can be found in the [site](https://number-flow.barvian.me/) header
+        - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
       placeholder: |
         https://codesandbox.io/p/...
     validations:
@@ -64,11 +62,10 @@ body:
   - type: textarea
     id: screenshots_or_videos
     attributes:
-      label: Screenshots or Videos (Optional)
+      label: Screenshots or videos
       description: |
         If applicable, add screenshots or a video to help explain your problem.
-        For more information on the supported file image/file types and the file size limits, please refer
-        to the following link: https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files
+        For more information on the supported file image/file types and the file size limits, see [GitHub docs](https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files).
       placeholder: |
         You can drag your video or image files inside of this editor ↓
 
