@@ -6,7 +6,7 @@ body:
       value: |
         Thank you for reporting an issue :wave:.
 
-        Before submitting a new bug/issue, please check the [open](https://github.com/barvian/number-flow/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) and [closed](https://github.com/barvian/number-flow/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aclosed) issues to see if a similar one has already been reported.
+        Before filing, please check the [open](https://github.com/barvian/number-flow/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc) and [closed](https://github.com/barvian/number-flow/issues?q=is%3Aissue+sort%3Aupdated-desc+is%3Aclosed) issues to see if a similar one has already been reported.
 
   - type: input
     id: numberflow-version
