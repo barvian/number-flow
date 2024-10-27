@@ -1,5 +1,18 @@
 # @number-flow/react
 
+## 0.3.0
+
+### Minor Changes
+
+- Rename number-flow element to avoid conflicts between wrappers ([`19abcf8`](https://github.com/barvian/number-flow/commit/19abcf88f7d7bd34332f5e1c42e647a0e81725ac))
+
+### Patch Changes
+
+- fix animation handler types ([`7534f2e`](https://github.com/barvian/number-flow/commit/7534f2e35d6e871b1b13a008b8a923c23e1077e6))
+
+- Updated dependencies [[`19abcf8`](https://github.com/barvian/number-flow/commit/19abcf88f7d7bd34332f5e1c42e647a0e81725ac)]:
+  - number-flow@0.3.5
+
 ## 0.2.6
 
 ### Patch Changes
