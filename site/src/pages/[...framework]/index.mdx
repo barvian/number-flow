@@ -19,7 +19,10 @@ import Link from '@/components/Link.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
+{/* We need an empty match for a complicated reason related to async and collecting the TOC headers in order */}
+<Match>
 <Heading class="sr-only" value="Basic usage" />
+</Match>
 
 <div class='xl:pre-first-line:hidden first:*:mt-0'>
 <Match react>
@@ -69,7 +72,9 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 
 ---
 
+<Match>
 <Heading value="Props" />
+</Match>
 
 NumberFlow accepts additional props to customize its transitions:
 
@@ -221,7 +226,9 @@ Triggered when update animations finish.
 
 ---
 
+<Match>
 <Heading value="Styling" />
+</Match>
 
 There's some CSS properties you can use to style the component:
 
@@ -268,7 +275,9 @@ and (optionally) the user is [okay with motion](https://developer.mozilla.org/en
 
 ---
 
+<Match>
 <Heading value="Limitations" />
+</Match>
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
 * Selected text inside the number will not respect color changes from `::selection`, if any.
