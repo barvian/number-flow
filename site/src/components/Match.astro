@@ -12,10 +12,10 @@ type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> &
 		  }
 	)
 
-const { as: _Tag, react, vue, ...props } = Astro.props
+const { as: _Tag, react, vue, svelte, ...props } = Astro.props
 let Tag = _Tag ?? (Object.keys(props).length ? 'div' : Fragment)
 const framework = getFramework(Astro.params)
-const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean'
+const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof svelte !== 'boolean'
 ---
 
 <Tag {...props}
@@ -40,6 +40,15 @@ const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean'
 				<slot name="vue" />
 			) : (
 				(vue || noBool) && <slot />
+			))
+	}{
+		framework === 'svelte' &&
+			(typeof svelte == 'string' ? (
+				svelte
+			) : Astro.slots.has('svelte') ? (
+				<slot name="svelte" />
+			) : (
+				(svelte || noBool) && <slot />
 			))
 	}{
 		/*

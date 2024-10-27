@@ -41,7 +41,8 @@ const app = {
 <html
 	lang="en"
 	data-framework={frameworkId || undefined}
-	class="text-primary min-h-screen scroll-pt-10 overflow-x-hidden bg-white antialiased motion-safe:scroll-smooth dark:bg-zinc-950"
+	class="text-primary min-h-screen scroll-pt-10 overflow-x-hidden bg-white antialiased [--accent:var(--framework-light,theme(colors.blue.500))] motion-safe:scroll-smooth dark:bg-zinc-950 dark:[--accent:var(--framework-dark,theme(colors.blue.500))]"
+	style={{ '--framework-light': framework?.lightColor, '--framework-dark': framework?.darkColor }}
 >
 	<head>
 		<meta charset="UTF-8" />

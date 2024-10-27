@@ -1,90 +1,90 @@
 .actions {
-  display: flex;
-  align-items: center;
-  color: var(--tweet-font-color-secondary);
-  padding-top: 0.25rem;
-  margin-top: 0.25rem;
-  border-top: var(--tweet-border);
-  overflow-wrap: break-word;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+	display: flex;
+	align-items: center;
+	color: var(--tweet-font-color-secondary);
+	padding-top: 0.25rem;
+	margin-top: 0.25rem;
+	border-top: var(--tweet-border);
+	overflow-wrap: break-word;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .like,
 .reply,
 .copy {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  margin-right: 1.25rem;
+	text-decoration: none;
+	color: inherit;
+	display: flex;
+	align-items: center;
+	margin-right: 1.25rem;
 }
 .like:hover,
 .reply:hover,
 .copy:hover {
-  background-color: rgba(0, 0, 0, 0);
+	background-color: rgba(0, 0, 0, 0);
 }
 .like:hover > .likeIconWrapper {
-  background-color: var(--tweet-color-red-primary-hover);
+	background-color: var(--tweet-color-red-primary-hover);
 }
 .like:hover > .likeCount {
-  color: var(--tweet-color-red-primary);
-  text-decoration-line: underline;
+	color: var(--tweet-color-red-primary);
+	text-decoration-line: underline;
 }
 .likeIconWrapper,
 .replyIconWrapper,
 .copyIconWrapper {
-  width: var(--tweet-actions-icon-wrapper-size);
-  height: var(--tweet-actions-icon-wrapper-size);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-left: -0.25rem;
-  border-radius: 9999px;
+	width: var(--tweet-actions-icon-wrapper-size);
+	height: var(--tweet-actions-icon-wrapper-size);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-left: -0.25rem;
+	border-radius: 9999px;
 }
 .likeIcon,
 .replyIcon,
 .copyIcon {
-  height: var(--tweet-actions-icon-size);
-  fill: currentColor;
-  user-select: none;
+	height: var(--tweet-actions-icon-size);
+	fill: currentColor;
+	user-select: none;
 }
 .likeIcon {
-  color: var(--tweet-color-red-primary);
+	color: var(--tweet-color-red-primary);
 }
 .likeCount,
 .replyText,
 .copyText {
-  font-size: var(--tweet-actions-font-size);
-  font-weight: var(--tweet-actions-font-weight);
-  line-height: var(--tweet-actions-line-height);
-  margin-left: 0.25rem;
+	font-size: var(--tweet-actions-font-size);
+	font-weight: var(--tweet-actions-font-weight);
+	line-height: var(--tweet-actions-line-height);
+	margin-left: 0.25rem;
 }
 
 .reply:hover > .replyIconWrapper {
-  background-color: var(--tweet-color-blue-secondary-hover);
+	background-color: var(--tweet-color-blue-secondary-hover);
 }
 .reply:hover > .replyText {
-  color: var(--tweet-color-blue-secondary);
-  text-decoration-line: underline;
+	color: var(--tweet-color-blue-secondary);
+	text-decoration-line: underline;
 }
 .replyIcon {
-  color: var(--tweet-color-blue-primary);
+	color: var(--tweet-color-blue-primary);
 }
 
 .copy {
-  font: inherit;
-  background: none;
-  border: none;
-  cursor: pointer;
+	font: inherit;
+	background: none;
+	border: none;
+	cursor: pointer;
 }
 .copy:hover > .copyIconWrapper {
-  background-color: var(--tweet-color-green-primary-hover);
+	background-color: var(--tweet-color-green-primary-hover);
 }
 .copy:hover .copyIcon {
-  color: var(--tweet-color-green-primary);
+	color: var(--tweet-color-green-primary);
 }
 .copy:hover > .copyText {
-  color: var(--tweet-color-green-primary);
-  text-decoration-line: underline;
+	color: var(--tweet-color-green-primary);
+	text-decoration-line: underline;
 }

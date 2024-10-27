@@ -1,0 +1,29 @@
+test-results
+node_modules
+
+# Output
+.output
+.vercel
+/.svelte-kit
+/build
+/dist
+
+# testing
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

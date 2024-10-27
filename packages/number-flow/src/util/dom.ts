@@ -1,3 +1,5 @@
+import { BROWSER } from './env'
+
 type ExcludeReadonly<T> = {
 	-readonly [K in keyof T as T[K] extends Readonly<any> ? never : K]: T[K]
 }
@@ -32,3 +34,11 @@ export const offset = (el: HTMLElement, justify: Justify) => {
 }
 
 export const visible = (el: HTMLElement) => el.offsetWidth > 0 && el.offsetHeight > 0
+
+// HMR-safe customElements.define
+export const define = (name: string, constructor: CustomElementConstructor) => {
+	if (!BROWSER) return
+	const RegisteredElement = customElements.get(name)
+	if (RegisteredElement === constructor) return
+	return customElements.define(name, constructor)
+}

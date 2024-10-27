@@ -1,12 +1,12 @@
 ---
-import type { EnrichedQuotedTweet } from "../../utils.js";
-import styles from "./quoted-tweet-container.module.css";
+import type { EnrichedQuotedTweet } from '../../utils.js'
+import styles from './quoted-tweet-container.module.css'
 
-type Props = { tweet: EnrichedQuotedTweet };
+type Props = { tweet: EnrichedQuotedTweet }
 ---
 
 <div class={styles.root}>
-  <article class={styles.article}>
-    <slot />
-  </article>
+	<article class={styles.article}>
+		<slot />
+	</article>
 </div>

@@ -8,17 +8,25 @@ import React from './react'
 import react from './react/Component.tsx?raw'
 import Vue from './vue/index.vue'
 import vue from './vue/Component.vue?raw'
+import Svelte from './svelte/index.svelte'
+import svelte from './svelte/Component.svelte?raw'
+
+import clsx from 'clsx/lite'
+import { getFramework } from '@/lib/framework'
+const framework = getFramework(Astro.params)
 ---
 
-<Demo className="pt-12" client:visible>
+<Demo className={clsx(framework !== 'svelte' && 'pt-12')} client:visible>
 	<!-- @ts-ignore too complex -->
 	<Match>
 		<!-- Wrap in fragments to avoid extraneous prop warnings (probably an Astro bug?): -->
 		<Fragment slot="react"><React client:load /></Fragment>
 		<Fragment slot="vue"><Vue client:load /></Fragment>
+		<Fragment slot="svelte"><Svelte client:load /></Fragment>
 	</Match>
 	<Match slot="code">
 		<Code code={react} slot="react" lang="tsx" />
 		<Code code={vue} slot="vue" lang="vue" />
+		<Code code={svelte} slot="svelte" lang="svelte" />
 	</Match>
 </Demo>

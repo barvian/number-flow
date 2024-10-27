@@ -17,12 +17,13 @@ export const FRAMEWORKS = {
 		sandbox: 'https://codesandbox.io/p/devbox/number-flow-vue-7t7y6y',
 		lightColor: '#42B883',
 		darkColor: '#42B883'
+	},
+	svelte: {
+		name: 'Svelte',
+		sandbox: '',
+		lightColor: '#FF3E00',
+		darkColor: '#F96844'
 	}
-	// svelte: {
-	// 	name: 'Svelte',
-	// 	lightColor: '#FF3E00',
-	// 	darkColor: '#F96844'
-	// },
 	// vanilla: {
 	// 	name: 'Vanilla',
 	// 	lightColor: '#F7DF1E',

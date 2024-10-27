@@ -10,32 +10,32 @@ import {
 	type PartitionedParts,
 	NumberFlowLite,
 	prefersReducedMotion,
-	canAnimate as _canAnimate
+	canAnimate as _canAnimate,
+	define
 } from 'number-flow'
 export type { Value, Format, Trend } from 'number-flow'
 
-const isReact19 = React.version.startsWith('19.')
+const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
+const isReact19 = REACT_MAJOR >= 19
 
 // Can't wait to not have to do this in React 19:
 const OBSERVED_ATTRIBUTES = ['parts'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 export class NumberFlowElement extends NumberFlowLite {
-	static observedAttributes = OBSERVED_ATTRIBUTES
+	static observedAttributes = isReact19 ? [] : OBSERVED_ATTRIBUTES
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
 		this[attr] = JSON.parse(newValue)
 	}
 }
 
-NumberFlowElement.define()
-
-type NonPartsProps = Omit<Props, 'manual'>
+define('number-flow-react', NumberFlowElement)
 
 type BaseProps = React.HTMLAttributes<NumberFlowElement> &
-	Partial<NonPartsProps> & {
+	Partial<Props> & {
 		isolate?: boolean
 		willChange?: boolean
-		onAnimationsStart?: () => void
-		onAnimationsFinish?: () => void
+		onAnimationsStart?: (e: CustomEvent<undefined>) => void
+		onAnimationsFinish?: (e: CustomEvent<undefined>) => void
 	}
 
 type NumberFlowImplProps = BaseProps & {
@@ -51,9 +51,7 @@ const formatters: Record<string, Intl.NumberFormat> = {}
 // Tiny workaround to support React 19 until it's released:
 const serializeParts = isReact19 ? (p: PartitionedParts) => p : JSON.stringify
 
-function splitProps<T extends Record<string, any>>(
-	props: T
-): [NonPartsProps, Omit<T, keyof NonPartsProps>] {
+function splitProps<T extends Record<string, any>>(props: T): [Props, Omit<T, keyof Props>] {
 	const {
 		transformTiming,
 		spinTiming,
@@ -105,14 +103,17 @@ class NumberFlowImpl extends React.Component<
 		)
 
 		if (prevProps?.onAnimationsStart)
-			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart)
+			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart as EventListener)
 		if (this.props.onAnimationsStart)
-			this.#el.addEventListener('animationsstart', this.props.onAnimationsStart)
+			this.#el.addEventListener('animationsstart', this.props.onAnimationsStart as EventListener)
 
 		if (prevProps?.onAnimationsFinish)
-			this.#el.removeEventListener('animationsfinish', prevProps.onAnimationsFinish)
+			this.#el.removeEventListener(
+				'animationsfinish',
+				prevProps.onAnimationsFinish as EventListener
+			)
 		if (this.props.onAnimationsFinish)
-			this.#el.addEventListener('animationsfinish', this.props.onAnimationsFinish)
+			this.#el.addEventListener('animationsfinish', this.props.onAnimationsFinish as EventListener)
 	}
 
 	override componentDidMount() {
@@ -155,7 +156,7 @@ class NumberFlowImpl extends React.Component<
 
 		return (
 			// @ts-expect-error missing types
-			<number-flow
+			<number-flow-react
 				ref={this.handleRef}
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:

@@ -1,8 +1,16 @@
 import { computed, onMounted, ref, toValue, watchEffect, type MaybeRefOrGetter } from 'vue'
-import { NumberFlowLite, canAnimate as _canAnimate, prefersReducedMotion } from 'number-flow'
-export type { Value, Format, Trend, NumberFlowLite } from 'number-flow'
+import {
+	NumberFlowLite as NumberFlowElement,
+	canAnimate as _canAnimate,
+	define,
+	prefersReducedMotion
+} from 'number-flow'
 
-NumberFlowLite.define()
+export type { Value, Format, Trend } from 'number-flow'
+export { NumberFlowElement }
+
+// In case we ever need a subclass:
+define('number-flow-vue', NumberFlowElement)
 
 export { default } from './index.vue'
 

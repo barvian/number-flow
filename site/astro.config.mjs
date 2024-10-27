@@ -1,11 +1,11 @@
 import { defineConfig, envField } from 'astro/config'
-import react from '@astrojs/react'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel/serverless'
 import shikiTheme from './highlighter-theme.json'
-
+import react from '@astrojs/react'
 import vue from '@astrojs/vue'
+import svelte from '@astrojs/svelte'
 
 // https://astro.build/config
 export default defineConfig({
@@ -46,7 +46,8 @@ export default defineConfig({
 				}
 			}
 			// ...
-		})
+		}),
+		svelte()
 	],
 	output: 'hybrid',
 	adapter: vercel({

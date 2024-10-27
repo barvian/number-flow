@@ -17,24 +17,19 @@ const animated = ref(true)
 const showCaret = ref(true)
 
 function handleInput({ currentTarget }: Event) {
-	const el = currentTarget as HTMLInputElement // nicer than inputRef.value.value
+	const input = currentTarget as HTMLInputElement // nicer than inputRef.value.value
 
 	animated.value = false
-	if (el.value === '') {
-		modelValue.value = defaultValue
-		el.value = String(defaultValue)
-		return
-	}
-	const num = parseInt(el.value)
-	if (isNaN(num) || (min != null && num < min) || (max != null && num > max)) {
-		// Revert input's value:
-		el.value = String(modelValue.value)
+	let next = modelValue.value
+	if (input.value === '') {
+		next = defaultValue
 	} else {
-		// Manually update value in case they e.g. start with a "0" or end with a "."
-		// which won't trigger a DOM update (because the number is the same):
-		el.value = String(num)
-		modelValue.value = num
+		const num = parseInt(input.value)
+		if (!isNaN(num) && min <= num && num <= max) next = num
 	}
+	// Manually update the input.value in case the number stays the same i.e. 09 == 9
+	input.value = String(next)
+	modelValue.value = next
 }
 
 function handlePointerDown(event: PointerEvent, diff: number) {
@@ -50,7 +45,7 @@ function handlePointerDown(event: PointerEvent, diff: number) {
 
 <template>
 	<div
-		class="group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800"
+		class="focus-within:ring-accent group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 dark:ring-zinc-800"
 	>
 		<button
 			aria-hidden
@@ -85,8 +80,8 @@ function handlePointerDown(event: PointerEvent, diff: number) {
 				:format="{ useGrouping: false }"
 				aria-hidden
 				:animated
-				@animations-start="showCaret = false"
-				@animations-finish="showCaret = true"
+				@animationsstart="showCaret = false"
+				@animationsfinish="showCaret = true"
 				class="pointer-events-none"
 				willChange
 			/>
