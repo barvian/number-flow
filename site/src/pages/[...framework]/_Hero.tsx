@@ -82,7 +82,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 				/>
 			</div>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert">
-				A component to transition, localize, and format numbers. Dependency-free. Accessible.
+				A component to transition, format, and localize numbers. Dependency-free. Accessible.
 				Customizable.
 			</p>
 			<div className="~mt-3/5 flex w-full flex-wrap items-stretch justify-center gap-3">
