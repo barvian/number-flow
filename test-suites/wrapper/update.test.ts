@@ -11,6 +11,7 @@ test('updates correctly', async ({ page }) => {
 	page.on('console', (msg) => logs.push(msg.text()))
 
 	await page.getByRole('button', { name: 'Change and pause' }).click()
+	await page.getByText('152,00 $US').waitFor()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })
 
 	await page.getByRole('button', { name: 'Resume' }).click()
