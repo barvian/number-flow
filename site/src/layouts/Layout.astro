@@ -27,7 +27,11 @@ type Props = {
 	description: string
 }
 
-const { title, description } = Astro.props
+const { title: _title, description } = Astro.props
+const title = _title.replaceAll(
+	'{{name}}',
+	'NumberFlow' + (framework ? ' for ' + framework.name : '')
+)
 
 const app = {
 	'@context': 'https://schema.org',
@@ -56,7 +60,7 @@ const app = {
 		<meta property="twitter:image" content={image} />
 		<meta name="generator" content={Astro.generator} />
 		<title>
-			{title.replaceAll('{{name}}', 'NumberFlow' + (framework ? ' for ' + framework.name : ''))}
+			{title}
 		</title>
 		<!-- <AstroFont
 			config={[
