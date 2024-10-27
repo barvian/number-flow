@@ -34,7 +34,7 @@ body:
     attributes:
       label: Describe the bug and the steps to reproduce it
       placeholder: |
-        You can drag your video or image files inside of this editor ↓
+        You can drag screenshots or videos into this editor ↓
     validations:
       required: true
 
