@@ -33,7 +33,8 @@ body:
     id: description
     attributes:
       label: Describe the bug and the steps to reproduce it
-      # description: Provide a clear and concise description of the challenge you are running into, and the steps we should take to try to reproduce your bug.
+      placeholder: |
+        You can drag your video or image files inside of this editor ↓
     validations:
       required: true
 
@@ -49,14 +50,14 @@ body:
     validations:
       required: false
 
-  - type: textarea
-    id: screenshots_or_videos
-    attributes:
-      label: Screenshots or videos
-      description: |
-        For more information on the supported file image/file types and the file size limits, see [GitHub docs](https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files).
-      placeholder: |
-        You can drag your video or image files inside of this editor ↓
+  # - type: textarea
+  #   id: screenshots_or_videos
+  #   attributes:
+  #     label: Screenshots or videos
+  #     description: |
+  #       For more information on the supported file image/file types and the file size limits, see [GitHub docs](https://docs.github.com/en/github/writing-on-github/working-with-advanced-formatting/attaching-files).
+  #     placeholder: |
+  #       You can drag your video or image files inside of this editor ↓
 
   # - type: dropdown
   #   attributes:
