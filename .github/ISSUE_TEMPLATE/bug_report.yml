@@ -29,7 +29,7 @@ body:
       placeholder: |
         e.g. React v18.0.0
     validations:
-      required: false
+      required: true
 
   - type: textarea
     id: description
