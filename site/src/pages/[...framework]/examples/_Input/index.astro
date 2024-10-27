@@ -16,12 +16,9 @@ import svelte from './svelte/Component.svelte?raw'
 
 <Demo {...Astro.props} className="font-mac-ui" client:visible>
 	<!-- @ts-ignore too complex -->
-	<Match>
-		<!-- Wrap in fragments to avoid extraneous prop warnings (probably an Astro bug?): -->
-		<Fragment slot="react"><React client:load /></Fragment>
-		<Fragment slot="vue"><Vue client:load /></Fragment>
-		<Fragment slot="svelte"><Svelte client:load /></Fragment>
-	</Match>
+	<Match react><React client:load /></Match>
+	<Match vue><Vue client:load /></Match>
+	<Match svelte><Svelte client:load /></Match>
 	<Match slot="code">
 		<Code code={react} slot="react" lang="tsx" />
 		<Code code={vue} slot="vue" lang="vue" />

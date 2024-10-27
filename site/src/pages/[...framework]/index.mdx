@@ -21,8 +21,8 @@ export const components = {a: Link, pre: Pre}
 
 <Heading class="sr-only" value="Basic usage" />
 
-<Match class='xl:pre-first-line:hidden first:*:mt-0'>
-<Fragment slot="react">
+<div class='xl:pre-first-line:hidden first:*:mt-0'>
+<Match react>
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'
@@ -33,8 +33,8 @@ import NumberFlow from '@number-flow/react'
 	locales="en-US" // Intl.NumberFormat locales
 />
 ```
-</Fragment>
-<Fragment slot="vue">
+</Match>
+<Match vue>
 ```vue
 <!-- Basic usage -->
 <script setup>
@@ -48,8 +48,8 @@ import NumberFlow from '@number-flow/vue'
 	/>
 </template>
 ```
-</Fragment>
-<Fragment slot="svelte">
+</Match>
+<Match svelte>
 ```svelte
 <!-- Basic usage -->
 <script>
@@ -62,8 +62,8 @@ import NumberFlow from '@number-flow/svelte'
 	locales="en-US"
 />
 ```
-</Fragment>
 </Match>
+</div>
 
 See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
 
@@ -197,15 +197,13 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
 
-<Match>
-<Fragment slot="vue">
+<Match vue>
 ---
 <Heading value="Emits"/>
-</Fragment>
-<Fragment slot="svelte">
+</Match>
+<Match svelte>
 ---
 <Heading value="Events"/>
-</Fragment>
 </Match>
 
 <h3><code><Match react="onAnimationsStart" vue="animationsstart" svelte="animationsstart" /><Type>: (e: CustomEvent) => void</Type></code></h3>
@@ -213,7 +211,7 @@ Can be set to `false` to animate regardless of the user's reduced motion prefere
 Triggered when update animations start.
 <Match vue react>
 Not to be confused with the built-in
-<Match><Fragment slot="react">`onAnimationStart`</Fragment><Fragment slot="vue">[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Fragment></Match>, which
+<Match react>`onAnimationStart`</Match><Match vue>[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Match>, which
 would trigger for animations on the `<NumberFlow>` element itself.
 </Match>
 
