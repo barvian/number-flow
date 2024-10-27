@@ -20,7 +20,7 @@ export const FRAMEWORKS = {
 	},
 	svelte: {
 		name: 'Svelte',
-		sandbox: '',
+		sandbox: 'https://codesandbox.io/p/devbox/number-flow-svelte-xshsw4',
 		lightColor: '#FF3E00',
 		darkColor: '#F96844'
 	}
