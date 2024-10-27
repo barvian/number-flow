@@ -1,9 +1,9 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Get Help
+  - name: '💬 Get Help'
     url: https://github.com/barvian/number-flow/discussions/new?category=help
     about: If you can't get something to work the way you'd like, open a question in the discussion forums.
-  - name: Feature Request
+  - name: '💡 Feature Request'
     url: https://github.com/barvian/number-flow/discussions/new?category=ideas
     about: 'Suggest any ideas you have using the discussion forums.'
   # - name: Bug Report
