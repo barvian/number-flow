@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	import { NumberFlowLite, define, type PartitionedParts } from 'number-flow'
-	// Svelte 4 seems to check setters, but not on the prototype:
+	// Svelte only supports setters, and Svelte 4 doesn't seem to check the prototype:
 	export class NumberFlowElement extends NumberFlowLite {
 		override set parts(parts: PartitionedParts | undefined) {
 			super.parts = parts
