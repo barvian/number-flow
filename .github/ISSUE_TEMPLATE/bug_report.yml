@@ -55,7 +55,7 @@ body:
         Note:
           - Your bug may get fixed much faster if we can run your code and it doesn't have dependencies other than NumberFlow and a framework
             - Links to starter sandboxes can be found on the [site](https://number-flow.barvian.me/) in the header
-          # - For TypeScript related issues only, a TypeScript Playground link might be sufficient: https://www.typescriptlang.org/play
+#         - For TypeScript related issues only, a TypeScript Playground link might be sufficient: https://www.typescriptlang.org/play
           - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
       placeholder: |
         e.g. Code Sandbox, Stackblitz, etc.
