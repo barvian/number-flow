@@ -22,9 +22,8 @@ body:
       label: NumberFlow version
       description: |
         - Please let us know the exact version of NumberFlow that you were using when the issue occurred. If you are using an older version, check to see if your bug has already been solved in the latest version. (Please don't just type "latest", as this is subject to change.)
-        - The latest "number-flow" version is <img alt="" src="https://badgen.net/npm/v/number-flow" />
       placeholder: |
-        e.g. v0.3.5
+        @number-flow/react@0.3.0
     validations:
       required: true
 
