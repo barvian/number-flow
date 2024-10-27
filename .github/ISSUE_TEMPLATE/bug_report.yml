@@ -15,7 +15,7 @@ body:
     attributes:
       label: NumberFlow version
       description: |
-        - Please let us know the exact version of NumberFlow that you were using when the issue occurred. If you are using an older version, check to see if your bug has already been solved in the latest version. (Please don't just type "latest", as this is subject to change.)
+        - Please update to the latest package before filing to see if your bug has already been fixed.
       placeholder: |
         @number-flow/react@0.3.0
     validations:
@@ -24,8 +24,8 @@ body:
   - type: input
     id: framework-library-version
     attributes:
-      label: Framework/Library version
-      description: Which framework and what version of that framework are you using?
+      label: Framework version
+      # description: Which framework (and version) are you using?
       placeholder: |
         e.g. React v18.0.0
     validations:
