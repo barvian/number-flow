@@ -6,9 +6,9 @@ contact_links:
   - name: Feature Request
     url: https://github.com/barvian/number-flow/discussions/new?category=ideas
     about: 'Suggest any ideas you have using the discussion forums.'
-  - name: Bug Report
-    url: https://github.com/barvian/number-flow/issues/new
-    about: If something is clearly broken or not working as documented, create a bug report.
+  # - name: Bug Report
+  #   url: https://github.com/barvian/number-flow/issues/new
+  #   about: If something is clearly broken or not working as documented, create a bug report.
   # - name: Documentation Issue
   #   url: https://github.com/tailwindlabs/tailwindcss.com
   #   about: 'For documentation issues, suggest changes on our documentation repository.'
