@@ -44,8 +44,7 @@ body:
     attributes:
       label: Minimal reproduction (highly recommended)
       description: |
-        - Your bug may get fixed much faster if we can run your code and it doesn't have dependencies other than NumberFlow and a framework
-          - Links to starter sandboxes can be found in the [site](https://number-flow.barvian.me/) header
+        - Links to starter sandboxes can be found in the [site](https://number-flow.barvian.me/) header
         - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
       placeholder: |
         https://codesandbox.io/p/...
