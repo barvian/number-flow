@@ -1,5 +1,11 @@
 # @number-flow/svelte
 
+## 0.1.2
+
+### Patch Changes
+
+- Use main field for bundlephobia ([`790e0c4`](https://github.com/barvian/number-flow/commit/790e0c4c672ffb473614b8c8eed33e4dece3aa2f))
+
 ## 0.1.1
 
 ### Patch Changes
