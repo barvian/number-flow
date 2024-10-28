@@ -69,7 +69,7 @@
 			autocomplete="off"
 			inputmode="numeric"
 			{max}
-			bind:value
+			{value}
 			oninput={handleInput}
 		/>
 		<NumberFlow
