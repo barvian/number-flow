@@ -15,7 +15,7 @@ body:
       description: |
         - Please update to the latest version before filing to see if your bug has already been fixed.
       placeholder: |
-        @number-flow/react@0.3.0
+        @number-flow/react@x.x.x
     validations:
       required: true
 
