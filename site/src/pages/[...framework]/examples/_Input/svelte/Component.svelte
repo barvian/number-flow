@@ -25,7 +25,7 @@
 			const num = parseInt(input.value)
 			if (!isNaN(num) && min <= num && num <= max) next = num
 		}
-		// Manually update the input.value in case the number stays the same i.e. 09 == 9
+		// Manually update the input.value in case the number stays the same e.g. 09 == 9
 		input.value = String(next)
 		value = next
 	}

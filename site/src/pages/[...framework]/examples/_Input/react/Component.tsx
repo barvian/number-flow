@@ -26,7 +26,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 			const num = parseInt(el.value)
 			if (!isNaN(num) && min <= num && num <= max) next = num
 		}
-		// Manually update the input.value in case the number stays the same i.e. 09 == 9
+		// Manually update the input.value in case the number stays the same e.g. 09 == 9
 		el.value = String(next)
 		onChange?.(next)
 	}
