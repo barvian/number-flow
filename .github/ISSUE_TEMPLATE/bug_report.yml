@@ -44,7 +44,7 @@ body:
       label: Minimal reproduction (greatly appreciated)
       description: |
         - Links to starter sandboxes can be found in the [site](https://number-flow.barvian.me/) header
-        - Tips for providing a minimal example: https://stackoverflow.com/help/mcve
+        - Tips for creating minimal examples: https://stackoverflow.com/help/mcve
       placeholder: |
         https://codesandbox.io/p/...
     validations:
