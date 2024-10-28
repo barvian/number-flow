@@ -1,45 +1,60 @@
 ---
 import { getFramework, type Framework } from '@/lib/framework'
+import type { HTMLTag, Polymorphic } from 'astro/types'
 
-type Props =
-	| {
-			[framework in Framework]?: string
-	  }
-	| {
-			[framework in Framework]?: true
-	  }
+type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> &
+	(
+		| {
+				[framework in Framework]?: string
+		  }
+		| {
+				[framework in Framework]?: true
+		  }
+	)
 
 // We can't use a loop here because Astro needs the slot names to be static strings
-const { react, vue, svelte } = Astro.props
+const { as: _Tag, react, vue, svelte, ...props } = Astro.props
+let Tag = _Tag ?? (Object.keys(props).length ? 'div' : Fragment)
 const framework = getFramework(Astro.params)
 const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof svelte !== 'boolean'
 ---
 
-{
-	framework === 'react' &&
-		(typeof react == 'string' ? (
-			react
-		) : Astro.slots.has('react') ? (
-			<slot name="react" />
-		) : (
-			(react || noBool) && <slot />
-		))
-}{
-	framework === 'vue' &&
-		(typeof vue == 'string' ? (
-			vue
-		) : Astro.slots.has('vue') ? (
-			<slot name="vue" />
-		) : (
-			(vue || noBool) && <slot />
-		))
-}{
-	framework === 'svelte' &&
-		(typeof svelte == 'string' ? (
-			svelte
-		) : Astro.slots.has('svelte') ? (
-			<slot name="svelte" />
-		) : (
-			(svelte || noBool) && <slot />
-		))
-}
+<Tag {...props}
+	>{
+		framework === 'react' &&
+			(typeof react == 'string' ? (
+				react
+			) : Astro.slots.has('react') ? (
+				<slot name="react" />
+			) : (
+				(react || noBool) && <slot />
+			))
+	}{
+		framework === 'vue' &&
+			(typeof vue == 'string' ? (
+				vue
+			) : Astro.slots.has('vue') ? (
+				<slot name="vue" />
+			) : (
+				(vue || noBool) && <slot />
+			))
+	}{
+		framework === 'svelte' &&
+			(typeof svelte == 'string' ? (
+				svelte
+			) : Astro.slots.has('svelte') ? (
+				<slot name="svelte" />
+			) : (
+				(svelte || noBool) && <slot />
+			))
+	}{
+		framework === 'vanilla' &&
+			(typeof vanilla == 'string' ? (
+				vanilla
+			) : Astro.slots.has('vanilla') ? (
+				<slot name="vanilla" />
+			) : (
+				(vanilla || noBool) && <slot />
+			))
+	}</Tag
+>
