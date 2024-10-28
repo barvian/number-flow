@@ -47,14 +47,5 @@ const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof 
 			) : (
 				(svelte || noBool) && <slot />
 			))
-	}{
-		framework === 'vanilla' &&
-			(typeof vanilla == 'string' ? (
-				vanilla
-			) : Astro.slots.has('vanilla') ? (
-				<slot name="vanilla" />
-			) : (
-				(vanilla || noBool) && <slot />
-			))
 	}</Tag
 >
