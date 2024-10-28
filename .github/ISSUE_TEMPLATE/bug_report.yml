@@ -13,7 +13,7 @@ body:
     attributes:
       label: NumberFlow version
       description: |
-        - Please update to the latest package before filing to see if your bug has already been fixed.
+        - Please update to the latest version before filing to see if your bug has already been fixed.
       placeholder: |
         @number-flow/react@0.3.0
     validations:
@@ -41,10 +41,10 @@ body:
   - type: input
     id: link
     attributes:
-      label: Minimal reproduction (highly recommended)
+      label: Minimal reproduction (greatly appreciated)
       description: |
         - Links to starter sandboxes can be found in the [site](https://number-flow.barvian.me/) header
-        - Please read these tips for providing a minimal example: https://stackoverflow.com/help/mcve.
+        - Tips for providing a minimal example: https://stackoverflow.com/help/mcve
       placeholder: |
         https://codesandbox.io/p/...
     validations:
