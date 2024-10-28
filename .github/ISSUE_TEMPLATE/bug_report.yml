@@ -25,7 +25,7 @@ body:
       label: Framework version
       # description: Which framework (and version) are you using?
       placeholder: |
-        React v18.0.0
+        react@18.x.x
     validations:
       required: true
 
