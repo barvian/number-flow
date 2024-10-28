@@ -19,20 +19,16 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 
 	const handleInput: React.ChangeEventHandler<HTMLInputElement> = ({ currentTarget: el }) => {
 		setAnimated(false)
+		let next = value
 		if (el.value === '') {
-			onChange?.(defaultValue.current)
-			return
-		}
-		const num = parseInt(el.value)
-		if (isNaN(num) || (min != null && num < min) || (max != null && num > max)) {
-			// Revert input's value:
-			el.value = String(value)
+			next = defaultValue.current
 		} else {
-			// Manually update value in case they e.g. start with a "0" or end with a "."
-			// which won't trigger a DOM update (because the number is the same):
-			el.value = String(num)
-			onChange?.(num)
+			const num = parseInt(el.value)
+			if (!isNaN(num) && min <= num && num <= max) next = num
 		}
+		// Manually update the input.value in case the number stays the same i.e. 09 == 9
+		el.value = String(next)
+		onChange?.(next)
 	}
 
 	const handlePointerDown = (diff: number) => (event: React.PointerEvent<HTMLButtonElement>) => {
