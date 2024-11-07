@@ -73,7 +73,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 		>
 			<div className="~my-2/3.5">
 				<NumberFlow
-					className="~text-5xl/7xl font-medium [--number-flow-char-height:0.85em]"
+					className="~text-5xl/7xl font-[550] [--number-flow-char-height:0.85em]"
 					trend={false}
 					value={value}
 					locales={locale}
