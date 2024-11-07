@@ -21,10 +21,6 @@
 }
 
 @layer base {
-	:root {
-		@apply [--link-underline-opacity:20%] dark:[--link-underline-opacity:35%];
-	}
-
 	number-flow-react,
 	number-flow-vue,
 	number-flow-svelte {
@@ -38,7 +34,7 @@
 	}
 
 	.link-underline {
-		@apply ease-out-quad decoration-current/[--link-underline-opacity] hover:text-primary underline decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current;
+		@apply ease-out-quad hover:text-primary underline decoration-[#CECECE] decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current dark:decoration-[#5E5D5E];
 	}
 
 	.btn {
