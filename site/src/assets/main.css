@@ -34,7 +34,7 @@
 	}
 
 	.link-underline {
-		@apply ease-out-quad hover:text-primary underline decoration-[#CECECE] decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current dark:decoration-[#5E5D5E];
+		@apply ease-out-quad hover:text-primary underline decoration-zinc-300 decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current dark:decoration-zinc-600;
 	}
 
 	.btn {
