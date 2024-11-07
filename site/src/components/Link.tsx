@@ -55,7 +55,7 @@ export default function Link({
 			{active && activeChildren}
 			{children}
 			{isExternal && (
-				<ArrowUpRight className="ml-[0.125em] inline-block size-[1em] no-underline opacity-60 transition duration-[inherit] ease-[inherit] group-hover/link:-translate-y-px group-hover/link:translate-x-px group-hover/link:opacity-100" />
+				<ArrowUpRight className="group-hover/link:text-primary text-muted ml-[0.125em] inline-block size-[1em] no-underline transition duration-[inherit] ease-[inherit] group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
 			)}
 		</a>
 	)
