@@ -24,17 +24,13 @@ export const components = {a: Link, pre: Pre}
 <Heading class="sr-only" value="Basic usage" />
 </Match>
 
-<div class='xl:pre-first-line:hidden first:*:mt-0'>
+<div className='xl:pre-first-line:hidden first:*:mt-0'>
 <Match react>
 ```jsx
 // Basic usage
 import NumberFlow from '@number-flow/react'
 
-<NumberFlow
-	value={value}
-	format={{ notation: 'compact' }} // Intl.NumberFormat options
-	locales="en-US" // Intl.NumberFormat locales
-/>
+<NumberFlow value={123} />
 ```
 </Match>
 <Match vue>
@@ -44,11 +40,7 @@ import NumberFlow from '@number-flow/react'
 import NumberFlow from '@number-flow/vue'
 </script>
 <template>
-	<NumberFlow
-		:value="value"
-		:format="{ notation: 'compact' } /* Intl.NumberFormat options */"
-		:locales="'en-US' /* Intl.NumberFormat locales */"
-	/>
+	<NumberFlow :value="123" />
 </template>
 ```
 </Match>
@@ -59,16 +51,14 @@ import NumberFlow from '@number-flow/vue'
 import NumberFlow from '@number-flow/svelte'
 </script>
 
-<NumberFlow
-	value={value}
-	format={{ /* Intl.NumberFormat options */ }}
-	locales="en-US"
-/>
+<NumberFlow value={123} />
 ```
 </Match>
 </div>
 
-See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#parameters) for a full list of `locales` and `format` options.
+<Match>
+`<NumberFlow>` will automatically transition when the `value` prop changes.
+</Match>
 
 ---
 
@@ -76,7 +66,33 @@ See [MDN's `Intl.NumberFormat` reference](https://developer.mozilla.org/en-US/do
 <Heading value="Props" />
 </Match>
 
-NumberFlow accepts additional props to customize its transitions:
+<h3 id="format">
+	<code>format<Type>: <Link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options" className="text-[unset]">Intl.NumberFormatOptions</Link></Type></code>
+</h3>
+
+The format options passed to the internal `Intl.NumberFormat` instance.
+
+<Match react>
+```jsx
+<NumberFlow format={{ notation: 'compact' }} value={value} />
+```
+</Match>
+<Match vue>
+```vue
+<NumberFlow format="{ notation: 'compact' }" :value />
+```
+</Match>
+<Match svelte>
+```svelte
+<NumberFlow format={{ notation: 'compact' }} {value} />
+```
+</Match>
+
+<h3 id="locales">
+<code>locales<Type>: <Link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#locales" className="text-[unset]">Intl.LocalesArgument</Link></Type></code>
+</h3>
+
+The locales passed to the internal `Intl.NumberFormat` instance.
 
 ### Timings
 
