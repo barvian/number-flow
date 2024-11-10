@@ -88,7 +88,8 @@ export default {
 						'line-height': '1.7',
 
 						a: {
-							'@apply link-underline font-normal': {}
+							'font-weight': 'unset',
+							'@apply link-underline': {}
 						},
 
 						hr: {
