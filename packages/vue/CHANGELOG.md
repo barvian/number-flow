@@ -1,5 +1,14 @@
 # @number-flow/vue
 
+## 0.2.1
+
+### Patch Changes
+
+- More defensive checks on browser globals (see [#58](https://github.com/barvian/number-flow/issues/58)) ([#59](https://github.com/barvian/number-flow/pull/59))
+
+- Updated dependencies [[`13a66fb`](https://github.com/barvian/number-flow/commit/13a66fba336c53687664ad9b859ec705891fce2a)]:
+  - number-flow@0.3.6
+
 ## 0.2.0
 
 ### Minor Changes

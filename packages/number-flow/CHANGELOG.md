@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.3.6
+
+### Patch Changes
+
+- More defensive checks on browser globals (see [#58](https://github.com/barvian/number-flow/issues/58)) ([#59](https://github.com/barvian/number-flow/pull/59))
+
 ## 0.3.5
 
 ### Patch Changes
