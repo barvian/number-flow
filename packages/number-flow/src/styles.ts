@@ -2,12 +2,16 @@ import { BROWSER } from './util/env'
 import { css } from './util/css'
 
 export const supportsLinear =
-	BROWSER && typeof CSS !== 'undefined' && CSS.supports('animation-timing-function', 'linear(1,2)')
+	BROWSER &&
+	typeof CSS !== 'undefined' &&
+	CSS.supports &&
+	CSS.supports('animation-timing-function', 'linear(1,2)')
 
 export const supportsMod =
-	BROWSER && typeof CSS !== 'undefined' && CSS.supports('line-height', 'mod(1,1)')
+	BROWSER && typeof CSS !== 'undefined' && CSS.supports && CSS.supports('line-height', 'mod(1,1)')
 
-export const prefersReducedMotion = BROWSER ? matchMedia('(prefers-reduced-motion: reduce)') : null
+export const prefersReducedMotion =
+	BROWSER && matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null
 
 // Register animated vars:
 export const opacityDeltaVar = '--_number-flow-d-opacity'
