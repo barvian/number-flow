@@ -1,5 +1,5 @@
 import type { NumberFlowLite, partitionParts } from 'number-flow'
-import type { InjectionKey, Ref, ComputedRef, MaybeRefOrGetter } from 'vue'
+import type { InjectionKey, Ref, ComputedRef } from 'vue'
 
 export type RegisterWithGroup = (
 	el: Ref<NumberFlowLite | undefined>,
