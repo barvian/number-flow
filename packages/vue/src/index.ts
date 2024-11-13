@@ -6,6 +6,8 @@ import {
 	prefersReducedMotion
 } from 'number-flow'
 
+export { default as NumberFlowGroup } from './NumberFlowGroup.vue'
+
 export type { Value, Format, Trend } from 'number-flow'
 export { NumberFlowElement }
 

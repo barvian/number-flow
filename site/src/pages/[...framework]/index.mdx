@@ -16,6 +16,7 @@ import Type from '@/components/Type.astro'
 import Heading from '@/components/Heading.astro'
 import Union from '@/components/Union.astro'
 import Link from '@/components/Link.astro'
+import Group from './examples/_Group/index.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
@@ -270,6 +271,19 @@ Ensures all numbers are the same width, which can prevent digits from shifting d
 See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#numeric-spacing-values) for more information.
 
 {/* <TabularNumsDemo client:visible /> */}
+
+<Match vue svelte>
+---
+
+<Heading value="Grouping"/>
+
+If you're using multiple `<NumberFlow>` components on one line, you can wrap
+them in a `<NumberFlowGroup>` to properly sync their transitions:
+
+<Group />
+
+`<NumberFlowGroup>` doesn't render an element or accept any props.
+</Match>
 
 ---
 

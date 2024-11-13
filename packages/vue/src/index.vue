@@ -7,7 +7,8 @@ import {
 	NumberFlowLite,
 	type Props as NumberFlowProps
 } from 'number-flow'
-import { computed, ref } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
+import { key as groupKey } from './group'
 
 type Props = Partial<NumberFlowProps> & {
 	locales?: Intl.LocalesArgument
@@ -18,7 +19,7 @@ type Props = Partial<NumberFlowProps> & {
 
 // This is repetitive but I couldn't get it any cleaner using `withDefaults`,
 // because then you can't destructure,
-// and if you don't set defaults Vue will use its own for i.e. booleans.
+// and if you don't set defaults Vue will use its own for e.g. booleans.
 const {
 	locales,
 	format,
@@ -41,7 +42,6 @@ defineOptions({
 	inheritAttrs: false // set them manually to ensure `parts` updates last
 })
 
-// Technically the original animationsstart still emits but ah well:
 const emit = defineEmits<{
 	(e: 'animationsstart'): void
 	(e: 'animationsfinish'): void
@@ -50,32 +50,19 @@ const emit = defineEmits<{
 // You're supposed to cache these between uses:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 const formatter = computed(() => new Intl.NumberFormat(locales, format))
-
 const parts = computed(() => partitionParts(value, formatter.value))
 
-// Pre effects don't seem to batch to handle grouping like React:
-// https://discord.com/channels/325477692906536972/1299071468533055541
-//
-// watch(
-// 	[parts, () => isolate],
-// 	([_, isolate]) => {
-// 		if (!isolate) el.value?.willUpdate()
-// 	},
-// 	{ flush: 'pre' }
-// )
-// watch(
-// 	[parts, () => isolate],
-// 	([_, isolate]) => {
-// 		if (!isolate) el.value?.didUpdate()
-// 	},
-// 	{ flush: 'post' }
-// )
+// Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
+// for better tree-shaking:
+const register = inject(groupKey, undefined)
+register?.(el, parts)
 </script>
 <template>
 	<!-- Make sure parts is set last: -->
 	<number-flow-vue
 		ref="el"
 		v-bind="$attrs"
+		:manual="Boolean(register)"
 		:trend
 		:continuous
 		:animated
