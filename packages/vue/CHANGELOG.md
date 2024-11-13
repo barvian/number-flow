@@ -1,5 +1,11 @@
 # @number-flow/vue
 
+## 0.2.2
+
+### Patch Changes
+
+- Add `<NumberFlowGroup>` ([`ad220fd`](https://github.com/barvian/number-flow/commit/ad220fdb95b524b451e11bfcddd1f86e768e007d))
+
 ## 0.2.1
 
 ### Patch Changes
