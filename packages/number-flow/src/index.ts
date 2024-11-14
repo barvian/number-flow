@@ -87,6 +87,10 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	}
 
 	#created = false
+	get created() {
+		return this.#created
+	}
+
 	#pre?: SymbolSection
 	#num?: Num
 	#post?: SymbolSection
