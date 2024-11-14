@@ -25,6 +25,7 @@
 	],
 	"scripts": {
 		"dev": "vite dev",
+		"build:watch": "svelte-package --watch",
 		"build": "svelte-kit sync && svelte-package && publint",
 		"build:site": "vite build && pnpm build",
 		"preview": "vite preview",

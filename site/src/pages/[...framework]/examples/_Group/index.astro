@@ -9,14 +9,18 @@ import React from './react'
 import react from './react/Component.tsx?raw'
 import Vue from './vue/index.vue'
 import vue from './vue/Component.vue?raw'
+import Svelte from './svelte/index.svelte'
+import svelte from './svelte/Component.svelte?raw'
 ---
 
 <Group client:visible>
 	<!-- @ts-ignore too complex -->
 	<Match react><React client:load /></Match>
 	<Match vue><Vue client:load /></Match>
+	<Match svelte><Svelte client:load /></Match>
 	<Match slot="code">
 		<Code code={react} slot="react" lang="tsx" />
 		<Code code={vue} slot="vue" lang="vue" />
+		<Code code={svelte} slot="svelte" lang="svelte" />
 	</Match>
 </Group>
