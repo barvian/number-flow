@@ -6,6 +6,7 @@ import { onMount } from 'svelte'
 import { derived, readable } from 'svelte/store'
 
 export type { Value, Format, Trend } from 'number-flow'
+export { default as NumberFlowGroup } from './NumberFlowGroup.svelte'
 export { default, NumberFlowElement } from './NumberFlow.svelte'
 
 const canAnimate = readable(_canAnimate, (set) => {

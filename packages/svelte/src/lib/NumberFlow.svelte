@@ -2,6 +2,9 @@
 	import { NumberFlowLite, define, type PartitionedParts } from 'number-flow'
 	// Svelte only supports setters, but Svelte 4 didn't pick up inherited ones:
 	export class NumberFlowElement extends NumberFlowLite {
+		set __svelte_manual(manual: boolean) {
+			this.manual = manual
+		}
 		override set parts(parts: PartitionedParts | undefined) {
 			super.parts = parts
 		}
@@ -28,6 +31,8 @@
 		type Props as NumberFlowProps
 	} from 'number-flow'
 	import type { HTMLAttributes } from 'svelte/elements'
+	import { writable } from 'svelte/store'
+	import { getGroupContext } from './group.js'
 
 	export let locales: Intl.LocalesArgument = undefined
 	export let format: Format | undefined = undefined
@@ -59,11 +64,18 @@
 	}
 
 	export let el: NumberFlowElement | undefined = undefined
+	const elStore = writable<NumberFlowElement | undefined>(el)
+	$: $elStore = el
 
 	// You're supposed to cache these between uses:
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 	$: formatter = new Intl.NumberFormat(locales, format)
 	$: parts = partitionParts(value, formatter)
+
+	// Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
+	// for better tree-shaking:
+	const group = getGroupContext()
+	group?.register?.(elStore)
 </script>
 
 <number-flow-svelte
@@ -72,6 +84,7 @@
 	data-will-change={willChange ? '' : undefined}
 	on:animationsstart
 	on:animationsfinish
+	__svelte_manual={Boolean(group)}
 	__svelte_transformTiming={transformTiming}
 	__svelte_spinTiming={spinTiming}
 	__svelte_opacityTiming={opacityTiming}
