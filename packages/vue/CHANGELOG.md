@@ -1,5 +1,14 @@
 # @number-flow/vue
 
+## 0.2.3
+
+### Patch Changes
+
+- Fix for `<NumberFlowGroup>` and v-if ([`a57700c`](https://github.com/barvian/number-flow/commit/a57700c211d67d2d1d8ea228bae9bd427bee553c))
+
+- Updated dependencies [[`0fac2f6`](https://github.com/barvian/number-flow/commit/0fac2f69b239048054755c556afc3f0eb65767c9)]:
+  - number-flow@0.3.7
+
 ## 0.2.2
 
 ### Patch Changes
