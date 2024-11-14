@@ -1,5 +1,4 @@
 ---
-'number-flow': patch
 '@number-flow/vue': patch
 ---
 
