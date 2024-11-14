@@ -8,24 +8,22 @@
 	let updating = false
 
 	const registerWithGroup: RegisterWithGroup = (el) => {
-		let mounted = false
 		flows.add(el)
 
 		beforeUpdate(async () => {
-			if (!get(el)) return
-			if (!mounted) {
-				mounted = true
-				return
-			}
 			if (updating) return
 			updating = true
-			flows.forEach((flow) => {
-				get(flow)?.willUpdate()
-			})
-			await tick()
-			flows.forEach((flow) => {
+			flows.forEach(async (flow) => {
+				{
+					const f = get(flow)
+					if (!f || !f.created) return
+					f.willUpdate()
+				}
+				await tick()
+				// Optional in case the element was removed after tick:
 				get(flow)?.didUpdate()
 			})
+			await tick()
 			updating = false
 		})
 
