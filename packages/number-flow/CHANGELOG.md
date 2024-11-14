@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.3.7
+
+### Patch Changes
+
+- Expose `created` property ([`0fac2f6`](https://github.com/barvian/number-flow/commit/0fac2f69b239048054755c556afc3f0eb65767c9))
+
 ## 0.3.6
 
 ### Patch Changes

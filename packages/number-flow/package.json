@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"version": "0.3.6",
+	"version": "0.3.7",
 	"author": {
 		"name": "Maxwell Barvian",
 		"email": "max@barvian.me",
