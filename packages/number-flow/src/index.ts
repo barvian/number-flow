@@ -460,15 +460,16 @@ abstract class Section {
 		const offset = rect[this.justify]
 		const dx = this.#prevOffset! - offset
 
-		this.el.animate(
-			{
-				transform: [`translateX(${dx}px)`, 'none']
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'accumulate'
-			}
-		)
+		if (dx && this.children.size)
+			this.el.animate(
+				{
+					transform: [`translateX(${dx}px)`, 'none']
+				},
+				{
+					...this.flow.transformTiming,
+					composite: 'accumulate'
+				}
+			)
 	}
 }
 
@@ -664,16 +665,18 @@ class Digit extends Char<KeyedDigitPart> {
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
+		const dx = this.#prevCenter! - center
 
-		this.el.animate(
-			{
-				transform: [`translateX(${this.#prevCenter! - center}px)`, 'none']
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'accumulate'
-			}
-		)
+		if (dx)
+			this.el.animate(
+				{
+					transform: [`translateX(${dx}px)`, 'none']
+				},
+				{
+					...this.flow.transformTiming,
+					composite: 'accumulate'
+				}
+			)
 
 		const diff = this.diff
 		if (!diff) return
@@ -800,12 +803,14 @@ class Sym extends Char<KeyedSymbolPart> {
 
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
+		const dx = this.#prevOffset! - offset
 
-		this.el.animate(
-			{
-				transform: [`translateX(${this.#prevOffset! - offset}px)`, 'none']
-			},
-			{ ...this.flow.transformTiming, composite: 'accumulate' }
-		)
+		if (dx)
+			this.el.animate(
+				{
+					transform: [`translateX(${dx}px)`, 'none']
+				},
+				{ ...this.flow.transformTiming, composite: 'accumulate' }
+			)
 	}
 }
