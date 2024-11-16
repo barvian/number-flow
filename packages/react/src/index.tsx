@@ -6,20 +6,20 @@ import {
 	type Format,
 	type Props,
 	render,
-	partitionParts,
-	type PartitionedParts,
+	formatToData,
+	type Data,
 	NumberFlowLite,
 	prefersReducedMotion,
 	canAnimate as _canAnimate,
 	define
 } from 'number-flow'
-export type { Value, Format, Trend } from 'number-flow'
+export type { Value, Format, Trend, NumberPartType } from 'number-flow'
 
 const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
 const isReact19 = REACT_MAJOR >= 19
 
 // Can't wait to not have to do this in React 19:
-const OBSERVED_ATTRIBUTES = ['parts'] as const
+const OBSERVED_ATTRIBUTES = ['data'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 export class NumberFlowElement extends NumberFlowLite {
 	static observedAttributes = isReact19 ? [] : OBSERVED_ATTRIBUTES
@@ -40,7 +40,7 @@ type BaseProps = React.HTMLAttributes<NumberFlowElement> &
 
 type NumberFlowImplProps = BaseProps & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
-	parts: PartitionedParts
+	data: Data
 }
 
 // You're supposed to cache these between uses:
@@ -49,7 +49,7 @@ type NumberFlowImplProps = BaseProps & {
 const formatters: Record<string, Intl.NumberFormat> = {}
 
 // Tiny workaround to support React 19 until it's released:
-const serializeParts = isReact19 ? (p: PartitionedParts) => p : JSON.stringify
+const serializeData = isReact19 ? (p: Data) => p : JSON.stringify
 
 function splitProps<T extends Record<string, any>>(props: T): [Props, Omit<T, keyof Props>] {
 	const {
@@ -90,16 +90,16 @@ class NumberFlowImpl extends React.Component<
 		this.handleRef = this.handleRef.bind(this)
 	}
 
-	// Update the non-`parts` props to avoid JSON serialization
-	// Parts needs to be set in render still:
-	updateNonPartsProps(prevProps?: Readonly<NumberFlowImplProps>) {
+	// Update the non-`data` props to avoid JSON serialization
+	// Data needs to be set in render still:
+	updateNonDataProps(prevProps?: Readonly<NumberFlowImplProps>) {
 		if (!this.#el) return
 
 		this.#el.manual = !this.props.isolate
-		const [nonParts] = splitProps(this.props)
+		const [nonData] = splitProps(this.props)
 		Object.assign(
 			this.#el,
-			Object.fromEntries(Object.entries(nonParts).filter(([_, v]) => v != null))
+			Object.fromEntries(Object.entries(nonData).filter(([_, v]) => v != null))
 		)
 
 		if (prevProps?.onAnimationsStart)
@@ -117,19 +117,19 @@ class NumberFlowImpl extends React.Component<
 	}
 
 	override componentDidMount() {
-		this.updateNonPartsProps()
+		this.updateNonDataProps()
 		if (isReact19 && this.#el) {
 			// React 19 needs this because the attributeChangedCallback isn't called:
-			this.#el.parts = this.props.parts
+			this.#el.data = this.props.data
 		}
 	}
 
 	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
-		this.updateNonPartsProps(prevProps)
+		this.updateNonDataProps(prevProps)
 		if (
 			this.props.isolate ||
 			this.props.animated === false /* totally optional optimization */ ||
-			prevProps.parts === this.props.parts
+			prevProps.data === this.props.data
 		)
 			return false
 		this.#el?.willUpdate()
@@ -152,7 +152,7 @@ class NumberFlowImpl extends React.Component<
 	}
 
 	override render() {
-		const [_, { innerRef, className, parts, willChange, isolate, ...rest }] = splitProps(this.props)
+		const [_, { innerRef, className, data, willChange, isolate, ...rest }] = splitProps(this.props)
 
 		return (
 			// @ts-expect-error missing types
@@ -162,9 +162,11 @@ class NumberFlowImpl extends React.Component<
 				// Have to rename this:
 				class={className}
 				{...rest}
-				dangerouslySetInnerHTML={{ __html: render({ formatted: parts.formatted, willChange }) }}
-				// Make sure parts are set last, everything else is updated:
-				parts={serializeParts(parts)}
+				dangerouslySetInnerHTML={{
+					__html: render({ valueAsString: data.valueAsString, willChange })
+				}}
+				// Make sure data is set last, everything else is updated:
+				data={serializeData(data)}
 			/>
 		)
 	}
@@ -174,10 +176,12 @@ export type NumberFlowProps = BaseProps & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
+	prefix?: string
+	suffix?: string
 }
 
 const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
-	{ value, locales, format, ...props },
+	{ value, locales, format, prefix, suffix, ...props },
 	_ref
 ) {
 	React.useImperativeHandle(_ref, () => ref.current!, [])
@@ -185,15 +189,15 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 
 	const localesString = React.useMemo(() => (locales ? JSON.stringify(locales) : ''), [locales])
 	const formatString = React.useMemo(() => (format ? JSON.stringify(format) : ''), [format])
-	const parts = React.useMemo(() => {
+	const data = React.useMemo(() => {
 		const formatter = (formatters[`${localesString}:${formatString}`] ??= new Intl.NumberFormat(
 			locales,
 			format
 		))
-		return partitionParts(value, formatter)
-	}, [value, localesString, formatString])
+		return formatToData(value, formatter, prefix, suffix)
+	}, [value, localesString, formatString, prefix, suffix])
 
-	return <NumberFlowImpl {...props} parts={parts} innerRef={ref} />
+	return <NumberFlowImpl {...props} data={data} innerRef={ref} />
 })
 
 export default NumberFlow

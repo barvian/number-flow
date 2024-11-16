@@ -1,12 +1,12 @@
 <script lang="ts" context="module">
-	import { NumberFlowLite, define, type PartitionedParts } from 'number-flow'
+	import { NumberFlowLite, define, type Data } from 'number-flow'
 	// Svelte only supports setters, but Svelte 4 didn't pick up inherited ones:
 	export class NumberFlowElement extends NumberFlowLite {
 		set __svelte_manual(manual: boolean) {
 			this.manual = manual
 		}
-		override set parts(parts: PartitionedParts | undefined) {
-			super.parts = parts
+		override set data(data: Data | undefined) {
+			super.data = data
 		}
 	}
 	Object.keys(NumberFlowElement.defaultProps).forEach((key) => {
@@ -27,7 +27,7 @@
 		type Value,
 		type Format,
 		render as renderFlow,
-		partitionParts,
+		formatToData,
 		type Props as NumberFlowProps
 	} from 'number-flow'
 	import type { HTMLAttributes } from 'svelte/elements'
@@ -37,6 +37,8 @@
 	export let locales: Intl.LocalesArgument = undefined
 	export let format: Format | undefined = undefined
 	export let value: Value
+	export let prefix: string | undefined = undefined
+	export let suffix: string | undefined = undefined
 	export let willChange = false
 
 	// Define these so they can be remapped. We set them to their defaults because
@@ -55,6 +57,8 @@
 			locales?: Intl.LocalesArgument
 			format?: Format
 			value: Value
+			prefix?: string
+			suffix?: string
 			willChange?: boolean
 		}
 
@@ -70,7 +74,7 @@
 	// You're supposed to cache these between uses:
 	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 	$: formatter = new Intl.NumberFormat(locales, format)
-	$: parts = partitionParts(value, formatter)
+	$: data = formatToData(value, formatter, prefix, suffix)
 
 	// Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
 	// for better tree-shaking:
@@ -92,7 +96,7 @@
 	__svelte_respectMotionPreference={respectMotionPreference}
 	__svelte_trend={trend}
 	__svelte_continuous={continuous}
-	{parts}
+	{data}
 >
-	{@html renderFlow({ formatted: parts.formatted, willChange })}
+	{@html renderFlow({ valueAsString: data.valueAsString, willChange })}
 </number-flow-svelte>

@@ -3,7 +3,7 @@ import {
 	type Value,
 	type Format,
 	render,
-	partitionParts,
+	formatToData,
 	NumberFlowLite,
 	type Props as NumberFlowProps
 } from 'number-flow'
@@ -14,6 +14,8 @@ type Props = Partial<NumberFlowProps> & {
 	locales?: Intl.LocalesArgument
 	format?: Format
 	value: Value
+	prefix?: string
+	suffix?: string
 	willChange?: boolean
 }
 
@@ -24,6 +26,8 @@ const {
 	locales,
 	format,
 	value,
+	prefix,
+	suffix,
 	trend = NumberFlowLite.defaultProps.trend,
 	continuous = NumberFlowLite.defaultProps.continuous,
 	animated = NumberFlowLite.defaultProps.animated,
@@ -50,12 +54,12 @@ const emit = defineEmits<{
 // You're supposed to cache these between uses:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 const formatter = computed(() => new Intl.NumberFormat(locales, format))
-const parts = computed(() => partitionParts(value, formatter.value))
+const data = computed(() => formatToData(value, formatter.value, prefix, suffix))
 
 // Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
 // for better tree-shaking:
 const register = inject(groupKey, undefined)
-register?.(el, parts)
+register?.(el, data)
 </script>
 <template>
 	<!-- Make sure parts is set last: -->
@@ -71,9 +75,9 @@ register?.(el, parts)
 		:opacityTiming
 		:respectMotionPreference
 		:data-will-change="willChange ? '' : undefined"
-		v-html="render({ formatted: parts.formatted, willChange })"
+		v-html="render({ valueAsString: data.valueAsString, willChange })"
 		@animationsstart="emit('animationsstart')"
 		@animationsfinish="emit('animationsfinish')"
-		:parts
+		:data
 	/>
 </template>

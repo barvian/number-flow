@@ -236,7 +236,7 @@ const styles = css`
 		display: inline-flex;
 		align-items: baseline;
 		position: relative;
-		isolation: isolate;
+		isolation: isolate; /* helpful for z-index and mix-blend-mode */
 		padding: ${halfMaskHeight} 0;
 	}
 
@@ -246,6 +246,7 @@ const styles = css`
 
 	.symbol__value {
 		display: block;
+		mix-blend-mode: plus-lighter; /* better crossfades e.g. + <-> - */
 		white-space: pre; /* some symbols are spaces or thin spaces */
 	}
 

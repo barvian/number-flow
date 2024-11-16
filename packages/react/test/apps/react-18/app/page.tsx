@@ -17,6 +17,8 @@ export default function Page() {
 					format={{ style: 'currency', currency: 'USD' }}
 					locales="fr-FR"
 					trend="increasing"
+					prefix=":"
+					suffix="/mo"
 					continuous
 					onAnimationsStart={() => console.log('start')}
 					onAnimationsFinish={() => console.log('finish')}

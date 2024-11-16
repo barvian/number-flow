@@ -5,7 +5,7 @@ import {
 	type KeyedNumberPart,
 	type KeyedSymbolPart,
 	type NumberPartKey,
-	type PartitionedParts
+	type Data
 } from './formatter'
 import { ServerSafeHTMLElement } from './ssr'
 import styles, {
@@ -110,20 +110,20 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		return this.#computedAnimated
 	}
 
-	#parts?: PartitionedParts
+	#data?: Data
 
 	manual = false
 
-	set parts(parts: PartitionedParts | undefined) {
-		if (parts == null) {
+	set data(data: Data | undefined) {
+		if (data == null) {
 			return
 		}
 
-		const { pre, integer, fraction, post, value } = parts
+		const { pre, integer, fraction, post, value } = data
 
 		// Initialize if needed
 		if (!this.#created) {
-			this.#parts = parts
+			this.#data = data
 
 			this.attachShadow({ mode: 'open' })
 
@@ -162,8 +162,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
-			const prev = this.#parts!
-			this.#parts = parts
+			const prev = this.#data!
+			this.#data = data
 
 			// Compute trend
 			if (this.trend === true) {
@@ -182,8 +182,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				const prevNumber = prev.integer
 					.concat(prev.fraction)
 					.filter((p) => p.type === 'integer' || p.type === 'fraction')
-				const number = parts.integer
-					.concat(parts.fraction)
+				const number = data.integer
+					.concat(data.fraction)
 					.filter((p) => p.type === 'integer' || p.type === 'fraction')
 				const firstChangedPrev = prevNumber.find(
 					(pp) => !number.find((p) => p.place === pp.place && p.value === pp.value)
@@ -294,7 +294,7 @@ class Num {
 		this.#fraction.willUpdate()
 	}
 
-	update({ integer, fraction }: Pick<PartitionedParts, 'integer' | 'fraction'>) {
+	update({ integer, fraction }: Pick<Data, 'integer' | 'fraction'>) {
 		this.#integer.update(integer)
 		this.#fraction.update(fraction)
 	}

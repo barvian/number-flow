@@ -25,6 +25,8 @@ const handleFinish = () => console.log('finish')
 			ref="flow"
 			:value
 			:format="{ style: 'currency', currency: 'USD' }"
+			prefix=":"
+			suffix="/mo"
 			locales="fr-FR"
 			trend="increasing"
 			continuous
