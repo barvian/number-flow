@@ -15,7 +15,7 @@ export default function DemoHOC({
 		<Demo {...rest} code={children} onClick={cycleValue}>
 			<NumberFlow
 				value={value}
-				format={{ style: 'currency', currency: 'USD', maximumFractionDigits: 0 }}
+				format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 				suffix="/mo"
 				className="~text-xl/4xl font-semibold"
 				style={{ '--number-flow-char-height': '0.85em' }}
