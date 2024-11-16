@@ -1,5 +1,14 @@
 # @number-flow/react
 
+## 0.3.3
+
+### Patch Changes
+
+- Add prefix & suffix props ([`adcf50f`](https://github.com/barvian/number-flow/commit/adcf50f93eec1f6a469004ab58aae4b2799b3c14))
+
+- Updated dependencies [[`9854f77`](https://github.com/barvian/number-flow/commit/9854f77e11561fe119bf9009ae1369389a64ba15), [`adcf50f`](https://github.com/barvian/number-flow/commit/adcf50f93eec1f6a469004ab58aae4b2799b3c14)]:
+  - number-flow@0.3.8
+
 ## 0.3.2
 
 ### Patch Changes
