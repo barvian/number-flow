@@ -8,7 +8,7 @@ import NumberFlow from '@number-flow/react'
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
 import ContinuousDemo from './_demos/Continuous'
-import TabularNumsDemo from './_demos/TabularNums'
+import SuffixDemo from './_demos/Suffix'
 import TrendDemo from './_demos/Trend'
 import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
@@ -100,6 +100,50 @@ The locales passed to the internal `Intl.NumberFormat` instance.
 </h3>
 
 A custom prefix or suffix for the number.
+
+<SuffixDemo client:visible defaultValue='code'>
+<Match react>
+```jsx
+<NumberFlow
+	value={value}
+	format={{
+		style: 'currency',
+		currency: 'USD',
+		maximumFractionDigits: 0
+	}}
+	suffix="/mo"
+/>
+```
+</Match>
+<Match vue>
+```vue
+<NumberFlow
+	:value
+	:format="{
+		style: 'currency',
+		currency: 'USD',
+		maximumFractionDigits: 0
+	}"
+	locales="en-US"
+	suffix="/mo"
+/>
+```
+</Match>
+<Match svelte>
+```svelte
+<NumberFlow
+	value={value}
+	format={{
+		style: 'currency',
+		currency: 'USD',
+		maximumFractionDigits: 0
+	}}
+	locales="en-US"
+	suffix="/mo"
+/>
+```
+</Match>
+</SuffixDemo>
 
 ### Timings
 
