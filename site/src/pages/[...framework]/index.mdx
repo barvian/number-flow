@@ -106,11 +106,7 @@ A custom prefix or suffix for the number.
 ```jsx
 <NumberFlow
 	value={value}
-	format={{
-		style: 'currency',
-		currency: 'USD',
-		trailingZeroDisplay: 'stripIfInteger'
-	}}
+	format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 	suffix="/mo"
 />
 ```
@@ -119,11 +115,7 @@ A custom prefix or suffix for the number.
 ```vue
 <NumberFlow
 	:value
-	:format="{
-		style: 'currency',
-		currency: 'USD',
-		trailingZeroDisplay: 'stripIfInteger'
-	}"
+	:format="{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }"
 	suffix="/mo"
 />
 ```
@@ -132,11 +124,7 @@ A custom prefix or suffix for the number.
 ```svelte
 <NumberFlow
 	{value}
-	format={{
-		style: 'currency',
-		currency: 'USD',
-		trailingZeroDisplay: 'stripIfInteger'
-	}}
+	format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 	suffix="/mo"
 />
 ```
