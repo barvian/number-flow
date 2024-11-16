@@ -11,9 +11,17 @@ import {
 	NumberFlowLite,
 	prefersReducedMotion,
 	canAnimate as _canAnimate,
-	define
+	define,
+	type Overrides
 } from 'number-flow'
-export type { Value, Format, Trend, NumberPartType } from 'number-flow'
+export type {
+	Value,
+	Format,
+	Trend,
+	NumberPartType,
+	Overrides,
+	OverridableNumberPartType
+} from 'number-flow'
 
 const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
 const isReact19 = REACT_MAJOR >= 19
@@ -176,12 +184,13 @@ export type NumberFlowProps = BaseProps & {
 	value: Value
 	locales?: Intl.LocalesArgument
 	format?: Format
+	overrides?: Overrides
 	prefix?: string
 	suffix?: string
 }
 
 const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
-	{ value, locales, format, prefix, suffix, ...props },
+	{ value, locales, format, overrides, prefix, suffix, ...props },
 	_ref
 ) {
 	React.useImperativeHandle(_ref, () => ref.current!, [])
@@ -194,8 +203,8 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 			locales,
 			format
 		))
-		return formatToData(value, formatter, prefix, suffix)
-	}, [value, localesString, formatString, prefix, suffix])
+		return formatToData(value, formatter, overrides, prefix, suffix)
+	}, [value, localesString, formatString, overrides && JSON.stringify(overrides), prefix, suffix])
 
 	return <NumberFlowImpl {...props} data={data} innerRef={ref} />
 })

@@ -19,6 +19,7 @@ export default function Page() {
 					trend="increasing"
 					prefix=":"
 					suffix="/mo"
+					overrides={{ currency: '₿' }}
 					continuous
 					onAnimationsStart={() => console.log('start')}
 					onAnimationsFinish={() => console.log('finish')}

@@ -1,9 +1,10 @@
 // Merge the plus and minus sign types
-export type NumberPartType =
+export type OverridableNumberPartType =
 	| Exclude<Intl.NumberFormatPartTypes, 'minusSign' | 'plusSign'>
 	| 'sign'
-	| 'prefix'
-	| 'suffix'
+
+export type NumberPartType = OverridableNumberPartType | 'prefix' | 'suffix'
+
 // These need to be separated for the discriminated union to work:
 // https://www.typescriptlang.org/play/?target=99&ssl=8&ssc=1&pln=9&pc=1#code/C4TwDgpgBAIglgczsKBeKBvKpIC4oDkcAdsBAhAE4FQA+hAZpQIYDGwcA9sQQNxQA3ZgBsArhHzFRAWwBGVKAF8AsACgc0AMIALZpTSZs4CYVa7q-QSPH4AzsEokEStWoaji7LsSgATTgDKwKIMDAAUYHrA+PBIKPQ6egCUmGpQUHAMUBFRAHQaaKjoRKTkVDS09JGUwPnGhcVMbBzcBCkYaelQ1cCdilAQwrbQHapd3VFQAPRTUAA8ALTY2nC2GbY8KImUADRQwnAA1tAAkgS+AwAekOzZAPxJfWqKQA
 type IntegerPart = { type: NumberPartType & 'integer'; value: number }
@@ -26,9 +27,12 @@ export type Format = Omit<Intl.NumberFormatOptions, 'notation'> & {
 
 export type Value = Exclude<Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0], bigint>
 
+export type Overrides = Partial<Record<OverridableNumberPartType, string>>
+
 export function formatToData(
 	value: Value,
 	formatter: Intl.NumberFormat,
+	overrides?: Overrides,
 	prefix?: string,
 	suffix?: string
 ) {
@@ -39,7 +43,7 @@ export function formatToData(
 	if (suffix) parts.push({ type: 'suffix', value: suffix })
 
 	const pre: KeyedNumberPart[] = []
-	const _integer: Array<IntegerPart | SymbolPart> = [] // we do a second pass to key these from RTL
+	const unkeyedInteger: Array<IntegerPart | SymbolPart> = [] // we do a second pass to key these from RTL
 	const fraction: KeyedNumberPart[] = []
 	const post: KeyedNumberPart[] = []
 
@@ -51,23 +55,25 @@ export function formatToData(
 	let seenInteger = false,
 		seenDecimal = false
 	for (const part of parts) {
-		valueAsString += part.value
-
 		// Merge plus and minus sign types (doing it this way appeases TypeScript)
 		const type: NumberPartType =
 			part.type === 'minusSign' || part.type === 'plusSign' ? 'sign' : part.type
+		// We don't actually enforce the override type, so cast:
+		const value = (overrides as Record<NumberPartType, string>)?.[type] ?? part.value
+
+		valueAsString += value
 
 		if (type === 'integer') {
 			seenInteger = true
-			_integer.push(...part.value.split('').map((d) => ({ type, value: parseInt(d) })))
+			unkeyedInteger.push(...value.split('').map((d) => ({ type, value: parseInt(d) })))
 		} else if (type === 'group') {
-			_integer.push({ type, value: part.value })
+			unkeyedInteger.push({ type, value })
 		} else if (type === 'decimal') {
 			seenDecimal = true
-			fraction.push({ type, value: part.value, key: generateKey(type) })
+			fraction.push({ type, value, key: generateKey(type) })
 		} else if (type === 'fraction') {
 			fraction.push(
-				...part.value.split('').map((d) => ({
+				...value.split('').map((d) => ({
 					type,
 					value: parseInt(d),
 					key: generateKey(type),
@@ -77,7 +83,7 @@ export function formatToData(
 		} else {
 			;(seenInteger || seenDecimal ? post : pre).push({
 				type,
-				value: part.value,
+				value,
 				key: generateKey(type)
 			})
 		}
@@ -85,8 +91,8 @@ export function formatToData(
 
 	const integer: KeyedNumberPart[] = []
 	// Key the integer parts RTL, for better layout animations
-	for (let i = _integer.length - 1; i >= 0; i--) {
-		const p = _integer[i]!
+	for (let i = unkeyedInteger.length - 1; i >= 0; i--) {
+		const p = unkeyedInteger[i]!
 		integer.unshift(
 			p.type === 'integer'
 				? {

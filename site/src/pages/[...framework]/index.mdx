@@ -9,6 +9,7 @@ import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
 import ContinuousDemo from './_demos/Continuous'
 import SuffixDemo from './_demos/Suffix'
+// import OverridesDemo from './_demos/Overrides'
 import TrendDemo from './_demos/Trend'
 import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
@@ -106,11 +107,7 @@ A custom prefix or suffix for the number.
 ```jsx
 <NumberFlow
 	value={value}
-	format={{
-		style: 'currency',
-		currency: 'USD',
-		trailingZeroDisplay: 'stripIfInteger'
-	}}
+	format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 	suffix="/mo"
 />
 ```
@@ -119,11 +116,7 @@ A custom prefix or suffix for the number.
 ```vue
 <NumberFlow
 	:value
-	:format="{
-		style: 'currency',
-		currency: 'USD',
-		trailingZeroDisplay: 'stripIfInteger'
-	}"
+	:format="{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }"
 	suffix="/mo"
 />
 ```
@@ -132,11 +125,7 @@ A custom prefix or suffix for the number.
 ```svelte
 <NumberFlow
 	{value}
-	format={{
-		style: 'currency',
-		currency: 'USD',
-		trailingZeroDisplay: 'stripIfInteger'
-	}}
+	format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 	suffix="/mo"
 />
 ```
@@ -266,6 +255,48 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 </h3>
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
+
+<h3>
+	<code>overrides<Type>: Record{'<string, string>'}</Type></code>
+</h3>
+
+Overrides for symbol values, e.g. for currencies not supported by `Intl.NumberFormat`:
+
+{/*<OverridesDemo client:visible defaultValue='code'>*/}
+<Match react>
+```jsx
+<NumberFlow
+	value={value}
+	format={{ style: 'currency', currency: 'BTC', currencyDisplay: 'name' }}
+	overrides={{
+		currency: 'SOL'
+	}}
+/>
+```
+</Match>
+<Match vue>
+```vue
+<NumberFlow
+	:value
+	:format="{ style: 'currency', currency: 'BTC', currencyDisplay: 'name' }"
+	:overrides="{
+		currency: 'SOL'
+	}"
+/>
+```
+</Match>
+<Match svelte>
+```svelte
+<NumberFlow
+	{value}
+	format={{ style: 'currency', currency: 'BTC', currencyDisplay: 'name' }}
+	overrides={{
+		currency: 'SOL'
+	}}
+/>
+```
+</Match>
+{/*</OverridesDemo>*/}
 
 <Match vue>
 ---
