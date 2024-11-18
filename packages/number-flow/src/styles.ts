@@ -68,8 +68,6 @@ const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 
 const cornerGradient = `#000 0, transparent 71%` // or transparent ${maskWidth}
 
-export const SlottedTag = 'span'
-
 const styles = css`
 	:host {
 		display: inline-block;
