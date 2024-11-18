@@ -147,6 +147,8 @@ const app = {
 	// Disable smooth scroll when transitioning, which also fixes anchor links for some reason:
 	document.addEventListener('astro:before-swap', (event) => {
 		event.newDocument.documentElement.style.scrollBehavior = 'auto'
+		event.newDocument.documentElement.dataset.supportsDsd =
+			document.documentElement.dataset.supportsDsd
 
 		document.addEventListener(
 			'astro:after-swap',
