@@ -15,10 +15,11 @@ export default function Page() {
 					ref={ref}
 					value={value}
 					format={{ style: 'currency', currency: 'USD' }}
-					locales="fr-FR"
+					locales="zh-CN"
 					trend="increasing"
 					prefix=":"
 					suffix="/mo"
+					data-testid="flow"
 					continuous
 					onAnimationsStart={() => console.log('start')}
 					onAnimationsFinish={() => console.log('finish')}

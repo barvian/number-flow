@@ -10,12 +10,14 @@ import IsolateDemo from './_demos/Isolate'
 import ContinuousDemo from './_demos/Continuous'
 import SuffixDemo from './_demos/Suffix'
 import TrendDemo from './_demos/Trend'
+import StylingDemo from './_demos/Styling'
 import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
 import Heading from '@/components/Heading.astro'
 import Union from '@/components/Union.astro'
 import Link from '@/components/Link.astro'
+import Note from '@/components/Note.astro'
 import Group from './examples/_Group/index.astro'
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
@@ -283,7 +285,117 @@ Triggered when update animations finish.
 <Heading value="Styling" />
 </Match>
 
-There's some CSS properties you can use to style the component:
+NumberFlow uses a [custom element](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) under the hood, and exposes [parts](https://developer.mozilla.org/en-US/docs/Web/CSS/::part)
+for styling purposes:
+
+<StylingDemo client:visible>
+<Match react>
+```css
+number-flow-react::part(suffix) {
+	margin-left: .0625em;
+	font-weight: normal;
+	font-size: 0.75em;
+	color: var(--muted);
+}
+```
+</Match>
+<Match vue>
+```css
+number-flow-vue::part(suffix) {
+	margin-left: .0625em;
+	font-weight: normal;
+	font-size: 0.75em;
+	color: var(--muted);
+}
+```
+</Match>
+<Match svelte>
+```css
+number-flow-svelte::part(suffix) {
+	margin-left: .0625em;
+	font-weight: normal;
+	font-size: 0.75em;
+	color: var(--muted);
+}
+```
+</Match>
+</StylingDemo>
+
+You can use your browser's inspector to see which [`part` attributes](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/part)
+are available to style. Note that changing the `font-size` of digits is difficult
+due to the CSS techniques NumberFlow uses.
+
+<Note class="mb-[2.7em]">
+`::part` styles may cause a flash of unstyled content in [old browsers](https://caniuse.com/declarative-shadow-dom).
+<details>
+<summary>See workaround</summary>
+You can use feature detection
+to apply `::part` styles only to browsers that support [Declarative Shadow DOM](https://web.dev/articles/declarative-shadow-dom) (DSD). Add the following snippet to your `<head>`:
+
+```html
+<script>
+	if (
+		HTMLTemplateElement.prototype.hasOwnProperty('shadowRootMode') ||
+		HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot') // old Chrome/Edge
+	)
+		document.documentElement.setAttribute('data-supports-dsd', '')
+</script>
+```
+
+Then ensure your `::part` styles use it:
+
+<Match react>
+```css
+:root[data-supports-dsd] number-flow-react::part(suffix) {
+}
+```
+</Match>
+<Match vue>
+```css
+:root[data-supports-dsd] number-flow-vue::part(suffix) {
+}
+```
+</Match>
+<Match svelte>
+```css
+:root[data-supports-dsd] number-flow-svelte::part(suffix) {
+}
+```
+</Match>
+If you're using Tailwind, you can do this with a custom variant:
+```js
+// tailwind.config.js
+import plugin from 'tailwindcss/plugin'
+
+export default {
+	// ...
+	plugins: [
+		plugin(({ matchVariant }) => {
+			matchVariant('part', (p) => `:root[data-supports-dsd] &::part(${p})`)
+		})
+	]
+}
+```
+
+<Match react>
+```tsx
+<NumberFlow className="part-[suffix]:text-muted" />
+```
+</Match>
+<Match vue>
+```vue
+<NumberFlow class="part-[suffix]:text-muted" />
+```
+</Match>
+<Match svelte>
+```svelte
+<NumberFlow class="part-[suffix]:text-muted" />
+```
+</Match>
+</details>
+</Note>
+
+There's also some CSS properties you can use to style the component:
 
 <h3>
 	<code>{'--'}number-flow-mask-[height|width]<Type>: {'<length>'}</Type></code>
@@ -298,8 +410,8 @@ These adjust the height and width of the gradient fade-out masks at the edges of
 	<Meta>Default: `1em`</Meta>
 </h3>
 
-Sets the height of each character. This can be used to adjust the vertical 
-spacing between numbers.
+Sets the height of each character. This can be used to adjust the spacing between
+digits during spin animations.
 
 ### <code>font-variant-numeric<span className="text-muted">:</span> tabular-nums</code>
 
@@ -346,6 +458,5 @@ and (optionally) the user is [okay with motion](https://developer.mozilla.org/en
 </Match>
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
-* Selected text inside the number will not respect color changes from `::selection`, if any.
 * Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions.
 <Match react>I'd recommend using Framer Motion for these, as it's more composable than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).</Match>

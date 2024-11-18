@@ -53,6 +53,7 @@
 		"test": "pnpm -r --workspace-concurrency 1 --filter=\"./test/apps/*\" test"
 	},
 	"dependencies": {
+		"esm-env": "^1.1.4",
 		"number-flow": "workspace:*"
 	},
 	"devDependencies": {

@@ -11,8 +11,11 @@ test('updates correctly', async ({ page }) => {
 	page.on('console', (msg) => logs.push(msg.text()))
 
 	await page.getByRole('button', { name: 'Change and pause' }).click()
-	await page.getByText('152,00 $US').waitFor()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })
+
+	const flow = await page.getByTestId('flow')
+	expect(await flow.getAttribute('role')).toBe('img')
+	expect(await flow.getAttribute('aria-label')).toBe(':US$152.00/mo')
 
 	await page.getByRole('button', { name: 'Resume' }).click()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })

@@ -26,13 +26,14 @@
 	import {
 		type Value,
 		type Format,
-		render as renderFlow,
+		renderInnerHTML,
 		formatToData,
 		type Props as NumberFlowProps
 	} from 'number-flow'
 	import type { HTMLAttributes } from 'svelte/elements'
 	import { writable } from 'svelte/store'
 	import { getGroupContext } from './group.js'
+	import { BROWSER } from 'esm-env'
 
 	export let locales: Intl.LocalesArgument = undefined
 	export let format: Format | undefined = undefined
@@ -84,7 +85,9 @@
 
 <number-flow-svelte
 	bind:this={el}
+	aria-label={data.valueAsString}
 	{...$$restProps}
+	role="img"
 	data-will-change={willChange ? '' : undefined}
 	on:animationsstart
 	on:animationsfinish
@@ -98,5 +101,5 @@
 	__svelte_continuous={continuous}
 	{data}
 >
-	{@html renderFlow({ valueAsString: data.valueAsString, willChange })}
+	{@html BROWSER ? undefined : renderInnerHTML(data)}
 </number-flow-svelte>

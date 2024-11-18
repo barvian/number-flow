@@ -1,14 +1,14 @@
 import { resolve } from 'path'
 import { defineConfig, createFilter } from 'vite'
 import typescript from '@rollup/plugin-typescript'
-import { minifyRaw } from 'babel-plugin-styled-components/lib/minify'
+// import minifyLiterals from 'rollup-plugin-minify-html-literals-v3'
+import { minifyRaw as minifyCSS } from 'babel-plugin-styled-components/lib/minify'
 import MagicString from 'magic-string'
 import * as pl from 'parse-literals'
 
 const outDir = resolve(__dirname, 'dist')
 
 export default defineConfig(({ mode }) => ({
-	plugins: [minifyCSSLiterals()],
 	build: {
 		outDir,
 		lib: {
@@ -17,8 +17,16 @@ export default defineConfig(({ mode }) => ({
 			fileName: 'index'
 		},
 		rollupOptions: {
-			external: [],
+			external: ['esm-env'],
 			plugins: [
+				// Caused issues with CSS:
+				// minifyLiterals({
+				// 	// Couldn't get the plugin to work with css``, so disable it and handle it separately:
+				// 	minifyOptions: {
+				// 		minifyCSS: false
+				// 	}
+				// }),
+				minifyCSSLiterals(),
 				typescript({
 					tsconfig: resolve(__dirname, `./tsconfig${mode === 'production' ? '.build' : ''}.json`)
 				})
@@ -46,7 +54,7 @@ function minifyCSSLiterals() {
 				if (template.tag !== 'css') return
 				template.parts.forEach((part) => {
 					if (part.start < part.end) {
-						const [mini] = minifyRaw(part.text)
+						const [mini] = minifyCSS(part.text)
 						ms.overwrite(part.start, part.end, mini)
 					}
 				})

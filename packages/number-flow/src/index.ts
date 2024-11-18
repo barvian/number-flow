@@ -22,7 +22,7 @@ import { max } from './util/math'
 export { define } from './util/dom'
 
 export { prefersReducedMotion } from './styles'
-export { render, type RenderProps } from './ssr'
+export { renderInnerHTML } from './ssr'
 export * from './formatter'
 
 export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
@@ -125,6 +125,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		if (!this.#created) {
 			this.#data = data
 
+			// This will overwrite the DSD if any:
 			this.attachShadow({ mode: 'open' })
 
 			// Add stylesheet
@@ -140,25 +141,18 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				this.shadowRoot!.appendChild(style)
 			}
 
-			this.shadowRoot!.appendChild(createElement('slot'))
-
 			this.#pre = new SymbolSection(this, pre, {
-				inert: true,
-				ariaHidden: 'true',
-				justify: 'right'
+				justify: 'right',
+				part: 'left'
 			})
 			this.shadowRoot!.appendChild(this.#pre.el)
 
-			this.#num = new Num(this, integer, fraction, {
-				inert: true,
-				ariaHidden: 'true'
-			})
+			this.#num = new Num(this, integer, fraction)
 			this.shadowRoot!.appendChild(this.#num.el)
 
 			this.#post = new SymbolSection(this, post, {
-				inert: true,
-				ariaHidden: 'true',
-				justify: 'left'
+				justify: 'left',
+				part: 'right'
 			})
 			this.shadowRoot!.appendChild(this.#post.el)
 		} else {
@@ -260,10 +254,12 @@ class Num {
 		{ className, ...props }: HTMLProps<'span'> = {}
 	) {
 		this.#integer = new NumberSection(flow, integer, {
-			justify: 'right'
+			justify: 'right',
+			part: 'integer'
 		})
 		this.#fraction = new NumberSection(flow, fraction, {
-			justify: 'left'
+			justify: 'left',
+			part: 'fraction'
 		})
 
 		this.#inner = createElement(
@@ -277,6 +273,7 @@ class Num {
 			'span',
 			{
 				...props,
+				part: 'number',
 				className: `number ${className ?? ''}`
 			},
 			[this.#inner]
@@ -384,12 +381,14 @@ abstract class Section {
 
 	protected unpop(char: Char) {
 		char.el.classList.remove('section__exiting')
+		char.el.style.top = ''
 		char.el.style[this.justify] = ''
 	}
 
 	protected pop(chars: Map<any, Char>) {
 		// Calculate offsets for removed before popping, to avoid layout thrashing:
 		chars.forEach((char) => {
+			char.el.style.top = `${char.el.offsetTop}px`
 			char.el.style[this.justify] = `${offset(char.el, this.justify)}px`
 		})
 		chars.forEach((char) => {
@@ -609,7 +608,7 @@ class Digit extends Char<KeyedDigitPart> {
 
 	constructor(
 		section: Section,
-		_: KeyedDigitPart['type'],
+		type: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
 		readonly place: number,
 		props?: CharProps
@@ -626,6 +625,7 @@ class Digit extends Char<KeyedDigitPart> {
 		const el = createElement(
 			'span',
 			{
+				part: `digit ${type}-digit`,
 				className: `digit`
 			},
 			numbers
@@ -736,6 +736,7 @@ class Sym extends Char<KeyedSymbolPart> {
 			createElement(
 				'span',
 				{
+					part: type,
 					className: `symbol`
 				},
 				[val]

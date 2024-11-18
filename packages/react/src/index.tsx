@@ -5,7 +5,7 @@ import {
 	type Value,
 	type Format,
 	type Props,
-	render,
+	renderInnerHTML,
 	formatToData,
 	type Data,
 	NumberFlowLite,
@@ -13,6 +13,7 @@ import {
 	canAnimate as _canAnimate,
 	define
 } from 'number-flow'
+import { BROWSER } from 'esm-env'
 export type { Value, Format, Trend, NumberPartType } from 'number-flow'
 
 const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
@@ -152,7 +153,19 @@ class NumberFlowImpl extends React.Component<
 	}
 
 	override render() {
-		const [_, { innerRef, className, data, willChange, isolate, ...rest }] = splitProps(this.props)
+		const [
+			_,
+			{
+				innerRef,
+				className,
+				data,
+				willChange,
+				isolate,
+				onAnimationsStart,
+				onAnimationsFinish,
+				...rest
+			}
+		] = splitProps(this.props)
 
 		return (
 			// @ts-expect-error missing types
@@ -161,10 +174,11 @@ class NumberFlowImpl extends React.Component<
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:
 				class={className}
+				aria-label={data.valueAsString}
 				{...rest}
-				dangerouslySetInnerHTML={{
-					__html: render({ valueAsString: data.valueAsString, willChange })
-				}}
+				role="img"
+				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
+				suppressHydrationWarning
 				// Make sure data is set last, everything else is updated:
 				data={serializeData(data)}
 			/>

@@ -1,5 +1,5 @@
-import { BROWSER } from './util/env'
-import { css } from './util/css'
+import { BROWSER } from 'esm-env'
+import { css } from './util/string'
 
 export const supportsLinear =
 	BROWSER &&
@@ -11,7 +11,9 @@ export const supportsMod =
 	BROWSER && typeof CSS !== 'undefined' && CSS.supports && CSS.supports('line-height', 'mod(1,1)')
 
 export const prefersReducedMotion =
-	BROWSER && matchMedia ? matchMedia('(prefers-reduced-motion: reduce)') : null
+	BROWSER && typeof matchMedia !== 'undefined'
+		? matchMedia('(prefers-reduced-motion: reduce)')
+		: null
 
 // Register animated vars:
 export const opacityDeltaVar = '--_number-flow-d-opacity'
@@ -60,7 +62,7 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
-const halfMaskHeight = `calc(${maskHeight} / 2)`
+export const halfMaskHeight = `calc(${maskHeight} / 2)`
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 
@@ -70,40 +72,20 @@ export const SlottedTag = 'span'
 
 const styles = css`
 	:host {
-		display: inline-flex; /* seems better at matching baselines with other inline elements */
-		align-items: baseline; /* ^ */
+		display: inline-block;
 		direction: ltr;
 		white-space: nowrap;
-		/* for invisible slotted label used for screen readers and selecting: */
-		position: relative;
 		line-height: ${charHeight} !important;
-		isolation: isolate;
-	}
-
-	::slotted(${SlottedTag}) {
-		position: absolute;
-		left: 0;
-		top: 0;
-		color: transparent !important;
-		will-change: unset !important;
-		z-index: -5;
-	}
-
-	:host > .number,
-	:host > .section {
-		pointer-events: none;
-		user-select: none;
+		isolation: isolate; /* for .number z-index */
 	}
 
 	.number,
 	.number__inner {
-		display: inline-flex;
-		align-items: baseline;
+		display: inline-block;
 		transform-origin: left top;
 	}
 
-	:host([data-will-change]) .number,
-	:host([data-will-change]) .number__inner {
+	:host([data-will-change]) :is(.number, .number__inner, .section, .digit, .digit__num, .symbol) {
 		will-change: transform;
 	}
 
@@ -115,7 +97,7 @@ const styles = css`
 		position: relative; /* for z-index */
 		z-index: -1; /* display underneath other sections */
 
-		overflow: clip; /* important so it doesn't affect page layout */
+		/* overflow: clip; /* helpful to not affect page layout, but breaks baseline alignment in Safari :/ */
 		/* -webkit- prefixed properties have better support than unprefixed ones: */
 		-webkit-mask-image:
 			/* Horizontal: */
@@ -156,16 +138,13 @@ const styles = css`
 	}
 
 	.number__inner {
-		padding: 0 ${maskWidth};
+		padding: ${halfMaskHeight} ${maskWidth};
 		/* invert parent's: */
 		transform: scaleX(calc(1 / var(--scale-x))) translateX(calc(-1 * var(${dxVar})));
 	}
 
 	.section {
-		display: inline-flex;
-		align-items: baseline;
-		padding-bottom: ${halfMaskHeight};
-		padding-top: ${halfMaskHeight};
+		display: inline-block;
 		/* for .section__exiting: */
 		position: relative;
 		isolation: isolate;
@@ -173,16 +152,12 @@ const styles = css`
 
 	.section::after {
 		/*
-		 * We seem to need some type of character to ensure align-items: baseline continues working
+		 * We seem to need some type of character to ensure baseline alignment continues working
 		 * even when empty
 		 */
 		content: '\200b'; /* zero-width space */
-		display: block;
+		display: inline-block;
 		padding: ${halfMaskHeight} 0;
-	}
-
-	:host([data-will-change]) .section {
-		will-change: transform;
 	}
 
 	.section--justify-left {
@@ -193,25 +168,21 @@ const styles = css`
 		transform-origin: center right;
 	}
 
-	.section__exiting {
+	.section__exiting,
+	.symbol__exiting {
+		margin: 0 !important;
 		position: absolute !important;
 		z-index: -1;
-		/* top: 0; this seemed to backfire */
 	}
 
 	.digit {
-		display: block;
+		display: inline-block;
 		position: relative;
 		--c: var(--current) + var(${deltaVar});
 	}
 
-	:host([data-will-change]) .digit,
-	:host([data-will-change]) .digit__num {
-		will-change: transform;
-	}
-
 	.digit__num {
-		display: block;
+		display: inline-block;
 		padding: ${halfMaskHeight} 0;
 		/* Claude + https://buildui.com/recipes/animated-counter */
 		--offset-raw: mod(10 + var(--n) - mod(var(--c), 10), 10);
@@ -233,26 +204,15 @@ const styles = css`
 	}
 
 	.symbol {
-		display: inline-flex;
-		align-items: baseline;
+		display: inline-block;
 		position: relative;
 		isolation: isolate; /* helpful for z-index and mix-blend-mode */
-		padding: ${halfMaskHeight} 0;
-	}
-
-	:host([data-will-change]) .symbol {
-		will-change: transform;
 	}
 
 	.symbol__value {
-		display: block;
+		display: inline-block;
 		mix-blend-mode: plus-lighter; /* better crossfades e.g. + <-> - */
 		white-space: pre; /* some symbols are spaces or thin spaces */
-	}
-
-	.symbol__exiting {
-		position: absolute;
-		z-index: -1;
 	}
 
 	.section--justify-left .symbol__exiting {

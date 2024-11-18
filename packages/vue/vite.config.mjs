@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
 			fileName: 'index'
 		},
 		rollupOptions: {
-			external: ['vue', 'number-flow'],
+			external: ['vue', 'number-flow', 'esm-env'],
 			output: {
 				globals: {
 					vue: 'Vue'

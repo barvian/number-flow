@@ -86,6 +86,13 @@ const app = {
 		<meta name="description" content={description} />
 		<meta property="og:description" content={description} />
 		<meta name="twitter:description" content={description} />
+		<script is:inline>
+			if (
+				HTMLTemplateElement.prototype.hasOwnProperty('shadowRootMode') ||
+				HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot')
+			)
+				document.documentElement.setAttribute('data-supports-dsd', '')
+		</script>
 		<script type="application/ld+json" is:inline set:html={JSON.stringify(app)} />
 
 		<ViewTransitions />

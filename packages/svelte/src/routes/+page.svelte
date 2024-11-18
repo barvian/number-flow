@@ -23,10 +23,11 @@
 		bind:el
 		{value}
 		format={{ style: 'currency', currency: 'USD' }}
-		locales="fr-FR"
+		locales="zh-CN"
 		trend="increasing"
 		prefix=":"
 		suffix="/mo"
+		data-testid="flow"
 		continuous
 		on:animationsstart={() => console.log('start')}
 		on:animationsfinish={() => console.log('finish')}

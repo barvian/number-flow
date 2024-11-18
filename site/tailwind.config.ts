@@ -100,6 +100,10 @@ export default {
 							content: 'none'
 						},
 
+						summary: {
+							'@apply font-medium text-[--tw-prose-links] cursor-pointer': {}
+						},
+
 						'code::after': {
 							content: 'none'
 						},
@@ -167,7 +171,7 @@ export default {
 		spring,
 		fluid,
 		typography,
-		plugin(({ matchUtilities, addUtilities, addVariant, theme }) => {
+		plugin(({ matchUtilities, addUtilities, addVariant, matchVariant, theme }) => {
 			matchUtilities(
 				{
 					vt: (_, { modifier }) => ({
@@ -176,6 +180,8 @@ export default {
 				},
 				{ values: { DEFAULT: '' }, modifiers: 'any' }
 			)
+
+			matchVariant('part', (p) => `:root[data-supports-dsd] &::part(${p})`)
 
 			matchUtilities(
 				{

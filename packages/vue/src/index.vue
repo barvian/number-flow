@@ -2,13 +2,14 @@
 import {
 	type Value,
 	type Format,
-	render,
+	renderInnerHTML,
 	formatToData,
 	NumberFlowLite,
 	type Props as NumberFlowProps
 } from 'number-flow'
 import { computed, inject, ref, watch } from 'vue'
 import { key as groupKey } from './group'
+import { BROWSER } from 'esm-env'
 
 type Props = Partial<NumberFlowProps> & {
 	locales?: Intl.LocalesArgument
@@ -62,10 +63,12 @@ const register = inject(groupKey, undefined)
 register?.(el, data)
 </script>
 <template>
-	<!-- Make sure parts is set last: -->
+	<!-- Make sure data is set last: -->
 	<number-flow-vue
 		ref="el"
+		:aria-label="data.valueAsString"
 		v-bind="$attrs"
+		role="img"
 		:manual="Boolean(register)"
 		:trend
 		:continuous
@@ -75,7 +78,8 @@ register?.(el, data)
 		:opacityTiming
 		:respectMotionPreference
 		:data-will-change="willChange ? '' : undefined"
-		v-html="render({ valueAsString: data.valueAsString, willChange })"
+		v-html="BROWSER ? undefined : renderInnerHTML(data)"
+		data-allow-mismatch
 		@animationsstart="emit('animationsstart')"
 		@animationsfinish="emit('animationsfinish')"
 		:data

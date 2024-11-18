@@ -1,4 +1,4 @@
-import { BROWSER } from './env'
+import { BROWSER } from 'esm-env'
 
 type ExcludeReadonly<T> = {
 	-readonly [K in keyof T as T[K] extends Readonly<any> ? never : K]: T[K]

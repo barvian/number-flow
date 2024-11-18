@@ -25,10 +25,11 @@ const handleFinish = () => console.log('finish')
 			ref="flow"
 			:value
 			:format="{ style: 'currency', currency: 'USD' }"
+			locales="zh-CN"
+			trend="increasing"
 			prefix=":"
 			suffix="/mo"
-			locales="fr-FR"
-			trend="increasing"
+			data-testid="flow"
 			continuous
 			@animationsstart="handleStart"
 			@animationsfinish="handleFinish"
