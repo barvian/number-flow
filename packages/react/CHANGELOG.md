@@ -1,5 +1,14 @@
 # @number-flow/react
 
+## 0.3.4
+
+### Patch Changes
+
+- Expose parts for styling support ([`27156cc`](https://github.com/barvian/number-flow/commit/27156cc3d4750d06293b7022afca492024f4bea4))
+
+- Updated dependencies [[`27156cc`](https://github.com/barvian/number-flow/commit/27156cc3d4750d06293b7022afca492024f4bea4)]:
+  - number-flow@0.3.9
+
 ## 0.3.3
 
 ### Patch Changes
