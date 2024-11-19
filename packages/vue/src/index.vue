@@ -57,6 +57,9 @@ const emit = defineEmits<{
 const formatter = computed(() => new Intl.NumberFormat(locales, format))
 const data = computed(() => formatToData(value, formatter.value, prefix, suffix))
 
+// Putting this in the v-html attribute ruined tree-shaking
+const html = BROWSER ? undefined : renderInnerHTML(data.value)
+
 // Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
 // for better tree-shaking:
 const register = inject(groupKey, undefined)
@@ -78,7 +81,7 @@ register?.(el, data)
 		:opacityTiming
 		:respectMotionPreference
 		:data-will-change="willChange ? '' : undefined"
-		v-html="BROWSER ? undefined : renderInnerHTML(data)"
+		v-html="html"
 		data-allow-mismatch
 		@animationsstart="emit('animationsstart')"
 		@animationsfinish="emit('animationsfinish')"
