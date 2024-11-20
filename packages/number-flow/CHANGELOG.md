@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.3.10
+
+### Patch Changes
+
+- Switch to TS private properties to reduce bundle size ([`765e43b`](https://github.com/barvian/number-flow/commit/765e43b4f2670ec532b5ef69b745d5d350f51bdd))
+
 ## 0.3.9
 
 ### Patch Changes
