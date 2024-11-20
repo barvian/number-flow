@@ -51,6 +51,13 @@ export interface Props {
 // This one is used internally for framework wrappers, and
 // doesn't include things like attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
+	/**
+	 * Use `private _private` properties instead of `_private` to avoid _private polyfill and
+	 * reduce bundle size. Also, use `readonly` properties instead of getters to save on bundle
+	 * size, even though you have to do gross stuff like `(this as Mutable<...>)` until TS
+	 * supports e.g. https://github.com/microsoft/TypeScript/issues/37487
+	 */
+
 	static defaultProps: Props = {
 		transformTiming: {
 			duration: 900,
@@ -75,42 +82,42 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	trend = (this.constructor as typeof NumberFlowLite).defaultProps.trend
 	continuous = (this.constructor as typeof NumberFlowLite).defaultProps.continuous
 
-	#animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
+	private _animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
 	get animated() {
-		return this.#animated
+		return this._animated
 	}
 	set animated(val: boolean) {
 		if (this.animated === val) return
-		this.#animated = val
+		this._animated = val
 		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
 		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
 	}
 
-	#created = false
+	private _created = false
 	get created() {
-		return this.#created
+		return this._created
 	}
 
-	#pre?: SymbolSection
-	#num?: Num
-	#post?: SymbolSection
+	private _pre?: SymbolSection
+	private _num?: Num
+	private _post?: SymbolSection
 
-	#computedTrend?: Trend
+	private _computedTrend?: Trend
 	get computedTrend() {
-		return this.#computedTrend
+		return this._computedTrend
 	}
 
-	#startingPlace?: number | null
+	private _startingPlace?: number | null
 	get startingPlace() {
-		return this.#startingPlace
+		return this._startingPlace
 	}
 
-	#computedAnimated = this.#animated
+	private _computedAnimated = this._animated
 	get computedAnimated() {
-		return this.#computedAnimated
+		return this._computedAnimated
 	}
 
-	#data?: Data
+	private _data?: Data
 
 	manual = false
 
@@ -122,8 +129,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		const { pre, integer, fraction, post, value } = data
 
 		// Initialize if needed
-		if (!this.#created) {
-			this.#data = data
+		if (!this._created) {
+			this._data = data
 
 			// This will overwrite the DSD if any:
 			this.attachShadow({ mode: 'open' })
@@ -141,36 +148,36 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				this.shadowRoot!.appendChild(style)
 			}
 
-			this.#pre = new SymbolSection(this, pre, {
+			this._pre = new SymbolSection(this, pre, {
 				justify: 'right',
 				part: 'left'
 			})
-			this.shadowRoot!.appendChild(this.#pre.el)
+			this.shadowRoot!.appendChild(this._pre.el)
 
-			this.#num = new Num(this, integer, fraction)
-			this.shadowRoot!.appendChild(this.#num.el)
+			this._num = new Num(this, integer, fraction)
+			this.shadowRoot!.appendChild(this._num.el)
 
-			this.#post = new SymbolSection(this, post, {
+			this._post = new SymbolSection(this, post, {
 				justify: 'left',
 				part: 'right'
 			})
-			this.shadowRoot!.appendChild(this.#post.el)
+			this.shadowRoot!.appendChild(this._post.el)
 		} else {
-			const prev = this.#data!
-			this.#data = data
+			const prev = this._data!
+			this._data = data
 
 			// Compute trend
 			if (this.trend === true) {
-				this.#computedTrend = Math.sign(value - prev.value)
+				this._computedTrend = Math.sign(value - prev.value)
 			} else if (this.trend === 'increasing') {
-				this.#computedTrend = Trend.UP
+				this._computedTrend = Trend.UP
 			} else if (this.trend === 'decreasing') {
-				this.#computedTrend = Trend.DOWN
-			} else this.#computedTrend = Trend.NONE
+				this._computedTrend = Trend.DOWN
+			} else this._computedTrend = Trend.NONE
 
 			// Compute starting place for continuous
-			this.#startingPlace = undefined
-			if (this.#computedTrend !== Trend.NONE && this.continuous) {
+			this._startingPlace = undefined
+			if (this._computedTrend !== Trend.NONE && this.continuous) {
 				// Find the starting place based on the parts, not the value,
 				// to handle e.g. compact notation where value = 1000 and integer part = 1
 				const prevNumber = prev.integer
@@ -185,67 +192,67 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				const firstChanged = number.find(
 					(p) => !prevNumber.find((pp) => p.place === pp.place && p.value === pp.value)
 				)
-				this.#startingPlace = max(firstChangedPrev?.place, firstChanged?.place)
+				this._startingPlace = max(firstChangedPrev?.place, firstChanged?.place)
 			}
 
-			this.#computedAnimated =
+			this._computedAnimated =
 				canAnimate &&
-				this.#animated &&
+				this._animated &&
 				(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
 				// https://github.com/barvian/number-flow/issues/9
 				visible(this)
 
 			if (!this.manual) this.willUpdate()
 
-			this.#pre!.update(pre)
-			this.#num!.update({ integer, fraction })
-			this.#post!.update(post)
+			this._pre!.update(pre)
+			this._num!.update({ integer, fraction })
+			this._post!.update(post)
 
 			if (!this.manual) this.didUpdate()
 		}
 
-		this.#created = true
+		this._created = true
 	}
 
 	willUpdate() {
 		// Not super safe to check animated here, b/c the prop may not have been updated yet:
-		this.#pre!.willUpdate()
-		this.#num!.willUpdate()
-		this.#post!.willUpdate()
+		this._pre!.willUpdate()
+		this._num!.willUpdate()
+		this._post!.willUpdate()
 	}
 
-	#abortAnimationsFinish?: AbortController
+	private _abortAnimationsFinish?: AbortController
 
 	didUpdate() {
 		// Safe to call this here because we know the animated prop is up-to-date
-		if (!this.#computedAnimated) return
+		if (!this._computedAnimated) return
 
 		// If we're already animating, cancel the previous animationsfinish event:
-		if (this.#abortAnimationsFinish) this.#abortAnimationsFinish.abort()
+		if (this._abortAnimationsFinish) this._abortAnimationsFinish.abort()
 		// Otherwise, dispatch a start event:
 		else this.dispatchEvent(new Event('animationsstart'))
 
-		this.#pre!.didUpdate()
-		this.#num!.didUpdate()
-		this.#post!.didUpdate()
+		this._pre!.didUpdate()
+		this._num!.didUpdate()
+		this._post!.didUpdate()
 
 		const controller = new AbortController()
 		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
 			if (!controller.signal.aborted) {
 				this.dispatchEvent(new Event('animationsfinish'))
-				this.#abortAnimationsFinish = undefined
+				this._abortAnimationsFinish = undefined
 			}
 		})
-		this.#abortAnimationsFinish = controller
+		this._abortAnimationsFinish = controller
 	}
 }
 
 class Num {
 	readonly el: HTMLSpanElement
-	readonly #inner: HTMLSpanElement
+	readonly _inner: HTMLSpanElement
 
-	#integer: NumberSection
-	#fraction: NumberSection
+	private _integer: NumberSection
+	private _fraction: NumberSection
 
 	constructor(
 		readonly flow: NumberFlowLite,
@@ -253,21 +260,21 @@ class Num {
 		fraction: KeyedNumberPart[],
 		{ className, ...props }: HTMLProps<'span'> = {}
 	) {
-		this.#integer = new NumberSection(flow, integer, {
+		this._integer = new NumberSection(flow, integer, {
 			justify: 'right',
 			part: 'integer'
 		})
-		this.#fraction = new NumberSection(flow, fraction, {
+		this._fraction = new NumberSection(flow, fraction, {
 			justify: 'left',
 			part: 'fraction'
 		})
 
-		this.#inner = createElement(
+		this._inner = createElement(
 			'span',
 			{
 				className: `number__inner`
 			},
-			[this.#integer.el, this.#fraction.el]
+			[this._integer.el, this._fraction.el]
 		)
 		this.el = createElement(
 			'span',
@@ -276,39 +283,39 @@ class Num {
 				part: 'number',
 				className: `number ${className ?? ''}`
 			},
-			[this.#inner]
+			[this._inner]
 		)
 	}
 
-	#prevWidth?: number
-	#prevLeft?: number
+	private _prevWidth?: number
+	private _prevLeft?: number
 
 	willUpdate() {
-		this.#prevWidth = this.el.offsetWidth
-		this.#prevLeft = this.el.getBoundingClientRect().left
+		this._prevWidth = this.el.offsetWidth
+		this._prevLeft = this.el.getBoundingClientRect().left
 
-		this.#integer.willUpdate()
-		this.#fraction.willUpdate()
+		this._integer.willUpdate()
+		this._fraction.willUpdate()
 	}
 
 	update({ integer, fraction }: Pick<Data, 'integer' | 'fraction'>) {
-		this.#integer.update(integer)
-		this.#fraction.update(fraction)
+		this._integer.update(integer)
+		this._fraction.update(fraction)
 	}
 
 	didUpdate() {
 		const rect = this.el.getBoundingClientRect()
 
 		// Do this before starting to animate:
-		this.#integer.didUpdate()
-		this.#fraction.didUpdate()
+		this._integer.didUpdate()
+		this._fraction.didUpdate()
 
-		const dx = this.#prevLeft! - rect.left
+		const dx = this._prevLeft! - rect.left
 
 		const width = this.el.offsetWidth
 		// We convert scale to width delta in px to better handle interruptions and keep them in
 		// sync with translations:
-		const dWidth = this.#prevWidth! - width
+		const dWidth = this._prevWidth! - width
 		this.el.style.setProperty('--width', String(width))
 
 		this.el.animate(
@@ -441,11 +448,11 @@ abstract class Section {
 		})
 	}
 
-	#prevOffset?: number
+	private _prevOffset?: number
 
 	willUpdate() {
 		const rect = this.el.getBoundingClientRect()
-		this.#prevOffset = rect[this.justify]
+		this._prevOffset = rect[this.justify]
 
 		this.children.forEach((comp) => comp.willUpdate(rect))
 	}
@@ -457,7 +464,7 @@ abstract class Section {
 		this.children.forEach((comp) => comp.didUpdate(rect))
 
 		const offset = rect[this.justify]
-		const dx = this.#prevOffset! - offset
+		const dx = this._prevOffset! - offset
 
 		if (dx && this.children.size)
 			this.el.animate(
@@ -522,8 +529,8 @@ interface AnimatePresenceProps {
 }
 
 class AnimatePresence {
-	#present = true
-	#onRemove?: OnRemove
+	private _present = true
+	private _onRemove?: OnRemove
 
 	constructor(
 		readonly flow: NumberFlowLite,
@@ -546,24 +553,24 @@ class AnimatePresence {
 			)
 		}
 
-		this.#onRemove = onRemove
+		this._onRemove = onRemove
 	}
 
 	get present() {
-		return this.#present
+		return this._present
 	}
 
-	#remove = () => {
+	private _remove = () => {
 		this.el.remove()
-		this.#onRemove?.()
+		this._onRemove?.()
 	}
 
 	set present(val) {
-		if (this.#present === val) return
-		this.#present = val
+		if (this._present === val) return
+		this._present = val
 
 		if (!this.flow.computedAnimated) {
-			if (!val) this.#remove()
+			if (!val) this._remove()
 			return
 		}
 
@@ -578,9 +585,9 @@ class AnimatePresence {
 			}
 		)
 
-		if (val) this.flow.removeEventListener('animationsfinish', this.#remove)
+		if (val) this.flow.removeEventListener('animationsfinish', this._remove)
 		else
-			this.flow.addEventListener('animationsfinish', this.#remove, {
+			this.flow.addEventListener('animationsfinish', this._remove, {
 				once: true
 			})
 	}
@@ -604,7 +611,7 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends Animate
 }
 
 class Digit extends Char<KeyedDigitPart> {
-	#numbers: HTMLSpanElement[]
+	private _numbers: HTMLSpanElement[]
 
 	constructor(
 		section: Section,
@@ -634,29 +641,29 @@ class Digit extends Char<KeyedDigitPart> {
 
 		super(section, value, el, props)
 
-		this.#numbers = numbers
+		this._numbers = numbers
 	}
 
-	#prevValue?: KeyedDigitPart['value']
+	private _prevValue?: KeyedDigitPart['value']
 
 	// Relative to parent:
-	#prevCenter?: number
+	private _prevCenter?: number
 
 	willUpdate(parentRect: DOMRect) {
 		const rect = this.el.getBoundingClientRect()
 
-		this.#prevValue = this.value
+		this._prevValue = this.value
 
 		const prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
-		this.#prevCenter =
+		this._prevCenter =
 			this.section.justify === 'left' ? prevOffset + halfWidth : prevOffset - halfWidth
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		this.#numbers[this.value]?.classList.remove('is-current')
+		this._numbers[this.value]?.classList.remove('is-current')
 		this.el.style.setProperty('--current', String(value))
-		this.#numbers[value]?.classList.add('is-current')
+		this._numbers[value]?.classList.add('is-current')
 		this.value = value
 	}
 
@@ -665,7 +672,7 @@ class Digit extends Char<KeyedDigitPart> {
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
-		const dx = this.#prevCenter! - center
+		const dx = this._prevCenter! - center
 
 		if (dx)
 			this.el.animate(
@@ -692,12 +699,12 @@ class Digit extends Char<KeyedDigitPart> {
 			}
 		)
 		// Hoisting the callback out prevents duplicates:
-		this.flow.addEventListener('animationsfinish', this.#onAnimationsFinish, { once: true })
+		this.flow.addEventListener('animationsfinish', this._onAnimationsFinish, { once: true })
 	}
 
 	get diff() {
 		let trend = this.flow.computedTrend
-		const diff = this.value - this.#prevValue!
+		const diff = this.value - this._prevValue!
 		// Loop once if it's continuous:
 		if (!diff && this.flow.startingPlace != null && this.flow.startingPlace >= this.place) {
 			return 10 * trend! // trend must exist if there's a startingPlace
@@ -706,15 +713,15 @@ class Digit extends Char<KeyedDigitPart> {
 		// Make it per-digit if no root trend:
 		trend ||= Math.sign(diff)
 		// Loop around if need be:
-		if (trend === Trend.DOWN && this.value > this.#prevValue!)
-			return this.value - 10 - this.#prevValue!
-		else if (trend === Trend.UP && this.value < this.#prevValue!)
-			return 10 - this.#prevValue! + this.value
+		if (trend === Trend.DOWN && this.value > this._prevValue!)
+			return this.value - 10 - this._prevValue!
+		else if (trend === Trend.UP && this.value < this._prevValue!)
+			return 10 - this._prevValue! + this.value
 
 		return diff
 	}
 
-	#onAnimationsFinish = () => {
+	private _onAnimationsFinish = () => {
 		this.el.classList.remove('is-spinning')
 	}
 }
@@ -743,41 +750,41 @@ class Sym extends Char<KeyedSymbolPart> {
 			),
 			props
 		)
-		this.#children.set(
+		this._children.set(
 			value,
 			new AnimatePresence(this.flow, val, {
-				onRemove: this.#onChildRemove(value)
+				onRemove: this._onChildRemove(value)
 			})
 		)
 	}
 
-	#children = new Map<KeyedSymbolPart['value'], AnimatePresence>()
+	private _children = new Map<KeyedSymbolPart['value'], AnimatePresence>()
 
-	#prevOffset?: number
+	private _prevOffset?: number
 
 	willUpdate(parentRect: DOMRect) {
 		if (this.type === 'decimal') return // decimal never needs animation b/c it's the first in a left aligned section and never moves
 
 		const rect = this.el.getBoundingClientRect()
-		this.#prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
+		this._prevOffset = rect[this.section.justify] - parentRect[this.section.justify]
 	}
 
-	#onChildRemove =
+	private _onChildRemove =
 		(key: KeyedSymbolPart['value']): OnRemove =>
 		() => {
-			this.#children.delete(key)
+			this._children.delete(key)
 		}
 
 	update(value: KeyedSymbolPart['value']) {
 		if (this.value !== value) {
 			// Pop the current value:
-			const current = this.#children.get(this.value)!
+			const current = this._children.get(this.value)!
 			current.present = false
 			current.el.classList.add('symbol__exiting')
 
 			// If we already have the new value and it hasn't finished removing, reclaim it:
-			if (this.#children.has(value)) {
-				const prev = this.#children.get(value)!
+			if (this._children.has(value)) {
+				const prev = this._children.get(value)!
 				prev.present = true
 				prev.el.classList.remove('symbol__exiting')
 			} else {
@@ -787,11 +794,11 @@ class Sym extends Char<KeyedSymbolPart> {
 					textContent: value
 				})
 				this.el.appendChild(newVal)
-				this.#children.set(
+				this._children.set(
 					value,
 					new AnimatePresence(this.flow, newVal, {
 						animateIn: true,
-						onRemove: this.#onChildRemove(value)
+						onRemove: this._onChildRemove(value)
 					})
 				)
 			}
@@ -804,7 +811,7 @@ class Sym extends Char<KeyedSymbolPart> {
 
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
-		const dx = this.#prevOffset! - offset
+		const dx = this._prevOffset! - offset
 
 		if (dx)
 			this.el.animate(
