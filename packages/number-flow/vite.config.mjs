@@ -54,7 +54,10 @@ function minifyCSSLiterals() {
 				if (template.tag !== 'css') return
 				template.parts.forEach((part) => {
 					if (part.start < part.end) {
-						const [mini] = minifyCSS(part.text)
+						const mini = minifyCSS(part.text)[0]
+							.replaceAll(';}', '}')
+							// .replaceAll(/\s+!important/g, '!important')
+							.replaceAll(/linear-gradient\(\s+/g, 'linear-gradient(')
 						ms.overwrite(part.start, part.end, mini)
 					}
 				})
