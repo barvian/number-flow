@@ -1,5 +1,11 @@
 # @number-flow/vue
 
+## 0.2.6
+
+### Patch Changes
+
+- Improve tree-shaking ([`7885ecd`](https://github.com/barvian/number-flow/commit/7885ecddd717822b48dc43c4ab0cccbb8c33cf6f))
+
 ## 0.2.5
 
 ### Patch Changes
