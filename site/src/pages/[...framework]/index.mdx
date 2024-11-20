@@ -347,18 +347,21 @@ Then ensure your `::part` styles use it:
 <Match react>
 ```css
 :root[data-supports-dsd] number-flow-react::part(suffix) {
+	font-size: 0.75rem;
 }
 ```
 </Match>
 <Match vue>
 ```css
 :root[data-supports-dsd] number-flow-vue::part(suffix) {
+	font-size: 0.75rem;
 }
 ```
 </Match>
 <Match svelte>
 ```css
 :root[data-supports-dsd] number-flow-svelte::part(suffix) {
+	font-size: 0.75rem;
 }
 ```
 </Match>
@@ -379,17 +382,17 @@ export default {
 
 <Match react>
 ```tsx
-<NumberFlow className="part-[suffix]:text-muted" />
+<NumberFlow className="part-[suffix]:text-xs" />
 ```
 </Match>
 <Match vue>
 ```vue
-<NumberFlow class="part-[suffix]:text-muted" />
+<NumberFlow class="part-[suffix]:text-xs" />
 ```
 </Match>
 <Match svelte>
 ```svelte
-<NumberFlow class="part-[suffix]:text-muted" />
+<NumberFlow class="part-[suffix]:text-xs" />
 ```
 </Match>
 </details>
