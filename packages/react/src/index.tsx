@@ -98,10 +98,9 @@ class NumberFlowImpl extends React.Component<
 
 		this.#el.manual = !this.props.isolate
 		const [nonData] = splitProps(this.props)
-		Object.assign(
-			this.#el,
-			Object.fromEntries(Object.entries(nonData).filter(([_, v]) => v != null))
-		)
+		Object.entries(nonData).forEach(([k, v]) => {
+			this.#el![k as keyof Props] = v ?? NumberFlowElement.defaultProps[k as keyof Props]
+		})
 
 		if (prevProps?.onAnimationsStart)
 			this.#el.removeEventListener('animationsstart', prevProps.onAnimationsStart as EventListener)

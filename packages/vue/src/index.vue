@@ -7,7 +7,7 @@ import {
 	NumberFlowLite,
 	type Props as NumberFlowProps
 } from 'number-flow'
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, ref } from 'vue'
 import { key as groupKey } from './group'
 import { BROWSER } from 'esm-env'
 

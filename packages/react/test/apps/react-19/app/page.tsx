@@ -16,7 +16,7 @@ export default function Page() {
 					value={value}
 					format={{ style: 'currency', currency: 'USD' }}
 					locales="zh-CN"
-					trend="increasing"
+					trend={() => +1}
 					prefix=":"
 					suffix="/mo"
 					data-testid="flow"

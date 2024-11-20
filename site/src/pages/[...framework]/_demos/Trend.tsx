@@ -11,10 +11,18 @@ import useCycle from '@/hooks/useCycle'
 
 const NUMBERS = [20, 19]
 
+const TRENDS: Record<string, Trend | undefined> = {
+	default: undefined,
+	'+1': 1,
+	'0': 0,
+	'-1': -1
+}
+
 export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'>) {
 	const [value, cycleValue] = useCycle(NUMBERS)
 
-	const [trend, setTrend] = React.useState<Trend>(true)
+	const [option, setOption] = React.useState<keyof typeof TRENDS>('default')
+	const trend = TRENDS[option]
 
 	return (
 		<Demo
@@ -23,20 +31,20 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 				<DemoMenu>
 					<DemoMenuButton className="gap-1">
 						<code className="text-muted">trend:</code>
-						<code className="font-semibold">{JSON.stringify(trend)}</code>
+						<code className="font-semibold">{option}</code>
 					</DemoMenuButton>
 					<DemoMenuItems>
-						<DemoMenuItem onClick={() => setTrend(true)} disabled={trend === true}>
-							<code className="font-semibold">true</code>
+						<DemoMenuItem onClick={() => setOption('default')} disabled={option === 'default'}>
+							<code className="font-semibold">default</code>
 						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setTrend(false)} disabled={trend === false}>
-							<code className="font-semibold">false</code>
+						<DemoMenuItem onClick={() => setOption('+1')} disabled={option === '+1'}>
+							<code className="font-semibold">+1</code>
 						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setTrend('increasing')} disabled={trend === 'increasing'}>
-							<code className="font-semibold">"increasing"</code>
+						<DemoMenuItem onClick={() => setOption('0')} disabled={option === '0'}>
+							<code className="font-semibold">0</code>
 						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setTrend('decreasing')} disabled={trend === 'decreasing'}>
-							<code className="font-semibold">"decreasing"</code>
+						<DemoMenuItem onClick={() => setOption('-1')} disabled={option === '-1'}>
+							<code className="font-semibold">-1</code>
 						</DemoMenuItem>
 					</DemoMenuItems>
 				</DemoMenu>

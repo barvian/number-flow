@@ -195,17 +195,16 @@ For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.
 or [easing.dev](https://www.easing.dev/).
 
 <h3>
-	<code>trend<Type>: <Union types={["boolean", "'increasing'", "'decreasing'"]} /></Type></code>
-	<Meta>Default: `true`</Meta>
+	<code>trend<Type>: <Union types={["number", "(oldValue: number, value: number) => number"]} /></Type></code>
+	<Meta>Default: `(oldValue, value) => Math.sign(value - oldValue)`</Meta>
 </h3>
 
-Controls the direction of the digits.
+Controls the direction of the digits. If `trend` is or returns
 
-- `true:` The digits go up if the number increases, and down if the number decreases.
-- `false:` Ignores the trend of the number; each digit goes up if it increases and down if it decreases. This can be useful if you
+- `+1:` the digits always go up.
+- `0:` each digit goes up if it increases and down if it decreases. This can be useful if you
 want to animate number changes without conveying an overall increase or decrease ([example](https://x.com/pontusab/status/1825941664189526067)).
-- `"increasing":` The digits always go up.
-- `"decreasing":` The digits always go down.
+- `-1:` The digits always go down.
 
 <TrendDemo client:visible />
 
@@ -214,7 +213,7 @@ want to animate number changes without conveying an overall increase or decrease
 	<Meta>Default: `false`</Meta>
 </h3>
 
-If set, number transitions will appear to pass through in-between numbers. Has no effect if `trend` is `false`.
+If set, number transitions will appear to pass through in-between numbers. Has no effect if `trend` is `0`.
 
 <ContinuousDemo client:visible />
 

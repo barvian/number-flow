@@ -16,7 +16,7 @@
 		"@number-flow/vue": "workspace:*",
 		"@nuxt/fonts": "^0.10.2",
 		"nuxt": "^3.13.2",
-		"vue": "latest",
+		"vue": "^3.5.13",
 		"vue-router": "latest"
 	},
 	"devDependencies": {

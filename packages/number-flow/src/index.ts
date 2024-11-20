@@ -27,16 +27,9 @@ export * from './formatter'
 
 export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
 
-type RawTrend = boolean | 'increasing' | 'decreasing'
-export { type RawTrend as Trend }
-
-enum Trend {
-	UP = 1,
-	DOWN = -1,
-	NONE = 0
-}
-
-let styleSheet: CSSStyleSheet | undefined
+// Hoping to use -1 | 0 | 1 in the future if Math.sign types ever get fixed.
+// Don't do ReturnType<Math['sign']> cause it breaks Vue prop types:
+export type Trend = number | ((oldValue: number, value: number) => number)
 
 export interface Props {
 	transformTiming: EffectTiming
@@ -44,15 +37,17 @@ export interface Props {
 	opacityTiming: EffectTiming
 	animated: boolean
 	respectMotionPreference: boolean
-	trend: RawTrend
+	trend: Trend
 	continuous: boolean
 }
+
+let styleSheet: CSSStyleSheet | undefined
 
 // This one is used internally for framework wrappers, and
 // doesn't include things like attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	/**
-	 * Use `private _private` properties instead of `_private` to avoid _private polyfill and
+	 * Use `private _private` properties instead of `#private` to avoid # polyfill and
 	 * reduce bundle size. Also, use `readonly` properties instead of getters to save on bundle
 	 * size, even though you have to do gross stuff like `(this as Mutable<...>)` until TS
 	 * supports e.g. https://github.com/microsoft/TypeScript/issues/37487
@@ -67,7 +62,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		spinTiming: undefined,
 		opacityTiming: { duration: 450, easing: 'ease-out' },
 		animated: true,
-		trend: true,
+		trend: (oldValue, value) => Math.sign(value - oldValue),
 		continuous: false,
 		respectMotionPreference: true
 	}
@@ -102,7 +97,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	private _num?: Num
 	private _post?: SymbolSection
 
-	private _computedTrend?: Trend
+	private _computedTrend?: number
 	get computedTrend() {
 		return this._computedTrend
 	}
@@ -167,17 +162,12 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 			this._data = data
 
 			// Compute trend
-			if (this.trend === true) {
-				this._computedTrend = Math.sign(value - prev.value)
-			} else if (this.trend === 'increasing') {
-				this._computedTrend = Trend.UP
-			} else if (this.trend === 'decreasing') {
-				this._computedTrend = Trend.DOWN
-			} else this._computedTrend = Trend.NONE
+			this._computedTrend =
+				typeof this.trend === 'function' ? this.trend(prev.value, value) : this.trend
 
 			// Compute starting place for continuous
 			this._startingPlace = undefined
-			if (this._computedTrend !== Trend.NONE && this.continuous) {
+			if (this._computedTrend && this.continuous) {
 				// Find the starting place based on the parts, not the value,
 				// to handle e.g. compact notation where value = 1000 and integer part = 1
 				const prevNumber = prev.integer
@@ -713,10 +703,8 @@ class Digit extends Char<KeyedDigitPart> {
 		// Make it per-digit if no root trend:
 		trend ||= Math.sign(diff)
 		// Loop around if need be:
-		if (trend === Trend.DOWN && this.value > this._prevValue!)
-			return this.value - 10 - this._prevValue!
-		else if (trend === Trend.UP && this.value < this._prevValue!)
-			return 10 - this._prevValue! + this.value
+		if (trend < 0 && this.value > this._prevValue!) return this.value - 10 - this._prevValue!
+		else if (trend > 0 && this.value < this._prevValue!) return 10 - this._prevValue! + this.value
 
 		return diff
 	}
