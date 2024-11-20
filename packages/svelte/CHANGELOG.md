@@ -1,5 +1,14 @@
 # @number-flow/svelte
 
+## 0.1.7
+
+### Patch Changes
+
+- Switch to TS private properties to reduce bundle size ([`765e43b`](https://github.com/barvian/number-flow/commit/765e43b4f2670ec532b5ef69b745d5d350f51bdd))
+
+- Updated dependencies [[`765e43b`](https://github.com/barvian/number-flow/commit/765e43b4f2670ec532b5ef69b745d5d350f51bdd)]:
+  - number-flow@0.3.10
+
 ## 0.1.6
 
 ### Patch Changes
