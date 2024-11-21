@@ -54,7 +54,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			<NumberFlow
 				trend={trend}
 				value={value}
-				className="~text-xl/4xl text-primary font-semibold"
+				className="~text-3xl/4xl text-primary font-semibold"
 				style={{ '--number-flow-char-height': '0.85em' }}
 			/>
 		</Demo>

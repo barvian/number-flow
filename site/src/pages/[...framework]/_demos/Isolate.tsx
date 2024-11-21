@@ -16,7 +16,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			}
 			onClick={() => setIncreased((o) => !o)}
 		>
-			<div className="~text-xl/4xl flex items-center gap-4">
+			<div className="~text-3xl/4xl flex items-center gap-4">
 				{increased && <div className="bg-faint ~w-20/40 h-[1em] rounded-sm" />}
 				<NumberFlow
 					isolate={isolate}

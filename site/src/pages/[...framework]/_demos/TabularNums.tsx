@@ -16,7 +16,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			}
 			onClick={() => setValue((v) => v + 1)}
 		>
-			<div className="~text-xl/4xl flex items-center gap-4">
+			<div className="~text-3xl/4xl flex items-center gap-4">
 				<NumberFlow
 					style={{
 						fontVariantNumeric: tabularNums ? 'tabular-nums' : undefined,

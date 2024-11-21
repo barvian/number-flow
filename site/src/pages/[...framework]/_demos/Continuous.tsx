@@ -19,7 +19,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			}
 			onClick={cycleValue}
 		>
-			<div className="~text-xl/4xl flex items-center gap-4">
+			<div className="~text-3xl/4xl flex items-center gap-4">
 				<NumberFlow
 					continuous={continuous}
 					style={{ '--number-flow-char-height': '0.85em' }}
