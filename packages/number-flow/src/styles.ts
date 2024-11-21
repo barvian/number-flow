@@ -93,7 +93,6 @@ const styles = css`
 
 		margin: 0 calc(-1 * ${maskWidth});
 		position: relative; /* for z-index */
-		z-index: -1; /* display underneath other sections */
 
 		/* overflow: clip; /* helpful to not affect page layout, but breaks baseline alignment in Safari :/ */
 		/* -webkit- prefixed properties have better support than unprefixed ones: */
@@ -141,11 +140,17 @@ const styles = css`
 		transform: scaleX(calc(1 / var(--scale-x))) translateX(calc(-1 * var(${dxVar})));
 	}
 
-	.section {
+	/* Put number underneath other sections. Negative z-index messed up text cursor and selection, weirdly: */
+	:host > :not(.number) {
+		z-index: 5;
+	}
+
+	.section,
+	.symbol {
 		display: inline-block;
-		/* for .section__exiting: */
+		/* for __exiting: */
 		position: relative;
-		isolation: isolate;
+		isolation: isolate; /* also helpful for mix-blend-mode in symbol__value */
 	}
 
 	.section::after {
@@ -199,12 +204,6 @@ const styles = css`
 
 	.digit:not(.is-spinning) .digit__num:not(.is-current) {
 		display: none;
-	}
-
-	.symbol {
-		display: inline-block;
-		position: relative;
-		isolation: isolate; /* helpful for z-index and mix-blend-mode */
 	}
 
 	.symbol__value {
