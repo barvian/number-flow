@@ -29,11 +29,11 @@ export default function Countdown({ active = true }: Props) {
 			style={{ fontVariantNumeric: 'tabular-nums', '--number-flow-char-height': '0.85em' }}
 			className="~text-xl/4xl flex items-baseline font-semibold"
 		>
-			<NumberFlow trend="decreasing" value={hours} format={{ minimumIntegerDigits: 2 }} />
+			<NumberFlow trend={-1} value={hours} format={{ minimumIntegerDigits: 2 }} />
 			:
-			<NumberFlow trend="decreasing" value={minutes} format={{ minimumIntegerDigits: 2 }} />
+			<NumberFlow trend={-1} value={minutes} format={{ minimumIntegerDigits: 2 }} />
 			:
-			<NumberFlow trend="decreasing" value={seconds} format={{ minimumIntegerDigits: 2 }} />
+			<NumberFlow trend={-1} value={seconds} format={{ minimumIntegerDigits: 2 }} />
 		</div>
 	)
 }
