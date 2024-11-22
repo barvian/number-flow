@@ -1,19 +1,6 @@
-import * as React from 'react'
 import Demo, { type DemoProps } from '@/components/Demo'
-import Example from './Example'
-import type { Rename } from '@/lib/types'
-import { useInView } from 'framer-motion'
+import { $inView, $seconds } from './stores'
 
-export default function DemoHOC({
-	children,
-	...rest
-}: Rename<Omit<DemoProps, 'children'>, 'code', 'children'>) {
-	const ref = React.useRef<HTMLDivElement>(null)
-	const inView = useInView(ref)
-
-	return (
-		<Demo ref={ref} {...rest} code={children}>
-			<Example active={inView} />
-		</Demo>
-	)
+export default function Activity(props: DemoProps) {
+	return <Demo {...props} onIntersect={({ isIntersecting }) => $inView.set(isIntersecting)} />
 }

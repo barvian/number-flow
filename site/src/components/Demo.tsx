@@ -2,7 +2,7 @@ import * as React from 'react'
 import * as Tabs from '@radix-ui/react-tabs'
 // import { atom, useAtom } from 'jotai'
 import { clsx } from 'clsx/lite'
-import { inView, motion, MotionConfig } from 'framer-motion'
+import { inView, motion, MotionConfig } from 'motion/react'
 import { useId } from 'react'
 import {
 	Menu,

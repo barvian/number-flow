@@ -8,16 +8,13 @@ import { DemoTitle } from '@/components/Demo'
 import Activity from './_Activity/index.astro'
 import Slider from './_Slider/index.astro'
 import Input from './_Input/index.astro'
-// import Countdown from './_Countdown'
-// import CountdownCode from './_Countdown/Example?raw'
-// import ColoredTrends from './_ColoredTrends'
-// import ColoredTrendsCode from './_ColoredTrends/Example?raw'
+import Countdown from './_Countdown/index.astro'
 import Heading from '@/components/Heading.astro';
 import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
 import Link from '@/components/Link.astro'
 import Pre from '@/components/Pre.astro'
-import Group from './_Group/index.astro'
+import Motion from './_Motion/index.astro'
 export const components = {a: Link, pre: Pre}
 
 <Heading class="sr-only" value="Input" />
@@ -32,24 +29,19 @@ export const components = {a: Link, pre: Pre}
 
 <Slider />
 
-{/*
-## Countdown
+<Heading value="Countdown" />
 
-<Countdown client:visible>
-<Code code={CountdownCode} lang="tsx" />
-</Countdown>
-*/}
+<Countdown />
 
 <Match react>
-    <Heading value="Framer Motion" />
+    <Heading value="Motion for React" />
 
-    NumberFlow was designed to work with [Framer Motion layout animations](https://www.framer.com/motion/layout-animations/).
+    NumberFlow was designed to work with [Motion's layout animations](https://motion.dev/docs/react-layout-animations).
     You can use a `{ type: 'spring', duration: 0.9, bounce: 0 }` transition to match NumberFlow's default transform timing:
 
-    <Group />
+    <Motion />
 
     **Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
-    [`motion` component](https://www.framer.com/motion/component/#custom-components) with the
-    [`layout layoutRoot`](https://www.framer.com/motion/layout-animations/###item-is-performing-unwanted-layout-animations-as-surrounding-content-changes)
-    props.
+    [`motion` component](https://motion.dev/docs/react-motion-component) with the
+    `layout layoutRoot` props.
 </Match>

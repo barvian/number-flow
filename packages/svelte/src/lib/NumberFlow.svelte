@@ -51,6 +51,7 @@
 	export let respectMotionPreference = NumberFlowElement.defaultProps.respectMotionPreference
 	export let trend = NumberFlowElement.defaultProps.trend
 	export let continuous = NumberFlowElement.defaultProps.continuous
+	export let digits = NumberFlowElement.defaultProps.digits
 
 	type $$Props = HTMLAttributes<HTMLElement> &
 		Partial<NumberFlowProps> & {
@@ -99,6 +100,7 @@
 	__svelte_respectMotionPreference={respectMotionPreference}
 	__svelte_trend={trend}
 	__svelte_continuous={continuous}
+	__svelte_digits={digits}
 	{data}
 >
 	{@html BROWSER ? undefined : renderInnerHTML(data)}

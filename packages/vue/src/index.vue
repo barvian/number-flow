@@ -37,6 +37,7 @@ const {
 	spinTiming = NumberFlowLite.defaultProps.spinTiming,
 	opacityTiming = NumberFlowLite.defaultProps.opacityTiming,
 	respectMotionPreference = NumberFlowLite.defaultProps.respectMotionPreference,
+	digits = NumberFlowLite.defaultProps.digits,
 	willChange = false
 } = defineProps<Props>()
 
@@ -82,6 +83,7 @@ register?.(el, data)
 		:opacityTiming
 		:respectMotionPreference
 		:data-will-change="willChange ? '' : undefined"
+		:digits
 		v-html="html"
 		data-allow-mismatch
 		@animationsstart="emit('animationsstart')"

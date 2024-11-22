@@ -23,8 +23,6 @@ export const config = defineConfig({
 	workers: process.env.CI ? 1 : undefined,
 	/* Reporter to use. See https://playwright.dev/docs/test-reporters */
 	reporter: 'html',
-	snapshotPathTemplate:
-		'{testDir}/__screenshots__/{testFilePath}/{arg}-{projectName}-{platform}{ext}',
 	/* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
 	use: {
 		/* Base URL to use in actions like `await page.goto('/')`. */
@@ -43,6 +41,10 @@ export const config = defineConfig({
 		{
 			name: 'chromium-no-js',
 			use: { ...devices['Desktop Chrome'], javaScriptEnabled: false }
+		},
+		{
+			name: 'chromium-reduced-motion',
+			use: { ...devices['Desktop Chrome'], contextOptions: { reducedMotion: 'reduce' } }
 		},
 
 		{

@@ -31,6 +31,9 @@ export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
 // Don't do ReturnType<Math['sign']> cause it breaks Vue prop types:
 export type Trend = number | ((oldValue: number, value: number) => number)
 
+export type DigitOptions = { max?: number }
+export type Digits = Record<number, DigitOptions>
+
 export interface Props {
 	transformTiming: EffectTiming
 	spinTiming: EffectTiming | undefined
@@ -39,6 +42,7 @@ export interface Props {
 	respectMotionPreference: boolean
 	trend: Trend
 	continuous: boolean
+	digits: Digits | undefined
 }
 
 let styleSheet: CSSStyleSheet | undefined
@@ -64,7 +68,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		animated: true,
 		trend: (oldValue, value) => Math.sign(value - oldValue),
 		continuous: false,
-		respectMotionPreference: true
+		respectMotionPreference: true,
+		digits: undefined
 	}
 
 	// Kinda gross but can't do e.g. Object.assign in constructor because TypeScript
@@ -76,6 +81,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		.respectMotionPreference
 	trend = (this.constructor as typeof NumberFlowLite).defaultProps.trend
 	continuous = (this.constructor as typeof NumberFlowLite).defaultProps.continuous
+	digits = (this.constructor as typeof NumberFlowLite).defaultProps.digits
 
 	private _animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
 	get animated() {
@@ -102,9 +108,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		return this._computedTrend
 	}
 
-	private _startingPlace?: number | null
-	get startingPlace() {
-		return this._startingPlace
+	private _startingPos?: number | null
+	get startingPos() {
+		return this._startingPos
 	}
 
 	private _computedAnimated = this._animated
@@ -165,10 +171,10 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 			this._computedTrend =
 				typeof this.trend === 'function' ? this.trend(prev.value, value) : this.trend
 
-			// Compute starting place for continuous
-			this._startingPlace = undefined
+			// Compute starting pos for continuous
+			this._startingPos = undefined
 			if (this._computedTrend && this.continuous) {
-				// Find the starting place based on the parts, not the value,
+				// Find the starting pos based on the parts, not the value,
 				// to handle e.g. compact notation where value = 1000 and integer part = 1
 				const prevNumber = prev.integer
 					.concat(prev.fraction)
@@ -177,12 +183,12 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 					.concat(data.fraction)
 					.filter((p) => p.type === 'integer' || p.type === 'fraction')
 				const firstChangedPrev = prevNumber.find(
-					(pp) => !number.find((p) => p.place === pp.place && p.value === pp.value)
+					(pp) => !number.find((p) => p.pos === pp.pos && p.value === pp.value)
 				)
 				const firstChanged = number.find(
-					(p) => !prevNumber.find((pp) => p.place === pp.place && p.value === pp.value)
+					(p) => !prevNumber.find((pp) => p.pos === pp.pos && p.value === pp.value)
 				)
-				this._startingPlace = max(firstChangedPrev?.place, firstChanged?.place)
+				this._startingPos = max(firstChangedPrev?.pos, firstChanged?.pos)
 			}
 
 			this._computedAnimated =
@@ -358,7 +364,7 @@ abstract class Section {
 	) {
 		const comp =
 			part.type === 'integer' || part.type === 'fraction'
-				? new Digit(this, part.type, startDigitsAtZero ? 0 : part.value, part.place, {
+				? new Digit(this, part.type, startDigitsAtZero ? 0 : part.value, part.pos, {
 						...props,
 						onRemove: this.onCharRemove(part.key)
 					})
@@ -602,15 +608,17 @@ abstract class Char<P extends KeyedNumberPart = KeyedNumberPart> extends Animate
 
 class Digit extends Char<KeyedDigitPart> {
 	private _numbers: HTMLSpanElement[]
+	private _length: number
 
 	constructor(
 		section: Section,
 		type: KeyedDigitPart['type'],
 		value: KeyedDigitPart['value'],
-		readonly place: number,
+		readonly pos: number,
 		props?: CharProps
 	) {
-		const numbers = Array.from({ length: 10 }).map((_, i) => {
+		const length = (section.flow.digits?.[pos]?.max ?? 9) + 1
+		const numbers = Array.from({ length }).map((_, i) => {
 			const num = createElement(
 				'span',
 				{ className: `digit__num${i === value ? ' is-current' : ''}` },
@@ -628,10 +636,12 @@ class Digit extends Char<KeyedDigitPart> {
 			numbers
 		)
 		el.style.setProperty('--current', String(value))
+		el.style.setProperty('--length', String(length))
 
 		super(section, value, el, props)
 
 		this._numbers = numbers
+		this._length = length
 	}
 
 	private _prevValue?: KeyedDigitPart['value']
@@ -696,15 +706,17 @@ class Digit extends Char<KeyedDigitPart> {
 		let trend = this.flow.computedTrend
 		const diff = this.value - this._prevValue!
 		// Loop once if it's continuous:
-		if (!diff && this.flow.startingPlace != null && this.flow.startingPlace >= this.place) {
-			return 10 * trend! // trend must exist if there's a startingPlace
+		if (!diff && this.flow.startingPos != null && this.flow.startingPos >= this.pos) {
+			return this._length * trend! // trend must exist if there's a startingPos
 		}
 
 		// Make it per-digit if no root trend:
 		trend ||= Math.sign(diff)
 		// Loop around if need be:
-		if (trend < 0 && this.value > this._prevValue!) return this.value - 10 - this._prevValue!
-		else if (trend > 0 && this.value < this._prevValue!) return 10 - this._prevValue! + this.value
+		if (trend < 0 && this.value > this._prevValue!)
+			return this.value - this._length - this._prevValue!
+		else if (trend > 0 && this.value < this._prevValue!)
+			return this._length - this._prevValue! + this.value
 
 		return diff
 	}

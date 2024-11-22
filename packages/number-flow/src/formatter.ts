@@ -16,7 +16,7 @@ type SymbolPart = {
 
 export type NumberPartKey = string
 type KeyedPart = { key: NumberPartKey }
-export type KeyedDigitPart = DigitPart & KeyedPart & { place: number }
+export type KeyedDigitPart = DigitPart & KeyedPart & { pos: number }
 export type KeyedSymbolPart = SymbolPart & KeyedPart
 export type KeyedNumberPart = KeyedDigitPart | KeyedSymbolPart
 
@@ -71,7 +71,7 @@ export function formatToData(
 					type,
 					value: parseInt(d),
 					key: generateKey(type),
-					place: -1 - counts[type]!
+					pos: -1 - counts[type]!
 				}))
 			)
 		} else {
@@ -92,7 +92,7 @@ export function formatToData(
 				? {
 						...p,
 						key: generateKey(p.type),
-						place: counts[p.type]!
+						pos: counts[p.type]!
 					}
 				: {
 						...p,

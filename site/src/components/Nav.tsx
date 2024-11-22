@@ -1,6 +1,6 @@
 import Link from '@/components/Link'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
-import { motion, MotionConfig } from 'framer-motion'
+import { motion, MotionConfig } from 'motion/react'
 import * as React from 'react'
 import clsx from 'clsx/lite'
 

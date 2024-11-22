@@ -1,0 +1,18 @@
+---
+import Group from '.'
+import Match from '@/components/Match.astro'
+import Code from '@/components/Code.astro'
+
+// Can't glob these b/c Astro needs the import :/
+// Could probably do a client:only={framework} but then we'd lose SSR:
+import React from './react'
+import react from './react/Component.tsx?raw'
+---
+
+<Group client:visible>
+	<!-- @ts-ignore too complex -->
+	<Match react><React client:load /></Match>
+	<Match slot="code">
+		<Code code={react} slot="react" lang="tsx" />
+	</Match>
+</Group>

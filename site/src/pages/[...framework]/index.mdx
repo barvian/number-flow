@@ -11,6 +11,7 @@ import ContinuousDemo from './_demos/Continuous'
 import SuffixDemo from './_demos/Suffix'
 import TrendDemo from './_demos/Trend'
 import StylingDemo from './_demos/Styling'
+import Digits from './_Digits.astro'
 import Match from '@/components/Match.astro'
 import Meta from '@/components/Meta.astro'
 import Type from '@/components/Type.astro'
@@ -238,6 +239,18 @@ Can be set to `false` to disable all animations and finish any current ones.
 See the [input example](/examples/#input) for a usage scenario.
 
 <h3>
+	<code>digits<Type>: Record{'<number, { max?: number }>'}</Type></code>
+</h3>
+
+Configure digits based on their position in the number (i.e. <Digits/>). This can be helpful for time-related displays,
+to ensure e.g. 59 -> 00. See the [countdown example](/examples/#countdown) for a demo.
+
+<Note>
+`digits` is not currently reactive to save on bundle size.
+If you need it to be reactive, please submit a [feature request](https://github.com/barvian/number-flow/discussions/new?category=ideas).
+</Note>
+
+<h3>
 	<code>willChange<Type>: boolean</Type></code>
 	<Meta>Default: `false`</Meta>
 </h3>
@@ -422,7 +435,6 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 {/* <TabularNumsDemo client:visible /> */}
 
-<Match vue svelte>
 ---
 
 <Heading value="Grouping"/>
@@ -433,7 +445,6 @@ them in a `<NumberFlowGroup>` to properly sync their transitions:
 <Group />
 
 `<NumberFlowGroup>` doesn't render an element or accept any props.
-</Match>
 
 ---
 
@@ -451,7 +462,7 @@ them in a `<NumberFlowGroup>` to properly sync their transitions:
 
 Returns <Match react>`true`</Match><Match vue>a computed ref whose value is `true`</Match><Match svelte>a readable store whose value is `true`</Match> if NumerFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
-<Match react>See the [Framer Motion example](/examples#framer-motion) for a usage scenario.</Match>
+<Match react>See the [Motion for React example](/examples#motion-for-react) for a usage scenario.</Match>
 
 ---
 
@@ -461,4 +472,4 @@ and (optionally) the user is [okay with motion](https://developer.mozilla.org/en
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
 * Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions.
-<Match react>I'd recommend using Framer Motion for these, as it's more composable than any built-in solution could be. See the Framer Motion layout animations [example](/examples#framer-motion).</Match>
+<Match react>I'd recommend using [Motion for React](https://motion.dev/react) for these, as it's more composable than any built-in solution could be. See the Motion for React layout animations [example](/examples#motion-for-react).</Match>

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.skip(({ javaScriptEnabled }) => !javaScriptEnabled)
 
-test('updates correctly', async ({ page }) => {
+test('updates correctly', async ({ page, contextOptions }) => {
 	// Not sure why this is necessary for Svelte Chromium/Safari but I couldn't get it to work without it:
 	// https://www.reddit.com/r/sveltejs/comments/15m9jch/how_do_you_wait_for_sveltekit_to_be_completely/
 	await page.goto('/', { waitUntil: 'networkidle' })
@@ -13,12 +13,13 @@ test('updates correctly', async ({ page }) => {
 	await page.getByRole('button', { name: 'Change and pause' }).click()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })
 
-	const flow = await page.getByTestId('flow')
+	const flow = await page.getByTestId('flow1')
 	expect(await flow.getAttribute('role')).toBe('img')
 	expect(await flow.getAttribute('aria-label')).toBe(':US$152.00/mo')
 
 	await page.getByRole('button', { name: 'Resume' }).click()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })
 
-	expect(logs).toEqual(['start', 'finish'])
+	if (contextOptions.reducedMotion === 'reduce') expect(logs).toEqual([])
+	else expect(logs).toEqual(['start', 'finish'])
 })
