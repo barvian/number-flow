@@ -29,7 +29,8 @@ const {
 	value,
 	prefix,
 	suffix,
-	trend = NumberFlowLite.defaultProps.trend,
+	// Couldn't find docs on this, but needs wrapper function to work:
+	trend = () => NumberFlowLite.defaultProps.trend,
 	continuous = NumberFlowLite.defaultProps.continuous,
 	animated = NumberFlowLite.defaultProps.animated,
 	transformTiming = NumberFlowLite.defaultProps.transformTiming,
