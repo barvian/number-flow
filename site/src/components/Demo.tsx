@@ -157,12 +157,7 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 					)}
 				</div>
 			</Tabs.Content>
-			{code && (
-				// Pad the right side of the first line to make room for tabs:
-				<Tabs.Content className="[&_.line:first-child]:pr-[9.5rem]" value="code">
-					{code}
-				</Tabs.Content>
-			)}
+			{code && <Tabs.Content value="code">{code}</Tabs.Content>}
 		</Tabs.Root>
 	)
 })
