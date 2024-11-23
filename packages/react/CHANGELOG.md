@@ -10,7 +10,7 @@
 
 - Add digits prop ([`05423bb`](https://github.com/barvian/number-flow/commit/05423bbe4f0f4dab8caf442032fae9ecfccdbf94))
 
-- Add <NumberFlowGroup> ([`228110c`](https://github.com/barvian/number-flow/commit/228110cf189e81fa030ffc61766290f02d273ff7))
+- Add `<NumberFlowGroup>` ([`228110c`](https://github.com/barvian/number-flow/commit/228110cf189e81fa030ffc61766290f02d273ff7))
 
 - Fix cursor and improve text selection ([`8c1f922`](https://github.com/barvian/number-flow/commit/8c1f92232375bc35cf4a3b5f8136206c70918809))
 
