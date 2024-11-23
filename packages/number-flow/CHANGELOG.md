@@ -1,5 +1,17 @@
 # number-flow
 
+## 0.4.0
+
+### Minor Changes
+
+- More flexible trend prop ([`6f53990`](https://github.com/barvian/number-flow/commit/6f539906a439f567d50667d9fe9d52de4e2a4bd0))
+
+### Patch Changes
+
+- Add digits prop ([`05423bb`](https://github.com/barvian/number-flow/commit/05423bbe4f0f4dab8caf442032fae9ecfccdbf94))
+
+- Fix cursor and improve text selection ([`8c1f922`](https://github.com/barvian/number-flow/commit/8c1f92232375bc35cf4a3b5f8136206c70918809))
+
 ## 0.3.10
 
 ### Patch Changes
