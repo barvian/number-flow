@@ -87,6 +87,10 @@ export default {
 					css: {
 						'line-height': '1.7',
 
+						th: {
+							'@apply font-semibold': {}
+						},
+
 						a: {
 							'font-weight': 'unset',
 							'@apply link-underline': {}
