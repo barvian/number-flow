@@ -13,6 +13,7 @@ import Heading from '@/components/Heading.astro';
 import Match from '@/components/Match.astro';
 import Code from '@/components/Code.astro';
 import Link from '@/components/Link.astro'
+import Note from '@/components/Note.astro'
 import Pre from '@/components/Pre.astro'
 import Motion from './_Motion/index.astro'
 export const components = {a: Link, pre: Pre}
@@ -41,7 +42,9 @@ export const components = {a: Link, pre: Pre}
 
     <Motion />
 
-    **Note:** whenever `NumberFlow` is used within a layout animation it must be (or be in) a
+    <Note>
+    When `NumberFlow` is used within a layout animation it should be (or be in) a
     [`motion` component](https://motion.dev/docs/react-motion-component) with the
     `layout layoutRoot` props.
+    </Note>
 </Match>
