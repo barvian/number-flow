@@ -11,6 +11,9 @@ const sans = ['Inter', '_font_fallback_732902278794', 'sans-serif']
 
 export default {
 	presets: [reset],
+	future: {
+		hoverOnlyWhenSupported: true
+	},
 	content: {
 		files: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
 		transform: {

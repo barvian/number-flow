@@ -18,7 +18,7 @@ export default function MotionExample({ value }: Props) {
 		<motion.span
 			className={clsx(
 				value > 0 ? 'bg-emerald-400' : 'bg-red-500',
-				'~text-base/2xl inline-flex items-center px-[0.3em] text-white transition-colors duration-300'
+				'inline-flex items-center px-[0.3em] text-2xl text-white transition-colors duration-300'
 			)}
 			style={{ borderRadius: 999 }}
 			layout={canAnimate}
