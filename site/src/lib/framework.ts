@@ -1,3 +1,5 @@
+import { trimSlash } from './url'
+
 export type FrameworkData = {
 	name: string | undefined
 	sandbox: string
@@ -56,8 +58,9 @@ export const toFrameworkPath = (
 	// New prefix to prepend, based on new framework:
 	const prefix = id === DEFAULT_FRAMEWORK ? '' : '/' + id
 
-	if (firstSegment && Object.keys(FRAMEWORKS).includes(firstSegment))
-		return prefix + '/' + segments.join('/')
+	if (firstSegment && Object.keys(FRAMEWORKS).includes(firstSegment)) {
+		return trimSlash(prefix + '/' + segments.join('/'))
+	}
 	// It was on the default framework
-	return prefix + path
+	return trimSlash(prefix + path)
 }

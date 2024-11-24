@@ -15,3 +15,5 @@ export const isActive = (
 		toFrameworkPath(path, DEFAULT_FRAMEWORK),
 		toFrameworkPath(urlOrPathname, DEFAULT_FRAMEWORK)
 	)
+
+export const trimSlash = (path: string | undefined) => path?.replace(/(.)\/$/, '$1')
