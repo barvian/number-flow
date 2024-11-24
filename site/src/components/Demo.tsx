@@ -213,7 +213,7 @@ export function DemoMenuItems({ className, ...props }: MenuItemsProps) {
 			{...props}
 			className={clsx(
 				className,
-				'animate-pop-in absolute left-0 top-full mt-2 min-w-full origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
+				'animate-pop-in absolute left-0 top-full z-10 mt-2 min-w-full origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
 		/>
 	)
