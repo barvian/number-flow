@@ -276,7 +276,7 @@ export function NumberFlowGroup({ children }: { children: React.ReactNode }) {
 
 // SSR-safe canAnimate
 export function useCanAnimate({ respectMotionPreference = true } = {}) {
-	const [canAnimate, setCanAnimate] = React.useState(_canAnimate)
+	const [canAnimate, setCanAnimate] = React.useState(false)
 	const [reducedMotion, setReducedMotion] = React.useState(false)
 
 	// Handle SSR:

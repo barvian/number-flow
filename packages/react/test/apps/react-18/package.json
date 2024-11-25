@@ -3,6 +3,8 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"build": "next build",
+		"start": "next start --port 3039",
 		"dev": "next dev --port 3039",
 		"lint": "next lint",
 		"test": "playwright test",
@@ -23,7 +25,8 @@
 		"postcss": "^8",
 		"tailwindcss": "^3.4.1",
 		"tw-reset": "^0.0.5",
-		"typescript": "^5"
+		"typescript": "^5",
+		"webpack": "^5.96.1"
 	},
 	"packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
 }

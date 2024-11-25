@@ -22,7 +22,7 @@ export function useCanAnimate({
 }: {
 	respectMotionPreference?: MaybeRefOrGetter<boolean>
 } = {}) {
-	const canAnimate = ref(_canAnimate)
+	const canAnimate = ref(false)
 	const reducedMotion = ref(false)
 
 	// Handle SSR:

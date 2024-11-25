@@ -9,7 +9,7 @@ export type { Value, Format, Trend } from 'number-flow'
 export { default as NumberFlowGroup } from './NumberFlowGroup.svelte'
 export { default, NumberFlowElement } from './NumberFlow.svelte'
 
-const canAnimate = readable(_canAnimate, (set) => {
+const canAnimate = readable(false, (set) => {
 	onMount(() => {
 		set(_canAnimate)
 	})

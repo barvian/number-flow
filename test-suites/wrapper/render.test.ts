@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test'
 
 test('renders correctly', async ({ page }) => {
+	// Check for hydration errors:
+	const logs: string[] = []
+	page.on('console', (msg) => logs.push(msg.text()))
+
 	await page.goto('/')
 	await expect(page).toHaveScreenshot()
 
@@ -19,4 +23,6 @@ test('renders correctly', async ({ page }) => {
 	await expect(flow.locator('[part~=digit]')).toHaveCount(4)
 	await expect(flow.locator('[part~=suffix]')).toBeAttached()
 	await expect(flow.locator('[part~=right]')).toBeAttached()
+
+	expect(logs).toEqual([])
 })
