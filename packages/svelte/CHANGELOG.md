@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- Fix useCanAnimate hydration ([`e775131`](https://github.com/barvian/number-flow/commit/e775131a09628b98724dd1ec905d06ba78d06e21))
+- Fix getCanAnimate hydration ([`e775131`](https://github.com/barvian/number-flow/commit/e775131a09628b98724dd1ec905d06ba78d06e21))
 
 ## 0.2.0
 
