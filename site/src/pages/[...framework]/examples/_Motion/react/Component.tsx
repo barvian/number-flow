@@ -45,6 +45,7 @@ export default function MotionExample({ value }: Props) {
 					className="font-semibold"
 					format={{ style: 'percent', maximumFractionDigits: 2 }}
 					style={{ '--number-flow-char-height': '0.85em', '--number-flow-mask-height': '0.3em' }}
+					// Important, see note below:
 					layout
 					layoutRoot
 				/>
