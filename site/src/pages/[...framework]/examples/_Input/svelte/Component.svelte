@@ -75,7 +75,7 @@
 		<NumberFlow
 			{value}
 			format={{ useGrouping: false }}
-			aria-hidden
+			aria-hidden="true"
 			{animated}
 			on:animationsstart={() => (showCaret = false)}
 			on:animationsfinish={() => (showCaret = true)}

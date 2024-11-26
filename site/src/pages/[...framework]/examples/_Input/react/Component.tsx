@@ -44,7 +44,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 	return (
 		<div className="group flex items-stretch rounded-md text-3xl font-semibold ring ring-zinc-200 transition-[box-shadow] focus-within:ring-2 focus-within:ring-blue-500 dark:ring-zinc-800">
 			<button
-				aria-hidden
+				aria-hidden="true"
 				tabIndex={-1}
 				className="flex items-center pl-[.5em] pr-[.325em]"
 				disabled={min != null && value <= min}
@@ -73,7 +73,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 				<NumberFlow
 					value={value}
 					format={{ useGrouping: false }}
-					aria-hidden
+					aria-hidden="true"
 					animated={animated}
 					onAnimationsStart={() => setShowCaret(false)}
 					onAnimationsFinish={() => setShowCaret(true)}
@@ -82,7 +82,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 				/>
 			</div>
 			<button
-				aria-hidden
+				aria-hidden="true"
 				tabIndex={-1}
 				className="flex items-center pl-[.325em] pr-[.5em]"
 				disabled={max != null && value >= max}

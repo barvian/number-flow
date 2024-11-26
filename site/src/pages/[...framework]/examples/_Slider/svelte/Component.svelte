@@ -27,7 +27,7 @@
 			<NumberFlow
 				willChange
 				value={value[0]}
-				aria-hidden
+				aria-hidden="true"
 				continuous
 				opacityTiming={{
 					duration: 250,
