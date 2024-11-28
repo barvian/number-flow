@@ -12,7 +12,16 @@
 	position: relative;
 	height: 48px;
 	width: 48px;
+	flex-shrink: 0;
 }
+
+.avatar img {
+	height: 100%;
+	object-fit: cover;
+	object-position: center;
+	width: 100%;
+}
+
 .avatarOverflow {
 	height: 100%;
 	width: 100%;
