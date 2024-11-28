@@ -8,5 +8,5 @@ interface Props {
 ---
 
 <p class={styles.root}>
-	{Astro.props.tweet.entities.map((item) => <span>{item.text}</span>)}
+	{Astro.props.tweet.entities.map((item) => <span set:html={item.text} />)}
 </p>
