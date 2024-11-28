@@ -165,6 +165,7 @@ class NumberFlowImpl extends React.Component<
 				data,
 				willChange,
 				isolate,
+				group,
 				digits,
 				onAnimationsStart,
 				onAnimationsFinish,
