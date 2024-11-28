@@ -462,6 +462,8 @@ abstract class Section {
 		const offset = rect[this.justify]
 		const dx = this._prevOffset! - offset
 
+		// Technically checking for children could get weird during multiple interruptions
+		// but probably still worth it;
 		if (dx && this.children.size)
 			this.el.animate(
 				{
