@@ -9,6 +9,8 @@ type Props = JSX.IntrinsicElements['nav'] & {
 	repo?: string
 }
 
+const maskWidth = '2.5rem'
+
 export default function Nav({ stargazers, className, repo, ...props }: Props) {
 	// Fix scroll positions after view transitions:
 	const scrollableRef = React.useRef<HTMLDivElement>(null)
@@ -69,7 +71,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 							ref={scrollableRef}
 							className="scrollbar-none vt/nav pointer-events-auto overflow-x-auto scroll-smooth rounded-[inherit] p-1.5"
 							style={{
-								WebkitMaskImage: `linear-gradient(to right, transparent min(-2rem + var(--left-overflow), 0px), black min(var(--left-overflow), 2rem), black calc(100% - min(var(--right-overflow), 2rem)), transparent calc(100% - min(-2rem + var(--right-overflow), 0px)))`,
+								WebkitMaskImage: `linear-gradient(to right, transparent min(-${maskWidth} + var(--left-overflow), 0px), black min(var(--left-overflow), ${maskWidth}), black calc(100% - min(var(--right-overflow), ${maskWidth})), transparent calc(100% - min(-${maskWidth} + var(--right-overflow), 0px)))`,
 								'--left-overflow': leftOverflowPx,
 								'--right-overflow': rightOverflowPx
 							}}
