@@ -1,6 +1,6 @@
 import Link from '@/components/Link'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
-import { motion, MotionConfig, useMotionTemplate, useMotionValue } from 'motion/react'
+import { motion, MotionConfig } from 'motion/react'
 import * as React from 'react'
 import clsx from 'clsx/lite'
 
@@ -9,7 +9,7 @@ type Props = JSX.IntrinsicElements['nav'] & {
 	repo?: string
 }
 
-const maskWidth = '2.5rem'
+// const maskWidth = '2.5rem'
 
 export default function Nav({ stargazers, className, repo, ...props }: Props) {
 	// Fix scroll positions after view transitions:
@@ -32,26 +32,26 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 		}
 	}, [])
 
-	// Scroll pos
-	const leftOverflow = useMotionValue(0)
-	const leftOverflowPx = useMotionTemplate`${leftOverflow}px`
-	const rightOverflow = useMotionValue(0)
-	const rightOverflowPx = useMotionTemplate`${rightOverflow}px`
-	React.useEffect(() => {
-		const onScroll = () => {
-			leftOverflow.set(scrollableRef.current!.scrollLeft)
-			rightOverflow.set(
-				scrollableRef.current!.scrollWidth -
-					scrollableRef.current!.clientWidth -
-					scrollableRef.current!.scrollLeft
-			)
-		}
-		onScroll()
-		scrollableRef.current?.addEventListener('scroll', onScroll)
-		return () => {
-			scrollableRef.current?.removeEventListener('scroll', onScroll)
-		}
-	}, [])
+	// Overflow mask. Disable for now b/c of Chrome bug with mask-image and VTs:
+	// const leftOverflow = useMotionValue(0)
+	// const leftOverflowPx = useMotionTemplate`${leftOverflow}px`
+	// const rightOverflow = useMotionValue(0)
+	// const rightOverflowPx = useMotionTemplate`${rightOverflow}px`
+	// React.useEffect(() => {
+	// 	const onScroll = () => {
+	// 		leftOverflow.set(scrollableRef.current!.scrollLeft)
+	// 		rightOverflow.set(
+	// 			scrollableRef.current!.scrollWidth -
+	// 				scrollableRef.current!.clientWidth -
+	// 				scrollableRef.current!.scrollLeft
+	// 		)
+	// 	}
+	// 	onScroll()
+	// 	scrollableRef.current?.addEventListener('scroll', onScroll)
+	// 	return () => {
+	// 		scrollableRef.current?.removeEventListener('scroll', onScroll)
+	// 	}
+	// }, [])
 
 	return (
 		<MotionConfig transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0 } }}>
@@ -70,11 +70,11 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 						<motion.div
 							ref={scrollableRef}
 							className="scrollbar-none vt/nav pointer-events-auto overflow-x-auto scroll-smooth rounded-[inherit] p-1.5"
-							style={{
-								WebkitMaskImage: `linear-gradient(to right, transparent min(-${maskWidth} + var(--left-overflow), 0px), black min(var(--left-overflow), ${maskWidth}), black calc(100% - min(var(--right-overflow), ${maskWidth})), transparent calc(100% - min(-${maskWidth} + var(--right-overflow), 0px)))`,
-								'--left-overflow': leftOverflowPx,
-								'--right-overflow': rightOverflowPx
-							}}
+							// style={{
+							// 	WebkitMaskImage: `linear-gradient(to right, transparent min(-${maskWidth} + var(--left-overflow), 0px), black min(var(--left-overflow), ${maskWidth}), black calc(100% - min(var(--right-overflow), ${maskWidth})), transparent calc(100% - min(-${maskWidth} + var(--right-overflow), 0px)))`,
+							// 	'--left-overflow': leftOverflowPx,
+							// 	'--right-overflow': rightOverflowPx
+							// }}
 						>
 							<div className="isolate grid grid-cols-[repeat(5,5.6875em)]">
 								<Link
