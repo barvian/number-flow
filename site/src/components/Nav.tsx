@@ -1,6 +1,6 @@
 import Link from '@/components/Link'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
-import { motion, MotionConfig } from 'motion/react'
+import { motion, MotionConfig, useMotionTemplate, useMotionValue, useScroll } from 'motion/react'
 import * as React from 'react'
 import clsx from 'clsx/lite'
 
@@ -30,6 +30,27 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 		}
 	}, [])
 
+	// Scroll pos
+	const leftOverflow = useMotionValue(0)
+	const leftOverflowPx = useMotionTemplate`${leftOverflow}px`
+	const rightOverflow = useMotionValue(0)
+	const rightOverflowPx = useMotionTemplate`${rightOverflow}px`
+	React.useEffect(() => {
+		const onScroll = () => {
+			leftOverflow.set(scrollableRef.current!.scrollLeft)
+			rightOverflow.set(
+				scrollableRef.current!.scrollWidth -
+					scrollableRef.current!.clientWidth -
+					scrollableRef.current!.scrollLeft
+			)
+		}
+		onScroll()
+		scrollableRef.current?.addEventListener('scroll', onScroll)
+		return () => {
+			scrollableRef.current?.removeEventListener('scroll', onScroll)
+		}
+	}, [])
+
 	return (
 		<MotionConfig transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0 } }}>
 			<nav
@@ -44,9 +65,14 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 				<div className="container flex justify-center">
 					{/* The backdrop blur broke with VTs when it was on the scrolling div: */}
 					<div className="max-w-full rounded-[1.375rem] bg-zinc-100/90 ring ring-black/[5%] backdrop-blur-xl backdrop-saturate-[140%] dark:border dark:border-white/[8%] dark:bg-zinc-950/90 dark:ring-0">
-						<div
+						<motion.div
 							ref={scrollableRef}
 							className="scrollbar-none vt/nav pointer-events-auto overflow-x-auto scroll-smooth rounded-[inherit] p-1.5"
+							style={{
+								WebkitMaskImage: `linear-gradient(to right, transparent min(-2rem + var(--left-overflow), 0px), black min(var(--left-overflow), 2rem), black calc(100% - min(var(--right-overflow), 2rem)), transparent calc(100% - min(-2rem + var(--right-overflow), 0px)))`,
+								'--left-overflow': leftOverflowPx,
+								'--right-overflow': rightOverflowPx
+							}}
 						>
 							<div className="isolate grid grid-cols-[repeat(5,5.6875em)]">
 								<Link
@@ -114,7 +140,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 									Follow
 								</a>
 							</div>
-						</div>
+						</motion.div>
 					</div>
 				</div>
 			</nav>
