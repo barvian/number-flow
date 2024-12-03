@@ -20,6 +20,7 @@ import styles, {
 } from './styles'
 import { max } from './util/math'
 export { define } from './util/dom'
+import type { Mutable as MakeMutable } from './util/types'
 
 export { prefersReducedMotion } from './styles'
 export { renderInnerHTML } from './ssr'
@@ -47,6 +48,14 @@ export interface Props {
 
 let styleSheet: CSSStyleSheet | undefined
 
+// Workaround for Object.assign in constructor and TS:
+// https://github.com/microsoft/TypeScript/issues/26792#issuecomment-617541464
+export interface NumberFlowLite extends Props {}
+
+// Workaround for no outside-readable/inside-writable members in TS:
+// https://github.com/microsoft/TypeScript/issues/37487
+type Mutable = MakeMutable<NumberFlowLite>
+
 // This one is used internally for framework wrappers, and
 // doesn't include things like attribute support:
 export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
@@ -72,18 +81,14 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		digits: undefined
 	}
 
-	// Kinda gross but can't do e.g. Object.assign in constructor because TypeScript
-	// can't determine if they're definitively assigned that way:
-	transformTiming = (this.constructor as typeof NumberFlowLite).defaultProps.transformTiming
-	spinTiming = (this.constructor as typeof NumberFlowLite).defaultProps.spinTiming
-	opacityTiming = (this.constructor as typeof NumberFlowLite).defaultProps.opacityTiming
-	respectMotionPreference = (this.constructor as typeof NumberFlowLite).defaultProps
-		.respectMotionPreference
-	trend = (this.constructor as typeof NumberFlowLite).defaultProps.trend
-	continuous = (this.constructor as typeof NumberFlowLite).defaultProps.continuous
-	digits = (this.constructor as typeof NumberFlowLite).defaultProps.digits
+	constructor() {
+		super()
+		const { animated, ...props } = (this.constructor as typeof NumberFlowLite).defaultProps
+		this._animated = this.computedAnimated = animated
+		Object.assign(this, props)
+	}
 
-	private _animated = (this.constructor as typeof NumberFlowLite).defaultProps.animated
+	private _animated: boolean
 	get animated() {
 		return this._animated
 	}
@@ -94,29 +99,16 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
 	}
 
-	private _created = false
-	get created() {
-		return this._created
-	}
+	readonly created: boolean = false
 
 	private _pre?: SymbolSection
 	private _num?: Num
 	private _post?: SymbolSection
 
-	private _computedTrend?: number
-	get computedTrend() {
-		return this._computedTrend
-	}
+	readonly computedTrend?: number
+	readonly startingPos?: number | null
 
-	private _startingPos?: number | null
-	get startingPos() {
-		return this._startingPos
-	}
-
-	private _computedAnimated = this._animated
-	get computedAnimated() {
-		return this._computedAnimated
-	}
+	readonly computedAnimated: boolean
 
 	private _data?: Data
 
@@ -130,7 +122,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		const { pre, integer, fraction, post, value } = data
 
 		// Initialize if needed
-		if (!this._created) {
+		if (!this.created) {
 			this._data = data
 
 			// This will overwrite the DSD if any:
@@ -168,12 +160,12 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 			this._data = data
 
 			// Compute trend
-			this._computedTrend =
+			;(this as Mutable).computedTrend =
 				typeof this.trend === 'function' ? this.trend(prev.value, value) : this.trend
 
 			// Compute starting pos for continuous
-			this._startingPos = undefined
-			if (this._computedTrend && this.continuous) {
+			;(this as Mutable).startingPos = undefined
+			if (this.computedTrend && this.continuous) {
 				// Find the starting pos based on the parts, not the value,
 				// to handle e.g. compact notation where value = 1000 and integer part = 1
 				const prevNumber = prev.integer
@@ -188,10 +180,10 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				const firstChanged = number.find(
 					(p) => !prevNumber.find((pp) => p.pos === pp.pos && p.value === pp.value)
 				)
-				this._startingPos = max(firstChangedPrev?.pos, firstChanged?.pos)
+				;(this as Mutable).startingPos = max(firstChangedPrev?.pos, firstChanged?.pos)
 			}
 
-			this._computedAnimated =
+			;(this as Mutable).computedAnimated =
 				canAnimate &&
 				this._animated &&
 				(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
@@ -207,7 +199,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 			if (!this.manual) this.didUpdate()
 		}
 
-		this._created = true
+		;(this as Mutable).created = true
 	}
 
 	willUpdate() {
@@ -221,7 +213,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 
 	didUpdate() {
 		// Safe to call this here because we know the animated prop is up-to-date
-		if (!this._computedAnimated) return
+		if (!this.computedAnimated) return
 
 		// If we're already animating, cancel the previous animationsfinish event:
 		if (this._abortAnimationsFinish) this._abortAnimationsFinish.abort()
