@@ -1,5 +1,16 @@
 # @number-flow/react
 
+## 0.4.2
+
+### Patch Changes
+
+- Reduce bundle size ([`efd355d`](https://github.com/barvian/number-flow/commit/efd355dda6c5005f5dec8bba0c4a0ff705144ee3))
+
+- Fix group coming through as attribute ([`0efd6cd`](https://github.com/barvian/number-flow/commit/0efd6cd92af03d15e0010412b147d96eb30b1967))
+
+- Updated dependencies [[`efd355d`](https://github.com/barvian/number-flow/commit/efd355dda6c5005f5dec8bba0c4a0ff705144ee3)]:
+  - number-flow@0.4.1
+
 ## 0.4.1
 
 ### Patch Changes

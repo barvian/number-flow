@@ -1,5 +1,14 @@
 # @number-flow/svelte
 
+## 0.2.2
+
+### Patch Changes
+
+- Reduce bundle size ([`efd355d`](https://github.com/barvian/number-flow/commit/efd355dda6c5005f5dec8bba0c4a0ff705144ee3))
+
+- Updated dependencies [[`efd355d`](https://github.com/barvian/number-flow/commit/efd355dda6c5005f5dec8bba0c4a0ff705144ee3)]:
+  - number-flow@0.4.1
+
 ## 0.2.1
 
 ### Patch Changes
