@@ -51,7 +51,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 
 	const ref = useRef<HTMLElement>(null)
 	const inView = useInView(ref, { once: true })
-	const timeoutRef = useRef<NodeJS.Timeout>()
+	const timeoutRef = useRef<NodeJS.Timeout>(undefined)
 	useEffect(() => {
 		if (!inView) return
 		if (sessionStorage.getItem('hero-did-animate')) return

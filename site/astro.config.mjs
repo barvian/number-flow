@@ -1,7 +1,7 @@
 import { defineConfig, envField } from 'astro/config'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
-import vercel from '@astrojs/vercel/serverless'
+import vercel from '@astrojs/vercel'
 import shikiTheme from './highlighter-theme.json'
 import react from '@astrojs/react'
 import vue from '@astrojs/vue'
@@ -16,16 +16,17 @@ export default defineConfig({
 		}
 	},
 	vite: {
+		// esbuild: {
+		// 	jsx: 'automatic'
+		// },
 		ssr: {
 			// Fixes build issue on macOS
 			external: ['fsevents']
 		}
 	},
-	experimental: {
-		env: {
-			schema: {
-				GITHUB_TOKEN: envField.string({ context: 'server', access: 'secret' })
-			}
+	env: {
+		schema: {
+			GITHUB_TOKEN: envField.string({ context: 'server', access: 'secret' })
 		}
 	},
 	integrations: [
@@ -39,17 +40,10 @@ export default defineConfig({
 				}
 			}
 		},
-		vue({
-			template: {
-				compilerOptions: {
-					// isCustomElement: (tag) => tag === 'number-flow'
-				}
-			}
-			// ...
-		}),
+		vue(),
 		svelte()
 	],
-	output: 'hybrid',
+	output: 'static',
 	adapter: vercel({
 		webAnalytics: {
 			enabled: true

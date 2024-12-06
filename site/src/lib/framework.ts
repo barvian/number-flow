@@ -14,6 +14,12 @@ export const FRAMEWORKS = {
 		lightColor: '#0A7EA4',
 		darkColor: '#58C4DC'
 	},
+	reactLegacy: {
+		name: 'React (Legacy)',
+		sandbox: 'https://codesandbox.io/p/sandbox/r47dcw',
+		lightColor: '#0A7EA4',
+		darkColor: '#58C4DC'
+	},
 	vue: {
 		name: 'Vue',
 		sandbox: 'https://codesandbox.io/p/devbox/number-flow-vue-7t7y6y',

@@ -1,9 +1,9 @@
 {
-	"name": "@number-flow/react",
+	"name": "@number-flow/react-legacy",
 	"publishConfig": {
 		"access": "public"
 	},
-	"version": "0.4.2",
+	"version": "0.0.1",
 	"author": {
 		"name": "Maxwell Barvian",
 		"email": "max@barvian.me",
@@ -11,7 +11,7 @@
 	},
 	"description": "A component to transition and format numbers.",
 	"license": "MIT",
-	"homepage": "https://number-flow.barvian.me",
+	"homepage": "https://number-flow.barvian.me/react-legacy",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/barvian/number-flow",
@@ -59,14 +59,14 @@
 	"devDependencies": {
 		"@playwright/test": "^1.48.0",
 		"@types/node": "^22.7.9",
-		"@types/react": "^19",
-		"@types/react-dom": "^19",
-		"react": "^19",
-		"react-dom": "^19",
-		"tsup": "^8.3.5"
+		"@types/react": "^18.3.3",
+		"@types/react-dom": "^18.3.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"tsup": "^8.2.4"
 	},
 	"peerDependencies": {
-		"react": "^19",
-		"react-dom": "^19"
+		"react": "^18",
+		"react-dom": "^18"
 	}
 }
