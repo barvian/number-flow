@@ -16,7 +16,7 @@ export const FRAMEWORKS = {
 	},
 	vue: {
 		name: 'Vue',
-		sandbox: 'https://codesandbox.io/p/devbox/number-flow-vue-7t7y6y',
+		sandbox: 'https://stackblitz.com/edit/vitejs-vite-4prbhc?file=src%2FApp.vue',
 		lightColor: '#42B883',
 		darkColor: '#42B883'
 	},
