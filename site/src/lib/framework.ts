@@ -22,8 +22,7 @@ export const FRAMEWORKS = {
 	},
 	svelte: {
 		name: 'Svelte',
-		sandbox:
-			'https://codesandbox.io/p/devbox/number-flow-svelte-xshsw4?file=%2Fsrc%2Froutes%2F%2Bpage.svelte',
+		sandbox: 'https://stackblitz.com/edit/vitejs-vite-5czxuc?file=src%2FApp.svelte',
 		lightColor: '#FF3E00',
 		darkColor: '#F96844'
 	}
