@@ -37,8 +37,5 @@ export const visible = (el: HTMLElement) => el.offsetWidth > 0 && el.offsetHeigh
 
 // HMR-safe customElements.define
 export const define = (name: string, constructor: CustomElementConstructor) => {
-	if (!BROWSER) return
-	const RegisteredElement = customElements.get(name)
-	if (RegisteredElement === constructor) return
-	return customElements.define(name, constructor)
+	if (BROWSER && customElements.get(name) !== constructor) customElements.define(name, constructor)
 }
