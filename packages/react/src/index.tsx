@@ -31,6 +31,7 @@ type SnapshotterState = {}
 type SnapshotterSnapshot = (() => void) | null // React doesn't like undefined
 class Snapshotter extends React.Component<SnapshotterProps, SnapshotterState, SnapshotterSnapshot> {
 	override getSnapshotBeforeUpdate(prevProps: Readonly<SnapshotterProps>) {
+		// Data is changing, so we need to update:
 		if (prevProps.data !== this.props.data) {
 			if (this.props.group) {
 				this.props.group.willUpdate()
@@ -66,6 +67,8 @@ export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> &
 		suffix?: string
 		isolate?: boolean
 		willChange?: boolean
+		onAnimationsStart?: (e: CustomEvent<undefined>) => void
+		onAnimationsFinish?: (e: CustomEvent<undefined>) => void
 		ref?: React.Ref<NumberFlowElement>
 	}
 
@@ -78,6 +81,8 @@ function NumberFlow({
 	isolate,
 	className,
 	willChange,
+	onAnimationsStart,
+	onAnimationsFinish,
 	ref: _ref,
 	...props
 }: NumberFlowProps) {
@@ -107,14 +112,16 @@ function NumberFlow({
 			<number-flow-react
 				ref={ref}
 				data-will-change={willChange ? '' : undefined}
-				// Have to rename this:
+				// Have to rename these:
 				class={className}
+				onanimationsstart={onAnimationsStart}
+				onanimationsfinish={onAnimationsFinish}
 				// Aria-label should be overrideable, but not role=img
 				aria-label={data.valueAsString}
 				// Have to filter out undefineds before merging with defaultProps:
 				{...Object.fromEntries(
 					Object.entries(props).map(([k, v]) =>
-						// @ts-ignore
+						// @ts-expect-error
 						[k, v ?? NumberFlowElement.defaultProps[k]]
 					)
 				)}
