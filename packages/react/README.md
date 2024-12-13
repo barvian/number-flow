@@ -2,7 +2,7 @@
 
 # NumberFlow for React
 
-A React component to transition & format numbers.
+An animated number component.
 
 [![NPM Version](https://img.shields.io/npm/v/@number-flow/react.svg)](https://npmjs.com/package/@number-flow/react)
 [![Bundle size](https://badgen.net/bundlephobia/minzip/@number-flow/react@latest)](https://bundlephobia.com/package/@number-flow/react@latest)

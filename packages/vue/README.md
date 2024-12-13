@@ -2,7 +2,7 @@
 
 # NumberFlow for Vue
 
-A Vue component to transition & format numbers.
+An animated number component.
 
 [![NPM Version](https://img.shields.io/npm/v/@number-flow/vue.svg)](https://npmjs.com/package/@number-flow/vue)
 [![Bundle size](https://badgen.net/bundlephobia/minzip/@number-flow/vue@latest)](https://bundlephobia.com/package/@number-flow/vue@latest)

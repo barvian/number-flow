@@ -2,7 +2,7 @@
 
 # NumberFlow for Svelte
 
-A Svelte component to transition & format numbers.
+An animated number component.
 
 [![NPM Version](https://img.shields.io/npm/v/@number-flow/svelte.svg)](https://npmjs.com/package/@number-flow/svelte)
 [![Bundle size](https://badgen.net/bundlephobia/minzip/@number-flow/svelte@latest)](https://bundlephobia.com/package/@number-flow/svelte@latest)
