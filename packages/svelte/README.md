@@ -8,8 +8,6 @@ An animated number component.
 [![Bundle size](https://badgen.net/bundlephobia/minzip/@number-flow/svelte@latest)](https://bundlephobia.com/package/@number-flow/svelte@latest)
 [![Follow @mbarvian](https://img.shields.io/twitter/follow/mbarvian.svg?style=social&label=Follow)](https://x.com/mbarvian)
 
----
-
 ## Documentation
 
 For full documentation, visit [number-flow.barvian.me/svelte](https://number-flow.barvian.me/svelte).

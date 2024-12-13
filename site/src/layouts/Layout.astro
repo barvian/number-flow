@@ -8,7 +8,7 @@ import Link from '@/components/Link.astro'
 import Nav from '@/components/Nav.astro'
 // import { AstroFont } from 'astro-font'
 // import * as path from 'node:path'
-import { ViewTransitions } from 'astro:transitions'
+import { ClientRouter } from 'astro:transitions'
 import { isActive } from '@/lib/url'
 import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
@@ -25,9 +25,10 @@ const image = import.meta.env.URL
 type Props = {
 	title: string
 	description: string
+	paddingBottom?: string
 }
 
-const { title, description } = Astro.props
+const { title, description, paddingBottom = "~pb-40/52" } = Astro.props
 
 const app = {
 	'@context': 'https://schema.org',
@@ -91,9 +92,9 @@ const app = {
 		</script>
 		<script type="application/ld+json" is:inline set:html={JSON.stringify(app)} />
 
-		<ViewTransitions />
+		<ClientRouter />
 	</head>
-	<body class="~pt-12/28 ~pb-40/52">
+	<body class:list={[paddingBottom, '~pt-12/28']}> 
 		<div class="container inline-flex items-baseline justify-center whitespace-nowrap text-center">
 			{
 				isActive('/', Astro.url) ? (

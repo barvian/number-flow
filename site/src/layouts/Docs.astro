@@ -6,11 +6,13 @@ import TOC from '@/components/TOC.astro'
 import type { ComponentProps } from 'astro/types'
 import { TOCProvider } from '@/context/toc'
 import GitHubSlugger from 'github-slugger'
+import FrigadeLogoLight from '@/assets/sponsors/frigade.light.svg'
+import FrigadeLogoDark from '@/assets/sponsors/frigade.dark.svg'
 
 type Props = ComponentProps<typeof Layout> & {}
 ---
 
-<Layout {...Astro.props}>
+<Layout {...Astro.props} paddingBottom=''>
 	<Supported transition:persist="supported" client:only="react" />
 	<slot name="hero" />
 	<div
@@ -18,13 +20,23 @@ type Props = ComponentProps<typeof Layout> & {}
 	>
 		<TOCProvider headings={[]} slugger={new GitHubSlugger()}>
 			<TOCLayout>
-				<article class="container max-w-2xl">
+				<article class="container max-w-2xl ~pb-40/52">
 					<div class="prose prose-zinc dark:prose-invert">
 						<slot />
 					</div>
 					<slot name="footer" />
 				</article>
-				<TOC className="~top-6/10 sticky max-xl:hidden" slot="toc" />
+				<div class="~top-6/10 sticky max-xl:hidden" slot="toc">
+					<TOC  />
+					<hr class="my-6 border-t border-faint" style="mask-image: linear-gradient(to right, black, transparent)" />
+					<section class="">
+						<h2 class="text-muted text-xs mb-4">Sponsored by</h2>
+						<a href="https://frigade.com?source=numberflow" class="inline-block transition duration-[.16s] ease-out grayscale-[1] opacity-70 hover:opacity-100 hover:grayscale-0" target="_blank">
+							<FrigadeLogoLight class="block dark:hidden h-6" role="img" aria-label="Frigade logo" />
+							<FrigadeLogoDark class="hidden dark:block h-6" role="img" aria-label="Frigade logo" />
+						</a>
+					</section>
+				</div>
 			</TOCLayout>
 		</TOCProvider>
 	</div>

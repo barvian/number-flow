@@ -73,7 +73,7 @@
 	}
 
 	.bg-faint {
-		@apply bg-zinc-200 dark:bg-zinc-700;
+		@apply bg-zinc-150 dark:bg-zinc-700;
 	}
 
 	.bg-mask-white {

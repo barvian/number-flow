@@ -221,7 +221,7 @@ export default {
 
 			addUtilities({
 				'.border-faint': {
-					'@apply border-zinc-200 dark:border-zinc-800': {}
+					'@apply border-zinc-150 dark:border-zinc-800': {}
 				}
 			})
 
