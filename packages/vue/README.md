@@ -1,6 +1,6 @@
 [![NumberFlow for Vue](https://number-flow.barvian.me/preview.webp)](https://number-flow.barvian.me/vue)
 
-# Number Flow for Vue
+# NumberFlow for Vue
 
 A Vue component to transition & format numbers.
 

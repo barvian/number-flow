@@ -1,6 +1,6 @@
 [![NumberFlow for React](https://number-flow.barvian.me/preview.webp)](https://number-flow.barvian.me)
 
-# Number Flow for React
+# NumberFlow for React
 
 A React component to transition & format numbers.
 

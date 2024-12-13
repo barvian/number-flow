@@ -4,21 +4,16 @@ import type { MDXLayoutProps } from 'astro'
 import { ArrowUpRight } from 'lucide-react'
 import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
-type Props = MDXLayoutProps<{
-	title: string
-	description: string
-}>
+type Props = MDXLayoutProps<{}>
 
-const { sandbox } = FRAMEWORKS[getFramework(Astro.params)!]
-
-const { frontmatter } = Astro.props
+const { sandbox, pkgName } = FRAMEWORKS[getFramework(Astro.params)!]
 ---
 
-<DocsLayout title={frontmatter.title} description={frontmatter.description}>
+<DocsLayout title={`${pkgName} Examples`} description={`Official ${pkgName} templates to get you started.`}>
 	<header slot="hero" class="~mb-12/24 ~mt-4/6 container max-w-2xl text-center">
 		<h1 class="~text-3xl/5xl font-semibold tracking-tight">Examples</h1>
 		<div class="~text-base/lg ~mt-4/6 prose prose-muted dark:prose-invert text-pretty">
-			<p>{frontmatter.description}</p>
+			<p>Official templates to get you started.</p>
 		</div>
 		<div class="~mt-6/8 flex w-full flex-wrap items-stretch justify-center gap-3">
 			<a href={sandbox} target="_blank" class="btn btn-primary">

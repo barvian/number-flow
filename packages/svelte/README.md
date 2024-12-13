@@ -1,6 +1,6 @@
 [![NumberFlow for Svelte](https://number-flow.barvian.me/preview.webp)](https://number-flow.barvian.me/svelte)
 
-# Number Flow for Svelte
+# NumberFlow for Svelte
 
 A Svelte component to transition & format numbers.
 

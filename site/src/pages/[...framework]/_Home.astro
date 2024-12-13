@@ -5,17 +5,15 @@ import Hero from './_Hero'
 import Link from '@/components/Link.astro'
 import { FRAMEWORKS, getFramework } from '@/lib/framework'
 
-type Props = MDXLayoutProps<{
-	title: string
-	description: string
-}>
+type Props = MDXLayoutProps<{}>
 
-const { sandbox } = FRAMEWORKS[getFramework(Astro.params)!]
-
-const { frontmatter } = Astro.props
+const { sandbox, pkgName, componentType } = FRAMEWORKS[getFramework(Astro.params)!]
 ---
 
-<DocsLayout title={frontmatter.title} description={frontmatter.description}>
+<DocsLayout
+	title={`${pkgName} - An animated number component`}
+	description={`A ${componentType} to animate numbers. Dependency-free. Accessible. Customizable.`}
+>
 	<Hero transition:persist="home-hero" client:load {sandbox} slot="hero" />
 	<slot />
 	<footer

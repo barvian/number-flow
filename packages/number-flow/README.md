@@ -1,3 +1,3 @@
-# Number Flow
+# NumberFlow
 
 WIP.

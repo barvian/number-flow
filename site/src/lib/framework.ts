@@ -2,6 +2,8 @@ import { trimSlash } from './url'
 
 export type FrameworkData = {
 	name: string | undefined
+	pkgName: string
+	componentType: string
 	sandbox: string
 	lightColor: string
 	darkColor: string
@@ -10,18 +12,24 @@ export type FrameworkData = {
 export const FRAMEWORKS = {
 	react: {
 		name: 'React',
+		pkgName: 'NumberFlow for React',
+		componentType: 'React component',
 		sandbox: 'https://codesandbox.io/p/sandbox/r47dcw',
 		lightColor: '#0A7EA4',
 		darkColor: '#58C4DC'
 	},
 	vue: {
 		name: 'Vue',
+		pkgName: 'NumberFlow for Vue',
+		componentType: 'Vue component',
 		sandbox: 'https://stackblitz.com/edit/vitejs-vite-4prbhc?file=src%2FApp.vue',
 		lightColor: '#42B883',
 		darkColor: '#42B883'
 	},
 	svelte: {
 		name: 'Svelte',
+		pkgName: 'NumberFlow for Svelte',
+		componentType: 'Svelte component',
 		sandbox: 'https://stackblitz.com/edit/vitejs-vite-5czxuc?file=src%2FApp.svelte',
 		lightColor: '#FF3E00',
 		darkColor: '#F96844'

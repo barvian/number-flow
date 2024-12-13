@@ -27,16 +27,12 @@ type Props = {
 	description: string
 }
 
-const { title: _title, description } = Astro.props
-const title = _title.replaceAll(
-	'{{name}}',
-	'NumberFlow' + (framework ? ' for ' + framework.name : '')
-)
+const { title, description } = Astro.props
 
 const app = {
 	'@context': 'https://schema.org',
 	'@type': 'WebSite',
-	name: 'Number Flow',
+	name: 'NumberFlow',
 	alternateName: ['number-flow'],
 	url: Astro.site
 }

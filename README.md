@@ -1,6 +1,6 @@
 https://github.com/user-attachments/assets/5b99dbe6-e0eb-44e8-9c0d-ed4f00aff48d
 
-# Number Flow
+# NumberFlow
 
 A component to transition, format, and localize numbers.
 
