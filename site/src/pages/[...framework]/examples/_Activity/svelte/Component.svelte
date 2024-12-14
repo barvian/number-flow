@@ -43,7 +43,7 @@
 	{...props}
 	class={clsx(
 		cls,
-		'~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
+		'flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
 	)}
 >
 	<div class="flex flex-1 items-center gap-1.5">
@@ -87,7 +87,7 @@
 			<NumberFlow willChange continuous value={likes} {format} />
 		</button>
 	</div>
-	<div class="flex flex-1 items-center gap-1.5">
+	<div class="flex  shrink-0 min-[30rem]:flex-1 items-center gap-1.5 max-[24rem]:hidden">
 		<button
 			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-blue-500"
 			class:text-blue-500={bookmarked}
@@ -104,7 +104,7 @@
 					)}
 				/>
 			</div>
-			<NumberFlow willChange continuous value={bookmarks} {format} />
+			<NumberFlow class="max-[30rem]:hidden" willChange continuous value={bookmarks} {format} />
 		</button>
 	</div>
 	<Share absoluteStrokeWidth class="~size-4/5 shrink-0" />

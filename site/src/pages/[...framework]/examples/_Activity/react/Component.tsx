@@ -40,7 +40,7 @@ export default function Activity({
 			{...rest}
 			className={clsx(
 				className,
-				'~text-[0.8125rem]/sm flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
+				'flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
 			)}
 		>
 			<div className="flex flex-1 items-center gap-1.5">
@@ -84,7 +84,7 @@ export default function Activity({
 					<NumberFlow willChange continuous value={likes} format={format} />
 				</button>
 			</div>
-			<div className="flex flex-1 items-center gap-1.5">
+			<div className="flex shrink-0 min-[30rem]:flex-1 items-center gap-1.5 max-[24rem]:hidden">
 				<button
 					className={clsx(
 						'group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-blue-500',
@@ -101,7 +101,7 @@ export default function Activity({
 							)}
 						/>
 					</div>
-					<NumberFlow willChange continuous value={bookmarks} format={format} />
+					<NumberFlow className="max-[30rem]:hidden" willChange continuous value={bookmarks} format={format} />
 				</button>
 			</div>
 			<Share absoluteStrokeWidth className="~size-4/5 shrink-0" />
