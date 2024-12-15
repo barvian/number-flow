@@ -9,7 +9,7 @@ import {
 	formatToData,
 	type Data,
 	NumberFlowLite,
-	prefersReducedMotion,
+	prefersReducedMotion as _prefersReducedMotion,
 	canAnimate as _canAnimate,
 	define
 } from 'number-flow'
@@ -275,28 +275,25 @@ export function NumberFlowGroup({ children }: { children: React.ReactNode }) {
 	return <NumberFlowGroupContext.Provider value={value}>{children}</NumberFlowGroupContext.Provider>
 }
 
-// SSR-safe canAnimate
+export const useIsSupported = () =>
+	React.useSyncExternalStore(
+		() => () => {}, // this value doesn't change, but it's useful to specify a different SSR value:
+		() => _canAnimate,
+		() => false
+	)
+export const usePrefersReducedMotion = () =>
+	React.useSyncExternalStore(
+		(cb) => {
+			_prefersReducedMotion?.addEventListener('change', cb)
+			return () => _prefersReducedMotion?.removeEventListener('change', cb)
+		},
+		() => _prefersReducedMotion!.matches,
+		() => false
+	)
+
 export function useCanAnimate({ respectMotionPreference = true } = {}) {
-	const [canAnimate, setCanAnimate] = React.useState(false)
-	const [reducedMotion, setReducedMotion] = React.useState(false)
+	const isSupported = useIsSupported()
+	const reducedMotion = usePrefersReducedMotion()
 
-	// Handle SSR:
-	React.useEffect(() => {
-		setCanAnimate(_canAnimate)
-		setReducedMotion(prefersReducedMotion?.matches ?? false)
-	}, [])
-
-	// Listen for reduced motion changes if needed:
-	React.useEffect(() => {
-		if (!respectMotionPreference) return
-		const onChange = ({ matches }: MediaQueryListEvent) => {
-			setReducedMotion(matches)
-		}
-		prefersReducedMotion?.addEventListener('change', onChange)
-		return () => {
-			prefersReducedMotion?.removeEventListener('change', onChange)
-		}
-	}, [respectMotionPreference])
-
-	return canAnimate && (!respectMotionPreference || !reducedMotion)
+	return isSupported && (!respectMotionPreference || !reducedMotion)
 }
