@@ -18,4 +18,4 @@ For full documentation, visit [number-flow.barvian.me](https://number-flow.barvi
     <img alt="Frigade logo" src="./sponsors/frigade.png" width="600">
   </a>
 </p>
-<p>NumberFlow is proud to be sponsored by <a href="https://frigade.com/?source=numberflow">Frigade</a>, a developer tool for building better product onboarding: guided tours, getting started checklists, announcements, and more.</p>
+<p>NumberFlow is proudly sponsored by <a href="https://frigade.com/?source=numberflow">Frigade</a>, a developer tool for building better product onboarding: guided tours, getting started checklists, announcements, and more.</p>
