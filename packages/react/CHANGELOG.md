@@ -1,5 +1,11 @@
 # @number-flow/react
 
+## 0.4.3
+
+### Patch Changes
+
+- Bump React peers ([`215a6bf`](https://github.com/barvian/number-flow/commit/215a6bf6f4d90a40114c5dd588fbf05c812b91f5))
+
 ## 0.4.2
 
 ### Patch Changes
