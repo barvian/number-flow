@@ -1,5 +1,14 @@
 # @number-flow/svelte
 
+## 0.2.3
+
+### Patch Changes
+
+- Add symbol part for styling all symbols ([`46ab8bd`](https://github.com/barvian/number-flow/commit/46ab8bd96467b1e27383546ce67a9889263ad0eb))
+
+- Updated dependencies [[`46ab8bd`](https://github.com/barvian/number-flow/commit/46ab8bd96467b1e27383546ce67a9889263ad0eb)]:
+  - number-flow@0.4.2
+
 ## 0.2.2
 
 ### Patch Changes

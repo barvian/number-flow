@@ -1,5 +1,16 @@
 # @number-flow/react
 
+## 0.4.4
+
+### Patch Changes
+
+- Add symbol part for styling all symbols ([`46ab8bd`](https://github.com/barvian/number-flow/commit/46ab8bd96467b1e27383546ce67a9889263ad0eb))
+
+- Use useSyncExternalStore for hooks ([`e626a3f`](https://github.com/barvian/number-flow/commit/e626a3fc3776f06ad3b92d8f1afdb8586bf66a13))
+
+- Updated dependencies [[`46ab8bd`](https://github.com/barvian/number-flow/commit/46ab8bd96467b1e27383546ce67a9889263ad0eb)]:
+  - number-flow@0.4.2
+
 ## 0.4.3
 
 ### Patch Changes
