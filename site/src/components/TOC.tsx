@@ -53,7 +53,7 @@ export default function TOC({ headings, ...props }: Props) {
 
 	return (
 		<nav {...props} id="toc" aria-label="Table Of Contents">
-			<ol className="space-y-4 text-sm">
+			<ol className="space-y-4 text-sm font-[425]">
 				{headings.map((h) => (
 					<li key={h.id}>
 						<a
