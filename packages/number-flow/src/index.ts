@@ -737,7 +737,7 @@ class Sym extends Char<KeyedSymbolPart> {
 			createElement(
 				'span',
 				{
-					part: type,
+					part: `symbol ${type}`,
 					className: `symbol`
 				},
 				[val]

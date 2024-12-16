@@ -73,8 +73,9 @@ const styles = css`
 		display: inline-block;
 		direction: ltr;
 		white-space: nowrap;
-		line-height: ${charHeight} !important;
 		isolation: isolate; /* for .number z-index */
+		/* Technically this is only needed on the .number, but applying it here makes the ::selection the same height for the whole element: */
+		line-height: ${charHeight} !important;
 	}
 
 	.number,
@@ -160,7 +161,6 @@ const styles = css`
 		 */
 		content: '\200b'; /* zero-width space */
 		display: inline-block;
-		padding: ${halfMaskHeight} 0;
 	}
 
 	.section--justify-left {
@@ -184,12 +184,18 @@ const styles = css`
 		--c: var(--current) + var(${deltaVar});
 	}
 
+	.digit__num,
+	.number .section::after {
+		padding: ${halfMaskHeight} 0;
+	}
+
 	.digit__num {
 		display: inline-block;
-		padding: ${halfMaskHeight} 0;
 		/* Claude + https://buildui.com/recipes/animated-counter */
 		--offset-raw: mod(var(--length) + var(--n) - mod(var(--c), var(--length)), var(--length));
-		--offset: calc(var(--offset-raw) - var(--length) * round(down, var(--offset-raw) / (var(--length)/2), 1));
+		--offset: calc(
+			var(--offset-raw) - var(--length) * round(down, var(--offset-raw) / (var(--length) / 2), 1)
+		);
 		/* Technically we just need var(--offset)*100%, but clamping should reduce the layer size: */
 		--y: clamp(-100%, var(--offset) * 100%, 100%);
 		transform: translateY(var(--y));
