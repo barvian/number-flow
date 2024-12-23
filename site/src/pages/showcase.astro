@@ -1,6 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro'
 import Tweet from '@/components/Tweet.astro'
+import LogoWall from '@/components/LogoWall/LogoWall.astro'
 import Link from '@/components/Link.astro'
 ---
 
@@ -14,11 +15,12 @@ import Link from '@/components/Link.astro'
 				in a post on X and I might include it here. Note: NumberFlow was previously called MotionNumber.
 			</p>
 		</div>
+		<LogoWall class="~mt-10/20" />
 	</header>
 	<!-- <div class="lg:max-w-9xl container max-w-2xl gap-8 *:mb-8 lg:columns-2 2xl:columns-3"> -->
 	<div class="~space-y-6/8 container max-w-2xl">
-		<Tweet id="1861891285000577303" autoplay />
-		<Tweet id="1860956737974804866" />
+		<!-- <Tweet id="1861891285000577303" autoplay /> -->
+		<Tweet id="1860956737974804866" autoplay />
 		<Tweet id="1861923025131888901" />
 		<Tweet id="1837159796564447380" />
 		<Tweet id="1862193333550162190" />

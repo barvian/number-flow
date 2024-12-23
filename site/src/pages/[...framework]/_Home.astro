@@ -1,4 +1,6 @@
 ---
+// import LogoWall from '@/components/LogoWall/LogoWall.astro'
+// import Match from '@/components/Match.astro'
 import DocsLayout from '@/layouts/Docs.astro'
 import type { MDXLayoutProps } from 'astro'
 import Hero from './_Hero'
@@ -15,6 +17,9 @@ const { sandbox, pkgName, componentType } = FRAMEWORKS[getFramework(Astro.params
 	description={`A ${componentType} to animate numbers. Dependency-free. Accessible. Customizable.`}
 >
 	<Hero transition:persist="home-hero" client:load {sandbox} slot="hero" />
+	<!-- <Match react slot="hero">
+		<LogoWall />
+	</Match> -->
 	<slot />
 	<footer
 		slot="footer"

@@ -52,6 +52,11 @@ export default {
 				}
 			},
 			keyframes: {
+				'logo-wall': {
+					to: {
+						transform: 'translateX(-100%)'
+					}
+				},
 				'pop-in': {
 					from: {
 						opacity: '0',
@@ -60,6 +65,7 @@ export default {
 				}
 			},
 			animation: {
+				'logo-wall': 'logo-wall 40s linear infinite',
 				'pop-in': 'pop-in .11s ease'
 			},
 			screens: {

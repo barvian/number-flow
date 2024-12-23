@@ -1,0 +1,19 @@
+---
+import Wall from './Wall.astro'
+import type { HTMLAttributes } from 'astro/types'
+
+type Props = HTMLAttributes<'div'>
+
+const { class: cls, ...props } = Astro.props
+---
+
+<div {...props} class:list={[cls /*'container max-w-2xl'*/]}>
+	<!-- <h2 class="text-muted whitespace-nowrap text-left text-sm">Used by</h2> -->
+	<div
+		class="flex items-center"
+		style="-webkit-mask-image: linear-gradient(to right, transparent 0, black 2rem, black calc(100% - 2rem), transparent 100%)"
+	>
+		<Wall />
+		<Wall />
+	</div>
+</div>
