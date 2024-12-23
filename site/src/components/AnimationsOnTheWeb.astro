@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets'
+import headshot from '@/assets/images/headshot.jpeg'
+import { ArrowUpRight } from 'lucide-react'
+---
+
+<aside class="border-faint my-16 border-y py-8">
+	<h2 class="not-prose text-lg font-medium">Learn to build components like NumberFlow</h2>
+	<blockquote class="text-pretty not-italic">
+		<!-- prettier-ignore -->
+		<p>Emil Kowalski's Animations on the Web course taught me everything I know about UI animation. I can't
+			imagine having built NumberFlow without it.</p>
+	</blockquote>
+	<p class="not-prose text-muted mb-6 flex items-center gap-2 text-sm">
+		<Image
+			src={headshot}
+			alt="Headshot of Maxwell Barvian"
+			width={64}
+			height={64}
+			class="size-6 rounded-full"
+		/>
+		Maxwell Barvian, NumberFlow creator
+	</p>
+	<a href="https://animations.dev" rel="external" target="_blank" class="btn btn-callout not-prose">
+		Take the course
+		<ArrowUpRight className="size-4" />
+	</a>
+</aside>

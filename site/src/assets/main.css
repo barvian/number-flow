@@ -45,6 +45,10 @@
 		@apply bg-zinc-900 text-zinc-50 hover:brightness-125;
 	}
 
+	.btn-callout {
+		@apply hover:bg-zinc-850 bg-zinc-900 text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900 hover:dark:bg-white;
+	}
+
 	.btn-secondary {
 		@apply hover:bg-zinc-100 dark:hover:bg-zinc-900;
 	}
