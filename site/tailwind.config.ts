@@ -128,6 +128,10 @@ export default {
 							'margin-top': '1.25em'
 						},
 
+						blockquote: {
+							'@apply border-faint': {}
+						},
+
 						'[role=alert]': {
 							'@apply my-[1.25em]': {}
 						},
