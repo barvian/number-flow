@@ -11,7 +11,7 @@ const { class: cls, ...props } = Astro.props
 	<!-- <h2 class="text-muted whitespace-nowrap text-left text-sm">Used by</h2> -->
 	<div
 		class="flex items-center"
-		style="-webkit-mask-image: linear-gradient(to right, transparent 0, black 2rem, black calc(100% - 2rem), transparent 100%)"
+		style="-webkit-mask-image: linear-gradient(to right, transparent 0, rgba(0,0,0,0.2) 1rem, black 2rem, black calc(100% - 2rem), rgba(0,0,0,0) calc(100% - 1rem), transparent calc(100% - 1rem))"
 	>
 		<Wall />
 		<Wall />
