@@ -345,10 +345,7 @@ to apply `::part` styles only to browsers that support [Declarative Shadow DOM](
 
 ```html
 <script>
-	if (
-		HTMLTemplateElement.prototype.hasOwnProperty('shadowRootMode') ||
-		HTMLTemplateElement.prototype.hasOwnProperty('shadowRoot') // old Chrome/Edge
-	)
+	if (HTMLTemplateElement.prototype.hasOwnProperty('shadowRootMode'))
 		document.documentElement.setAttribute('data-supports-dsd', '')
 </script>
 ```
