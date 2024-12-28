@@ -8,10 +8,17 @@ export interface Props extends HTMLAttributes<'code'> {
 const { types, class: cls, ...props } = Astro.props
 ---
 
-<Type {...props} class:list={[cls, 'inline-flex flex-wrap gap-[0.5em] leading-snug']}>
+<Type {...props} class:list={[cls, 'leading-snug']}>
 	{
 		types.map((type, i) => (
-			<span class:list={[i !== types.length - 1 && 'border-r-[0.125em] pr-[0.5em]']}>{type}</span>
+			<span
+				class:list={[
+					'mr-[0.5em] inline-block last:mr-0',
+					i !== types.length - 1 && 'border-r-[0.125em] pr-[0.5em]'
+				]}
+			>
+				{type}
+			</span>
 		))
 	}
 </Type>
