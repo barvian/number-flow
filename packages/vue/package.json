@@ -1,5 +1,6 @@
 {
 	"name": "@number-flow/vue",
+	"type": "module",
 	"publishConfig": {
 		"access": "public"
 	},
@@ -32,14 +33,14 @@
 		"dist",
 		"README.md"
 	],
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
+	"main": "./dist/index.umd.cjs",
+	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
+			"import": "./dist/index.js",
+			"require": "./dist/index.umd.cjs"
 		}
 	},
 	"scripts": {

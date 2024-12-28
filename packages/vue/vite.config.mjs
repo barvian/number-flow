@@ -23,16 +23,24 @@ export default defineConfig(({ mode }) => ({
 	build: {
 		outDir,
 		lib: {
-			entry: resolve(__dirname, 'src/index.ts'),
-			formats: ['es', 'cjs'],
-			fileName: 'index'
+			name: 'number-flow-vue', // required for UMD build
+			entry: {
+				index: resolve(__dirname, 'src/index.ts')
+			},
+			fileName: (format, name) => {
+				return `${name}.${format === 'es' ? 'js' : 'umd.cjs'}`
+			}
 		},
 		rollupOptions: {
 			external: ['vue', 'number-flow', 'esm-env'],
 			output: {
+				// Names for UMD builds
 				globals: {
-					vue: 'Vue'
-				}
+					vue: 'Vue',
+					'esm-env': 'Env',
+					'number-flow': 'NumberFlow'
+				},
+				exports: 'named'
 			}
 		}
 	}
