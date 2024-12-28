@@ -1,5 +1,11 @@
 # @number-flow/vue
 
+## 0.3.4
+
+### Patch Changes
+
+- Use UMD for CJS build (see [#88](https://github.com/barvian/number-flow/issues/88)) ([`2f9495d`](https://github.com/barvian/number-flow/commit/2f9495dd4b69dbd4716cfbeb2a1cfb2d9ecd0a00))
+
 ## 0.3.3
 
 ### Patch Changes
