@@ -84,7 +84,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 										<motion.div
 											layout
 											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 										></motion.div>
 									}
 								>
@@ -98,7 +98,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 										<motion.div
 											layout
 											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 										></motion.div>
 									}
 								>
@@ -113,7 +113,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 										<motion.div
 											layout
 											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full translate-x-[calc(var(--x)*5.6875em)] rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 										></motion.div>
 									}
 								>
