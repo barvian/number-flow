@@ -66,22 +66,20 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 	return (
 		<header
 			ref={ref}
-			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center gap-2 text-center"
+			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center text-center"
 		>
-			<div className="~my-2/3.5">
-				<NumberFlow
-					className="~text-5xl/7xl font-[550] [--number-flow-char-height:0.85em]"
-					trend={0}
-					value={value}
-					locales={locale}
-					format={format}
-					willChange
-				/>
-			</div>
+			<NumberFlow
+				className="~text-5xl/7xl my-3.5 font-[550] [--number-flow-char-height:0.85em]"
+				trend={0}
+				value={value}
+				locales={locale}
+				format={format}
+				willChange
+			/>
 			<p className="~text-base/lg prose prose-muted dark:prose-invert text-balance">
 				An animated number component. Dependency-free. Accessible. Customizable.
 			</p>
-			<div className="~mt-3/5 flex w-full flex-wrap items-stretch justify-center gap-3">
+			<div className="~mt-6/8 flex w-full flex-wrap items-stretch justify-center gap-3">
 				<button
 					className="btn btn-primary"
 					onClick={() => {
