@@ -69,7 +69,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center text-center"
 		>
 			<NumberFlow
-				className="~text-5xl/7xl mb-4.5 mt-3.5 font-[550] [--number-flow-char-height:0.85em]"
+				className="~text-5xl/7xl mb-4 mt-3.5 font-[550] [--number-flow-char-height:0.85em]"
 				trend={0}
 				value={value}
 				locales={locale}
