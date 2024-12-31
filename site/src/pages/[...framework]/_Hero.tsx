@@ -4,14 +4,11 @@ import { useEffect, useRef } from 'react'
 import { useInView } from 'motion/react'
 import { ArrowUpRight } from 'lucide-react'
 
-const NUMBERS = [43110, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
+const NUMBERS = [431.1, -3243.6, 42, 398.43, -3243.5, 1435237.2, 12348.43, -3243.6, 54323.2]
 const LOCALES = ['en-US', 'en-US', 'fr-FR', 'en-US', 'en-US', 'zh-CN', 'en-US', 'en-US', 'fr-FR']
 const FORMATS = [
 	{
-		// style: "unit",
-		// unit: "meter",
-		// notation: "compact",
-		// signDisplay: "never",
+		minimumFractionDigits: 2
 	},
 	{
 		style: 'currency',
