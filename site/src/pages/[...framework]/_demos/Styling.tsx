@@ -3,7 +3,7 @@ import type { Rename } from '@/lib/types'
 import NumberFlow, { type Value } from '@number-flow/react'
 import useCycle from '@/hooks/useCycle'
 
-const NUMBERS: Value[] = [3, 25, 50]
+const NUMBERS: Value[] = [3, 15, 50]
 
 export default function DemoHOC({
 	children,
