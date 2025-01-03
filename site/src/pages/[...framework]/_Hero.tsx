@@ -41,6 +41,14 @@ const FORMATS = [
 	}
 ] as Format[]
 
+const chineseFormat = new Intl.NumberFormat('zh-CN', {
+	style: 'unit',
+	unit: 'meter',
+	notation: 'compact'
+})
+// Warm up this locale to avoid stuttering
+chineseFormat.format(1435237.2)
+
 export default function Hero({ sandbox }: { sandbox: string }) {
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
@@ -68,10 +76,6 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 			ref={ref}
 			className="~mb-12/24 container flex w-full max-w-2xl flex-col items-center text-center"
 		>
-			{/* "Warm up" these characters, otherwise the animation will stutter if the browser tries to access them the first time */}
-			<span className="sr-only" aria-hidden="true" {...{ inert: '' }}>
-				万米
-			</span>
 			<NumberFlow
 				className="~text-5xl/7xl mb-4 mt-3.5 font-[550] [--number-flow-char-height:0.85em]"
 				trend={0}
