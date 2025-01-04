@@ -41,14 +41,6 @@ const FORMATS = [
 	}
 ] as Format[]
 
-const chineseFormat = new Intl.NumberFormat('zh-CN', {
-	style: 'unit',
-	unit: 'meter',
-	notation: 'compact'
-})
-// Warm up this locale to avoid stuttering
-chineseFormat.format(1435237.2)
-
 export default function Hero({ sandbox }: { sandbox: string }) {
 	const [value, cycleValue] = useCycle(NUMBERS)
 	const [locale, cycleLocale] = useCycle(LOCALES)
