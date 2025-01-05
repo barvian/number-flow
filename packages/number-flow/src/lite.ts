@@ -654,13 +654,13 @@ export class Digit extends Char<KeyedDigitPart> {
 				}
 			)
 
-		const spin = this.getSpin()
-		if (!spin) return
+		const delta = this.getDelta()
+		if (!delta) return
 
 		this.el.classList.add('is-spinning')
 		this.el.animate(
 			{
-				[deltaVar]: [-spin, 0]
+				[deltaVar]: [-delta, 0]
 			},
 			{
 				...(this.flow.spinTiming ?? this.flow.transformTiming),
@@ -671,10 +671,10 @@ export class Digit extends Char<KeyedDigitPart> {
 		this.flow.addEventListener('animationsfinish', this._onAnimationsFinish, { once: true })
 	}
 
-	getSpin() {
+	getDelta() {
 		if (this.flow.plugins)
 			for (const plugin of this.flow.plugins) {
-				const diff = plugin.getSpin?.(this.value, this._prevValue!, this)
+				const diff = plugin.getDelta?.(this.value, this._prevValue!, this)
 				if (diff != null) return diff
 			}
 

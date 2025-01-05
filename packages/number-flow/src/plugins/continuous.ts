@@ -28,7 +28,7 @@ export const continuous: Plugin = {
 		)
 		startingPos.set(flow, max(firstChangedPrev?.pos, firstChanged?.pos))
 	},
-	getSpin(value, prev, digit) {
+	getDelta(value, prev, digit) {
 		const diff = value - prev
 		const starting = startingPos.get(digit.flow)
 		// Loop once if it's continuous:
