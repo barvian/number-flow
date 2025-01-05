@@ -24,7 +24,10 @@ export type Format = Omit<Intl.NumberFormatOptions, 'notation'> & {
 	notation?: Exclude<Intl.NumberFormatOptions['notation'], 'scientific' | 'engineering'>
 }
 
-export type Value = Exclude<Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0], bigint>
+export type Value = Exclude<
+	Parameters<typeof Intl.NumberFormat.prototype.formatToParts>[0],
+	bigint | undefined
+>
 
 export function formatToData(
 	value: Value,
