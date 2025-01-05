@@ -9,6 +9,7 @@ import {
 export { default as NumberFlowGroup } from './NumberFlowGroup.vue'
 
 export type { Value, Format, Trend } from 'number-flow'
+export * from 'number-flow/plugins'
 export { NumberFlowElement }
 
 // In case we ever need a subclass:

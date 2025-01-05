@@ -14,6 +14,7 @@ import {
 	define
 } from 'number-flow'
 import { BROWSER } from 'esm-env'
+export * from 'number-flow/plugins'
 export type { Value, Format, Trend, NumberPartType } from 'number-flow'
 
 const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
@@ -63,7 +64,7 @@ function splitProps<T extends Record<string, any>>(
 		animated,
 		respectMotionPreference,
 		trend,
-		continuous,
+		plugins,
 		...rest
 	} = props
 
@@ -75,7 +76,7 @@ function splitProps<T extends Record<string, any>>(
 			animated,
 			respectMotionPreference,
 			trend,
-			continuous
+			plugins
 		},
 		rest
 	]

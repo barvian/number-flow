@@ -31,7 +31,7 @@ const {
 	suffix,
 	// Couldn't find docs on this, but needs wrapper function to work:
 	trend = () => NumberFlowLite.defaultProps.trend,
-	continuous = NumberFlowLite.defaultProps.continuous,
+	plugins = NumberFlowLite.defaultProps.plugins,
 	animated = NumberFlowLite.defaultProps.animated,
 	transformTiming = NumberFlowLite.defaultProps.transformTiming,
 	spinTiming = NumberFlowLite.defaultProps.spinTiming,
@@ -76,7 +76,7 @@ register?.(el, data)
 		role="img"
 		:manual="Boolean(register)"
 		:trend
-		:continuous
+		:plugins
 		:animated
 		:transformTiming
 		:spinTiming

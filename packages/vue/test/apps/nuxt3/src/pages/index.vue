@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import NumberFlow, { NumberFlowGroup } from '@number-flow/vue'
-import { ref } from 'vue'
+import NumberFlow, { NumberFlowGroup, continuous } from '@number-flow/vue'
+import { nextTick, ref, useTemplateRef, watch } from 'vue'
 
 const flow1 = useTemplateRef('flow1')
 const flow2 = useTemplateRef('flow2')
@@ -47,7 +47,7 @@ const handleFinish = () => console.log('finish')
 				:value
 				:respectMotionPreference="false"
 				data-testid="flow2"
-				continuous
+				:plugins="[continuous]"
 				:digits="{ 0: { max: 2 } }"
 				:transformTiming="{ easing: 'linear', duration: 500 }"
 				:spinTiming="{ easing: 'linear', duration: 800 }"

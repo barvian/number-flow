@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Slider, type SliderProps } from 'bits-ui'
-	import NumberFlow from '@number-flow/svelte'
+	import NumberFlow, { continuous } from '@number-flow/svelte'
 
 	let { value = $bindable([0]), ...props }: SliderProps = $props()
 </script>
@@ -28,7 +28,7 @@
 				willChange
 				value={value[0]}
 				aria-hidden="true"
-				continuous
+				plugins={[continuous]}
 				opacityTiming={{
 					duration: 250,
 					easing: 'ease-out'

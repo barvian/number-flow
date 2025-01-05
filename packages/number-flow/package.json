@@ -40,6 +40,11 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
+		},
+		"./plugins": {
+			"types": "./dist/plugins/index.d.ts",
+			"import": "./dist/plugins.mjs",
+			"require": "./dist/plugins.js"
 		}
 	},
 	"scripts": {

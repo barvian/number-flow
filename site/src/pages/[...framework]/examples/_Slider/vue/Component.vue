@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NumberFlow from '@number-flow/vue'
+import NumberFlow, { continuous } from '@number-flow/vue'
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'radix-vue'
 </script>
 
@@ -19,7 +19,7 @@ import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'radix-vue'
 				v-if="modelValue[0] != null"
 				willChange
 				:value="modelValue[0]"
-				continuous
+				:plugins="[continuous]"
 				:opacityTiming="{
 					duration: 250,
 					easing: 'ease-out'

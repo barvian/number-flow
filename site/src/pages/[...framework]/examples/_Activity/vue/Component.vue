@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import NumberFlow, { type Format } from '@number-flow/vue'
+import NumberFlow, { type Format, continuous } from '@number-flow/vue'
 import { Bookmark, ChartNoAxesColumn, Heart, Repeat, Share } from 'lucide-vue-next'
 
 const format: Format = {
@@ -29,7 +29,7 @@ const emit = defineEmits<{
 	<div class="flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
 		<div class="flex flex-1 items-center gap-1.5">
 			<ChartNoAxesColumn absoluteStrokeWidth class="~size-4/5" />
-			<NumberFlow willChange continuous :value="views" :format />
+			<NumberFlow willChange :plugins="[continuous]" :value="views" :format />
 		</div>
 		<div class="flex-1">
 			<button
@@ -45,7 +45,7 @@ const emit = defineEmits<{
 						class="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
 					/>
 				</div>
-				<NumberFlow willChange continuous :value="reposts" :format />
+				<NumberFlow willChange :plugins="[continuous]" :value="reposts" :format />
 			</button>
 		</div>
 		<div class="flex-1">
@@ -65,7 +65,7 @@ const emit = defineEmits<{
 						]"
 					/>
 				</div>
-				<NumberFlow willChange continuous :value="likes" :format />
+				<NumberFlow willChange :plugins="[continuous]" :value="likes" :format />
 			</button>
 		</div>
 		<div class="flex shrink-0 min-[30rem]:flex-1 items-center gap-1.5 max-[24rem]:hidden">
@@ -85,7 +85,7 @@ const emit = defineEmits<{
 						]"
 					/>
 				</div>
-				<NumberFlow class="max-[30rem]:hidden" willChange continuous :value="bookmarks" :format />
+				<NumberFlow class="max-[30rem]:hidden" willChange :plugins="[continuous]" :value="bookmarks" :format />
 			</button>
 		</div>
 		<Share absoluteStrokeWidth class="~size-4/5 shrink-0" />

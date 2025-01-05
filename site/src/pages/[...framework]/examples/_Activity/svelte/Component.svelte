@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NumberFlow, { type Format } from '@number-flow/svelte'
+	import NumberFlow, { continuous, type Format } from '@number-flow/svelte'
 	import clsx from 'clsx/lite'
 	import { Bookmark, ChartNoAxesColumn, Heart, Repeat, Share } from 'lucide-svelte'
 	import type { HTMLAttributes } from 'svelte/elements'
@@ -41,14 +41,11 @@
 
 <div
 	{...props}
-	class={clsx(
-		cls,
-		'flex w-full select-none items-center text-zinc-600 dark:text-zinc-300'
-	)}
+	class={clsx(cls, 'flex w-full select-none items-center text-zinc-600 dark:text-zinc-300')}
 >
 	<div class="flex flex-1 items-center gap-1.5">
 		<ChartNoAxesColumn absoluteStrokeWidth class="~size-4/5" />
-		<NumberFlow willChange continuous value={views} {format} />
+		<NumberFlow willChange plugins={[continuous]} value={views} {format} />
 	</div>
 	<div class="flex-1">
 		<button
@@ -64,7 +61,7 @@
 					class="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
 				/>
 			</div>
-			<NumberFlow willChange continuous value={reposts} {format} />
+			<NumberFlow willChange plugins={[continuous]} value={reposts} {format} />
 		</button>
 	</div>
 	<div class="flex-1">
@@ -84,10 +81,10 @@
 					)}
 				/>
 			</div>
-			<NumberFlow willChange continuous value={likes} {format} />
+			<NumberFlow willChange plugins={[continuous]} value={likes} {format} />
 		</button>
 	</div>
-	<div class="flex  shrink-0 min-[30rem]:flex-1 items-center gap-1.5 max-[24rem]:hidden">
+	<div class="min-[30rem]:flex-1 max-[24rem]:hidden flex shrink-0 items-center gap-1.5">
 		<button
 			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-blue-500"
 			class:text-blue-500={bookmarked}
@@ -104,7 +101,13 @@
 					)}
 				/>
 			</div>
-			<NumberFlow class="max-[30rem]:hidden" willChange continuous value={bookmarks} {format} />
+			<NumberFlow
+				class="max-[30rem]:hidden"
+				willChange
+				plugins={[continuous]}
+				value={bookmarks}
+				{format}
+			/>
 		</button>
 	</div>
 	<Share absoluteStrokeWidth class="~size-4/5 shrink-0" />

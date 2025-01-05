@@ -1,4 +1,4 @@
-import NumberFlow from '@number-flow/react'
+import NumberFlow, { continuous } from '@number-flow/react'
 import * as RadixSlider from '@radix-ui/react-slider'
 import clsx from 'clsx/lite'
 
@@ -21,7 +21,7 @@ export default function Slider({ value, className, ...props }: RadixSlider.Slide
 						willChange
 						value={value[0]}
 						isolate
-						continuous
+						plugins={[continuous]}
 						opacityTiming={{
 							duration: 250,
 							easing: 'ease-out'

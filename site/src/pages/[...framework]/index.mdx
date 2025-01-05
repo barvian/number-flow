@@ -208,15 +208,6 @@ want to animate number changes without conveying an overall trend ([example](htt
 
 <TrendDemo client:visible />
 
-<h3 id="continuous">
-	<code>continuous<Type>: boolean</Type></code>
-	<Meta>Default: `false`</Meta>
-</h3>
-
-If set, number transitions will appear to pass through in-between numbers. Has no effect if `trend` is `0`.
-
-<ContinuousDemo client:visible />
-
 <Match react>
 <h3>
 	<code>isolate<Type>: boolean</Type></code>
@@ -267,6 +258,53 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 </h3>
 
 Can be set to `false` to animate regardless of the user's reduced motion preference.
+
+<h3>
+	<code>plugins<Type>: Plugin[]</Type></code>
+</h3>
+
+Plugins to apply to the component. Currently there's only one plugin, `continuous`, which
+makes the number transitions appear to pass through in-between numbers:
+
+<ContinuousDemo client:visible>
+<Match react>
+```jsx
+import NumberFlow, { continuous } from '@number-flow/react'
+
+<NumberFlow
+	plugins={[continuous]}
+	value={value}
+/>
+```
+</Match>
+<Match vue>
+```vue
+<script setup>
+import NumberFlow, { continuous } from '@number-flow/vue'
+</script>
+<template>
+	<NumberFlow
+		:plugins="[continuous]"
+		:value="123"
+	/>
+</template>
+```
+</Match>
+<Match svelte>
+```svelte
+<script>
+import NumberFlow, { continuous } from '@number-flow/svelte'
+</script>
+
+<NumberFlow
+	plugins={[continuous]}
+	value={123}
+/>
+```
+</Match>
+</ContinuousDemo>
+
+This plugin has no effect if `trend` is `0`.
 
 <Match vue>
 ---

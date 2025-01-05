@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import NumberFlow, { NumberFlowElement, NumberFlowGroup } from '@number-flow/react'
+import NumberFlow, { NumberFlowElement, NumberFlowGroup, continuous } from '@number-flow/react'
 import { flushSync } from 'react-dom'
 
 export default function Page() {
@@ -33,7 +33,7 @@ export default function Page() {
 						value={value}
 						respectMotionPreference={false}
 						data-testid="flow2"
-						continuous
+						plugins={[continuous]}
 						digits={{ 0: { max: 2 } }}
 						transformTiming={{ easing: 'linear', duration: 500 }}
 						spinTiming={{ easing: 'linear', duration: 800 }}

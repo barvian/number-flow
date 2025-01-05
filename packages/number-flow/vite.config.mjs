@@ -12,9 +12,11 @@ export default defineConfig(({ mode }) => ({
 	build: {
 		outDir,
 		lib: {
-			entry: resolve(__dirname, 'src/index.ts'),
-			formats: ['es', 'cjs'],
-			fileName: 'index'
+			entry: {
+				index: resolve(__dirname, 'src/index.ts'),
+				plugins: resolve(__dirname, 'src/plugins/index.ts')
+			},
+			formats: ['es', 'cjs']
 		},
 		rollupOptions: {
 			external: ['esm-env'],

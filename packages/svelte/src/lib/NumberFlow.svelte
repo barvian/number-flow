@@ -50,7 +50,7 @@
 	export let animated = NumberFlowElement.defaultProps.animated
 	export let respectMotionPreference = NumberFlowElement.defaultProps.respectMotionPreference
 	export let trend = NumberFlowElement.defaultProps.trend
-	export let continuous = NumberFlowElement.defaultProps.continuous
+	export let plugins = NumberFlowElement.defaultProps.plugins
 	export let digits = NumberFlowElement.defaultProps.digits
 
 	type $$Props = HTMLAttributes<HTMLElement> &
@@ -99,7 +99,7 @@
 	__svelte_animated={animated}
 	__svelte_respectMotionPreference={respectMotionPreference}
 	__svelte_trend={trend}
-	__svelte_continuous={continuous}
+	__svelte_plugins={plugins}
 	__svelte_digits={digits}
 	{data}
 >

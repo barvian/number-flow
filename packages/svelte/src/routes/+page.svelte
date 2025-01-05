@@ -1,5 +1,5 @@
 <script lang="ts">
-	import NumberFlow, { NumberFlowGroup, NumberFlowElement } from '$lib/index.js'
+	import NumberFlow, { NumberFlowGroup, NumberFlowElement, continuous } from '$lib/index.js'
 	import { afterUpdate, tick } from 'svelte'
 
 	const initialValue = 42
@@ -44,7 +44,7 @@
 			{value}
 			respectMotionPreference={false}
 			data-testid="flow2"
-			continuous
+			plugins={[continuous]}
 			digits={{ 0: { max: 2 } }}
 			transformTiming={{ easing: 'linear', duration: 500 }}
 			spinTiming={{ easing: 'linear', duration: 800 }}

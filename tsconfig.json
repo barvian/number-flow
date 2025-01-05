@@ -13,6 +13,7 @@
 
 		/* Linting */
 		"strict": true,
+		"noImplicitReturns": false,
 		"forceConsistentCasingInFileNames": true,
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,

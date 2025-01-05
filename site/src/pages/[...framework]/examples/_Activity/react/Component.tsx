@@ -1,4 +1,4 @@
-import NumberFlow, { type Format } from '@number-flow/react'
+import NumberFlow, { continuous, type Format } from '@number-flow/react'
 import clsx from 'clsx/lite'
 import { Bookmark, ChartNoAxesColumn, Heart, Repeat, Share } from 'lucide-react'
 
@@ -45,7 +45,7 @@ export default function Activity({
 		>
 			<div className="flex flex-1 items-center gap-1.5">
 				<ChartNoAxesColumn absoluteStrokeWidth className="~size-4/5" />
-				<NumberFlow willChange continuous value={views} format={format} />
+				<NumberFlow willChange plugins={[continuous]} value={views} format={format} />
 			</div>
 			<div className="flex-1">
 				<button
@@ -61,7 +61,7 @@ export default function Activity({
 							className="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
 						/>
 					</div>
-					<NumberFlow willChange continuous value={reposts} format={format} />
+					<NumberFlow willChange plugins={[continuous]} value={reposts} format={format} />
 				</button>
 			</div>
 			<div className="flex-1">
@@ -81,10 +81,10 @@ export default function Activity({
 							)}
 						/>
 					</div>
-					<NumberFlow willChange continuous value={likes} format={format} />
+					<NumberFlow willChange plugins={[continuous]} value={likes} format={format} />
 				</button>
 			</div>
-			<div className="flex shrink-0 min-[30rem]:flex-1 items-center gap-1.5 max-[24rem]:hidden">
+			<div className="min-[30rem]:flex-1 max-[24rem]:hidden flex shrink-0 items-center gap-1.5">
 				<button
 					className={clsx(
 						'group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-blue-500',
@@ -101,7 +101,13 @@ export default function Activity({
 							)}
 						/>
 					</div>
-					<NumberFlow className="max-[30rem]:hidden" willChange continuous value={bookmarks} format={format} />
+					<NumberFlow
+						className="max-[30rem]:hidden"
+						willChange
+						plugins={[continuous]}
+						value={bookmarks}
+						format={format}
+					/>
 				</button>
 			</div>
 			<Share absoluteStrokeWidth className="~size-4/5 shrink-0" />

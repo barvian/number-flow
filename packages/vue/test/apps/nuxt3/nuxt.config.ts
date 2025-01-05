@@ -7,6 +7,11 @@ export default defineNuxtConfig({
 		port: 3039
 	},
 	modules: ['@nuxtjs/tailwindcss', '@nuxt/fonts'],
+	imports: {
+		// Breaks stuff b/c monorepo?
+		// https://github.com/nuxt/nuxt/issues/18823
+		autoImport: false
+	},
 	fonts: {
 		defaults: {
 			weights: [400],

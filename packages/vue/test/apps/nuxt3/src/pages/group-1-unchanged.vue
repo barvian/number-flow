@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NumberFlow, { NumberFlowGroup } from '@number-flow/vue'
-import { ref } from 'vue'
+import { nextTick, ref, useTemplateRef, watch } from 'vue'
 
 const flow1 = useTemplateRef('flow1')
 const flow2 = useTemplateRef('flow2')
