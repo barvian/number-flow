@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.0
+
+### Minor Changes
+
+- Move `continuous` prop into importable plugin ([`e40a15e`](https://github.com/barvian/number-flow/commit/e40a15e3df55727a196ba1dc9a1230139f4d69ff))
+
 ## 0.4.2
 
 ### Patch Changes
