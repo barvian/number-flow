@@ -29,6 +29,8 @@ export type Value = Exclude<Parameters<typeof Intl.NumberFormat.prototype.format
 export function formatToData(
 	value: Value,
 	formatter: Intl.NumberFormat,
+	digitChars: Record<number, string>,
+	charDigits: Record<string, number>,
 	prefix?: string,
 	suffix?: string
 ) {
@@ -59,7 +61,7 @@ export function formatToData(
 
 		if (type === 'integer') {
 			seenInteger = true
-			_integer.push(...part.value.split('').map((d) => ({ type, value: parseInt(d) })))
+			_integer.push(...part.value.split('').map((d) => ({ type, value: charDigits[d]! })))
 		} else if (type === 'group') {
 			_integer.push({ type, value: part.value })
 		} else if (type === 'decimal') {
@@ -69,7 +71,7 @@ export function formatToData(
 			fraction.push(
 				...part.value.split('').map((d) => ({
 					type,
-					value: parseInt(d),
+					value: charDigits[d]!,
 					key: generateKey(type),
 					pos: -1 - counts[type]!
 				}))
@@ -107,6 +109,7 @@ export function formatToData(
 		fraction,
 		post,
 		valueAsString,
+		digitChars,
 		value: typeof value == 'string' ? parseFloat(value) : value
 	}
 }

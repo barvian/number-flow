@@ -114,6 +114,10 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 
 	manual = false
 
+	get data() {
+		return this._data
+	}
+
 	set data(data: Data | undefined) {
 		if (data == null) {
 			return
@@ -616,7 +620,7 @@ class Digit extends Char<KeyedDigitPart> {
 			const num = createElement(
 				'span',
 				{ className: `digit__num${i === value ? ' is-current' : ''}` },
-				[document.createTextNode(String(i))]
+				[document.createTextNode(section.flow.data!.digitChars[i]!)]
 			)
 			num.style.setProperty('--n', String(i))
 			return num

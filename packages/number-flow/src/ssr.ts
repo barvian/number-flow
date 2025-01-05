@@ -33,20 +33,32 @@ const styles = css`
 	}
 `
 
-const renderPart = (part: KeyedNumberPart) =>
-	`<span class="${part.type === 'integer' || part.type === 'fraction' ? 'digit' : 'symbol'}" part="${part.type === 'integer' || part.type === 'fraction' ? `digit ${part.type}-digit` : part.type}">${part.value}</span>`
+const renderPart = (part: KeyedNumberPart, digitChars: Record<number, string>) => {
+	if (part.type === 'integer' || part.type === 'fraction') {
+		return `<span class="digit" part="digit ${part.type}-digit">${digitChars[part.value]!}</span>`
+	}
+	return `<span class="symbol" part="symbol ${part.type}">${part.value}</span>`
+}
 
-const renderSection = (section: KeyedNumberPart[], part: string) =>
-	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
+const renderSection = (
+	section: KeyedNumberPart[],
+	part: string,
+	digitChars: Record<number, string>
+) =>
+	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p, digitChars), '')}</span>`
 
 export const renderInnerHTML = (data: Data) =>
 	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
 			><style>
 				${styles}</style
-			>${renderSection(data.pre, 'left')}<span part="number" class="number"
-				>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
-			>${renderSection(data.post, 'right')}</template
+			>${renderSection(data.pre, 'left', data.digitChars)}<span part="number" class="number"
+				>${renderSection(data.integer, 'integer', data.digitChars)}${renderSection(
+					data.fraction,
+					'fraction',
+					data.digitChars
+				)}</span
+			>${renderSection(data.post, 'right', data.digitChars)}</template
 		><span
 			style="font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;"
 			>${data.valueAsString}</span

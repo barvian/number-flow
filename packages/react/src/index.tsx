@@ -212,12 +212,25 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 
 	const localesString = React.useMemo(() => (locales ? JSON.stringify(locales) : ''), [locales])
 	const formatString = React.useMemo(() => (format ? JSON.stringify(format) : ''), [format])
+	// Generate number-to-string and string-to-number maps from the locale,
+	// to handle e.g. Arabic locales that don't use the same digits as English (and will fail with parseInt):
+	const [digitChars, charDigits] = React.useMemo(() => {
+		const formatter = (formatters[localesString] ??= new Intl.NumberFormat(locales))
+		const digitChars: Record<number, string> = {},
+			charDigits: Record<string, number> = {}
+		Array.from({ length: 10 }, (_, i) => {
+			const char = formatter.format(i)
+			digitChars[i] = char
+			charDigits[char] = i
+		})
+		return [digitChars, charDigits] as const
+	}, [localesString])
 	const data = React.useMemo(() => {
 		const formatter = (formatters[`${localesString}:${formatString}`] ??= new Intl.NumberFormat(
 			locales,
 			format
 		))
-		return formatToData(value, formatter, prefix, suffix)
+		return formatToData(value, formatter, digitChars, charDigits, prefix, suffix)
 	}, [value, localesString, formatString, prefix, suffix])
 
 	return <NumberFlowImpl {...props} group={group} data={data} innerRef={ref} />
