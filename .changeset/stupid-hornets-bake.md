@@ -5,4 +5,4 @@
 '@number-flow/vue': minor
 ---
 
-Break `continuous` prop into importable plugin
+Move `continuous` prop into importable plugin
