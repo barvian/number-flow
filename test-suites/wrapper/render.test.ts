@@ -15,6 +15,7 @@ test('renders correctly', async ({ page }) => {
 	// Check for parts
 	await expect(flow.locator('[part~=left]')).toBeAttached()
 	await expect(flow.locator('[part~=currency]')).toBeAttached()
+	await expect(flow.locator('[part~=symbol]')).toHaveCount(4)
 	await expect(flow.locator('[part~=number]')).toBeAttached()
 	await expect(flow.locator('[part~=integer]')).toBeAttached()
 	await expect(flow.locator('[part~=fraction]')).toBeAttached()
