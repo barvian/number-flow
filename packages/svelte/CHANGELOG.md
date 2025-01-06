@@ -1,5 +1,14 @@
 # @number-flow/svelte
 
+## 0.3.1
+
+### Patch Changes
+
+- Add missing symbol part to SSR ([`34ea785`](https://github.com/barvian/number-flow/commit/34ea7856d6a75fba420bf379656dc3c8a7018948))
+
+- Updated dependencies [[`34ea785`](https://github.com/barvian/number-flow/commit/34ea7856d6a75fba420bf379656dc3c8a7018948)]:
+  - number-flow@0.5.1
+
 ## 0.3.0
 
 ### Minor Changes
