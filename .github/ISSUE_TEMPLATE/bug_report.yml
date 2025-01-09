@@ -26,8 +26,8 @@ body:
         - React
         - Vue
         - Svelte
-      validations:
-        required: true
+    validations:
+      required: true
 
   - type: input
     id: framework-library-version
