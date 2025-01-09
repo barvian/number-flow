@@ -19,23 +19,13 @@ body:
     validations:
       required: true
 
-  - type: dropdown
-    attributes:
-      label: Framework
-      options:
-        - React
-        - Vue
-        - Svelte
-    validations:
-      required: true
-
   - type: input
     id: framework-library-version
     attributes:
       label: Framework version
       # description: Which framework (and version) are you using?
       placeholder: |
-        x.x.x
+        react@x.x.x
     validations:
       required: true
 
