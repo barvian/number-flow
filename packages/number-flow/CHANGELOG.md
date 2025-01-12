@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.2
+
+### Patch Changes
+
+- Improve `::selection` display and accessibility during transitions ([`301a755`](https://github.com/barvian/number-flow/commit/301a755edd8bde8ad8a6fe680c1882e8f6230393))
+
 ## 0.5.1
 
 ### Patch Changes
