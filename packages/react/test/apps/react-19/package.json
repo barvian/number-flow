@@ -4,6 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "next dev --port 3039",
+		"build": "next build",
+		"start": "next start",
 		"lint": "next lint",
 		"test": "playwright test",
 		"test:ui": "playwright test --ui",
@@ -11,7 +13,7 @@
 	},
 	"dependencies": {
 		"@number-flow/react": "workspace:^",
-		"next": "15.1.0",
+		"next": "15.1.4",
 		"react": "19.0.0",
 		"react-dom": "19.0.0"
 	},
