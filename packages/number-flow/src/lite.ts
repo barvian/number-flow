@@ -350,7 +350,7 @@ abstract class Section {
 		}
 
 	protected unpop(char: Char) {
-		char.el.classList.remove('section__exiting')
+		char.el.removeAttribute('inert')
 		char.el.style.top = ''
 		char.el.style[this.justify] = ''
 	}
@@ -362,7 +362,7 @@ abstract class Section {
 			char.el.style[this.justify] = `${offset(char.el, this.justify)}px`
 		})
 		chars.forEach((char) => {
-			char.el.classList.add('section__exiting')
+			char.el.setAttribute('inert', '')
 			char.present = false
 		})
 	}
@@ -533,6 +533,8 @@ class AnimatePresence {
 	set present(val) {
 		if (this._present === val) return
 		this._present = val
+		if (val) this.el.removeAttribute('inert')
+		else this.el.setAttribute('inert', '')
 
 		if (!this.flow.computedAnimated) {
 			if (!val) this._remove()
@@ -588,11 +590,11 @@ export class Digit extends Char<KeyedDigitPart> {
 	) {
 		const length = (section.flow.digits?.[pos]?.max ?? 9) + 1
 		const numbers = Array.from({ length }).map((_, i) => {
-			const num = createElement(
-				'span',
-				{ className: `digit__num${i === value ? ' is-current' : ''}` },
-				[document.createTextNode(String(i))]
-			)
+			const num = createElement('span', { className: `digit__num` }, [
+				document.createTextNode(String(i))
+			])
+			// Use the attribute for now because it has a little better browser support:
+			if (i !== value) num.setAttribute('inert', '')
 			num.style.setProperty('--n', String(i))
 			return num
 		})
@@ -630,9 +632,10 @@ export class Digit extends Char<KeyedDigitPart> {
 	}
 
 	update(value: KeyedDigitPart['value']) {
-		this._numbers[this.value]?.classList.remove('is-current')
 		this.el.style.setProperty('--current', String(value))
-		this._numbers[value]?.classList.add('is-current')
+		this._numbers.forEach((num, i) =>
+			i === value ? num.removeAttribute('inert') : num.setAttribute('inert', '')
+		)
 		this.value = value
 	}
 
@@ -749,13 +752,11 @@ class Sym extends Char<KeyedSymbolPart> {
 			// Pop the current value:
 			const current = this._children.get(this.value)!
 			current.present = false
-			current.el.classList.add('symbol__exiting')
 
 			// If we already have the new value and it hasn't finished removing, reclaim it:
 			if (this._children.has(value)) {
 				const prev = this._children.get(value)!
 				prev.present = true
-				prev.el.classList.remove('symbol__exiting')
 			} else {
 				// Otherwise, create a new one:
 				const newVal = createElement('span', {

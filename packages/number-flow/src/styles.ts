@@ -135,6 +135,11 @@ const styles = css`
 		-webkit-mask-repeat: no-repeat;
 	}
 
+	/* Small improvement for ::selection when not animating: */
+	.number:not(:has(.digit.is-spinning)) {
+		-webkit-mask-image: none;
+	}
+
 	.number__inner {
 		padding: ${halfMaskHeight} ${maskWidth};
 		/* invert parent's: */
@@ -149,7 +154,7 @@ const styles = css`
 	.section,
 	.symbol {
 		display: inline-block;
-		/* for __exiting: */
+		/* for exiting (> [inert]): */
 		position: relative;
 		isolation: isolate; /* also helpful for mix-blend-mode in symbol__value */
 	}
@@ -171,10 +176,10 @@ const styles = css`
 		transform-origin: center right;
 	}
 
-	.section__exiting,
-	.symbol__exiting {
-		margin: 0 !important;
-		position: absolute !important;
+	.section > [inert],
+	.symbol > [inert] {
+		margin: 0 !important; /* to override any user styles */
+		position: absolute !important; /* ^ */
 		z-index: -1;
 	}
 
@@ -201,14 +206,14 @@ const styles = css`
 		transform: translateY(var(--y));
 	}
 
-	.digit__num:not(.is-current) {
+	.digit__num[inert] {
 		position: absolute;
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%) translateY(var(--y));
 	}
 
-	.digit:not(.is-spinning) .digit__num:not(.is-current) {
+	.digit:not(.is-spinning) .digit__num[inert] {
 		display: none;
 	}
 
@@ -218,11 +223,11 @@ const styles = css`
 		white-space: pre; /* some symbols are spaces or thin spaces */
 	}
 
-	.section--justify-left .symbol__exiting {
+	.section--justify-left .symbol > [inert] {
 		left: 0;
 	}
 
-	.section--justify-right .symbol__exiting {
+	.section--justify-right .symbol > [inert] {
 		right: 0;
 	}
 
