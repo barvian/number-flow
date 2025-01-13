@@ -1,9 +1,7 @@
 'use client'
 
-/*
- * This has to be in a separate file for #95.
- * Make sure tsup outputs both files.
- */
+// This has to be in a separate file for #95.
+//  Make sure tsup outputs both files.
 
 import * as React from 'react'
 import {
