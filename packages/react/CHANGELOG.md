@@ -1,5 +1,11 @@
 # @number-flow/react
 
+## 0.5.3
+
+### Patch Changes
+
+- Fix Next.js 15.1.4 build errors (see [#95](https://github.com/barvian/number-flow/issues/95)) ([`4bc66b4`](https://github.com/barvian/number-flow/commit/4bc66b481683205a7c87519af756b795d00dace2))
+
 ## 0.5.2
 
 ### Patch Changes
