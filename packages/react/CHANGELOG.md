@@ -1,5 +1,11 @@
 # @number-flow/react
 
+## 0.5.4
+
+### Patch Changes
+
+- Fix use within Server Components ([`1f27875`](https://github.com/barvian/number-flow/commit/1f278754acef7863fd81a27b22e739e2fdb009c0))
+
 ## 0.5.3
 
 ### Patch Changes
