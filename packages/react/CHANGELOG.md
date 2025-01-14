@@ -1,5 +1,14 @@
 # @number-flow/react
 
+## 0.5.5
+
+### Patch Changes
+
+- Revert mask-image change due to <1em char heights ([`e5be284`](https://github.com/barvian/number-flow/commit/e5be2840dfd0858894463beb8e3ebcffefb48d5d))
+
+- Updated dependencies [[`e5be284`](https://github.com/barvian/number-flow/commit/e5be2840dfd0858894463beb8e3ebcffefb48d5d)]:
+  - number-flow@0.5.3
+
 ## 0.5.4
 
 ### Patch Changes
