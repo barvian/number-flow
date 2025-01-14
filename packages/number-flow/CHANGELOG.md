@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.3
+
+### Patch Changes
+
+- Revert mask-image change due to <1em char heights ([`e5be284`](https://github.com/barvian/number-flow/commit/e5be2840dfd0858894463beb8e3ebcffefb48d5d))
+
 ## 0.5.2
 
 ### Patch Changes
