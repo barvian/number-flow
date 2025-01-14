@@ -136,9 +136,10 @@ const styles = css`
 	}
 
 	/* Small improvement for ::selection when not animating: */
-	.number:not(:has(.digit.is-spinning)) {
+	/* Reverted because you can see it change when char height < 1em: */
+	/*.number:not(:has(.digit.is-spinning)) {
 		-webkit-mask-image: none;
-	}
+	}*/
 
 	.number__inner {
 		padding: ${halfMaskHeight} ${maskWidth};
