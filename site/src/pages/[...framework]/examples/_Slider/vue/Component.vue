@@ -17,6 +17,7 @@ import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from 'radix-vue'
 		>
 			<NumberFlow
 				v-if="modelValue[0] != null"
+				locales="en-US"
 				willChange
 				:value="modelValue[0]"
 				:plugins="[continuous]"

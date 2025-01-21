@@ -18,6 +18,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 		>
 			<div className="~text-3xl/4xl flex items-center gap-4">
 				<NumberFlow
+					locales="en-US"
 					style={{
 						fontVariantNumeric: tabularNums ? 'tabular-nums' : undefined,
 						'--number-flow-char-height': '0.85em'

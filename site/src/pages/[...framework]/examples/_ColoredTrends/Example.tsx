@@ -30,6 +30,7 @@ export default function PriceWithColoredTrend({ value }: Props) {
 		<NumberFlow
 			ref={ref}
 			value={value}
+			locales="en-US"
 			format={{
 				style: 'currency',
 				currency: 'USD'

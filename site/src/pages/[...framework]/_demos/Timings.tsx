@@ -22,6 +22,7 @@ export default function DemoHOC({
 	return (
 		<Demo {...rest} code={children} onClick={cycleValue}>
 			<NumberFlow
+				locales="en-US"
 				value={value}
 				transformTiming={bouncySpring}
 				opacityTiming={opacityTiming}

@@ -29,7 +29,7 @@ const emit = defineEmits<{
 	<div class="flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
 		<div class="flex flex-1 items-center gap-1.5">
 			<ChartNoAxesColumn absoluteStrokeWidth class="~size-4/5" />
-			<NumberFlow willChange :plugins="[continuous]" :value="views" :format />
+			<NumberFlow willChange :plugins="[continuous]" :value="views" locales="en-US" :format />
 		</div>
 		<div class="flex-1">
 			<button
@@ -45,7 +45,7 @@ const emit = defineEmits<{
 						class="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
 					/>
 				</div>
-				<NumberFlow willChange :plugins="[continuous]" :value="reposts" :format />
+				<NumberFlow willChange :plugins="[continuous]" :value="reposts" locales="en-US" :format />
 			</button>
 		</div>
 		<div class="flex-1">
@@ -65,7 +65,7 @@ const emit = defineEmits<{
 						]"
 					/>
 				</div>
-				<NumberFlow willChange :plugins="[continuous]" :value="likes" :format />
+				<NumberFlow willChange :plugins="[continuous]" :value="likes" locales="en-US" :format />
 			</button>
 		</div>
 		<div class="flex shrink-0 min-[30rem]:flex-1 items-center gap-1.5 max-[24rem]:hidden">
@@ -85,7 +85,7 @@ const emit = defineEmits<{
 						]"
 					/>
 				</div>
-				<NumberFlow class="max-[30rem]:hidden" willChange :plugins="[continuous]" :value="bookmarks" :format />
+				<NumberFlow class="max-[30rem]:hidden" willChange :plugins="[continuous]" :value="bookmarks" locales="en-US" :format />
 			</button>
 		</div>
 		<Share absoluteStrokeWidth class="~size-4/5 shrink-0" />

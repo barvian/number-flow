@@ -74,6 +74,7 @@
 		/>
 		<NumberFlow
 			{value}
+			locales="en-US"
 			format={{ useGrouping: false }}
 			aria-hidden="true"
 			{animated}

@@ -72,6 +72,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 				/>
 				<NumberFlow
 					value={value}
+					locales="en-US"
 					format={{ useGrouping: false }}
 					aria-hidden="true"
 					animated={animated}

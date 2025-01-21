@@ -14,6 +14,7 @@ export default function DemoHOC({
 	return (
 		<Demo {...rest} code={children} onClick={cycleValue}>
 			<NumberFlow
+				locales="en-US"
 				value={value}
 				format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 				suffix="/mo"

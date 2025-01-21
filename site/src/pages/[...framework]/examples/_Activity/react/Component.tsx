@@ -45,7 +45,13 @@ export default function Activity({
 		>
 			<div className="flex flex-1 items-center gap-1.5">
 				<ChartNoAxesColumn absoluteStrokeWidth className="~size-4/5" />
-				<NumberFlow willChange plugins={[continuous]} value={views} format={format} />
+				<NumberFlow
+					willChange
+					plugins={[continuous]}
+					value={views}
+					locales="en-US"
+					format={format}
+				/>
 			</div>
 			<div className="flex-1">
 				<button
@@ -61,7 +67,13 @@ export default function Activity({
 							className="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
 						/>
 					</div>
-					<NumberFlow willChange plugins={[continuous]} value={reposts} format={format} />
+					<NumberFlow
+						willChange
+						plugins={[continuous]}
+						value={reposts}
+						locales="en-US"
+						format={format}
+					/>
 				</button>
 			</div>
 			<div className="flex-1">
@@ -81,7 +93,13 @@ export default function Activity({
 							)}
 						/>
 					</div>
-					<NumberFlow willChange plugins={[continuous]} value={likes} format={format} />
+					<NumberFlow
+						willChange
+						plugins={[continuous]}
+						value={likes}
+						locales="en-US"
+						format={format}
+					/>
 				</button>
 			</div>
 			<div className="min-[30rem]:flex-1 max-[24rem]:hidden flex shrink-0 items-center gap-1.5">
@@ -106,6 +124,7 @@ export default function Activity({
 						willChange
 						plugins={[continuous]}
 						value={bookmarks}
+						locales="en-US"
 						format={format}
 					/>
 				</button>

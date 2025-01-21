@@ -26,6 +26,7 @@ export default function DemoHOC({
 		>
 			<div className="~text-3xl/4xl flex items-center gap-4">
 				<NumberFlow
+					locales="en-US"
 					plugins={useContinuous ? [continuous] : undefined}
 					style={{ '--number-flow-char-height': '0.85em' }}
 					value={value}

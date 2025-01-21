@@ -52,6 +52,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			onClick={cycleValue}
 		>
 			<NumberFlow
+				locales="en-US"
 				trend={trend}
 				value={value}
 				className="~text-3xl/4xl text-primary font-semibold"

@@ -25,6 +25,7 @@
 	{#if value[0] != null}
 		<div class="w-8 shrink-0 text-center">
 			<NumberFlow
+				locales="en-US"
 				willChange
 				value={value[0]}
 				aria-hidden="true"

@@ -45,7 +45,7 @@
 >
 	<div class="flex flex-1 items-center gap-1.5">
 		<ChartNoAxesColumn absoluteStrokeWidth class="~size-4/5" />
-		<NumberFlow willChange plugins={[continuous]} value={views} {format} />
+		<NumberFlow willChange plugins={[continuous]} value={views} locales="en-US" {format} />
 	</div>
 	<div class="flex-1">
 		<button
@@ -61,7 +61,7 @@
 					class="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
 				/>
 			</div>
-			<NumberFlow willChange plugins={[continuous]} value={reposts} {format} />
+			<NumberFlow willChange plugins={[continuous]} value={reposts} locales="en-US" {format} />
 		</button>
 	</div>
 	<div class="flex-1">
@@ -81,7 +81,7 @@
 					)}
 				/>
 			</div>
-			<NumberFlow willChange plugins={[continuous]} value={likes} {format} />
+			<NumberFlow willChange plugins={[continuous]} value={likes} locales="en-US" {format} />
 		</button>
 	</div>
 	<div class="min-[30rem]:flex-1 max-[24rem]:hidden flex shrink-0 items-center gap-1.5">
@@ -106,6 +106,7 @@
 				willChange
 				plugins={[continuous]}
 				value={bookmarks}
+				locales="en-US"
 				{format}
 			/>
 		</button>

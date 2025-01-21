@@ -77,6 +77,7 @@ function handlePointerDown(event: PointerEvent, diff: number) {
 			/>
 			<NumberFlow
 				:value="modelValue"
+				locales="en-US"
 				:format="{ useGrouping: false }"
 				aria-hidden="true"
 				:animated

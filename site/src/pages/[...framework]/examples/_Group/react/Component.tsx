@@ -15,11 +15,13 @@ export default function PriceWithDiff({ value, diff }: Props) {
 			>
 				<NumberFlow
 					value={value}
+					locales="en-US"
 					format={{ style: 'currency', currency: 'USD' }}
 					className="~text-2xl/4xl"
 				/>
 				<NumberFlow
 					value={diff}
+					locales="en-US"
 					format={{ style: 'percent', maximumFractionDigits: 2, signDisplay: 'always' }}
 					className={clsx(
 						'~text-lg/2xl transition-colors duration-300',
