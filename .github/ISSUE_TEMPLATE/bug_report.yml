@@ -41,14 +41,14 @@ body:
   - type: input
     id: link
     attributes:
-      label: Minimal reproduction (greatly appreciated)
+      label: Minimal reproduction
       description: |
         - Links to starter sandboxes can be found in the [site](https://number-flow.barvian.me/) header
         - Tips for creating minimal examples: https://stackoverflow.com/help/mcve
       placeholder: |
         https://codesandbox.io/p/...
     validations:
-      required: false
+      required: true
 
   # - type: textarea
   #   id: screenshots_or_videos
