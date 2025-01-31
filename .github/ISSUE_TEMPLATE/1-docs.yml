@@ -1,5 +1,5 @@
 name: "📖 Docs issue"
-description: "Report a typo or make a suggestion for the docs."
+description: "Report a typo or other issue on the docs."
 title: "[Docs]: "
 # labels: ["type: documentation"]
 body:
@@ -7,10 +7,10 @@ body:
     attributes:
       label: Summary
       description: |
-        A clear and concise summary of what we should add.
+        A clear and concise summary of the issue.
       placeholder: |
         Example:
-        Add a new page for how to use React with TypeScript.
+        The Motion for React example isn't linked to the correct page.
     validations:
       required: true
   - type: input
