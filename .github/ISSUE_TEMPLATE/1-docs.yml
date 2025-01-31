@@ -15,9 +15,9 @@ body:
       required: true
   - type: input
     attributes:
-      label: Page
-      description: |
-        What page does this concern?
+      label: Affected page
+      # description: |
+      #   What page does this concern?
       placeholder: |
         https://number-flow.barvian.me
     validations:
