@@ -1,0 +1,24 @@
+name: "📖 Docs issue"
+description: "Report a typo or make a suggestion for the docs."
+title: "[Docs]: "
+# labels: ["type: documentation"]
+body:
+  - type: textarea
+    attributes:
+      label: Summary
+      description: |
+        A clear and concise summary of what we should add.
+      placeholder: |
+        Example:
+        Add a new page for how to use React with TypeScript.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Page
+      description: |
+        What page does this concern?
+      placeholder: |
+        https://number-flow.barvian.me
+    validations:
+      required: true
