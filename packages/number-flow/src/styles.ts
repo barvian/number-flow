@@ -62,7 +62,7 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
-export const halfMaskHeight = `calc(${maskHeight} / 2)`
+export const halfMaskHeight = `calc(${maskHeight} / 1.3)`
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 
@@ -203,8 +203,10 @@ const styles = css`
 			var(--offset-raw) - var(--length) * round(down, var(--offset-raw) / (var(--length) / 2), 1)
 		);
 		/* Technically we just need var(--offset)*100%, but clamping should reduce the layer size: */
-		--y: clamp(-100%, var(--offset) * 100%, 100%);
+		--y: clamp(2 * -100%, var(--offset) * 100%, 2 * 100%);
+		// --y: calc((var(--n) - var(--current)) * 100%);
 		transform: translateY(var(--y));
+		padding: 0;
 	}
 
 	.digit__num[inert] {
@@ -214,8 +216,11 @@ const styles = css`
 		transform: translateX(-50%) translateY(var(--y));
 	}
 
-	.digit:not(.is-spinning) .digit__num[inert] {
-		display: none;
+	.digit:not(.is-spinning) .digit__num[inert]:not(.visible) {
+		// opacity: 0;
+	}
+	.digit:not(.is-spinning) .digit__num {
+		padding: 0;
 	}
 
 	.symbol__value {

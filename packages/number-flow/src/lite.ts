@@ -633,9 +633,18 @@ export class Digit extends Char<KeyedDigitPart> {
 
 	update(value: KeyedDigitPart['value']) {
 		this.el.style.setProperty('--current', String(value))
-		this._numbers.forEach((num, i) =>
-			i === value ? num.removeAttribute('inert') : num.setAttribute('inert', '')
-		)
+		this._numbers.forEach((num, i) => {
+			if (i === value) {
+				num.removeAttribute('inert')
+			} else {
+				num.setAttribute('inert', '')
+			}
+			if (i - 1 === value || i + 1 === value) {
+				num.classList.add('visible')
+			} else {
+				num.classList.remove('visible')
+			}
+		})
 		this.value = value
 	}
 
