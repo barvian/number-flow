@@ -232,7 +232,7 @@ const styles = css`
 		display: block;
 	}
 
-	.digit:not(.is-spinning) .digit__num[inert]:not(.side) {
+	.digit:not(.is-spinning) .digit__num[inert] {
 		display: none;
 	}
 
