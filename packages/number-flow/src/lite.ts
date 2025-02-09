@@ -312,10 +312,7 @@ abstract class Section {
 		children?: (chars: Node[]) => Node[]
 	) {
 		this.justify = justify
-		const chars = parts.map<Node>((p) => {
-			const el = this.addChar(p).el
-			return el
-		})
+		const chars = parts.map<Node>((p) => this.addChar(p).el)
 		this.el = createElement(
 			'span',
 			{
