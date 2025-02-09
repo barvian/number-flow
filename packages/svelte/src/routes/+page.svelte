@@ -56,6 +56,7 @@
 			opacityTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
 			willChange={true}
 			showSideDigits={true}
+			style="--number-flow-mask-height: .3em"
 		/>
 		<NumberFlow
 			bind:el={el2}

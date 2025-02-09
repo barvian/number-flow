@@ -143,9 +143,13 @@ const styles = css`
 	}*/
 
 	.number__inner {
-		padding: ${halfMaskHeightSides} ${maskWidth};
+		padding: ${halfMaskHeight} ${maskWidth};
 		/* invert parent's: */
 		transform: scaleX(calc(1 / var(--scale-x))) translateX(calc(-1 * var(${dxVar})));
+	}
+
+	.number__inner:has(.show-side) {
+		padding: ${halfMaskHeightSides} ${maskWidth};
 	}
 
 	/* Put number underneath other sections. Negative z-index messed up text cursor and selection, weirdly: */
