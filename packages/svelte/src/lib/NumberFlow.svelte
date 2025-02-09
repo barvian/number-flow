@@ -52,6 +52,7 @@
 	export let trend = NumberFlowElement.defaultProps.trend
 	export let plugins = NumberFlowElement.defaultProps.plugins
 	export let digits = NumberFlowElement.defaultProps.digits
+	export let showSideDigits = NumberFlowElement.defaultProps.showSideDigits
 
 	type $$Props = HTMLAttributes<HTMLElement> &
 		Partial<NumberFlowProps> & {
@@ -101,6 +102,7 @@
 	__svelte_trend={trend}
 	__svelte_plugins={plugins}
 	__svelte_digits={digits}
+	__svelte_showSideDigits={showSideDigits}
 	{data}
 >
 	{@html BROWSER ? undefined : renderInnerHTML(data)}

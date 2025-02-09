@@ -39,6 +39,7 @@ export interface Props {
 	trend: Trend
 	plugins?: Plugin[]
 	digits: Digits | undefined
+	showSideDigits: boolean | undefined
 }
 
 let styleSheet: CSSStyleSheet | undefined
@@ -73,7 +74,8 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 		trend: (oldValue, value) => Math.sign(value - oldValue),
 		respectMotionPreference: true,
 		plugins: undefined,
-		digits: undefined
+		digits: undefined,
+		showSideDigits: undefined
 	}
 
 	constructor() {
@@ -310,8 +312,10 @@ abstract class Section {
 		children?: (chars: Node[]) => Node[]
 	) {
 		this.justify = justify
-		const chars = parts.map<Node>((p) => this.addChar(p).el)
-
+		const chars = parts.map<Node>((p) => {
+			const el = this.addChar(p).el
+			return el
+		})
 		this.el = createElement(
 			'span',
 			{
@@ -502,6 +506,9 @@ class AnimatePresence {
 		readonly el: HTMLElement,
 		{ onRemove, animateIn = false }: AnimatePresenceProps = {}
 	) {
+		if (this.flow.showSideDigits) {
+			this.el.classList.add('show-side')
+		}
 		this.el.classList.add('animate-presence')
 		// This craziness is the only way I could figure out how to get the opacity
 		// accumulation to work in all browsers. Accumulating -1 onto opacity directly
@@ -595,6 +602,11 @@ export class Digit extends Char<KeyedDigitPart> {
 			])
 			// Use the attribute for now because it has a little better browser support:
 			if (i !== value) num.setAttribute('inert', '')
+			if (i - 1 === value || i + 1 === value) {
+				num.classList.add('side')
+			} else {
+				num.classList.remove('side')
+			}
 			num.style.setProperty('--n', String(i))
 			return num
 		})
@@ -640,9 +652,9 @@ export class Digit extends Char<KeyedDigitPart> {
 				num.setAttribute('inert', '')
 			}
 			if (i - 1 === value || i + 1 === value) {
-				num.classList.add('visible')
+				num.classList.add('side')
 			} else {
-				num.classList.remove('visible')
+				num.classList.remove('side')
 			}
 		})
 		this.value = value

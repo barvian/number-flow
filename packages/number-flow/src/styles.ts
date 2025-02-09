@@ -62,7 +62,8 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
-export const halfMaskHeight = `calc(${maskHeight} / 1.3)`
+export const halfMaskHeight = `calc(${maskHeight} / 2)`
+export const halfMaskHeightSides = `calc(${maskHeight} / 1)`
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 
@@ -89,7 +90,7 @@ const styles = css`
 	}
 
 	.number {
-		--scale-x: calc(1 + var(${widthDeltaVar}) / var(--width));
+		--scale-x: calc(1 + var(${widthDeltaVar}) / var(--width, 1));
 		transform: translateX(var(${dxVar})) scaleX(var(--scale-x));
 
 		margin: 0 calc(-1 * ${maskWidth});
@@ -142,7 +143,7 @@ const styles = css`
 	}*/
 
 	.number__inner {
-		padding: ${halfMaskHeight} ${maskWidth};
+		padding: ${halfMaskHeightSides} ${maskWidth};
 		/* invert parent's: */
 		transform: scaleX(calc(1 / var(--scale-x))) translateX(calc(-1 * var(${dxVar})));
 	}
@@ -203,9 +204,12 @@ const styles = css`
 			var(--offset-raw) - var(--length) * round(down, var(--offset-raw) / (var(--length) / 2), 1)
 		);
 		/* Technically we just need var(--offset)*100%, but clamping should reduce the layer size: */
-		--y: clamp(2 * -100%, var(--offset) * 100%, 2 * 100%);
-		// --y: calc((var(--n) - var(--current)) * 100%);
+		--y: clamp(-100%, var(--offset) * 100%, 100%);
 		transform: translateY(var(--y));
+	}
+
+	.digit.show-side .digit__num {
+		--y: clamp(2 * -100%, var(--offset) * 100%, 2 * 100%);
 		padding: 0;
 	}
 
@@ -216,11 +220,16 @@ const styles = css`
 		transform: translateX(-50%) translateY(var(--y));
 	}
 
-	.digit:not(.is-spinning) .digit__num[inert]:not(.visible) {
-		// opacity: 0;
-	}
-	.digit:not(.is-spinning) .digit__num {
+	.digit.show-side:not(.is-spinning) .digit__num {
 		padding: 0;
+	}
+
+	.digit.show-side:not(.is-spinning) .digit__num[inert]:not(.side) {
+		display: block;
+	}
+
+	.digit:not(.is-spinning) .digit__num[inert]:not(.side) {
+		display: none;
 	}
 
 	.symbol__value {

@@ -20,9 +20,9 @@
 		// 	})
 		// }
 	})
-	setInterval(() => {
-		value += 1
-	}, 1000)
+	// setInterval(() => {
+	// 	value += 1
+	// }, 1000)
 </script>
 
 <div>
@@ -51,9 +51,11 @@
 			{value}
 			plugins={[continuous]}
 			class="relative top-64"
-			transformTiming={{ easing: 'linear', duration: 1000 }}
-			spinTiming={{ easing: 'linear', duration: 1000 }}
-			opacityTiming={{ easing: 'linear', duration: 1000 }}
+			transformTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
+			spinTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
+			opacityTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
+			willChange={true}
+			showSideDigits={true}
 		/>
 		<NumberFlow
 			bind:el={el2}
