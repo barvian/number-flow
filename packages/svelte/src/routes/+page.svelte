@@ -28,7 +28,7 @@
 <div>
 	Text node
 	<NumberFlowGroup>
-		<!-- <NumberFlow
+		<NumberFlow
 			bind:el={el1}
 			{value}
 			format={{ style: 'currency', currency: 'USD' }}
@@ -45,8 +45,8 @@
 			plugins={[continuous]}
 			class="relative top-64"
 			style="--number-flow-char-height: 1em"
-		/> -->
-		<NumberFlow
+		/>
+		<!-- <NumberFlow
 			bind:el={el1}
 			{value}
 			plugins={[continuous]}
@@ -57,7 +57,7 @@
 			willChange={true}
 			showSideDigits={true}
 			style="--number-flow-mask-height: .3em"
-		/>
+		/> -->
 		<NumberFlow
 			bind:el={el2}
 			{value}

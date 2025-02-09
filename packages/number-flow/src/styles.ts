@@ -228,7 +228,7 @@ const styles = css`
 		padding: 0;
 	}
 
-	.digit.show-side:not(.is-spinning) .digit__num[inert]:not(.side) {
+	.digit.show-side:not(.is-spinning) .digit__num[inert] {
 		display: block;
 	}
 
