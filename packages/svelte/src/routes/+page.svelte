@@ -20,9 +20,9 @@
 		// 	})
 		// }
 	})
-	// setInterval(() => {
-	// 	value += 1
-	// }, 1000)
+	setInterval(() => {
+		value += 1
+	}, 1000)
 </script>
 
 <div>
