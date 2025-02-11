@@ -1,0 +1,24 @@
+name: "📖 Docs issue"
+description: "Report a typo or other issue on the docs."
+title: "[Docs]: "
+# labels: ["type: documentation"]
+body:
+  - type: textarea
+    attributes:
+      label: Summary
+      description: |
+        A clear and concise summary of the issue.
+      placeholder: |
+        Example:
+        The Motion for React example isn't linked to the correct page.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Affected page
+      # description: |
+      #   What page does this concern?
+      placeholder: |
+        https://number-flow.barvian.me
+    validations:
+      required: true
