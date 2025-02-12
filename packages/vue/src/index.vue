@@ -38,6 +38,7 @@ const {
 	opacityTiming = NumberFlowLite.defaultProps.opacityTiming,
 	respectMotionPreference = NumberFlowLite.defaultProps.respectMotionPreference,
 	digits = NumberFlowLite.defaultProps.digits,
+	showSideDigits = NumberFlowLite.defaultProps.showSideDigits,
 	willChange = false
 } = defineProps<Props>()
 
@@ -88,6 +89,7 @@ register?.(el, data)
 		data-allow-mismatch
 		@animationsstart="emit('animationsstart')"
 		@animationsfinish="emit('animationsfinish')"
+		:show-side-digits
 		:data
 	/>
 </template>
