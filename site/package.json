@@ -18,6 +18,7 @@
 		"@headlessui/react": "^2.2.0",
 		"@nanostores/react": "^0.8.2",
 		"@nanostores/vue": "^0.11.0",
+		"number-flow": "workspace:*",
 		"@number-flow/react": "workspace:*",
 		"@number-flow/svelte": "workspace:*",
 		"@number-flow/vue": "workspace:*",

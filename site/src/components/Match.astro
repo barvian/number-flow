@@ -4,19 +4,23 @@ import type { HTMLTag, Polymorphic } from 'astro/types'
 
 type Props<Tag extends HTMLTag> = Polymorphic<{ as: Tag }> &
 	(
-		| {
+		| ({
 				[framework in Framework]?: string
-		  }
+		  } & { default?: string })
 		| {
 				[framework in Framework]?: true
 		  }
 	)
 
 // We can't use a loop here because Astro needs the slot names to be static strings
-const { as: _Tag, react, vue, svelte, ...props } = Astro.props
+const { as: _Tag, react, vue, svelte, default: def, vanilla, ...props } = Astro.props
 let Tag = _Tag ?? (Object.keys(props).length ? 'div' : Fragment)
 const framework = getFramework(Astro.params)
-const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof svelte !== 'boolean'
+const noBool =
+	typeof react !== 'boolean' &&
+	typeof vue !== 'boolean' &&
+	typeof svelte !== 'boolean' &&
+	typeof vanilla !== 'boolean'
 ---
 
 <Tag {...props}
@@ -27,7 +31,7 @@ const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof 
 			) : Astro.slots.has('react') ? (
 				<slot name="react" />
 			) : (
-				(react || noBool) && <slot />
+				(def ?? ((react || noBool) && <slot />))
 			))
 	}{
 		framework === 'vue' &&
@@ -36,7 +40,7 @@ const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof 
 			) : Astro.slots.has('vue') ? (
 				<slot name="vue" />
 			) : (
-				(vue || noBool) && <slot />
+				(def ?? ((vue || noBool) && <slot />))
 			))
 	}{
 		framework === 'svelte' &&
@@ -45,7 +49,16 @@ const noBool = typeof react !== 'boolean' && typeof vue !== 'boolean' && typeof 
 			) : Astro.slots.has('svelte') ? (
 				<slot name="svelte" />
 			) : (
-				(svelte || noBool) && <slot />
+				(def ?? ((svelte || noBool) && <slot />))
+			))
+	}{
+		framework === 'vanilla' &&
+			(typeof vanilla == 'string' ? (
+				vanilla
+			) : Astro.slots.has('vanilla') ? (
+				<slot name="vanilla" />
+			) : (
+				(def ?? ((vanilla || noBool) && <slot />))
 			))
 	}</Tag
 >

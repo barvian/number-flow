@@ -21,6 +21,12 @@ import styles, {
 import type { Mutable as MakeMutable } from './util/types'
 import type { Plugin } from './plugins'
 
+export { define } from './util/dom'
+export { prefersReducedMotion } from './styles'
+export { renderInnerHTML } from './ssr'
+export * from './plugins'
+export * from './formatter'
+
 export const canAnimate = supportsMod && supportsLinear && supportsAtProperty
 
 // Hoping to use -1 | 0 | 1 in the future if Math.sign types ever get fixed.
@@ -45,15 +51,16 @@ let styleSheet: CSSStyleSheet | undefined
 
 // Workaround for Object.assign in constructor and TS:
 // https://github.com/microsoft/TypeScript/issues/26792#issuecomment-617541464
-export interface NumberFlowLite extends Props {}
+export default interface NumberFlowLite extends Props {}
 
 // Workaround for no outside-readable/inside-writable members in TS:
 // https://github.com/microsoft/TypeScript/issues/37487
 type Mutable = MakeMutable<NumberFlowLite>
 
-// This one is used internally for framework wrappers, and
-// doesn't include things like attribute support:
-export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
+/**
+ * @internal Used for framework wrappers
+ */
+export default class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 	/**
 	 * Use `private _private` properties instead of `#private` to avoid # polyfill and
 	 * reduce bundle size. Also, use `readonly` properties instead of getters to save on bundle
@@ -104,10 +111,18 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 
 	readonly computedAnimated: boolean
 
+	private _internals?: ElementInternals
+
 	private _data?: Data
 
+	/**
+	 * @internal
+	 */
 	manual = false
 
+	/**
+	 * @internal
+	 */
 	set data(data: Data | undefined) {
 		if (data == null) {
 			return
@@ -121,6 +136,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 
 			// This will overwrite the DSD if any:
 			this.attachShadow({ mode: 'open' })
+
+			this._internals ??= this.attachInternals()
+			this._internals.role = 'img'
 
 			// Add stylesheet
 			if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
@@ -149,6 +167,7 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 				part: 'right'
 			})
 			this.shadowRoot!.appendChild(this._post.el)
+			;(this as Mutable).created = true
 		} else {
 			const prev = this._data!
 			this._data = data
@@ -174,9 +193,12 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 			if (!this.manual) this.didUpdate()
 		}
 
-		;(this as Mutable).created = true
+		this._internals!.ariaLabel = data.valueAsString
 	}
 
+	/**
+	 * @internal
+	 */
 	willUpdate() {
 		// Not super safe to check animated here, b/c the prop may not have been updated yet:
 		this._pre!.willUpdate()
@@ -186,6 +208,9 @@ export class NumberFlowLite extends ServerSafeHTMLElement implements Props {
 
 	private _abortAnimationsFinish?: AbortController
 
+	/**
+	 * @internal
+	 */
 	didUpdate() {
 		// Safe to call this here because we know the animated prop is up-to-date
 		if (!this.computedAnimated) return
@@ -395,7 +420,7 @@ abstract class Section {
 		)
 
 		if (this.flow.computedAnimated) {
-			const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children
+			const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children (?)
 			added.forEach((comp) => {
 				comp.willUpdate(rect)
 			})
@@ -750,12 +775,12 @@ class Sym extends Char<KeyedSymbolPart> {
 	update(value: KeyedSymbolPart['value']) {
 		if (this.value !== value) {
 			// Pop the current value:
-			const current = this._children.get(this.value)!
-			current.present = false
+			const current = this._children.get(this.value)
+			if (current) current.present = false
 
 			// If we already have the new value and it hasn't finished removing, reclaim it:
-			if (this._children.has(value)) {
-				const prev = this._children.get(value)!
+			const prev = this._children.get(value)
+			if (prev) {
 				prev.present = true
 			} else {
 				// Otherwise, create a new one:

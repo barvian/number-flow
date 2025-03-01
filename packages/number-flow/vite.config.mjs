@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => ({
 		lib: {
 			entry: {
 				index: resolve(__dirname, 'src/index.ts'),
+				lite: resolve(__dirname, 'src/lite.ts'),
+				group: resolve(__dirname, 'src/group.ts'),
 				plugins: resolve(__dirname, 'src/plugins/index.ts')
 			},
 			formats: ['es', 'cjs']

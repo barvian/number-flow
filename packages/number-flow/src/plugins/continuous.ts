@@ -1,6 +1,6 @@
 import { max } from '../util/math'
 import type { Plugin } from '.'
-import { NumberFlowLite } from '../lite'
+import type NumberFlowLite from '../lite'
 
 const startingPos = new WeakMap<NumberFlowLite, number | undefined>()
 

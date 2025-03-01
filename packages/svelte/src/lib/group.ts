@@ -1,4 +1,4 @@
-import type { NumberFlowLite } from 'number-flow'
+import type NumberFlowLite from 'number-flow/lite'
 import { getContext, setContext } from 'svelte'
 import type { Readable } from 'svelte/store'
 

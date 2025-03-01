@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import {
+import NumberFlowLite, {
 	type Value,
 	type Format,
 	renderInnerHTML,
 	formatToData,
-	NumberFlowLite,
 	type Props as NumberFlowProps
-} from 'number-flow'
+} from 'number-flow/lite'
 import { computed, inject, ref } from 'vue'
 import { key as groupKey } from './group'
 import { BROWSER } from 'esm-env'
@@ -71,9 +70,7 @@ register?.(el, data)
 	<!-- Make sure data is set last: -->
 	<number-flow-vue
 		ref="el"
-		:aria-label="data.valueAsString"
 		v-bind="$attrs"
-		role="img"
 		:manual="Boolean(register)"
 		:trend
 		:plugins

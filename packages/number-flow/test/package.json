@@ -1,0 +1,17 @@
+{
+	"name": "test",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "astro dev --port 3039",
+		"build": "astro build",
+		"preview": "astro preview --port 3039",
+		"astro": "astro"
+	},
+	"dependencies": {
+		"number-flow": "workspace:*",
+		"@tailwindcss/vite": "^4.0.9",
+		"astro": "^5.4.1",
+		"tailwindcss": "^4.0.9"
+	}
+}

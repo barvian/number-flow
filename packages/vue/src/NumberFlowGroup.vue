@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { NumberFlowLite } from 'number-flow'
+import type NumberFlowLite from 'number-flow/lite'
 import { key, type RegisterWithGroup } from './group'
 import { provide, watch, type Ref, nextTick, onUnmounted } from 'vue'
 

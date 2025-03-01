@@ -6,6 +6,8 @@ import NumberFlow from '@number-flow/react'
 import TimingsDemo from './_demos/Timings'
 import IsolateDemo from './_demos/Isolate'
 import ContinuousDemo from './_demos/Continuous'
+import Comp from '@/components/Comp.mdx'
+import GroupComp from '@/components/GroupComp.mdx'
 import SuffixDemo from './_demos/Suffix'
 import TrendDemo from './_demos/Trend'
 import StylingDemo from './_demos/Styling'
@@ -57,23 +59,43 @@ import NumberFlow from '@number-flow/svelte'
 <NumberFlow value={123} />
 ```
 </Match>
+<Match vanilla>
+```html
+<!-- Basic usage -->
+<number-flow></number-flow>
+
+<script type="module">
+	import 'number-flow'
+	// or, if not using a bundler:
+	// import 'https://esm.sh/number-flow'
+
+	const flow = document.querySelector('number-flow')
+	// Sets the initial value:
+	flow.update(123)
+</script>
+```
+</Match>
 </div>
 
 <Match>
-`<NumberFlow>` will automatically transition when the `value` prop changes.
+<Fragment slot="vanilla">
+Subsequent calls to `.update()` will trigger animations.
+</Fragment>
+<Comp/> will automatically transition when the `value` prop changes.
 </Match>
 
 <AnimationsOnTheWeb />
 
 <Match>
+<Heading slot="vanilla" value="Properties" />
 <Heading value="Props" />
 </Match>
 
 <h3 id="format">
-	<code>format<Type>: Intl.NumberFormatOptions</Type></code>
+	<code>format<Type>: <Link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options">Intl.NumberFormatOptions</Link></Type></code>
 </h3>
 
-Formatting options for the number; see MDN for [a full reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options).
+Formatting options for the number.
 
 <Match react>
 ```jsx
@@ -90,15 +112,20 @@ Formatting options for the number; see MDN for [a full reference](https://develo
 <NumberFlow format={{ notation: 'compact' }} {value} />
 ```
 </Match>
+<Match vanilla>
+```js
+flow.format = { notation: 'compact' }
+```
+</Match>
 
 <h3 id="locales">
-<code>locales<Type>: Intl.LocalesArgument</Type></code>
+<code>locales<Type>: <Link href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#locales">Intl.LocalesArgument</Link></Type></code>
 </h3>
 
-The locale(s) for the number; see MDN for [more information](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#locales).
+The locale(s) for the number.
 
 <h3>
-	<code>prefix<Type>: string</Type>, suffix<Type>: string</Type></code>
+	<code><Match default="p" vanilla="numberP"/>refix<Type>: string</Type>, <Match default="s" vanilla="numberS"/>uffix<Type>: string</Type></code>
 </h3>
 
 A custom prefix or suffix for the number.
@@ -131,11 +158,17 @@ A custom prefix or suffix for the number.
 />
 ```
 </Match>
+<Match vanilla>
+```js
+flow.format={ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }
+flow.numberSuffix="/mo"
+```
+</Match>
 </SuffixDemo>
 
 ### Timings
 
-There are three props to customize the animation timings. Each accept an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
+There are three <Match vanilla="properties" default="props" /> to customize the animation timings. Each accept an [`EffectTiming`](https://developer.mozilla.org/en-US/docs/Web/API/AnimationEffect/getTiming#return_value) object:
 
 <TimingsDemo client:visible defaultValue='code'>
 <Match react>
@@ -189,6 +222,23 @@ There are three props to customize the animation timings. Each accept an [`Effec
 />
 ```
 </Match>
+<Match vanilla>
+```js
+// Used for layout-related transforms:
+flow.transformTiming = {
+	duration: 700, easing: 'linear(...)'
+}
+// Used for the digit spin animations.
+// Will fall back to `transformTiming` if unset:
+flow.spinTiming = {
+	duration: 700, easing: 'linear(...)'
+}
+// Used for fading in/out characters:
+flow.opacityTiming = {
+	duration: 350, easing: 'ease-out'
+}
+```
+</Match>
 </TimingsDemo>
 
 For spring-based easings, I'd recommend [Kevin Grajeda's generator](https://www.kvin.me/css-springs)
@@ -214,7 +264,7 @@ want to animate number changes without conveying an overall trend ([example](htt
 	<Meta>Default: `false`</Meta>
 </h3>
 
-If `isolate` is set, `<NumberFlow>`'s transitions are isolated from any other layout changes
+If `isolate` is set, <Comp/>'s transitions are isolated from any other layout changes
 that may occur in the same update. Has no effect when inside a [`<NumberFlowGroup>`](#grouping).
 
 <IsolateDemo client:visible />
@@ -239,18 +289,6 @@ to ensure e.g. 59 -> 00. See the [countdown example](/examples/#countdown) for a
 `digits` is not reactive to save on bundle size.
 If you need it to be reactive, please submit a [feature request](https://github.com/barvian/number-flow/discussions/new?category=ideas).
 </Note>
-
-<h3>
-	<code>willChange<Type>: boolean</Type></code>
-	<Meta>Default: `false`</Meta>
-</h3>
-
-If set, NumberFlow applies [`will-change` properties](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change) to relevant elements.
-This can be useful if:
-* Your number is guaranteed to change frequently
-* You experience unwanted repositioning when a transition completes
-
-Note that "excessive use of `will-change` will result in excessive memory use" (source: [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change)).
 
 <h3 id="respect-motion-preference">
 	<code>respectMotionPreference<Type>: boolean</Type></code>
@@ -302,29 +340,61 @@ import NumberFlow, { continuous } from '@number-flow/svelte'
 />
 ```
 </Match>
+<Match vanilla>
+```js
+import { continuous } from 'number-flow'
+
+flow.plugins = [continuous]
+```
+</Match>
 </ContinuousDemo>
 
 This plugin has no effect if `trend` is `0`.
+
+<Match>
+<Fragment slot="vanilla">
+---
+<Heading value="Attributes"/>
+<h3><code>data-will-change</code></h3>
+</Fragment>
+<h3>
+	<code>willChange<Type>: boolean</Type></code>
+	<Meta>Default: `false`</Meta>
+</h3>
+</Match>
+
+If set, NumberFlow applies [`will-change` properties](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change) to relevant elements.
+This can be useful if:
+* Your number is guaranteed to change frequently
+* You experience unwanted repositioning when a transition completes
+
+Note that "excessive use of `will-change` will result in excessive memory use" (source: [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/will-change)).
+
+<Match vanilla>
+```html
+<number-flow data-will-change></number-flow>
+```
+</Match>
 
 <Match vue>
 ---
 <Heading value="Emits"/>
 </Match>
-<Match svelte>
+<Match svelte vanilla>
 ---
 <Heading value="Events"/>
 </Match>
 
-<h3><code><Match react="onAnimationsStart" vue="animationsstart" svelte="animationsstart" /><Type>: (e: CustomEvent) => void</Type></code></h3>
+<h3><code><Match react="onAnimationsStart" vue="animationsstart" default="animationsstart" /><Type>: (e: CustomEvent) => void</Type></code></h3>
 
 Triggered when update animations start.
-<Match vue react>
+<Match vue react vanilla>
 Not to be confused with the built-in
-<Match react>`onAnimationStart`</Match><Match vue>[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Match>, which
-would trigger for animations on the `<NumberFlow>` element itself.
+<Match react>`onAnimationStart`</Match><Match vue vanilla>[`animationstart` event](https://developer.mozilla.org/en-US/docs/Web/API/Element/animationstart_event)</Match>, which
+would trigger for animations on the <Comp/> element itself.
 </Match>
 
-<h3><code><Match react="onAnimationsFinish" vue="animationsfinish" svelte="animationsfinish" /><Type>: (e: CustomEvent) => void</Type></code></h3>
+<h3><code><Match react="onAnimationsFinish" vue="animationsfinish" default="animationsfinish" /><Type>: (e: CustomEvent) => void</Type></code></h3>
 
 Triggered when update animations finish.
 
@@ -334,7 +404,7 @@ Triggered when update animations finish.
 <Heading value="Styling" />
 </Match>
 
-NumberFlow uses a [custom element](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) under the hood, and exposes [parts](https://developer.mozilla.org/en-US/docs/Web/CSS/::part)
+NumberFlow <Match svelte vue react>uses a [custom element](https://developer.mozilla.org/en-US/docs/Web/API/Web_components/Using_custom_elements) under the hood, and</Match> exposes [parts](https://developer.mozilla.org/en-US/docs/Web/CSS/::part)
 for styling purposes:
 
 <StylingDemo client:visible>
@@ -361,6 +431,16 @@ number-flow-vue::part(suffix) {
 <Match svelte>
 ```css
 number-flow-svelte::part(suffix) {
+	margin-left: .0625em;
+	font-weight: normal;
+	font-size: 0.75em;
+	color: var(--muted);
+}
+```
+</Match>
+<Match vanilla>
+```css
+number-flow::part(suffix) {
 	margin-left: .0625em;
 	font-weight: normal;
 	font-size: 0.75em;
@@ -476,12 +556,16 @@ See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/font-variant-numeric#
 
 <Heading value="Grouping"/>
 
-If a `<NumberFlow>` affects another `<NumberFlow>`'s position, you can wrap
-them in a `<NumberFlowGroup>` to properly sync their transitions:
+If a <Comp/> affects another <Comp/>'s position, you can wrap them in a <GroupComp/> to properly sync their transitions<Match vanilla>. Make sure to `import 'number-flow/group'`</Match>:
 
 <Group />
 
-`<NumberFlowGroup>` doesn't render an element or accept any props.
+<Match svelte vue react>
+<GroupComp/> doesn't render an element or accept any props.
+</Match>
+<Match vanilla>
+<GroupComp/> syncs all descendant <Comp/>s, not just children.
+</Match>
 
 ---
 
@@ -489,17 +573,74 @@ them in a `<NumberFlowGroup>` to properly sync their transitions:
 <Heading slot="react" value="Hooks" />
 <Heading slot="vue" value="Composables" />
 <Heading slot="svelte" value="Stores" />
+<Heading slot="vanilla" value="Utilities" />
+</Match>
+
+<Match vanilla>
+<h3><code>renderInnerHTML<Type>: (value: Value, props: Props) => string</Type></code></h3>
+Renders the inner HTML of a <Comp/> for SSR (server-side rendering). Here's a usage example with [Astro](https://astro.build):
+```astro
+---
+import { renderInnerHTML } from 'number-flow'
+---
+<number-flow
+	set:html={renderInnerHTML(123, {
+		// Make sure to pass in the `locales`, `format`, `prefix`, and `suffix`
+		// properties you're using:
+		locales: 'en-US',
+		format: { notation: 'compact' }
+	})}
+/>
+
+<script>
+	import 'number-flow'
+
+	const flow = document.querySelector('number-flow')
+	flow.locales = 'en-US'
+	flow.format = { notation: 'compact' }
+	// The first .update() call hydrates the component.
+	// Make sure to pass the same value as you did in `renderInnerHTML()`:
+	flow.update(123)
+</script>
+```
 </Match>
 
 <Match as="h3">
 <code slot="react">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
 <code slot="vue">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: {'MaybeRefOrGetter<boolean> }'}</Type>)<Type>: {'ComputedRef<boolean>'}</Type></code>
 <code slot="svelte">getCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: {'Readable<boolean>'}</Type></code>
+<code slot="vanilla">canAnimate<Type>: boolean</Type></code>
 </Match>
 
-Returns <Match react>`true`</Match><Match vue>a computed ref whose value is `true`</Match><Match svelte>a readable store whose value is `true`</Match> if NumberFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
+<Match react>
+Returns `true` if NumberFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
-<Match react>See the [Motion for React example](/examples#motion-for-react) for a usage scenario.</Match>
+See the [Motion for React example](/examples#motion-for-react) for a usage scenario.
+</Match>
+<Match vue>
+Returns a computed ref whose value is `true`  if NumberFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
+and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
+</Match>
+<Match svelte>
+Returns a readable store whose value is `true` if NumberFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
+and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
+</Match>
+<Match vanilla>
+`true` if NumberFlow can animate, i.e. the browser supports the supports the [required features](https://caniuse.com/mdn-css_types_mod).
+```js
+import { canAnimate } from 'number-flow'
+```
+
+<h3><code>prefersReducedMotion<Type>: <Link href="https://developer.mozilla.org/en-US/docs/Web/API/MediaQueryList">MediaQueryList</Link></Type></code></h3>
+Whether the user prefers reduced motion.
+```js
+import { prefersReducedMotion } from 'number-flow'
+
+if (prefersReducedMotion.matches) {
+	// User prefers reduced motion
+}
+```
+</Match>
 
 ---
 
@@ -509,5 +650,5 @@ and (optionally) the user is [okay with motion](https://developer.mozilla.org/en
 
 * [Scientific](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#scientific) and [engineering](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#engineering) notations aren't supported.
 * [Non-Latin digits](https://github.com/barvian/number-flow/issues/8) and [RTL locales](https://github.com/barvian/number-flow/issues/93) aren't currently supported.
-* Backgrounds and borders on `<NumberFlow>` won't scale smoothly during transitions.
+* Backgrounds and borders on <Comp/> won't scale smoothly during transitions.
 <Match react>I'd recommend using [Motion for React](https://motion.dev/docs/react-quick-start) for these, as it's more composable than any built-in solution could be. See the Motion for React layout animations [example](/examples#motion-for-react).</Match>

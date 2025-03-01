@@ -16,6 +16,24 @@ export default defineConfig({
 		}
 	},
 	vite: {
+		plugins: [
+			{
+				transform(code, id) {
+					// Make .astro examples look like valid HTML:
+					if (id.endsWith('.astro?raw')) {
+						return (
+							code
+								.replaceAll('<script>', '<script type=\\"module\\">')
+								// Remove @ts-nocheck comments
+								.replaceAll(/(\\t)*\/\/ @ts-nocheck\\n/g, '')
+								.replaceAll(/(\\t)*\/\/ prettier-ignore\\n/g, '')
+								// Clean up IDs
+								.replaceAll(/vanilla-example-.*?-/g, '')
+						)
+					}
+				}
+			}
+		],
 		ssr: {
 			// Fixes build issue on macOS
 			external: ['fsevents']

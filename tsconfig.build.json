@@ -6,7 +6,7 @@
 		// "exactOptionalPropertyTypes": true,
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
-		"stripInternal": true,
+		// "stripInternal": true,
 		"noEmitOnError": true
 	}
 }

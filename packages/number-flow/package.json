@@ -41,6 +41,16 @@
 			"import": "./dist/index.mjs",
 			"require": "./dist/index.js"
 		},
+		"./lite": {
+			"types": "./dist/lite.d.ts",
+			"import": "./dist/lite.mjs",
+			"require": "./dist/lite.js"
+		},
+		"./group": {
+			"types": "./dist/group.d.ts",
+			"import": "./dist/group.mjs",
+			"require": "./dist/group.js"
+		},
 		"./plugins": {
 			"types": "./dist/plugins/index.d.ts",
 			"import": "./dist/plugins.mjs",

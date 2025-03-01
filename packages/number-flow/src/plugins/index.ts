@@ -1,4 +1,5 @@
-import type { NumberFlowLite, Digit } from '../lite'
+import type NumberFlowLite from '../lite'
+import type { Digit } from '../lite'
 import type { Data } from '../formatter'
 
 export type Plugin = {

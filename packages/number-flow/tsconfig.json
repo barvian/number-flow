@@ -1,5 +1,6 @@
 {
 	"extends": "../../tsconfig.json",
+	"exclude": ["test"], // exclude from build
 	"compilerOptions": {
 		"jsx": "react",
 		"declaration": true,

@@ -4,18 +4,17 @@
 //  Make sure tsup outputs both files.
 
 import * as React from 'react'
-import {
+import NumberFlowLite, {
 	type Value,
 	type Format,
 	type Props,
 	renderInnerHTML,
 	formatToData,
 	type Data,
-	NumberFlowLite,
 	prefersReducedMotion as _prefersReducedMotion,
 	canAnimate as _canAnimate,
 	define
-} from 'number-flow'
+} from 'number-flow/lite'
 import { BROWSER } from 'esm-env'
 
 const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
@@ -182,9 +181,7 @@ class NumberFlowImpl extends React.Component<
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:
 				class={className}
-				aria-label={data.valueAsString}
 				{...rest}
-				role="img"
 				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
 				suppressHydrationWarning
 				digits={serialize(digits)}

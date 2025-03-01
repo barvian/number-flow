@@ -21,6 +21,7 @@
 }
 
 @layer base {
+	number-flow,
 	number-flow-react,
 	number-flow-vue,
 	number-flow-svelte {

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { NumberFlowLite } from 'number-flow'
+	import type NumberFlowLite from 'number-flow/lite'
 	import { type Readable, get } from 'svelte/store'
 	import { beforeUpdate, onDestroy, tick } from 'svelte'
 	import { type RegisterWithGroup, setGroupContext } from './group.js'

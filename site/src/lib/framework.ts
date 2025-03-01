@@ -33,12 +33,15 @@ export const FRAMEWORKS = {
 		sandbox: 'https://stackblitz.com/edit/vitejs-vite-5czxuc?file=src%2FApp.svelte',
 		lightColor: '#FF3E00',
 		darkColor: '#F96844'
+	},
+	vanilla: {
+		name: 'Vanilla',
+		pkgName: 'NumberFlow',
+		componentType: 'web component',
+		sandbox: '',
+		lightColor: '#F7DF1E',
+		darkColor: '#F7DF1E'
 	}
-	// vanilla: {
-	// 	name: 'Vanilla',
-	// 	lightColor: '#F7DF1E',
-	// 	darkColor: '#F7DF1E'
-	// }
 } satisfies Record<string, FrameworkData>
 
 export type Framework = keyof typeof FRAMEWORKS

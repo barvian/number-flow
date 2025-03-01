@@ -1,11 +1,11 @@
 import {
 	canAnimate as _canAnimate,
 	prefersReducedMotion as _prefersReducedMotion
-} from 'number-flow'
+} from 'number-flow/lite'
 import { onMount } from 'svelte'
 import { derived, readable } from 'svelte/store'
 
-export type { Value, Format, Trend } from 'number-flow'
+export type { Value, Format, Trend } from 'number-flow/lite'
 export * from 'number-flow/plugins'
 export { default as NumberFlowGroup } from './NumberFlowGroup.svelte'
 export { default, NumberFlowElement } from './NumberFlow.svelte'

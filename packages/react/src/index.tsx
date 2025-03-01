@@ -2,11 +2,11 @@ import * as React from 'react'
 import {
 	prefersReducedMotion as _prefersReducedMotion,
 	canAnimate as _canAnimate
-} from 'number-flow'
+} from 'number-flow/lite'
 export * from 'number-flow/plugins'
 export { default } from './NumberFlow'
 export * from './NumberFlow'
-export type { Value, Format, Trend, NumberPartType } from 'number-flow'
+export type { Value, Format, Trend, NumberPartType } from 'number-flow/lite'
 
 export const useIsSupported = () =>
 	React.useSyncExternalStore(

@@ -44,9 +44,14 @@ export const renderInnerHTML = (data: Data) =>
 	html`<template shadowroot="open" shadowrootmode="open"
 			><style>
 				${styles}</style
-			>${renderSection(data.pre, 'left')}<span part="number" class="number"
-				>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
-			>${renderSection(data.post, 'right')}</template
+			><span role="img" aria-label="${data.valueAsString}"
+				>${renderSection(data.pre, 'left')}<span part="number" class="number"
+					>${renderSection(data.integer, 'integer')}${renderSection(
+						data.fraction,
+						'fraction'
+					)}</span
+				>${renderSection(data.post, 'right')}</span
+			></template
 		><span
 			style="font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;"
 			>${data.valueAsString}</span

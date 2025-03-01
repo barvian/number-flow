@@ -110,6 +110,10 @@ export default {
 							content: 'none'
 						},
 
+						'code a': {
+							'@apply text-muted': {}
+						},
+
 						summary: {
 							'@apply font-medium text-[--tw-prose-links] cursor-pointer': {}
 						},

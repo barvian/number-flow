@@ -1,5 +1,6 @@
 packages:
   - 'packages/*'
+  - 'packages/number-flow/test'
   - 'packages/react/test/apps/*'
   - 'packages/vue/test/apps/*'
   - 'site'

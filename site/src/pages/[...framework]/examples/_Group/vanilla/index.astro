@@ -1,0 +1,37 @@
+<number-flow-group
+	style="--number-flow-char-height: 0.85em"
+	class="flex items-center gap-4 font-semibold"
+>
+	<number-flow id="vanilla-example-group-number" class="~text-2xl/4xl"></number-flow>
+	<number-flow id="vanilla-example-group-diff" class="~text-lg/2xl transition-colors duration-300"
+	></number-flow>
+</number-flow-group>
+
+<script>
+	// @ts-nocheck
+	import 'number-flow'
+	import 'number-flow/group' // note the separate import
+	import { $number, $diff } from '../stores'
+	import { onReady } from '@/lib/dom'
+
+	onReady(() => {
+		const number = document.getElementById('vanilla-example-group-number')
+		number.locales = 'en-US'
+		number.format = { style: 'currency', currency: 'USD' }
+
+		const diff = document.getElementById('vanilla-example-group-diff')
+		diff.locales = 'en-US'
+		diff.format = { style: 'percent', maximumFractionDigits: 2, signDisplay: 'always' }
+
+		const unsubscribeNumber = $number.subscribe((value) => number.update(value))
+		const unsubscribeDiff = $diff.subscribe((value) => {
+			diff.classList.toggle('text-red-500', value < 0)
+			diff.classList.toggle('text-emerald-500', value >= 0)
+			diff.update(value)
+		})
+		return () => {
+			unsubscribeNumber()
+			unsubscribeDiff()
+		}
+	})
+</script>

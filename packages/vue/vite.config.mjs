@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => ({
 			}
 		},
 		rollupOptions: {
-			external: ['vue', 'number-flow', 'esm-env'],
+			external: ['vue', 'number-flow/lite', 'number-flow/plugins', 'esm-env'],
 			output: {
 				// Names for UMD builds
 				globals: {
