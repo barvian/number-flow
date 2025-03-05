@@ -20,6 +20,5 @@
 		"verbatimModuleSyntax": true,
 		"noUncheckedIndexedAccess": true
 	},
-	"include": ["src", "lib"],
 	"exclude": ["**/node_modules", "**/dist", "**/build"]
 }

@@ -1,3 +1,7 @@
 module.exports = {
-	plugins: [require('tailwindcss'), require('postcss-easing-gradients')]
+	plugins: [
+		require('tailwindcss'),
+		// @ts-expect-error no types
+		require('postcss-easing-gradients')
+	]
 }

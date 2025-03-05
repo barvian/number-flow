@@ -4,6 +4,7 @@ import fluid, { extract, fontSize, screens, type FluidThemeConfig } from 'fluid-
 import typography from '@tailwindcss/typography'
 import defaultTheme from 'tailwindcss/defaultTheme'
 import plugin from 'tailwindcss/plugin'
+// @ts-expect-error types not working
 import spring from 'tailwindcss-spring'
 import type { PluginUtils } from 'tailwindcss/types/config'
 

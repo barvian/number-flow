@@ -13,7 +13,7 @@
 		"typescript": "^5.6.2"
 	},
 	"scripts": {
-		"build": "pnpm -r build",
+		"build": "pnpm -r --filter=\"!./packages/**/test/**\" build",
 		"build:packages": "pnpm -r --filter=\"./packages/*\" build",
 		"test": "pnpm -r --workspace-concurrency=1 test",
 		"format": "prettier --write .",

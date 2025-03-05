@@ -12,12 +12,14 @@ export default defineConfig({
 	site: pkg.homepage,
 	markdown: {
 		shikiConfig: {
+			// @ts-ignore
 			theme: shikiTheme
 		}
 	},
 	vite: {
 		plugins: [
 			{
+				name: 'transform-vanilla-examples',
 				transform(code, id) {
 					// Make .astro examples look like valid HTML:
 					if (id.endsWith('.astro?raw')) {
