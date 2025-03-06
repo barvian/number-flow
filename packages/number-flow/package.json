@@ -60,7 +60,7 @@
 	"scripts": {
 		"build": "vite build --mode production",
 		"dev": "vite build --mode development --watch",
-		"test:unit": "vitest"
+		"test": "pnpm -r --workspace-concurrency 1 --filter=\"./test/apps/*\" test"
 	},
 	"devDependencies": {
 		"@rollup/plugin-typescript": "^12.1.0",

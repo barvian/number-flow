@@ -11,6 +11,8 @@ import Vue from './vue/index.vue'
 import vue from './vue/Component.vue?raw'
 import Svelte from './svelte/index.svelte'
 import svelte from './svelte/Component.svelte?raw'
+import Vanilla from './vanilla/index.astro'
+import vanilla from './vanilla/Component.astro?raw'
 ---
 
 <Activity client:visible>
@@ -18,9 +20,11 @@ import svelte from './svelte/Component.svelte?raw'
 	<Match react><React client:load /></Match>
 	<Match vue><Vue client:load /></Match>
 	<Match svelte><Svelte client:load /></Match>
+	<Match vanilla><Vanilla /></Match>
 	<Match slot="code">
 		<Code code={react} slot="react" lang="tsx" />
 		<Code code={vue} slot="vue" lang="vue" />
 		<Code code={svelte} slot="svelte" lang="svelte" />
+		<Code code={vanilla} slot="vanilla" lang="html" />
 	</Match>
 </Activity>

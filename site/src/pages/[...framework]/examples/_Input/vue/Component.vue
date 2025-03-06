@@ -24,7 +24,7 @@ function handleInput({ currentTarget }: Event) {
 	if (input.value === '') {
 		next = defaultValue
 	} else {
-		const num = parseInt(input.value)
+		const num = input.valueAsNumber
 		if (!isNaN(num) && min <= num && num <= max) next = num
 	}
 	// Manually update the input.value in case the number stays the same e.g. 09 == 9

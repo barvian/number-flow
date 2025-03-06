@@ -16,19 +16,27 @@ import Pre from '@/components/Pre.astro'
 import Motion from './_Motion/index.astro'
 export const components = {a: Link, pre: Pre}
 
+<Match react vue svelte>
 <Heading class="sr-only" value="Input" />
 
 <Input rootClassName="!mt-0" />
+</Match>
 
+<Match>
 <Heading value="Activity" />
+</Match>
 
 <Activity />
 
+<Match react vue svelte>
 <Heading value="Slider" />
 
 <Slider />
+</Match>
 
+<Match>
 <Heading value="Countdown" />
+</Match>
 
 <Countdown />
 

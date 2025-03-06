@@ -6,7 +6,10 @@
 		"dev": "astro dev --port 3039",
 		"build": "astro build",
 		"preview": "astro preview --port 3039",
-		"astro": "astro"
+		"astro": "astro",
+		"test": "playwright test",
+		"test:ui": "playwright test --ui",
+		"test:update": "playwright test --update-snapshots"
 	},
 	"dependencies": {
 		"number-flow": "workspace:*",

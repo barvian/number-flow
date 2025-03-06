@@ -23,7 +23,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 		if (el.value === '') {
 			next = defaultValue.current
 		} else {
-			const num = parseInt(el.value)
+			const num = el.valueAsNumber
 			if (!isNaN(num) && min <= num && num <= max) next = num
 		}
 		// Manually update the input.value in case the number stays the same e.g. 09 == 9

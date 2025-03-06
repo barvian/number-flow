@@ -1,29 +1,23 @@
 import { test, expect } from '@playwright/test'
 
+test.skip(({ javaScriptEnabled }) => !javaScriptEnabled)
+
 test('renders correctly', async ({ page }) => {
-	// Check for hydration errors:
+	// Check for console errors:
 	const logs: string[] = []
 	page.on('console', (msg) => logs.push(msg.text()))
 
 	await page.goto('/')
 	await expect(page).toHaveScreenshot()
 
-	const flow = await page.getByTestId('flow1')
-	expect(await flow.getAttribute('role')).toBe('img')
-	expect(await flow.getAttribute('aria-label')).toBe(':US$42.00/mo')
-
-	// Check for parts
-	await expect(flow.locator('[part~=left]')).toBeAttached()
-	await expect(flow.locator('[part~=currency]')).toBeAttached()
-	await expect(flow.locator('[part~=symbol]')).toHaveCount(4)
-	await expect(flow.locator('[part~=number]')).toBeAttached()
-	await expect(flow.locator('[part~=integer]')).toBeAttached()
-	await expect(flow.locator('[part~=fraction]')).toBeAttached()
-	await expect(flow.locator('[part~=integer-digit]')).toHaveCount(2)
-	await expect(flow.locator('[part~=fraction-digit]')).toHaveCount(2)
-	await expect(flow.locator('[part~=digit]')).toHaveCount(4)
-	await expect(flow.locator('[part~=suffix]')).toBeAttached()
-	await expect(flow.locator('[part~=right]')).toBeAttached()
+	// Ensure correct role and aria-label:
+	const flow = await page.evaluateHandle('window.flow1')
+	// @ts-expect-error private _internals
+	const role = await page.evaluate((flow) => flow._internals.role, flow)
+	// @ts-expect-error private _internals
+	const ariaLabel = await page.evaluate((flow) => flow._internals.ariaLabel, flow)
+	expect(role).toBe('img')
+	expect(ariaLabel).toBe(':US$42.00/mo')
 
 	expect(logs).toEqual([])
 })

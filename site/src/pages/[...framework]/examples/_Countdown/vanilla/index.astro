@@ -1,0 +1,44 @@
+<number-flow-group
+	style="font-variant-numeric: tabular-nums; --number-flow-char-height: 0.85em"
+	class="~text-3xl/4xl flex items-baseline font-semibold"
+>
+	<number-flow id="vanilla-example-countdown-hours"></number-flow>
+	<number-flow id="vanilla-example-countdown-minutes"></number-flow>
+	<number-flow id="vanilla-example-countdown-seconds"></number-flow>
+</number-flow-group>
+
+<script>
+	import 'number-flow'
+	import 'number-flow/group'
+	import { $seconds } from '../stores'
+	import { onReady } from '@/lib/dom'
+
+	onReady(() => {
+		const hours = document.getElementById('vanilla-example-countdown-hours')
+		const minutes = document.getElementById('vanilla-example-countdown-minutes')
+		const seconds = document.getElementById('vanilla-example-countdown-seconds')
+
+		hours.trend = -1
+		hours.format = { minimumIntegerDigits: 2 }
+
+		minutes.numberPrefix = ':'
+		minutes.trend = -1
+		minutes.digits = { 1: { max: 5 } }
+		minutes.format = { minimumIntegerDigits: 2 }
+
+		seconds.numberPrefix = ':'
+		seconds.trend = -1
+		seconds.digits = { 1: { max: 5 } }
+		seconds.format = { minimumIntegerDigits: 2 }
+
+		return $seconds.subscribe((s) => {
+			const hh = Math.floor(s / 3600)
+			const mm = Math.floor((s % 3600) / 60)
+			const ss = s % 60
+
+			hours.update(hh)
+			minutes.update(mm)
+			seconds.update(ss)
+		})
+	})
+</script>

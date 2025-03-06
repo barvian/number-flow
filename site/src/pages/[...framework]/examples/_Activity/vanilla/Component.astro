@@ -1,0 +1,167 @@
+<div class="flex w-full select-none items-center text-zinc-600 dark:text-zinc-300">
+	<div class="flex flex-1 items-center gap-1.5">
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="2"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			class="~size-4/5"
+			><line x1="18" x2="18" y1="20" y2="10"></line><line x1="12" x2="12" y1="20" y2="4"
+			></line><line x1="6" x2="6" y1="20" y2="14"></line></svg
+		>
+		<number-flow id="vanilla-example-activity-views" data-will-change></number-flow>
+	</div>
+	<div class="flex-1">
+		<button
+			id="vanilla-example-activity-repost"
+			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-emerald-500"
+		>
+			<div
+				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-emerald-500/10"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
+					><path d="m17 2 4 4-4 4"></path><path d="M3 11v-1a4 4 0 0 1 4-4h14"></path><path
+						d="m7 22-4-4 4-4"></path><path d="M21 13v1a4 4 0 0 1-4 4H3"></path></svg
+				>
+			</div>
+			<number-flow id="vanilla-example-activity-reposts" data-will-change></number-flow>
+		</button>
+	</div>
+	<div class="flex-1">
+		<button
+			id="vanilla-example-activity-like"
+			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-pink-500"
+		>
+			<div
+				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-pink-500/10"
+			>
+				<svg
+					id="vanilla-example-activity-heart"
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="~size-4/5 group-active:spring-duration-[25] spring-bounce-[65] spring-duration-300 transition-transform group-active:scale-[80%]"
+					><path
+						d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
+					></path></svg
+				>
+			</div>
+			<number-flow id="vanilla-example-activity-likes" data-will-change></number-flow>
+		</button>
+	</div>
+	<div class="min-[30rem]:flex-1 max-[24rem]:hidden flex shrink-0 items-center gap-1.5">
+		<button
+			id="vanilla-example-activity-bookmark"
+			class="group flex items-center gap-1.5 pr-1.5 transition-[color] hover:text-blue-500"
+		>
+			<div
+				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-blue-500/10"
+			>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="~size-4/5 group-active:spring-duration-[25] spring-bounce-50 spring-duration-300 transition-transform group-active:scale-[85%]"
+					><path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"></path></svg
+				>
+			</div>
+			<number-flow
+				id="vanilla-example-activity-bookmarks"
+				class="max-[30rem]:hidden"
+				data-will-change></number-flow>
+		</button>
+	</div>
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="2"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		class="~size-4/5 shrink-0"
+		><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"
+		></polyline><line x1="12" x2="12" y1="2" y2="15"></line></svg
+	>
+</div>
+<script>
+	import { continuous } from 'number-flow'
+	import { $views, $reposts, $likes, $bookmarks } from '../stores'
+	import { onReady } from '@/lib/dom'
+
+	const format = {
+		notation: 'compact',
+		compactDisplay: 'short',
+		roundingMode: 'trunc'
+	}
+
+	onReady(() => {
+		const views = document.getElementById('vanilla-example-activity-views')
+		views.format = format
+		views.plugins = [continuous]
+		const unsubscribeViews = $views.subscribe(({ count }) => {
+			views.update(count)
+		})
+
+		const repost = document.getElementById('vanilla-example-activity-repost')
+		repost.addEventListener('click', $reposts.toggle)
+		const reposts = document.getElementById('vanilla-example-activity-reposts')
+		reposts.format = format
+		reposts.plugins = [continuous]
+		const unsubscribeReposts = $reposts.subscribe(({ count, hasIncremented }) => {
+			repost.classList.toggle('text-emerald-500', hasIncremented)
+			reposts.update(count)
+		})
+
+		const like = document.getElementById('vanilla-example-activity-like')
+		like.addEventListener('click', $likes.toggle)
+		const heart = document.getElementById('vanilla-example-activity-heart')
+		const likes = document.getElementById('vanilla-example-activity-likes')
+		likes.format = format
+		likes.plugins = [continuous]
+		const unsubscribeLikes = $likes.subscribe(({ count, hasIncremented }) => {
+			like.classList.toggle('text-pink-500', hasIncremented)
+			heart.classList.toggle('fill-current', hasIncremented)
+			likes.update(count)
+		})
+
+		const bookmark = document.getElementById('vanilla-example-activity-bookmark')
+		bookmark.addEventListener('click', $bookmarks.toggle)
+		const bookmarks = document.getElementById('vanilla-example-activity-bookmarks')
+		bookmarks.format = format
+		bookmarks.plugins = [continuous]
+		const unsubscribeBookmarks = $bookmarks.subscribe(({ count, hasIncremented }) => {
+			bookmark.classList.toggle('text-blue-500', hasIncremented)
+			bookmarks.update(count)
+		})
+
+		return () => {
+			unsubscribeViews()
+			repost.removeEventListener('click', $reposts.toggle)
+			unsubscribeReposts()
+			like.removeEventListener('click', $likes.toggle)
+			unsubscribeLikes()
+			bookmark.removeEventListener('click', $bookmarks.toggle)
+			unsubscribeBookmarks()
+		}
+	})
+</script>
