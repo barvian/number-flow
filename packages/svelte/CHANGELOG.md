@@ -1,5 +1,14 @@
 # @number-flow/svelte
 
+## 0.3.4
+
+### Patch Changes
+
+- Release vanilla JS version ([`3929e33`](https://github.com/barvian/number-flow/commit/3929e33e8dcef03462593428639d66134f84c51d))
+
+- Updated dependencies [[`3929e33`](https://github.com/barvian/number-flow/commit/3929e33e8dcef03462593428639d66134f84c51d)]:
+  - number-flow@0.5.4
+
 ## 0.3.3
 
 ### Patch Changes

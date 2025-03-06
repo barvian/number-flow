@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.4
+
+### Patch Changes
+
+- Release vanilla JS version ([`3929e33`](https://github.com/barvian/number-flow/commit/3929e33e8dcef03462593428639d66134f84c51d))
+
 ## 0.5.3
 
 ### Patch Changes
