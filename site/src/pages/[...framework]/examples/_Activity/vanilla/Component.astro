@@ -73,6 +73,7 @@
 				class="relative before:absolute before:-inset-2.5 before:rounded-full before:transition-[background-color] before:group-hover:bg-blue-500/10"
 			>
 				<svg
+					id="vanilla-example-activity-ribbon"
 					xmlns="http://www.w3.org/2000/svg"
 					viewBox="0 0 24 24"
 					fill="none"
@@ -147,11 +148,13 @@
 
 		const bookmark = document.getElementById('vanilla-example-activity-bookmark')
 		bookmark.addEventListener('click', $bookmarks.toggle)
+		const ribbon = document.getElementById('vanilla-example-activity-ribbon')
 		const bookmarks = document.getElementById('vanilla-example-activity-bookmarks')
 		bookmarks.format = format
 		bookmarks.plugins = [continuous]
 		const unsubscribeBookmarks = $bookmarks.subscribe(({ count, hasIncremented }) => {
 			bookmark.classList.toggle('text-blue-500', hasIncremented)
+			ribbon.classList.toggle('fill-current', hasIncremented)
 			bookmarks.update(count)
 		})
 
