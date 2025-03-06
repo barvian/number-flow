@@ -3,12 +3,12 @@ import { test, expect } from '@playwright/test'
 test.skip(({ javaScriptEnabled }) => !javaScriptEnabled)
 
 test('renders correctly', async ({ page }) => {
+	await page.goto('/', { waitUntil: 'networkidle' })
+	await expect(page).toHaveScreenshot()
+
 	// Check for console errors:
 	const logs: string[] = []
 	page.on('console', (msg) => logs.push(msg.text()))
-
-	await page.goto('/')
-	await expect(page).toHaveScreenshot()
 
 	// Ensure correct role and aria-label:
 	const flow = await page.evaluateHandle('window.flow1')

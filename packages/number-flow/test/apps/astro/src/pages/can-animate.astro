@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { canAnimate, prefersReducedMotion } from 'number-flow'
+---
+
+<Layout>
+	<div>
+		<p data-testid="default">{String(!(prefersReducedMotion?.matches ?? false) && canAnimate)}</p>
+		<p data-testid="disrespect-motion-preference">
+			{String(canAnimate)}
+		</p>
+	</div>
+</Layout>
+
+<script>
+	import { canAnimate, prefersReducedMotion } from 'number-flow'
+	const def = document.querySelector('[data-testid="default"]')
+	const disrespect = document.querySelector('[data-testid="disrespect-motion-preference"]')
+
+	if (def) def.textContent = String(!(prefersReducedMotion?.matches ?? false) && canAnimate)
+	if (disrespect) disrespect.textContent = String(canAnimate)
+</script>

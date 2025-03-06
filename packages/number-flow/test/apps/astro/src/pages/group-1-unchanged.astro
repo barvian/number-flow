@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { renderInnerHTML } from 'number-flow'
+---
+
+<Layout>
+	<div>
+		<number-flow-group>
+			<number-flow set:html={renderInnerHTML(42)} /><number-flow set:html={renderInnerHTML(0)} />
+		</number-flow-group>
+	</div>
+	<button id="change"> Change and pause </button>
+	<br />
+	<button id="resume"> Resume </button>
+</Layout>
+
+<script>
+	import 'number-flow'
+	import 'number-flow/group'
+
+	const [flow1, flow2] = document.getElementsByTagName('number-flow')
+	const changeBtn = document.getElementById('change')
+	const resumeBtn = document.getElementById('resume')
+
+	flow1?.update(42)
+	flow2?.update(0)
+
+	changeBtn?.addEventListener('click', () => {
+		flow1?.update(152000)
+		queueMicrotask(() => {
+			;[
+				...(flow1?.shadowRoot?.getAnimations() ?? []),
+				...(flow2?.shadowRoot?.getAnimations() ?? [])
+			].forEach((a) => {
+				a.pause()
+				a.currentTime = 300
+			})
+		})
+	})
+
+	resumeBtn?.addEventListener('click', () => {
+		;[
+			...(flow1?.shadowRoot?.getAnimations() ?? []),
+			...(flow2?.shadowRoot?.getAnimations() ?? [])
+		].forEach((a) => {
+			a.play()
+		})
+	})
+</script>
