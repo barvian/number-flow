@@ -13,9 +13,10 @@ test('updates correctly', async ({ page, contextOptions }) => {
 	await page.getByRole('button', { name: 'Change and pause' }).click()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })
 
-	const flow = await page.getByTestId('flow1')
-	expect(await flow.getAttribute('role')).toBe('img')
-	expect(await flow.getAttribute('aria-label')).toBe(':US$152.00/mo')
+	const flow = await page.evaluateHandle('window.flow1')
+	// @ts-expect-error private _internals
+	const ariaLabel = await page.evaluate((flow) => flow._internals.ariaLabel, flow)
+	expect(ariaLabel).toBe(':US$152.00/mo')
 
 	await page.getByRole('button', { name: 'Resume' }).click()
 	await expect(page).toHaveScreenshot({ animations: 'allow' })

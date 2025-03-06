@@ -14,6 +14,8 @@ export default function Page() {
 				Text node{' '}
 				<NumberFlowGroup>
 					<NumberFlow
+						id="flow1"
+						data-testid="flow1"
 						ref={ref1}
 						value={value}
 						format={{ style: 'currency', currency: 'USD' }}
@@ -21,7 +23,6 @@ export default function Page() {
 						trend={() => -1}
 						prefix=":"
 						suffix="/mo"
-						data-testid="flow1"
 						onAnimationsStart={() => console.log('start')}
 						onAnimationsFinish={() => console.log('finish')}
 						transformTiming={{ easing: 'linear', duration: 500 }}
@@ -29,10 +30,11 @@ export default function Page() {
 						opacityTiming={{ easing: 'linear', duration: 500 }}
 					/>
 					<NumberFlow
+						id="flow2"
+						data-testid="flow2"
 						ref={ref2}
 						value={value}
 						respectMotionPreference={false}
-						data-testid="flow2"
 						plugins={[continuous]}
 						digits={{ 0: { max: 2 } }}
 						transformTiming={{ easing: 'linear', duration: 500 }}

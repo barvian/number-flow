@@ -27,13 +27,14 @@
 	<NumberFlowGroup>
 		<NumberFlow
 			bind:el={el1}
+			id="flow1"
+			data-testid="flow1"
 			{value}
 			format={{ style: 'currency', currency: 'USD' }}
 			locales="zh-CN"
 			trend={() => -1}
 			prefix=":"
 			suffix="/mo"
-			data-testid="flow1"
 			on:animationsstart={() => console.log('start')}
 			on:animationsfinish={() => console.log('finish')}
 			transformTiming={{ easing: 'linear', duration: 500 }}
@@ -41,9 +42,10 @@
 			opacityTiming={{ easing: 'linear', duration: 500 }}
 		/><NumberFlow
 			bind:el={el2}
+			id="flow2"
+			data-testid="flow2"
 			{value}
 			respectMotionPreference={false}
-			data-testid="flow2"
 			plugins={[continuous]}
 			digits={{ 0: { max: 2 } }}
 			transformTiming={{ easing: 'linear', duration: 500 }}

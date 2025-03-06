@@ -1,3 +1,5 @@
+import tailwindcss from '@tailwindcss/vite'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
 	compatibilityDate: '2024-04-03',
@@ -6,7 +8,11 @@ export default defineNuxtConfig({
 	devServer: {
 		port: 3039
 	},
-	modules: ['@nuxtjs/tailwindcss', '@nuxt/fonts'],
+	modules: ['@nuxt/fonts'],
+	css: [
+		// CSS file in the project
+		'~/assets/css/main.css'
+	],
 	imports: {
 		// Breaks stuff b/c monorepo?
 		// https://github.com/nuxt/nuxt/issues/18823
@@ -21,5 +27,8 @@ export default defineNuxtConfig({
 		experimental: {
 			disableLocalFallbacks: true
 		}
+	},
+	vite: {
+		plugins: [tailwindcss()]
 	}
 })

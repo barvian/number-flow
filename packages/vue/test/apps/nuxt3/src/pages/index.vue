@@ -28,6 +28,8 @@ const handleFinish = () => console.log('finish')
 		Text node
 		<NumberFlowGroup>
 			<NumberFlow
+				id="flow1"
+				data-testid="flow1"
 				ref="flow1"
 				:value
 				:format="{ style: 'currency', currency: 'USD' }"
@@ -35,7 +37,6 @@ const handleFinish = () => console.log('finish')
 				:trend="() => -1"
 				prefix=":"
 				suffix="/mo"
-				data-testid="flow1"
 				@animationsstart="handleStart"
 				@animationsfinish="handleFinish"
 				:transformTiming="{ easing: 'linear', duration: 500 }"
@@ -43,10 +44,11 @@ const handleFinish = () => console.log('finish')
 				:opacityTiming="{ easing: 'linear', duration: 500 }"
 			/>
 			<NumberFlow
+				id="flow2"
+				data-testid="flow2"
 				ref="flow2"
 				:value
 				:respectMotionPreference="false"
-				data-testid="flow2"
 				:plugins="[continuous]"
 				:digits="{ 0: { max: 2 } }"
 				:transformTiming="{ easing: 'linear', duration: 500 }"
