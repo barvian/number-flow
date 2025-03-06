@@ -38,7 +38,7 @@ export const FRAMEWORKS = {
 		name: 'Vanilla',
 		pkgName: 'NumberFlow',
 		componentType: 'web component',
-		sandbox: '',
+		sandbox: 'https://stackblitz.com/edit/vitejs-vite-ec8hg3dz?file=index.html,src%2Fmain.ts',
 		lightColor: '#F7DF1E',
 		darkColor: '#F7DF1E'
 	}
