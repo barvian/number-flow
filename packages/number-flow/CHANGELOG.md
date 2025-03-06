@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.5
+
+### Patch Changes
+
+- Expose value on custom element ([`bc6476f`](https://github.com/barvian/number-flow/commit/bc6476f910ad58625491c23ed0a8768217f9ab57))
+
 ## 0.5.4
 
 ### Patch Changes
