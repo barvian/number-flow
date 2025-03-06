@@ -52,7 +52,12 @@ export default class NumberFlow extends NumberFlowLite {
 
 	private _prevFormat?: Format
 	private _prevLocales?: Intl.LocalesArgument
+
 	private _value?: Value
+	get value() {
+		return this._value
+	}
+
 	update(value?: Value) {
 		// Might want to do a deep-equal check here:
 		if (
