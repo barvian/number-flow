@@ -71,7 +71,7 @@ register?.(el, data)
 	<number-flow-vue
 		ref="el"
 		v-bind="$attrs"
-		:manual="Boolean(register)"
+		:batched="Boolean(register)"
 		:trend
 		:plugins
 		:animated

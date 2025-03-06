@@ -118,7 +118,7 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 	/**
 	 * @internal
 	 */
-	manual = false
+	batched = false
 
 	/**
 	 * @internal
@@ -184,13 +184,13 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 
 			this.plugins?.forEach((p) => p.onUpdate?.(data, prev, this))
 
-			if (!this.manual) this.willUpdate()
+			if (!this.batched) this.willUpdate()
 
 			this._pre!.update(pre)
 			this._num!.update({ integer, fraction })
 			this._post!.update(post)
 
-			if (!this.manual) this.didUpdate()
+			if (!this.batched) this.didUpdate()
 		}
 
 		this._internals!.ariaLabel = data.valueAsString

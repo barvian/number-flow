@@ -100,7 +100,7 @@ class NumberFlowImpl extends React.Component<
 	updateProperties(prevProps?: Readonly<NumberFlowImplProps>) {
 		if (!this.el) return
 
-		this.el.manual = !this.props.isolate
+		this.el.batched = !this.props.isolate
 		const [nonData] = splitProps(this.props)
 		Object.entries(nonData).forEach(([k, v]) => {
 			// @ts-ignore

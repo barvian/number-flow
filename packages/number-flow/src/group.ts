@@ -32,11 +32,11 @@ export default class NumberFlowGroup extends ServerSafeHTMLElement {
 	private _flows = new Set<NumberFlow>()
 
 	_addDescendant = (flow: NumberFlow) => {
-		flow.manual = true
+		flow.batched = true
 		this._flows.add(flow)
 	}
 	_removeDescendant = (flow: NumberFlow) => {
-		flow.manual = false
+		flow.batched = false
 		this._flows.delete(flow)
 	}
 

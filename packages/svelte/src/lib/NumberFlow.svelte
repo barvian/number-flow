@@ -2,8 +2,8 @@
 	import NumberFlowLite, { define, type Data } from 'number-flow/lite'
 	// Svelte only supports setters, but Svelte 4 didn't pick up inherited ones:
 	export class NumberFlowElement extends NumberFlowLite {
-		set __svelte_manual(manual: boolean) {
-			this.manual = manual
+		set __svelte_batched(batched: boolean) {
+			this.batched = batched
 		}
 		override set data(data: Data | undefined) {
 			super.data = data
@@ -90,7 +90,7 @@
 	data-will-change={willChange ? '' : undefined}
 	on:animationsstart
 	on:animationsfinish
-	__svelte_manual={Boolean(group)}
+	__svelte_batched={Boolean(group)}
 	__svelte_transformTiming={transformTiming}
 	__svelte_spinTiming={spinTiming}
 	__svelte_opacityTiming={opacityTiming}
