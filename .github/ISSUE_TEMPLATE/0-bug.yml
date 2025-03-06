@@ -27,7 +27,7 @@ body:
       placeholder: |
         react@x.x.x
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: description
