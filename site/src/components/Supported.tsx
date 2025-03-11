@@ -25,7 +25,7 @@ export default function Supported() {
 				)}
 			>
 				{reducedMotion ? (
-					<p>Reduce motion is on</p>
+					<p>Reduced motion is on</p>
 				) : (
 					<p>
 						Your browser doesn't{' '}
