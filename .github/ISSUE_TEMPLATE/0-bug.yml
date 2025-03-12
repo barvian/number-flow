@@ -4,9 +4,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting :wave:
-
-        Before filing, please [search](https://github.com/barvian/number-flow/issues?q=is%3Aissue) open & closed issues to see if a similar one exists.
+        Thanks for reporting :wave:.  Before filing, please [search](https://github.com/barvian/number-flow/issues?q=is%3Aissue) open & closed issues to see if a similar one exists.
 
   # - type: input
   #   id: numberflow-version
