@@ -4,7 +4,6 @@ import { ChevronDown } from 'lucide-react'
 import * as React from 'react'
 import { Check } from 'lucide-react'
 import clsx from 'clsx/lite'
-import { $pageFramework } from '@/stores/url'
 
 const icons = import.meta.glob<React.FC<React.HTMLAttributes<SVGElement>>>(
 	'./icons/frameworks/*.tsx',
