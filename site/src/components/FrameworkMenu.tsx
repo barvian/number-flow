@@ -56,10 +56,6 @@ export default function FrameworkMenu({
 								'dark:data-[focus]:bg-white/12.5 text-primary flex items-center gap-2 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default data-[focus]:bg-black/[8%]'
 							)}
 							href={toFrameworkPath(url.pathname, id as Framework)}
-							onClick={() => {
-								localStorage.setItem('framework', id)
-								$pageFramework.set(id as Framework)
-							}}
 						>
 							<Icon className="size-4.5" />
 							{framework.name}
