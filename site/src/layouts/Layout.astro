@@ -28,7 +28,7 @@ type Props = {
 	paddingBottom?: string
 }
 
-const { title, description, paddingBottom = "~pb-40/52" } = Astro.props
+const { title, description, paddingBottom = '~pb-40/52' } = Astro.props
 
 const app = {
 	'@context': 'https://schema.org',
@@ -94,7 +94,7 @@ const app = {
 
 		<ClientRouter />
 	</head>
-	<body class:list={[paddingBottom, '~pt-12/28']}> 
+	<body class:list={[paddingBottom, '~pt-12/28']}>
 		<div class="container inline-flex items-baseline justify-center whitespace-nowrap text-center">
 			{
 				isActive('/', Astro.url) ? (
@@ -141,6 +141,9 @@ const app = {
 </style>
 
 <script>
+	import type { Framework } from '@/lib/framework'
+	import { $pageFramework } from '@/stores/url'
+
 	// Disable smooth scroll when transitioning, which also fixes anchor links for some reason:
 	document.addEventListener('astro:before-swap', (event) => {
 		event.newDocument.documentElement.style.scrollBehavior = 'auto'
@@ -154,5 +157,14 @@ const app = {
 			},
 			{ once: true }
 		)
+	})
+
+	// Update framework on page load
+	document.addEventListener('astro:page-load', () => {
+		const framework = document.documentElement.dataset.framework as Framework
+		if (framework) {
+			localStorage.setItem('framework', framework)
+			$pageFramework.set(framework)
+		}
 	})
 </script>

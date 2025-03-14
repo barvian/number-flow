@@ -4,39 +4,28 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting :wave:
+        Thanks for reporting :wave:.  Before filing, please [search](https://github.com/barvian/number-flow/issues?q=is%3Aissue) open & closed issues to see if a similar one exists.
 
-        Before filing, please [search](https://github.com/barvian/number-flow/issues?q=is%3Aissue) open & closed issues to see if a similar one exists.
+  # - type: input
+  #   id: numberflow-version
+  #   attributes:
+  #     label: NumberFlow version
+  #     description: |
+  #       - Please update to the [latest version](https://github.com/barvian/number-flow/releases) before filing to see if your bug has already been fixed.
+  #     placeholder: |
+  #       @number-flow/react@x.x.x
+  #   validations:
+  #     required: true
 
-  - type: input
-    id: numberflow-version
-    attributes:
-      label: NumberFlow version
-      description: |
-        - Please update to the [latest version](https://github.com/barvian/number-flow/releases) before filing to see if your bug has already been fixed.
-      placeholder: |
-        @number-flow/react@x.x.x
-    validations:
-      required: true
-
-  - type: input
-    id: framework-library-version
-    attributes:
-      label: Framework version
-      # description: Which framework (and version) are you using?
-      placeholder: |
-        react@x.x.x
-    validations:
-      required: false
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Describe the bug and the steps to reproduce it
-      placeholder: |
-        You can drag screenshots or videos into this editor ↓
-    validations:
-      required: true
+  # - type: input
+  #   id: framework-library-version
+  #   attributes:
+  #     label: Framework version
+  #     # description: Which framework (and version) are you using?
+  #     placeholder: |
+  #       react@x.x.x
+  #   validations:
+  #     required: false
 
   - type: input
     id: link
@@ -47,6 +36,15 @@ body:
         - Tips for creating minimal examples: https://stackoverflow.com/help/mcve
       placeholder: |
         https://codesandbox.io/p/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug and the steps to reproduce it
+      placeholder: |
+        You can drag screenshots or videos into this editor ↓
     validations:
       required: true
 
