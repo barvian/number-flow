@@ -86,7 +86,8 @@
 	}
 
 	.bg-mask-zinc-950 {
-		background-image: linear-gradient(to top, theme(colors.zinc.950), ease-out, transparent);
+		/* I think Chrome pushed a bug that broke the dark eased gradients, but the non-eased one works still: */
+		background-image: linear-gradient(to top, theme(colors.zinc.950), /*ease-out, */ transparent);
 	}
 
 	.scrollbar-none {
