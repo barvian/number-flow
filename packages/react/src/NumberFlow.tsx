@@ -1,7 +1,7 @@
 'use client'
 
 // This has to be in a separate file for #95.
-//  Make sure tsup outputs both files.
+// Make sure tsup outputs both files.
 
 import * as React from 'react'
 import NumberFlowLite, {
@@ -17,217 +17,159 @@ import NumberFlowLite, {
 } from 'number-flow/lite'
 import { BROWSER } from 'esm-env'
 
-const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
-const isReact19 = REACT_MAJOR >= 19
-
-// Can't wait to not have to do this in React 19:
+// Needed for SSR
+// https://github.com/vercel/next.js/issues/65584
 const OBSERVED_ATTRIBUTES = ['data', 'digits'] as const
 type ObservedAttribute = (typeof OBSERVED_ATTRIBUTES)[number]
 export class NumberFlowElement extends NumberFlowLite {
-	static observedAttributes = isReact19 ? [] : OBSERVED_ATTRIBUTES
+	static observedAttributes = OBSERVED_ATTRIBUTES
 	attributeChangedCallback(attr: ObservedAttribute, _oldValue: string, newValue: string) {
-		this[attr] = JSON.parse(newValue)
+		if (newValue) this[attr] = JSON.parse(newValue)
+		this.removeAttribute(attr) // so it doesn't show up in the inspector. Fires another callback
 	}
 }
 
 define('number-flow-react', NumberFlowElement)
 
-type BaseProps = React.HTMLAttributes<NumberFlowElement> &
-	Partial<Props> & {
-		isolate?: boolean
-		willChange?: boolean
-		onAnimationsStart?: (e: CustomEvent<undefined>) => void
-		onAnimationsFinish?: (e: CustomEvent<undefined>) => void
-	}
-
-type NumberFlowImplProps = BaseProps & {
-	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
+type SnapshotterProps = {
+	childRef: React.RefObject<NumberFlowElement | undefined>
 	group?: GroupContext
+	isolate?: boolean
+	children: React.ReactNode
 	data: Data
+	respectMotionPreference?: boolean
 }
-
-// You're supposed to cache these between uses:
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
-// Serialize to strings b/c React:
-const formatters: Record<string, Intl.NumberFormat> = {}
-
-// Tiny workaround to support React 19 until it's released:
-const serialize = isReact19 ? (p: any) => p : JSON.stringify
-
-function splitProps<T extends Record<string, any>>(
-	props: T
-): [Omit<Props, 'digits'>, Omit<T, keyof Omit<Props, 'digits'>>] {
-	const {
-		transformTiming,
-		spinTiming,
-		opacityTiming,
-		animated,
-		respectMotionPreference,
-		trend,
-		plugins,
-		...rest
-	} = props
-
-	return [
-		{
-			transformTiming,
-			spinTiming,
-			opacityTiming,
-			animated,
-			respectMotionPreference,
-			trend,
-			plugins
-		},
-		rest
-	]
-}
-
-type NumberFlowImplState = {}
-type NumberFlowImplSnapshot = (() => void) | null // React doesn't like undefined
-// We need a class component to use getSnapshotBeforeUpdate:
-class NumberFlowImpl extends React.Component<
-	NumberFlowImplProps,
-	NumberFlowImplState,
-	NumberFlowImplSnapshot
+type SnapshotterState = {}
+type SnapshotterSnapshot = (() => void) | null // React doesn't like undefined
+class Snapshotter extends React.PureComponent<
+	SnapshotterProps,
+	SnapshotterState,
+	SnapshotterSnapshot
 > {
-	constructor(props: NumberFlowImplProps) {
-		super(props)
-		this.handleRef = this.handleRef.bind(this)
-	}
+	override getSnapshotBeforeUpdate(prevProps: Readonly<SnapshotterProps>) {
+		// Pure component = data must have changed:
 
-	// Update the non-`data` props to avoid JSON serialization
-	// Data needs to be set in render still:
-	updateProperties(prevProps?: Readonly<NumberFlowImplProps>) {
-		if (!this.el) return
-
-		this.el.batched = !this.props.isolate
-		const [nonData] = splitProps(this.props)
-		Object.entries(nonData).forEach(([k, v]) => {
-			// @ts-ignore
-			this.el![k] = v ?? NumberFlowElement.defaultProps[k]
-		})
-
-		if (prevProps?.onAnimationsStart)
-			this.el.removeEventListener('animationsstart', prevProps.onAnimationsStart as EventListener)
-		if (this.props.onAnimationsStart)
-			this.el.addEventListener('animationsstart', this.props.onAnimationsStart as EventListener)
-
-		if (prevProps?.onAnimationsFinish)
-			this.el.removeEventListener('animationsfinish', prevProps.onAnimationsFinish as EventListener)
-		if (this.props.onAnimationsFinish)
-			this.el.addEventListener('animationsfinish', this.props.onAnimationsFinish as EventListener)
-	}
-
-	override componentDidMount() {
-		this.updateProperties()
-		if (isReact19 && this.el) {
-			// React 19 needs this because the attributeChangedCallback isn't called:
-			this.el.digits = this.props.digits
-			this.el.data = this.props.data
+		// Have to do this here and not as a normal prop, otherwise willUpdate
+		// could get called twice:
+		if (this.props.childRef.current) {
+			this.props.childRef.current.batched = !this.props.isolate || Boolean(this.props.group)
+			this.props.childRef.current.respectMotionPreference = Boolean(
+				this.props.respectMotionPreference
+			)
 		}
-	}
 
-	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
-		this.updateProperties(prevProps)
-		if (prevProps.data !== this.props.data) {
-			if (this.props.group) {
-				this.props.group.willUpdate()
-				return () => this.props.group?.didUpdate()
-			}
-			if (!this.props.isolate) {
-				this.el?.willUpdate()
-				return () => this.el?.didUpdate()
-			}
+		if (this.props.group) {
+			this.props.group.willUpdate()
+			return () => this.props.group?.didUpdate()
+		}
+		if (!this.props.isolate) {
+			this.props.childRef.current?.willUpdate()
+			return () => this.props.childRef.current?.didUpdate()
 		}
 		return null
 	}
 
 	override componentDidUpdate(
-		_: Readonly<NumberFlowImplProps>,
-		__: NumberFlowImplState,
-		didUpdate: NumberFlowImplSnapshot
+		_: Readonly<SnapshotterProps>,
+		__: SnapshotterState,
+		didUpdate: SnapshotterSnapshot
 	) {
 		didUpdate?.()
 	}
 
-	private el?: NumberFlowElement
-
-	handleRef(el: NumberFlowElement) {
-		if (this.props.innerRef) this.props.innerRef.current = el
-		this.el = el
-	}
-
 	override render() {
-		const [
-			_,
-			{
-				innerRef,
-				className,
-				data,
-				willChange,
-				isolate,
-				group,
-				digits,
-				onAnimationsStart,
-				onAnimationsFinish,
-				...rest
-			}
-		] = splitProps(this.props)
-
-		return (
-			// @ts-expect-error missing types
-			<number-flow-react
-				ref={this.handleRef}
-				data-will-change={willChange ? '' : undefined}
-				// Have to rename this:
-				class={className}
-				{...rest}
-				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
-				suppressHydrationWarning
-				digits={serialize(digits)}
-				// Make sure data is set last, everything else is updated:
-				data={serialize(data)}
-			/>
-		)
+		return this.props.children
 	}
 }
 
-export type NumberFlowProps = BaseProps & {
-	value: Value
-	locales?: Intl.LocalesArgument
-	format?: Format
-	prefix?: string
-	suffix?: string
-}
+export type NumberFlowProps = React.HTMLAttributes<NumberFlowElement> &
+	Partial<Props> & {
+		value: Value
+		locales?: Intl.LocalesArgument
+		format?: Format
+		prefix?: string
+		suffix?: string
+		isolate?: boolean
+		willChange?: boolean
+		onAnimationsStart?: (e: CustomEvent<undefined>) => void
+		onAnimationsFinish?: (e: CustomEvent<undefined>) => void
+		ref?: React.Ref<NumberFlowElement>
+	}
 
-const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function NumberFlow(
-	{ value, locales, format, prefix, suffix, ...props },
-	_ref
-) {
+function NumberFlow({
+	value,
+	locales,
+	format,
+	prefix,
+	suffix,
+	isolate,
+	respectMotionPreference,
+	className,
+	willChange,
+	digits,
+	onAnimationsStart,
+	onAnimationsFinish,
+	ref: _ref,
+	...props
+}: NumberFlowProps) {
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const ref = React.useRef<NumberFlowElement>()
+	const ref = React.useRef<NumberFlowElement>(null)
 	const group = React.useContext(NumberFlowGroupContext)
 	group?.useRegister(ref)
 
+	// Probably superfluous but they could be passing in a cached object:
 	const localesString = React.useMemo(() => (locales ? JSON.stringify(locales) : ''), [locales])
 	const formatString = React.useMemo(() => (format ? JSON.stringify(format) : ''), [format])
-	const data = React.useMemo(() => {
-		const formatter = (formatters[`${localesString}:${formatString}`] ??= new Intl.NumberFormat(
-			locales,
-			format
-		))
-		return formatToData(value, formatter, prefix, suffix)
-	}, [value, localesString, formatString, prefix, suffix])
 
-	return <NumberFlowImpl {...props} group={group} data={data} innerRef={ref} />
-})
+	// You're supposed to cache these between uses:
+	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
+	const formatter = React.useMemo(
+		() => new Intl.NumberFormat(locales, format),
+		[localesString, formatString]
+	)
+	const data = React.useMemo(
+		() => formatToData(value, formatter, prefix, suffix),
+		[value, formatter, prefix, suffix]
+	)
+	return (
+		<Snapshotter
+			isolate={isolate}
+			group={group}
+			data={data}
+			respectMotionPreference={respectMotionPreference}
+			childRef={ref}
+		>
+			{/* @ts-expect-error missing types */}
+			<number-flow-react
+				ref={ref}
+				data-will-change={willChange ? '' : undefined}
+				// Have to rename these:
+				class={className}
+				onanimationsstart={onAnimationsStart}
+				onanimationsfinish={onAnimationsFinish}
+				// Have to filter out undefineds before merging with defaultProps:
+				{...Object.fromEntries(
+					Object.entries(props).map(([k, v]) =>
+						// @ts-expect-error
+						[k, v ?? NumberFlowElement.defaultProps[k]]
+					)
+				)}
+				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
+				suppressHydrationWarning
+				digits={BROWSER ? digits : JSON.stringify(digits)}
+				// Make sure data is set last so everything else is updated first (order matters):
+				data={BROWSER ? data : JSON.stringify(data)}
+			/>
+		</Snapshotter>
+	)
+}
 
 export default NumberFlow
 
 // NumberFlowGroup
 
 type GroupContext = {
-	useRegister: (ref: React.MutableRefObject<NumberFlowElement | undefined>) => void
+	useRegister: (ref: React.MutableRefObject<NumberFlowElement | null>) => void
 	willUpdate: () => void
 	didUpdate: () => void
 }
@@ -235,7 +177,7 @@ type GroupContext = {
 const NumberFlowGroupContext = React.createContext<GroupContext | undefined>(undefined)
 
 export function NumberFlowGroup({ children }: { children: React.ReactNode }) {
-	const flows = React.useRef(new Set<React.MutableRefObject<NumberFlowElement | undefined>>())
+	const flows = React.useRef(new Set<React.MutableRefObject<NumberFlowElement | null>>())
 	const updating = React.useRef(false)
 	const pending = React.useRef(new WeakMap<NumberFlowElement, boolean>())
 	const value = React.useMemo<GroupContext>(
