@@ -37,34 +37,29 @@ type SnapshotterProps = {
 	isolate?: boolean
 	children: React.ReactNode
 	data: Data
-	respectMotionPreference?: boolean
+	animated: boolean
+	respectMotionPreference: boolean
 }
 type SnapshotterState = {}
 type SnapshotterSnapshot = (() => void) | null // React doesn't like undefined
-class Snapshotter extends React.PureComponent<
-	SnapshotterProps,
-	SnapshotterState,
-	SnapshotterSnapshot
-> {
+class Snapshotter extends React.Component<SnapshotterProps, SnapshotterState, SnapshotterSnapshot> {
 	override getSnapshotBeforeUpdate(prevProps: Readonly<SnapshotterProps>) {
-		// Pure component = data must have changed:
-
-		// Have to do this here and not as a normal prop, otherwise willUpdate
-		// could get called twice:
+		// Have to do these here and not as normal props, otherwise there's side effects:
 		if (this.props.childRef.current) {
 			this.props.childRef.current.batched = !this.props.isolate || Boolean(this.props.group)
-			this.props.childRef.current.respectMotionPreference = Boolean(
-				this.props.respectMotionPreference
-			)
+			this.props.childRef.current.animated = this.props.animated
+			this.props.childRef.current.respectMotionPreference = this.props.respectMotionPreference
 		}
 
-		if (this.props.group) {
-			this.props.group.willUpdate()
-			return () => this.props.group?.didUpdate()
-		}
-		if (!this.props.isolate) {
-			this.props.childRef.current?.willUpdate()
-			return () => this.props.childRef.current?.didUpdate()
+		if (this.props.data !== prevProps.data) {
+			if (this.props.group) {
+				this.props.group.willUpdate()
+				return () => this.props.group?.didUpdate()
+			}
+			if (!this.props.isolate) {
+				this.props.childRef.current?.willUpdate()
+				return () => this.props.childRef.current?.didUpdate()
+			}
 		}
 		return null
 	}
@@ -103,12 +98,18 @@ function NumberFlow({
 	prefix,
 	suffix,
 	isolate,
-	respectMotionPreference,
 	className,
 	willChange,
-	digits,
 	onAnimationsStart,
 	onAnimationsFinish,
+	transformTiming = NumberFlowElement.defaultProps.transformTiming,
+	spinTiming = NumberFlowElement.defaultProps.spinTiming,
+	opacityTiming = NumberFlowElement.defaultProps.opacityTiming,
+	animated = NumberFlowElement.defaultProps.animated,
+	respectMotionPreference = NumberFlowElement.defaultProps.respectMotionPreference,
+	trend = NumberFlowElement.defaultProps.trend,
+	plugins = NumberFlowElement.defaultProps.plugins,
+	digits = NumberFlowElement.defaultProps.digits,
 	ref: _ref,
 	...props
 }: NumberFlowProps) {
@@ -136,24 +137,24 @@ function NumberFlow({
 			isolate={isolate}
 			group={group}
 			data={data}
+			animated={animated}
 			respectMotionPreference={respectMotionPreference}
 			childRef={ref}
 		>
 			{/* @ts-expect-error missing types */}
 			<number-flow-react
+				{...props}
 				ref={ref}
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename these:
 				class={className}
 				onanimationsstart={onAnimationsStart}
 				onanimationsfinish={onAnimationsFinish}
-				// Have to filter out undefineds before merging with defaultProps:
-				{...Object.fromEntries(
-					Object.entries(props).map(([k, v]) =>
-						// @ts-expect-error
-						[k, v ?? NumberFlowElement.defaultProps[k]]
-					)
-				)}
+				transformTiming={transformTiming}
+				spinTiming={spinTiming}
+				opacityTiming={opacityTiming}
+				trend={trend}
+				plugins={plugins}
 				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
 				suppressHydrationWarning
 				digits={BROWSER ? digits : JSON.stringify(digits)}
