@@ -1,7 +1,6 @@
 {
 	"private": true,
 	"type": "module",
-	"private": true,
 	"devDependencies": {
 		"@changesets/cli": "^2.27.9",
 		"@playwright/test": "^1.48.0",
