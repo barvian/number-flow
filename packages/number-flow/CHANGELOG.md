@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.6
+
+### Patch Changes
+
+- Fix errors in browsers that don't support attachInternals (see [#127](https://github.com/barvian/number-flow/issues/127)) ([`2539c4b`](https://github.com/barvian/number-flow/commit/2539c4b653fd4aaa17ef6b2ffd77b7a41454da08))
+
 ## 0.5.5
 
 ### Patch Changes
