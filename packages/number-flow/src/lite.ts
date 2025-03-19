@@ -137,8 +137,13 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 			// This will overwrite the DSD if any:
 			this.attachShadow({ mode: 'open' })
 
-			this._internals ??= this.attachInternals()
-			this._internals.role = 'img'
+			try {
+				this._internals ??= this.attachInternals()
+				this._internals.role = 'img'
+			} catch {
+				// Don't error in old browsers that don't support ElementInternals
+				// Try/catch is less code than an if check.
+			}
 
 			// Add stylesheet
 			if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
@@ -193,7 +198,12 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 			if (!this.batched) this.didUpdate()
 		}
 
-		this._internals!.ariaLabel = data.valueAsString
+		try {
+			this._internals!.ariaLabel = data.valueAsString
+		} catch {
+			// Don't error in old browsers that don't support ElementInternals
+			// Try/catch is less code than an if check.
+		}
 	}
 
 	/**
