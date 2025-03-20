@@ -56,7 +56,10 @@ const serialize = isReact19 ? (p: any) => p : JSON.stringify
 
 function splitProps<T extends Record<string, any>>(
 	props: T
-): [Omit<Props, 'digits'>, Omit<T, keyof Omit<Props, 'digits'>>] {
+): [
+	Omit<Omit<Props, 'digits'>, 'showSideDigits'>,
+	Omit<T, keyof Omit<Omit<Props, 'digits'>, 'showSideDigits'>>
+] {
 	const {
 		transformTiming,
 		spinTiming,
