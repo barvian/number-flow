@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.7
+
+### Patch Changes
+
+- Attempted fix for old versions of Safari (see [#131](https://github.com/barvian/number-flow/issues/131)) ([`ee6a0a2`](https://github.com/barvian/number-flow/commit/ee6a0a2f2f09ba187b8df24cdfe0992ee7883192))
+
 ## 0.5.6
 
 ### Patch Changes

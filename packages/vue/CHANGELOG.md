@@ -1,5 +1,12 @@
 # @number-flow/vue
 
+## 0.4.7
+
+### Patch Changes
+
+- Updated dependencies [[`ee6a0a2`](https://github.com/barvian/number-flow/commit/ee6a0a2f2f09ba187b8df24cdfe0992ee7883192)]:
+  - number-flow@0.5.7
+
 ## 0.4.6
 
 ### Patch Changes
