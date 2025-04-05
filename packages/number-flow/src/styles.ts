@@ -3,9 +3,14 @@ import { css } from './util/string'
 
 export const supportsLinear =
 	BROWSER &&
-	typeof CSS !== 'undefined' &&
-	CSS.supports &&
-	CSS.supports('animation-timing-function', 'linear(1,2)')
+	(() => {
+		try {
+			document.createElement('div').animate({ opacity: 0 }, { easing: 'linear(0, 1)' })
+		} catch (e) {
+			return false
+		}
+		return true
+	})()
 
 export const supportsMod =
 	BROWSER && typeof CSS !== 'undefined' && CSS.supports && CSS.supports('line-height', 'mod(1,1)')
