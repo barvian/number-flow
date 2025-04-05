@@ -2,4 +2,4 @@
 'number-flow': patch
 ---
 
-attempted fix for old Safari (see #131)
+Attempted fix for old versions of Safari (see #131)

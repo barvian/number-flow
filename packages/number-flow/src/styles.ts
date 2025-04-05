@@ -5,6 +5,8 @@ export const supportsLinear =
 	BROWSER &&
 	(() => {
 		try {
+			// We can't use CSS.supports because it sometimes gives
+			// false positives compared to .animate support:
 			document.createElement('div').animate({ opacity: 0 }, { easing: 'linear(0, 1)' })
 		} catch (e) {
 			return false
