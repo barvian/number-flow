@@ -30,7 +30,9 @@ export class NumberFlowElement extends NumberFlowLite {
 	}
 }
 
-define('number-flow-react', NumberFlowElement)
+if (!customElements.get('number-flow-react')) {
+  define('number-flow-react', NumberFlowElement)
+}
 
 type BaseProps = React.HTMLAttributes<NumberFlowElement> &
 	Partial<Props> & {
