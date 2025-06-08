@@ -37,5 +37,8 @@ export const visible = (el: HTMLElement) => el.offsetWidth > 0 && el.offsetHeigh
 
 // HMR-safe customElements.define
 export const define = (name: string, constructor: CustomElementConstructor) => {
-	if (BROWSER && customElements.get(name) !== constructor) customElements.define(name, constructor)
+	// Opt for the simpler check, the constructor check breaks in Next.js force-static,
+	// Svelte REPL, and Webpack Module Federation:
+	if (BROWSER && !customElements.get(name) /* !== constructor*/)
+		customElements.define(name, constructor)
 }
