@@ -2,6 +2,9 @@
 	import { getCanAnimate } from '$lib/index.js'
 	const canAnimate = getCanAnimate()
 	const disrespectMotionPreference = getCanAnimate({ respectMotionPreference: false })
+
+	// Trigger runes mode:
+	$: $canAnimate
 </script>
 
 <div>

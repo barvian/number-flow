@@ -10,7 +10,8 @@
 		}
 	}
 	Object.keys(NumberFlowElement.defaultProps).forEach((key) => {
-		Object.defineProperty(NumberFlowElement.prototype, `__svelte_${key}`, {
+		// Use lowerCase for Svelte 5 for some reason:
+		Object.defineProperty(NumberFlowElement.prototype, `__svelte_${key.toLowerCase()}`, {
 			set(value) {
 				this[key] = value
 			},
@@ -91,11 +92,11 @@
 	on:animationsstart
 	on:animationsfinish
 	__svelte_batched={Boolean(group)}
-	__svelte_transformTiming={transformTiming}
-	__svelte_spinTiming={spinTiming}
-	__svelte_opacityTiming={opacityTiming}
+	__svelte_transformtiming={transformTiming}
+	__svelte_spintiming={spinTiming}
+	__svelte_opacitytiming={opacityTiming}
 	__svelte_animated={animated}
-	__svelte_respectMotionPreference={respectMotionPreference}
+	__svelte_respectmotionpreference={respectMotionPreference}
 	__svelte_trend={trend}
 	__svelte_plugins={plugins}
 	__svelte_digits={digits}
