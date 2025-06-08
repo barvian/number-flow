@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.8
+
+### Patch Changes
+
+- Fix "custom element already defined" bugs ([`a0d2a09`](https://github.com/barvian/number-flow/commit/a0d2a0901c06c647152654068163202e988d1f5d))
+
 ## 0.5.7
 
 ### Patch Changes

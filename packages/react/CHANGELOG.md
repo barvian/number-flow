@@ -1,5 +1,14 @@
 # @number-flow/react
 
+## 0.5.10
+
+### Patch Changes
+
+- Fix "custom element already defined" bugs ([`a0d2a09`](https://github.com/barvian/number-flow/commit/a0d2a0901c06c647152654068163202e988d1f5d))
+
+- Updated dependencies [[`a0d2a09`](https://github.com/barvian/number-flow/commit/a0d2a0901c06c647152654068163202e988d1f5d)]:
+  - number-flow@0.5.8
+
 ## 0.5.9
 
 ### Patch Changes
