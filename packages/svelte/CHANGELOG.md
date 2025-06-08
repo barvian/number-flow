@@ -1,5 +1,11 @@
 # @number-flow/svelte
 
+## 0.3.9
+
+### Patch Changes
+
+- Fix Svelte 5 props (see [#136](https://github.com/barvian/number-flow/issues/136)) ([`605008d`](https://github.com/barvian/number-flow/commit/605008da694cb56ec4047daa06fef9a1d74ef0b6))
+
 ## 0.3.8
 
 ### Patch Changes
