@@ -9,17 +9,20 @@
 	let el2: NumberFlowElement | undefined
 
 	afterUpdate(async () => {
-		await tick()
-		if (value !== initialValue) {
-			;[
-				...(el1?.shadowRoot?.getAnimations() ?? []),
-				...(el2?.shadowRoot?.getAnimations() ?? [])
-			].forEach((a) => {
-				a.pause()
-				a.currentTime = 300
-			})
-		}
+		// await tick()
+		// if (value !== initialValue) {
+		// 	;[
+		// 		...(el1?.shadowRoot?.getAnimations() ?? []),
+		// 		...(el2?.shadowRoot?.getAnimations() ?? [])
+		// 	].forEach((a) => {
+		// 		// a.pause()
+		// 		a.currentTime = 300
+		// 	})
+		// }
 	})
+	setInterval(() => {
+		value += 1
+	}, 1000)
 </script>
 
 <div>
@@ -32,15 +35,31 @@
 			{value}
 			format={{ style: 'currency', currency: 'USD' }}
 			locales="zh-CN"
-			trend={() => -1}
+			trend={() => 1}
 			prefix=":"
 			suffix="/mo"
 			on:animationsstart={() => console.log('start')}
 			on:animationsfinish={() => console.log('finish')}
-			transformTiming={{ easing: 'linear', duration: 500 }}
-			spinTiming={{ easing: 'linear', duration: 800 }}
-			opacityTiming={{ easing: 'linear', duration: 500 }}
-		/><NumberFlow
+			transformTiming={{ easing: 'linear', duration: 1000 }}
+			spinTiming={{ easing: 'linear', duration: 1000 }}
+			opacityTiming={{ easing: 'linear', duration: 1000 }}
+			plugins={[continuous]}
+			class="relative top-64"
+			style="--number-flow-char-height: 1em"
+		/>
+		<!-- <NumberFlow
+			bind:el={el1}
+			{value}
+			plugins={[continuous]}
+			class="relative top-64"
+			transformTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
+			spinTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
+			opacityTiming={{ easing: 'cubic-bezier(0.3, 0.2, 0.5, 1.7)', duration: 500 }}
+			willChange={true}
+			showSideDigits={true}
+			style="--number-flow-mask-height: .3em"
+		/> -->
+		<NumberFlow
 			bind:el={el2}
 			id="flow2"
 			data-testid="flow2"
@@ -54,7 +73,7 @@
 		/>
 	</NumberFlowGroup>
 </div>
-<button on:click={() => (value = 152)}>Change and pause</button>
+<button on:click={() => (value = 100 + Math.random() * 99)}>Change and pause</button>
 <br />
 <button
 	on:click={() => {
