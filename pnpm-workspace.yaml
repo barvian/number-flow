@@ -2,5 +2,6 @@ packages:
   - 'packages/*'
   - 'packages/number-flow/test/apps/*'
   - 'packages/react/test/apps/*'
+  - 'packages/react-native/test/apps/*' # Assuming similar test app structure
   - 'packages/vue/test/apps/*'
   - 'site'

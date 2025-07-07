@@ -38,6 +38,18 @@ import NumberFlow from '@number-flow/react'
 <NumberFlow value={123} />
 ```
 </Match>
+<Match react_native>
+```jsx
+// Basic usage
+// Ensure your project is set up for React Native
+import NumberFlow from 'number-flow-react-native'
+import { View } from 'react-native';
+
+// <NumberFlow value={123} />
+// Example in a component:
+const MyComponent = () => <View><NumberFlow value={123} /></View>;
+```
+</Match>
 <Match vue>
 ```vue
 <!-- Basic usage -->
@@ -102,6 +114,11 @@ Formatting options for the number.
 <NumberFlow format={{ notation: 'compact' }} value={value} />
 ```
 </Match>
+<Match react_native>
+```jsx
+<NumberFlow format={{ notation: 'compact' }} value={value} />
+```
+</Match>
 <Match vue>
 ```vue
 <NumberFlow :format="{ notation: 'compact' }" :value />
@@ -132,6 +149,15 @@ A custom prefix or suffix for the number.
 
 <SuffixDemo client:visible defaultValue='code'>
 <Match react>
+```jsx
+<NumberFlow
+	value={value}
+	format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
+	suffix="/mo"
+/>
+```
+</Match>
+<Match react_native>
 ```jsx
 <NumberFlow
 	value={value}
@@ -173,6 +199,21 @@ There are three <Match vanilla="properties" default="props" /> to customize the 
 <TimingsDemo client:visible defaultValue='code'>
 <Match react>
 ```jsx
+<NumberFlow
+	// Used for layout-related transforms:
+	transformTiming={{ duration: 750, easing: 'linear(...)' }}
+	// Used for the digit spin animations.
+	// Will fall back to `transformTiming` if unset:
+	spinTiming={{ duration: 750, easing: 'linear(...)' }}
+	// Used for fading in/out characters:
+	opacityTiming={{ duration: 350, easing: 'ease-out' }}
+/>
+```
+</Match>
+<Match react_native>
+```jsx
+// Note: Animations are not fully supported in React Native yet.
+// These props are available but may not have the same effect.
 <NumberFlow
 	// Used for layout-related transforms:
 	transformTiming={{ duration: 750, easing: 'linear(...)' }}
@@ -315,6 +356,18 @@ import NumberFlow, { continuous } from '@number-flow/react'
 />
 ```
 </Match>
+<Match react_native>
+```jsx
+// Note: Plugins might have limited or no effect in React Native yet.
+import NumberFlow from 'number-flow-react-native'
+// import { continuous } from 'number-flow/lite'; // or from 'number-flow' if re-exported
+
+// <NumberFlow
+//	 plugins={[continuous]} // Assuming continuous is adapted or available
+//	 value={value}
+// />
+```
+</Match>
 <Match vue>
 ```vue
 <script setup>
@@ -413,6 +466,19 @@ number-flow-react::part(suffix) {
 	font-size: 0.75em;
 	color: var(--muted);
 }
+```
+</Match>
+<Match react_native>
+```js
+// Styling in React Native is done via StyleSheet or inline styles.
+// The `style` and `textStyle` props can be used.
+// Example:
+// <NumberFlow value={123} style={{backgroundColor: 'blue'}} textStyle={{color: 'white'}} />
+
+// The concept of CSS `::part` does not directly map.
+// Custom styling would involve passing props to affect internal Text/View components.
+// For advanced styling, the component might need to expose more specific style props.
+// Note: Current RN component uses basic View and Text. No direct ::part equivalent.
 ```
 </Match>
 <Match vue>
@@ -605,6 +671,9 @@ import { renderInnerHTML } from 'number-flow'
 
 <Match as="h3">
 <code slot="react">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: boolean</Type></code>
+<code slot="react_native">// React Native's Animated API or Reanimated would be used for animations.
+// `AccessibilityInfo.isReduceMotionEnabled()` can check motion preference.
+// No direct `useCanAnimate` hook, behavior depends on chosen animation library.</code>
 <code slot="vue">useCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: {'MaybeRefOrGetter<boolean> }'}</Type>)<Type>: {'ComputedRef<boolean>'}</Type></code>
 <code slot="svelte">getCanAnimate(opts<Type>?: {'{'} respectMotionPreference?: boolean {'}'}</Type>)<Type>: {'Readable<boolean>'}</Type></code>
 <code slot="vanilla">canAnimate<Type>: boolean</Type></code>
@@ -614,6 +683,11 @@ import { renderInnerHTML } from 'number-flow'
 Returns `true` if NumberFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)
 and (optionally) the user is [okay with motion](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-reduced-motion).
 See the [Motion for React example](/examples#motion-for-react) for a usage scenario.
+</Match>
+<Match react_native>
+In React Native, animation capabilities are provided by the platform's native animation APIs (like `Animated`) or libraries such as `Reanimated`.
+The `respectMotionPreference` prop in the component should ideally use `AccessibilityInfo.isReduceMotionEnabled()` to determine if animations should be reduced or disabled.
+There isn't a direct equivalent to `useCanAnimate` as it's more about the animation library's capabilities and the device's settings.
 </Match>
 <Match vue>
 Returns a computed ref whose value is `true`  if NumberFlow can animate, i.e. the browser supports the [required features](https://caniuse.com/mdn-css_types_mod)

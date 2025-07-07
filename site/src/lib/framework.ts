@@ -18,6 +18,14 @@ export const FRAMEWORKS = {
 		lightColor: '#0A7EA4',
 		darkColor: '#58C4DC'
 	},
+	react_native: {
+		name: 'React Native',
+		pkgName: 'NumberFlow for React Native',
+		componentType: 'React Native component',
+		sandbox: '', // TODO: Add a CodeSandbox or Snack link for React Native
+		lightColor: '#61DAFB', // React's color, often associated with RN too
+		darkColor: '#61DAFB'
+	},
 	vue: {
 		name: 'Vue',
 		pkgName: 'NumberFlow for Vue',
