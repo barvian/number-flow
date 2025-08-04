@@ -66,7 +66,7 @@ export default {
 				}
 			},
 			animation: {
-				'logo-wall': 'logo-wall 50s linear infinite',
+				'logo-wall': 'logo-wall 55s linear infinite',
 				'pop-in': 'pop-in .11s ease'
 			},
 			screens: {

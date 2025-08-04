@@ -12,6 +12,9 @@ import Resend from '@/assets/images/logos/resend.svg'
 import Dub from '@/assets/images/logos/dub.svg'
 import Midday from '@/assets/images/logos/midday.svg'
 import OpenSea from '@/assets/images/logos/opensea.svg'
+import GhostLight from '@/assets/images/logos/ghost-light.png'
+import GhostDark from '@/assets/images/logos/ghost-dark.png'
+import { Image } from 'astro:assets'
 ---
 
 <div class="animate-logo-wall ~gap-12/14 ~pr-12/14 flex items-center">
@@ -20,6 +23,8 @@ import OpenSea from '@/assets/images/logos/opensea.svg'
 	<OpenSea class="h-6" role="img" aria-label="OpenSea logo" />
 	<SupabaseLight role="img" class="h-6 grayscale-[1] dark:hidden" aria-label="Supabase logo" />
 	<SupabaseDark role="img" class="hidden h-6 grayscale-[1] dark:block" aria-label="Supabase logo" />
+	<Image src={GhostLight} class="h-7 w-auto dark:hidden" alt="Ghost logo" />
+	<Image src={GhostDark} class="hidden h-7 w-auto dark:block" alt="Ghost logo" />
 	<Linear class="h-6" role="img" aria-label="Linear logo" />
 	<Whop class="h-6" role="img" aria-label="Whop logo" />
 	<Layers class="h-7" role="img" aria-label="Layers.to logo" />
