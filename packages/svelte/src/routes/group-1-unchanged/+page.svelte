@@ -27,10 +27,10 @@
 		<NumberFlow bind:el={el1} {value} /><NumberFlow bind:el={el2} value={0} />
 	</NumberFlowGroup>
 </div>
-<button on:click={() => (value = 152000)}>Change and pause</button>
+<button onclick={() => (value = 152000)}>Change and pause</button>
 <br />
 <button
-	on:click={() => {
+	onclick={() => {
 		;[
 			...(el1?.shadowRoot?.getAnimations() ?? []),
 			...(el2?.shadowRoot?.getAnimations() ?? [])

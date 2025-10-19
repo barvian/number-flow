@@ -1,11 +1,12 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 	import NumberFlowLite, { define, type Data } from 'number-flow/lite'
 	// Svelte only supports setters, but Svelte 4 didn't pick up inherited ones:
+
 	export class NumberFlowElement extends NumberFlowLite {
 		set __svelte_batched(batched: boolean) {
 			this.batched = batched
 		}
-		override set data(data: Data | undefined) {
+		set data(data: Data | undefined) {
 			super.data = data
 		}
 	}
@@ -29,68 +30,56 @@
 		type Format,
 		renderInnerHTML,
 		formatToData,
-		type Props as NumberFlowProps
+		type Props
 	} from 'number-flow/lite'
-	import type { HTMLAttributes } from 'svelte/elements'
-	import { writable } from 'svelte/store'
-	import { getGroupContext } from './group.js'
+	import { getGroupContext } from './group'
 	import { BROWSER } from 'esm-env'
+	import { writable } from 'svelte/store'
 
-	export let locales: Intl.LocalesArgument = undefined
-	export let format: Format | undefined = undefined
-	export let value: Value
-	export let prefix: string | undefined = undefined
-	export let suffix: string | undefined = undefined
-	export let willChange = false
-
-	// Define these so they can be remapped. We set them to their defaults because
-	// that makes them optional in Svelte
-	export let transformTiming = NumberFlowElement.defaultProps.transformTiming
-	export let spinTiming = NumberFlowElement.defaultProps.spinTiming
-	export let opacityTiming = NumberFlowElement.defaultProps.opacityTiming
-	export let animated = NumberFlowElement.defaultProps.animated
-	export let respectMotionPreference = NumberFlowElement.defaultProps.respectMotionPreference
-	export let trend = NumberFlowElement.defaultProps.trend
-	export let plugins = NumberFlowElement.defaultProps.plugins
-	export let digits = NumberFlowElement.defaultProps.digits
-
-	type $$Props = HTMLAttributes<HTMLElement> &
-		Partial<NumberFlowProps> & {
-			el?: NumberFlowElement
-			locales?: Intl.LocalesArgument
-			format?: Format
-			value: Value
-			prefix?: string
-			suffix?: string
-			willChange?: boolean
-		}
-
-	type $$Events = {
-		animationsstart: CustomEvent<undefined>
-		animationsfinish: CustomEvent<undefined>
+	interface NumberFlowProps extends Props {
+		locales: Intl.LocalesArgument
+		value: Value
+		format?: Format
+		prefix?: string
+		suffix?: string
+		willChange: boolean
+		el: NumberFlowElement | undefined
 	}
 
-	export let el: NumberFlowElement | undefined = undefined
-	const elStore = writable<NumberFlowElement | undefined>(el)
-	$: $elStore = el
+	let {
+		locales = undefined,
+		format = undefined,
+		value,
+		prefix = undefined,
+		suffix = undefined,
+		willChange = false,
+		transformTiming = NumberFlowElement.defaultProps.transformTiming,
+		spinTiming = NumberFlowElement.defaultProps.spinTiming,
+		opacityTiming = NumberFlowElement.defaultProps.opacityTiming,
+		animated = NumberFlowElement.defaultProps.animated,
+		respectMotionPreference = NumberFlowElement.defaultProps.respectMotionPreference,
+		trend = NumberFlowElement.defaultProps.trend,
+		plugins = NumberFlowElement.defaultProps.plugins,
+		digits = NumberFlowElement.defaultProps.digits,
+		el = $bindable<NumberFlowElement | undefined>(),
+		...restProps
+	}: NumberFlowProps = $props()
 
-	// You're supposed to cache these between uses:
-	// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
-	$: formatter = new Intl.NumberFormat(locales, format)
-	$: data = formatToData(value, formatter, prefix, suffix)
-
-	// Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
-	// for better tree-shaking:
+	let elStore = writable<NumberFlowElement | undefined>(el)
 	const group = getGroupContext()
-	group?.register?.(elStore)
+
+	$effect(() => {
+		elStore = writable<NumberFlowElement | undefined>(el)
+		group?.register?.(elStore)
+	})
+
+	let formatter = $derived(new Intl.NumberFormat(locales, format))
+	let data = $derived(formatToData(value, formatter, prefix, suffix))
 </script>
 
 <number-flow-svelte
 	bind:this={el}
-	{...$$restProps}
 	data-will-change={willChange ? '' : undefined}
-	on:animationsstart
-	on:animationsfinish
 	__svelte_batched={Boolean(group)}
 	__svelte_transformtiming={transformTiming}
 	__svelte_spintiming={spinTiming}
@@ -101,6 +90,7 @@
 	__svelte_plugins={plugins}
 	__svelte_digits={digits}
 	{data}
+	{...restProps}
 >
 	{@html BROWSER ? undefined : renderInnerHTML(data)}
 </number-flow-svelte>

@@ -2,7 +2,7 @@ import type NumberFlowLite from 'number-flow/lite'
 import { getContext, setContext } from 'svelte'
 import type { Readable } from 'svelte/store'
 
-let groupKey = Symbol('group')
+export let groupKey = Symbol('group')
 
 export type RegisterWithGroup = (el: Readable<NumberFlowLite | undefined>) => void
 
