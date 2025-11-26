@@ -76,6 +76,7 @@ export default {
 				xl: '74rem'
 			},
 			spacing: {
+				'0.75': '0.1875rem',
 				'4.5': '1.125rem',
 				'5.5': '1.375rem',
 				'11.5': '2.875rem',

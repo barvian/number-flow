@@ -195,12 +195,12 @@ export function DemoMenuButton({
 			{...props}
 			className={clsx(
 				className,
-				'group flex h-8 items-center rounded-full px-3 text-xs shadow-sm ring ring-black/[8%] dark:shadow-none dark:ring-white/10'
+				'btn-secondary group flex h-8 items-center rounded-md px-2 text-xs transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)]'
 			)}
 		>
 			{children}
 			<ChevronDown
-				className="spring-bounce-0 spring-duration-150 ml-1 size-4 shrink-0 group-data-[active]:rotate-180"
+				className="spring-bounce-0 spring-duration-150 ml-0.5 size-3.5 shrink-0 group-data-[open]:rotate-180"
 				strokeWidth={2}
 			/>
 		</MenuButton>
@@ -213,7 +213,7 @@ export function DemoMenuItems({ className, ...props }: MenuItemsProps) {
 			{...props}
 			className={clsx(
 				className,
-				'animate-pop-in absolute left-0 top-full z-10 mt-2 min-w-full origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
+				'animate-pop-in absolute left-0 top-full z-10 mt-2 min-w-full origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
 		/>
 	)
@@ -252,12 +252,12 @@ export function DemoSwitch({
 					{...props}
 					className={clsx(
 						className,
-						'dark:hover:bg-zinc-750 group relative flex h-6 w-10 rounded-full bg-zinc-200 p-0.5 transition-colors duration-200 ease-in-out hover:bg-zinc-300 focus:outline-none data-[checked]:bg-zinc-950 data-[focus]:outline-2 data-[focus]:outline-blue-500 data-[checked]:hover:bg-zinc-700 dark:bg-zinc-800 dark:data-[checked]:bg-zinc-50 dark:data-[checked]:hover:bg-zinc-300'
+						'dark:hover:bg-zinc-750 p-0.75 group relative flex h-6 w-10 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out hover:bg-zinc-300 focus:outline-none data-[checked]:bg-zinc-950 data-[focus]:outline-2 data-[focus]:outline-blue-500 data-[checked]:hover:bg-zinc-700 dark:bg-zinc-800 dark:data-[checked]:bg-zinc-50 dark:data-[checked]:hover:bg-zinc-300'
 					)}
 				>
 					<span
 						aria-hidden="true"
-						className="spring-bounce-0 spring-duration-200 pointer-events-none inline-block size-5 rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[checked]:translate-x-4 dark:bg-zinc-950"
+						className="spring-bounce-0 spring-duration-200 size-4.5 pointer-events-none inline-block rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[checked]:translate-x-4 dark:bg-zinc-950"
 					/>
 				</Switch>
 				<span className="text-xs">{children}</span>
