@@ -29,19 +29,19 @@ export default function FrameworkMenu({
 			<MenuButton
 				className={clsx(
 					className,
-					'text-primary group -mx-3 -my-2 -mr-4 inline-flex items-baseline rounded-full px-3 py-2 font-medium transition duration-[.16s] ease-out hover:brightness-[1.1] active:brightness-[.98] active:duration-[25ms]'
+					'text-primary btn-secondary group -mx-1 -my-1 -mr-4 inline-flex items-baseline rounded-lg px-2 py-1 font-medium transition duration-[.16s] ease-out'
 				)}
 			>
-				<Icon className="size-4.5 relative -top-[.0625em] mr-2 shrink-0 self-center" />
+				<Icon className="size-4.5 relative me-1.5 shrink-0 self-center" />
 				{FRAMEWORKS[value].name}
 				<ChevronDown
-					className="spring-bounce-0 spring-duration-150 ml-1 size-4 shrink-0 self-center group-data-[active]:rotate-180"
+					className="spring-bounce-0 spring-duration-150 ml-1 size-4 shrink-0 self-center group-data-[open]:rotate-180"
 					strokeWidth={2}
 				/>
 			</MenuButton>
 			<MenuItems
-				anchor={{ to: 'bottom start', offset: '-0.125rem' }}
-				className="animate-pop-in min-w-32 origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-black/[8%] dark:bg-zinc-950 dark:ring-inset dark:ring-white/10"
+				anchor={{ to: 'bottom start' }}
+				className="animate-pop-in mt-1.5 min-w-32 origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-black/[8%] dark:bg-zinc-950 dark:ring-inset dark:ring-white/10"
 			>
 				{Object.entries(FRAMEWORKS).map(([id, framework]) => {
 					const Icon = icons[`./icons/frameworks/${id}.tsx`]!
