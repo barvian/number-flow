@@ -11,48 +11,42 @@ import useCycle from '@/hooks/useCycle'
 
 const NUMBERS = [20, 19]
 
-const TRENDS = new Map<string, Trend | undefined>([
-	['default', undefined],
-	['+1', 1],
-	['0', 0],
-	['-1', -1]
-])
+const TRENDS: Record<string, Trend | undefined> = {
+	default: undefined,
+	'+1': 1,
+	'0': 0,
+	'-1': -1
+}
 
 export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'>) {
 	const [value, cycleValue] = useCycle(NUMBERS)
 
-	const [option, setOption] = React.useState<string>('default')
-	const trend = TRENDS.get(option)
-	const buttonId = React.useId()
+	const [option, setOption] = React.useState<keyof typeof TRENDS>('default')
+	const trend = TRENDS[option]
 
 	return (
 		<Demo
 			{...rest}
 			title={
 				<DemoMenu>
-					<div className="flex items-stretch">
-						<label htmlFor={buttonId} className="flex items-center ps-1">
-							<code className="text-muted text-xs font-medium">trend:</code>
-						</label>
-						<div className="relative">
-							<DemoMenuButton id={buttonId} className="gap-1">
-								<code className="font-semibold">{option}</code>
-							</DemoMenuButton>
-							<DemoMenuItems>
-								{TRENDS.keys()
-									.map((key) => (
-										<DemoMenuItem
-											key={key}
-											onClick={() => setOption(key)}
-											disabled={option === key}
-										>
-											<code className="font-semibold">{key}</code>
-										</DemoMenuItem>
-									))
-									.toArray()}
-							</DemoMenuItems>
-						</div>
-					</div>
+					<DemoMenuButton className="gap-1">
+						<code className="text-muted">trend:</code>
+						<code className="font-semibold">{option}</code>
+					</DemoMenuButton>
+					<DemoMenuItems>
+						<DemoMenuItem onClick={() => setOption('default')} disabled={option === 'default'}>
+							<code className="font-semibold">default</code>
+						</DemoMenuItem>
+						<DemoMenuItem onClick={() => setOption('+1')} disabled={option === '+1'}>
+							<code className="font-semibold">+1</code>
+						</DemoMenuItem>
+						<DemoMenuItem onClick={() => setOption('0')} disabled={option === '0'}>
+							<code className="font-semibold">0</code>
+						</DemoMenuItem>
+						<DemoMenuItem onClick={() => setOption('-1')} disabled={option === '-1'}>
+							<code className="font-semibold">-1</code>
+						</DemoMenuItem>
+					</DemoMenuItems>
 				</DemoMenu>
 			}
 			onClick={cycleValue}
