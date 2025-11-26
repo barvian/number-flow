@@ -7,6 +7,7 @@ import plugin from 'tailwindcss/plugin'
 // @ts-expect-error types not working
 import spring from 'tailwindcss-spring'
 import type { PluginUtils } from 'tailwindcss/types/config'
+import defaultColors from 'tailwindcss/colors'
 
 const sans = ['Inter', '_font_fallback_732902278794', 'sans-serif']
 
@@ -49,6 +50,7 @@ export default {
 				zinc: {
 					125: '##f0f0f1',
 					150: '#ececee',
+					750: `color-mix(in srgb, ${defaultColors.zinc['700']} 50%, ${defaultColors.zinc['800']})`,
 					850: '#1f1f22'
 				}
 			},

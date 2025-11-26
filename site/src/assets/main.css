@@ -27,6 +27,11 @@
 	number-flow-svelte {
 		@apply font-mac-ui;
 	}
+
+	/* Undo Tailwind preflight button cursor pointer */
+	button {
+		cursor: default;
+	}
 }
 
 @layer components {
