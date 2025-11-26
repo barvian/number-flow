@@ -58,7 +58,7 @@ export default function FrameworkMenu({
 						>
 							<Icon className="size-4.5" />
 							{framework.name}
-							{id === value && <Check className="ml-auto h-4 w-4" />}
+							{id === value && <Check className="ml-auto h-4 w-4" strokeWidth={2.5} />}
 						</MenuItem>
 					)
 				})}
