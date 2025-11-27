@@ -151,7 +151,8 @@ export default function Demo({
 									knowsToClick && 'opacity-0'
 								)}
 							>
-								Click anywhere to change numbers
+								<span className="can-hover:inline hidden">Click</span>
+								<span className="can-hover:hidden">Tap</span> anywhere to change numbers
 							</span>
 						)}
 					</div>

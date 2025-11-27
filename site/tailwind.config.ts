@@ -243,6 +243,7 @@ export default {
 				}
 			})
 
+			addVariant('can-hover', '@media (hover: hover)')
 			addVariant('pre-first-line', ['pre& .line:first-of-type', '& pre .line:first-of-type'])
 			addVariant('prefers-dark', ['@media (prefers-color-scheme: dark) { & }'])
 		})
