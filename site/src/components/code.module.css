@@ -1,6 +1,6 @@
 .code {
 	/* Make sure there's space to scroll around it: */
-	max-height: clamp(5rem, 100vh - var(--fluid), 40rem);
+	max-height: clamp(5rem, 100vh - var(--fluid), 30rem);
 	overflow-x: auto;
 	tab-size: 2;
 

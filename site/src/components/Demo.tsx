@@ -19,6 +19,7 @@ import {
 	type MenuProps
 } from '@headlessui/react'
 import { Check, ChevronDown } from 'lucide-react'
+import AnimateHeightFragment from './AnimateHeightFragment'
 
 type TabValue = 'preview' | 'code'
 
@@ -35,22 +36,21 @@ export type DemoProps = {
 type Props = DemoProps & {
 	onClick?: () => void
 	onIntersect?: (entry: IntersectionObserverEntry) => void
+	ref?: React.Ref<HTMLDivElement>
 }
 
-const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
-	{
-		children,
-		rootClassName,
-		className,
-		defaultValue = 'preview',
-		code,
-		title,
-		onClick,
-		onIntersect,
-		minHeight = 'min-h-[20rem]'
-	},
+export default function Demo({
+	children,
+	rootClassName,
+	className,
+	defaultValue = 'preview',
+	code,
+	title,
+	onClick,
+	onIntersect,
+	minHeight = 'min-h-[20rem]',
 	ref
-) {
+}: Props) {
 	// const [knowsToClick, setKnowsToClick] = useAtom(knowsToClickAtom)
 	const [knowsToClick, setKnowsToClick] = React.useState(false)
 	const [active, setActive] = React.useState(defaultValue)
@@ -79,95 +79,96 @@ const Demo = React.forwardRef<HTMLDivElement, Props>(function Demo(
 	}, [onIntersect])
 
 	return (
-		<Tabs.Root
-			ref={ref}
-			className={clsx(
-				active === 'code' && 'dark',
-				rootClassName,
-				'Demo text-primary not-prose relative isolate'
-			)} // reset text color if inside prose
-			value={active}
-			onValueChange={(val) => setActive(val as TabValue)}
-		>
-			{code && (
-				<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
-					<Tabs.List className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
-						<Tabs.Trigger
-							value="preview"
-							className={clsx(
-								active !== 'preview' && 'hover:transition-[color]',
-								'dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600'
-							)}
-						>
-							{active === 'preview' && (
-								<motion.div
-									className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
-									style={{ borderRadius: 999 }}
-									layout
-									layoutId={`${id}active`}
-								></motion.div>
-							)}
-							Preview
-						</Tabs.Trigger>
-						<Tabs.Trigger
-							value="code"
-							className={clsx(
-								active !== 'code' && 'hover:transition-[color]',
-								'dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600'
-							)}
-						>
-							{active === 'code' && (
-								<motion.div
-									className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
-									style={{ borderRadius: 999 }}
-									layout
-									layoutId={`${id}active`}
-								></motion.div>
-							)}
-							Code
-						</Tabs.Trigger>
-					</Tabs.List>
-				</MotionConfig>
-			)}
-			<Tabs.Content
-				value="preview"
-				forceMount
+		<AnimateHeightFragment dependencies={[active]}>
+			<Tabs.Root
+				ref={ref}
 				className={clsx(
-					className,
-					'border-faint relative rounded-lg border data-[state=inactive]:hidden'
-				)}
+					active === 'code' && 'dark',
+					rootClassName,
+					'Demo text-primary not-prose border-faint relative isolate overflow-clip rounded-lg border',
+					active === 'code' && 'bg-zinc-950 dark:bg-zinc-900'
+				)} // reset text color if inside prose
+				value={active}
+				onValueChange={(val) => setActive(val as TabValue)}
 			>
-				{title && <div className="absolute left-3 top-3">{title}</div>}
-				<div
-					className={clsx(minHeight, 'flex flex-col items-center justify-center p-5 pb-6')}
-					ref={demoRef}
-					onClick={onClick && handleClick}
-					onMouseDown={onClick && handleMouseDown}
+				{code && (
+					<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
+						<Tabs.List className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
+							<Tabs.Trigger
+								value="preview"
+								className={clsx(
+									active !== 'preview' && 'hover:transition-[color]',
+									'dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600'
+								)}
+							>
+								{active === 'preview' && (
+									<motion.div
+										className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
+										style={{ borderRadius: 999 }}
+										layout
+										layoutId={`${id}active`}
+									></motion.div>
+								)}
+								Preview
+							</Tabs.Trigger>
+							<Tabs.Trigger
+								value="code"
+								className={clsx(
+									active !== 'code' && 'hover:transition-[color]',
+									'dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600'
+								)}
+							>
+								{active === 'code' && (
+									<motion.div
+										className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
+										style={{ borderRadius: 999 }}
+										layout
+										layoutId={`${id}active`}
+									></motion.div>
+								)}
+								Code
+							</Tabs.Trigger>
+						</Tabs.List>
+					</MotionConfig>
+				)}
+				<Tabs.Content
+					value="preview"
+					forceMount
+					className={clsx(className, 'relative data-[state=inactive]:hidden')}
 				>
-					{children}
-					{onClick && (
-						<span
-							className={clsx(
-								'text-muted absolute bottom-5 left-0 w-full text-center text-sm transition-opacity duration-200 ease-out',
-								knowsToClick && 'opacity-0'
-							)}
-						>
-							Click anywhere to change numbers
-						</span>
-					)}
-				</div>
-			</Tabs.Content>
-			{code && (
-				// Pad the right side of the first line to make room for tabs:
-				<Tabs.Content className="[&_.line:first-child]:pr-[9.75rem]" value="code">
-					{code}
+					{title && <div className="absolute left-3 top-3">{title}</div>}
+					<div
+						className={clsx(minHeight, 'flex flex-col items-center justify-center p-5 pb-6')}
+						ref={demoRef}
+						onClick={onClick && handleClick}
+						onMouseDown={onClick && handleMouseDown}
+					>
+						{children}
+						{onClick && (
+							<span
+								className={clsx(
+									'text-muted absolute bottom-5 left-0 w-full text-center text-sm transition-opacity duration-200 ease-out',
+									knowsToClick && 'opacity-0'
+								)}
+							>
+								Click anywhere to change numbers
+							</span>
+						)}
+					</div>
 				</Tabs.Content>
-			)}
-		</Tabs.Root>
+				{code && (
+					// Pad the right side of the first line to make room for tabs:
+					<Tabs.Content
+						className="[&_.line:first-child]:pr-[9.75rem] [&_pre]:!rounded-none [&_pre]:!border-none"
+						value="code"
+					>
+						{code}
+					</Tabs.Content>
+				)}
+			</Tabs.Root>
+		</AnimateHeightFragment>
 	)
-})
-
-export default Demo
+}
 
 export function DemoTitle({
 	className,
