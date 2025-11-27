@@ -4,7 +4,9 @@
 	const disrespectMotionPreference = getCanAnimate({ respectMotionPreference: false })
 
 	// Trigger runes mode:
-	$: $canAnimate
+	$effect(() => {
+		$canAnimate
+	})
 </script>
 
 <div>
