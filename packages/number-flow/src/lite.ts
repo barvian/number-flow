@@ -20,7 +20,7 @@ import styles, {
 } from './styles'
 import type { Mutable as MakeMutable } from './util/types'
 import type { Plugin } from './plugins'
-import * as updates from './util/updates'
+import * as update from './util/update'
 
 export { define } from './util/dom'
 export { prefersReducedMotion } from './styles'
