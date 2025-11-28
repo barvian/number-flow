@@ -23,7 +23,7 @@ import type { Plugin } from './plugins'
 
 export { define } from './util/dom'
 export { prefersReducedMotion } from './styles'
-export { renderInnerHTML } from './ssr'
+export { renderInnerHTML, renderFallback } from './ssr'
 export * from './plugins'
 export * from './formatter'
 
@@ -124,6 +124,10 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 	 * @internal
 	 */
 	set data(data: Data | undefined) {
+		// Always remove DSD template from light DOM to prevent accumulation on re-renders
+		// (e.g., when framework wrappers re-render with {@html renderInnerHTML()})
+		this.querySelector('template[shadowrootmode]')?.remove()
+
 		if (data == null) {
 			return
 		}
@@ -134,8 +138,13 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		if (!this.created) {
 			this._data = data
 
-			// This will overwrite the DSD if any:
-			this.attachShadow({ mode: 'open' })
+			// Reuse existing shadow root from DSD if available, otherwise create one
+			if (!this.shadowRoot) {
+				this.attachShadow({ mode: 'open' })
+			} else {
+				// Clear DSD content to rebuild with JavaScript
+				this.shadowRoot.innerHTML = ''
+			}
 
 			try {
 				this._internals ??= this.attachInternals()
