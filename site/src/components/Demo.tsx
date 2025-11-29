@@ -138,7 +138,10 @@ export default function Demo({
 				>
 					{title && <div className="absolute left-3 top-3">{title}</div>}
 					<div
-						className={clsx(minHeight, 'flex flex-col items-center justify-center p-5 pb-6')}
+						className={clsx(
+							minHeight,
+							'flex flex-col items-center justify-center p-5 pb-6 [&_button]:cursor-pointer'
+						)}
 						ref={demoRef}
 						onClick={onClick && handleClick}
 						onMouseDown={onClick && handleMouseDown}
