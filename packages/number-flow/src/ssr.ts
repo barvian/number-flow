@@ -39,8 +39,13 @@ const renderPart = (part: KeyedNumberPart) =>
 const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
+export const renderFallback = (data: Data) =>
+	html`<span
+		style="font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;"
+		>${data.valueAsString}</span
+	>`
+
 export const renderInnerHTML = (data: Data) =>
-	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
 			><style>
 				${styles}</style
@@ -52,7 +57,4 @@ export const renderInnerHTML = (data: Data) =>
 					)}</span
 				>${renderSection(data.post, 'right')}</span
 			></template
-		><span
-			style="font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;"
-			>${data.valueAsString}</span
-		>` // ^ fallback for browsers that don't support DSD
+		>${renderFallback(data)}` // ^ fallback for browsers that don't support DSD

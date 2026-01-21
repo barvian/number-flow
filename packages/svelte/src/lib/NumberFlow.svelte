@@ -34,7 +34,6 @@
 	import type { HTMLAttributes } from 'svelte/elements'
 	import { writable } from 'svelte/store'
 	import { getGroupContext } from './group.js'
-	import { BROWSER } from 'esm-env'
 
 	export let locales: Intl.LocalesArgument = undefined
 	export let format: Format | undefined = undefined
@@ -102,5 +101,5 @@
 	__svelte_digits={digits}
 	{data}
 >
-	{@html BROWSER ? undefined : renderInnerHTML(data)}
+	{@html renderInnerHTML(data)}
 </number-flow-svelte>
