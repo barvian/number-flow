@@ -45,6 +45,7 @@ export interface Props {
 	trend: Trend
 	plugins?: Plugin[]
 	digits: Digits | undefined
+	showSideDigits: boolean | undefined
 }
 
 // Workaround for Object.assign in constructor and TS:
@@ -78,7 +79,8 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		trend: (oldValue, value) => Math.sign(value - oldValue),
 		respectMotionPreference: true,
 		plugins: undefined,
-		digits: undefined
+		digits: undefined,
+		showSideDigits: undefined
 	}
 
 	constructor() {
@@ -336,7 +338,6 @@ abstract class Section {
 	) {
 		this.justify = justify
 		const chars = parts.map<Node>((p) => this.addChar(p).el)
-
 		this.el = createElement(
 			'span',
 			{
@@ -527,6 +528,9 @@ class AnimatePresence {
 		readonly el: HTMLElement,
 		{ onRemove, animateIn = false }: AnimatePresenceProps = {}
 	) {
+		if (this.flow.showSideDigits) {
+			this.el.classList.add('show-side')
+		}
 		this.el.classList.add('animate-presence')
 		// This craziness is the only way I could figure out how to get the opacity
 		// accumulation to work in all browsers. Accumulating -1 onto opacity directly
@@ -620,6 +624,11 @@ export class Digit extends Char<KeyedDigitPart> {
 			])
 			// Use the attribute for now because it has a little better browser support:
 			if (i !== value) num.setAttribute('inert', '')
+			if (i - 1 === value || i + 1 === value) {
+				num.classList.add('side')
+			} else {
+				num.classList.remove('side')
+			}
 			num.style.setProperty('--n', String(i))
 			return num
 		})
@@ -658,9 +667,18 @@ export class Digit extends Char<KeyedDigitPart> {
 
 	update(value: KeyedDigitPart['value']) {
 		this.el.style.setProperty('--current', String(value))
-		this._numbers.forEach((num, i) =>
-			i === value ? num.removeAttribute('inert') : num.setAttribute('inert', '')
-		)
+		this._numbers.forEach((num, i) => {
+			if (i === value) {
+				num.removeAttribute('inert')
+			} else {
+				num.setAttribute('inert', '')
+			}
+			if (i - 1 === value || i + 1 === value) {
+				num.classList.add('side')
+			} else {
+				num.classList.remove('side')
+			}
+		})
 		this.value = value
 	}
 
