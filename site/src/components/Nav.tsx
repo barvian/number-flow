@@ -1,6 +1,6 @@
 import Link from '@/components/Link'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
-import { motion, MotionConfig } from 'motion/react'
+import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import * as React from 'react'
 import clsx from 'clsx/lite'
 
@@ -83,7 +83,9 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								>
 									{({ isActive }) => (
 										<>
-											{isActive && <NavLinkActive />}
+											<AnimatePresence initial={false}>
+												{isActive && <NavLinkActive />}
+											</AnimatePresence>
 											<BookOpen className="size-6" absoluteStrokeWidth />
 											Docs
 										</>
@@ -95,7 +97,9 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								>
 									{({ isActive }) => (
 										<>
-											{isActive && <NavLinkActive />}
+											<AnimatePresence initial={false}>
+												{isActive && <NavLinkActive />}
+											</AnimatePresence>
 											<Shapes className="size-6" absoluteStrokeWidth />
 											Examples
 										</>
@@ -108,7 +112,9 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								>
 									{({ isActive }) => (
 										<>
-											{isActive && <NavLinkActive />}
+											<AnimatePresence initial={false}>
+												{isActive && <NavLinkActive />}
+											</AnimatePresence>
 											<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
 											Showcase
 										</>
