@@ -47,8 +47,6 @@ export interface Props {
 	digits: Digits | undefined
 }
 
-let styleSheet: CSSStyleSheet | undefined
-
 // Workaround for Object.assign in constructor and TS:
 // https://github.com/microsoft/TypeScript/issues/26792#issuecomment-617541464
 export default interface NumberFlowLite extends Props {}
@@ -145,18 +143,10 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 				// Try/catch is less code than an if check.
 			}
 
-			// Add stylesheet
-			if (typeof CSSStyleSheet !== 'undefined' && this.shadowRoot!.adoptedStyleSheets) {
-				if (!styleSheet) {
-					styleSheet = new CSSStyleSheet()
-					styleSheet.replaceSync(styles)
-				}
-				this.shadowRoot!.adoptedStyleSheets = [styleSheet]
-			} else {
-				const style = document.createElement('style')
-				style.textContent = styles
-				this.shadowRoot!.appendChild(style)
-			}
+			// Add stylesheet; don't use adoptedStylesheets because it works unreliably in Safari:
+			const style = document.createElement('style')
+			style.textContent = styles
+			this.shadowRoot!.appendChild(style)
 
 			this._pre = new SymbolSection(this, pre, {
 				justify: 'right',

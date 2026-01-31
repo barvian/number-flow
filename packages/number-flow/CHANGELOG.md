@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.9
+
+### Patch Changes
+
+- Fix Safari visual bug (see [#147](https://github.com/barvian/number-flow/issues/147)) ([`bdf8ce9`](https://github.com/barvian/number-flow/commit/bdf8ce92df67d6147d7f56998c625fc29e1b7571))
+
 ## 0.5.8
 
 ### Patch Changes
