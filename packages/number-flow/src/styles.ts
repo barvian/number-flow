@@ -70,6 +70,7 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 // https://expensive.toys/blog/blur-vignette
 export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
 export const halfMaskHeight = `calc(${maskHeight} / 2)`
+export const halfMaskHeightSides = `calc(${maskHeight} / 1)`
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 
@@ -96,7 +97,7 @@ const styles = css`
 	}
 
 	.number {
-		--scale-x: calc(1 + var(${widthDeltaVar}) / var(--width));
+		--scale-x: calc(1 + var(${widthDeltaVar}) / var(--width, 1));
 		transform: translateX(var(${dxVar})) scaleX(var(--scale-x));
 
 		margin: 0 calc(-1 * ${maskWidth});
@@ -152,6 +153,10 @@ const styles = css`
 		padding: ${halfMaskHeight} ${maskWidth};
 		/* invert parent's: */
 		transform: scaleX(calc(1 / var(--scale-x))) translateX(calc(-1 * var(${dxVar})));
+	}
+
+	.number__inner:has(.show-side) {
+		padding: ${halfMaskHeightSides} ${maskWidth};
 	}
 
 	/* Put number underneath other sections. Negative z-index messed up text cursor and selection, weirdly: */
@@ -214,11 +219,24 @@ const styles = css`
 		transform: translateY(var(--y));
 	}
 
+	.digit.show-side .digit__num {
+		--y: clamp(2 * -100%, var(--offset) * 100%, 2 * 100%);
+		padding: 0;
+	}
+
 	.digit__num[inert] {
 		position: absolute;
 		top: 0;
 		left: 50%;
 		transform: translateX(-50%) translateY(var(--y));
+	}
+
+	.digit.show-side:not(.is-spinning) .digit__num {
+		padding: 0;
+	}
+
+	.digit.show-side:not(.is-spinning) .digit__num[inert] {
+		display: block;
 	}
 
 	.digit:not(.is-spinning) .digit__num[inert] {
