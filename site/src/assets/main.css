@@ -123,9 +123,4 @@
 		}
 	}
 
-	/* we need a fallback value for this: */
-	.mt-external-link-icon {
-		margin-top: 0.4em;
-		margin-top: calc((1lh - 1em) / 2 + 0.0625em);
-	}
 }

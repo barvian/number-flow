@@ -47,7 +47,7 @@ export default function Link({
 		<a
 			{...props}
 			ref={ref}
-			className={clsx(className, 'group/link', isExternal && 'pr-[1.125em]')}
+			className={clsx(className, 'group/link')}
 			target={isExternal ? '_blank' : target}
 			data-active={active ? '' : undefined}
 			href={href}
@@ -55,12 +55,10 @@ export default function Link({
 		>
 			{typeof children === 'function' ? children({ isActive: active }) : children}
 			{isExternal && (
-				<>
-					<span className="select-none" aria-hidden="true">
-						&#8288;
-					</span>
-					<ArrowUpRight className="group-hover/link:text-primary text-muted ExternalLinkIcon mt-external-link-icon absolute ml-[.125em] inline-block size-[1em] no-underline transition duration-[inherit] ease-[inherit] group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
-				</>
+				<span className="whitespace-nowrap">
+					&#8288;
+					<ArrowUpRight className="group-hover/link:text-primary text-muted ml-[.125em] inline-block size-[1em] align-[-0.2em] no-underline transition duration-[inherit] ease-[inherit] group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
+				</span>
 			)}
 		</a>
 	)
