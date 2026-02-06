@@ -93,10 +93,7 @@ export default function Demo({
 						<TabList className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
 							<Tab
 								id="preview"
-								className={clsx(
-									active !== 'preview' && 'hover:transition-[color]',
-									'dark:text-muted hover:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600'
-								)}
+								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600"
 							>
 								{active === 'preview' && (
 									<motion.div
@@ -110,10 +107,7 @@ export default function Demo({
 							</Tab>
 							<Tab
 								id="code"
-								className={clsx(
-									active !== 'code' && 'hover:transition-[color]',
-									'dark:text-muted hover:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600'
-								)}
+								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600"
 							>
 								{active === 'code' && (
 									<motion.div
@@ -278,7 +272,7 @@ export function DemoSwitch({
 			onChange={onChange}
 			className={clsx(className, 'group flex items-center gap-2 p-1')}
 		>
-			<div className="dark:hover:bg-zinc-750 p-0.75 relative flex h-6 w-10 shrink-0 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out hover:bg-zinc-300 group-data-[selected]:bg-zinc-950 group-data-[focus-visible]:outline-2 group-data-[focus-visible]:outline-blue-500 group-data-[selected]:hover:bg-zinc-700 dark:bg-zinc-800 dark:group-data-[selected]:bg-zinc-50 dark:group-data-[selected]:hover:bg-zinc-300">
+			<div className="dark:group-data-[hovered]:bg-zinc-750 p-0.75 relative flex h-6 w-10 shrink-0 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out group-data-[hovered]:bg-zinc-300 group-data-[selected]:bg-zinc-950 group-data-[selected]:group-data-[hovered]:bg-zinc-700 group-data-[focus-visible]:outline-2 group-data-[focus-visible]:outline-blue-500 dark:bg-zinc-800 dark:group-data-[selected]:bg-zinc-50 dark:group-data-[selected]:group-data-[hovered]:bg-zinc-300">
 				<span
 					aria-hidden="true"
 					className="spring-bounce-0 spring-duration-200 size-4.5 pointer-events-none inline-block rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[selected]:translate-x-4 dark:bg-zinc-950"
