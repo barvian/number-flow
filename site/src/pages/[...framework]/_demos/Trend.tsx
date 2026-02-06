@@ -34,16 +34,28 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 						<code className="font-semibold">{option}</code>
 					</DemoMenuButton>
 					<DemoMenuItems>
-						<DemoMenuItem onClick={() => setOption('default')} disabled={option === 'default'}>
+						<DemoMenuItem
+							textValue="default"
+							onAction={() => setOption('default')}
+							isDisabled={option === 'default'}
+						>
 							<code className="font-semibold">default</code>
 						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setOption('+1')} disabled={option === '+1'}>
+						<DemoMenuItem
+							textValue="+1"
+							onAction={() => setOption('+1')}
+							isDisabled={option === '+1'}
+						>
 							<code className="font-semibold">+1</code>
 						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setOption('0')} disabled={option === '0'}>
+						<DemoMenuItem textValue="0" onAction={() => setOption('0')} isDisabled={option === '0'}>
 							<code className="font-semibold">0</code>
 						</DemoMenuItem>
-						<DemoMenuItem onClick={() => setOption('-1')} disabled={option === '-1'}>
+						<DemoMenuItem
+							textValue="-1"
+							onAction={() => setOption('-1')}
+							isDisabled={option === '-1'}
+						>
 							<code className="font-semibold">-1</code>
 						</DemoMenuItem>
 					</DemoMenuItems>

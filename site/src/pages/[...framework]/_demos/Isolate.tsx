@@ -10,7 +10,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 		<Demo
 			{...rest}
 			title={
-				<DemoSwitch checked={isolate} onChange={setIsolate}>
+				<DemoSwitch isSelected={isolate} onChange={setIsolate}>
 					<code className="font-semibold">isolate</code>
 				</DemoSwitch>
 			}

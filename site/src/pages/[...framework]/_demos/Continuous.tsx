@@ -18,7 +18,7 @@ export default function DemoHOC({
 			code={children}
 			{...rest}
 			title={
-				<DemoSwitch checked={useContinuous} onChange={setUseContinuous}>
+				<DemoSwitch isSelected={useContinuous} onChange={setUseContinuous}>
 					<code className="font-semibold">continuous</code>
 				</DemoSwitch>
 			}

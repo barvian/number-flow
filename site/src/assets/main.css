@@ -32,6 +32,15 @@
 	button {
 		cursor: default;
 	}
+
+	[data-rac]:focus-visible {
+		outline: none;
+	}
+
+	:focus-visible,
+	[data-rac][data-focus-visible] {
+		outline: 2px solid theme(colors.blue.500);
+	}
 }
 
 @layer components {
@@ -40,7 +49,7 @@
 	}
 
 	.link-underline {
-		@apply ease-out-quad hover:text-primary underline decoration-zinc-300 decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current dark:decoration-zinc-600;
+		@apply ease-out-quad hover:text-primary underline decoration-zinc-300 decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current focus-visible:rounded dark:decoration-zinc-600;
 	}
 
 	.btn {
@@ -56,7 +65,7 @@
 	}
 
 	.btn-secondary {
-		@apply hover:bg-zinc-100 data-[open]:bg-zinc-100 dark:hover:bg-zinc-900 dark:data-[open]:bg-zinc-900;
+		@apply hover:bg-zinc-100 aria-expanded:bg-zinc-100 dark:hover:bg-zinc-900 dark:aria-expanded:bg-zinc-900;
 	}
 
 	/* We can't define this in the tailwind config because .Demo has .not-prose on it: */

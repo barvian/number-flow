@@ -1,23 +1,20 @@
 import * as React from 'react'
-import * as Tabs from '@radix-ui/react-tabs'
 // import { atom, useAtom } from 'jotai'
 import { clsx } from 'clsx/lite'
 import { inView, motion, MotionConfig } from 'motion/react'
 import { useId } from 'react'
 import {
+	MenuTrigger,
+	Button,
+	Popover,
 	Menu,
-	MenuButton,
 	MenuItem,
-	MenuItems,
 	Switch,
-	Field,
-	Label,
-	type SwitchProps,
-	type MenuButtonProps,
-	type MenuItemProps,
-	type MenuItemsProps,
-	type MenuProps
-} from '@headlessui/react'
+	Tabs,
+	TabList,
+	Tab,
+	TabPanel
+} from 'react-aria-components'
 import { Check, ChevronDown } from 'lucide-react'
 import AnimateHeightFragment from './AnimateHeightFragment'
 
@@ -80,7 +77,7 @@ export default function Demo({
 
 	return (
 		<AnimateHeightFragment dependencies={[active]}>
-			<Tabs.Root
+			<Tabs
 				ref={ref}
 				className={clsx(
 					active === 'code' && 'dark',
@@ -88,17 +85,17 @@ export default function Demo({
 					'Demo text-primary not-prose border-faint relative isolate overflow-clip rounded-lg border',
 					active === 'code' && 'bg-zinc-950 dark:bg-zinc-900'
 				)} // reset text color if inside prose
-				value={active}
-				onValueChange={(val) => setActive(val as TabValue)}
+				selectedKey={active}
+				onSelectionChange={(key) => setActive(key as TabValue)}
 			>
 				{code && (
 					<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
-						<Tabs.List className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
-							<Tabs.Trigger
-								value="preview"
+						<TabList className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
+							<Tab
+								id="preview"
 								className={clsx(
 									active !== 'preview' && 'hover:transition-[color]',
-									'dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600'
+									'dark:text-muted hover:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600'
 								)}
 							>
 								{active === 'preview' && (
@@ -110,12 +107,12 @@ export default function Demo({
 									></motion.div>
 								)}
 								Preview
-							</Tabs.Trigger>
-							<Tabs.Trigger
-								value="code"
+							</Tab>
+							<Tab
+								id="code"
 								className={clsx(
 									active !== 'code' && 'hover:transition-[color]',
-									'dark:text-muted hover:text-primary aria-selected:text-primary relative px-2 py-1 text-xs/4 font-medium text-zinc-600'
+									'dark:text-muted hover:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600'
 								)}
 							>
 								{active === 'code' && (
@@ -127,14 +124,14 @@ export default function Demo({
 									></motion.div>
 								)}
 								Code
-							</Tabs.Trigger>
-						</Tabs.List>
+							</Tab>
+						</TabList>
 					</MotionConfig>
 				)}
-				<Tabs.Content
-					value="preview"
-					forceMount
-					className={clsx(className, 'relative data-[state=inactive]:hidden')}
+				<TabPanel
+					id="preview"
+					shouldForceMount
+					className={clsx(className, 'relative data-[inert]:hidden')}
 				>
 					{title && <div className="absolute left-3 top-3">{title}</div>}
 					<div
@@ -159,17 +156,17 @@ export default function Demo({
 							</span>
 						)}
 					</div>
-				</Tabs.Content>
+				</TabPanel>
 				{code && (
 					// Pad the right side of the first line to make room for tabs:
-					<Tabs.Content
+					<TabPanel
 						className="[&_.line:first-child]:pr-[9.75rem] [&_pre]:!rounded-none [&_pre]:!border-none"
-						value="code"
+						id="code"
 					>
 						{code}
-					</Tabs.Content>
+					</TabPanel>
 				)}
-			</Tabs.Root>
+			</Tabs>
 		</AnimateHeightFragment>
 	)
 }
@@ -186,18 +183,19 @@ export function DemoTitle({
 	)
 }
 
-export function DemoMenu(props: MenuProps) {
-	return <Menu {...props} />
+export function DemoMenu({ children }: { children: React.ReactNode }) {
+	return <MenuTrigger>{children}</MenuTrigger>
 }
 
 export function DemoMenuButton({
 	children,
-	className,
-	...props
-}: MenuButtonProps & { children: React.ReactNode }) {
+	className
+}: {
+	children: React.ReactNode
+	className?: string
+}) {
 	return (
-		<MenuButton
-			{...props}
+		<Button
 			className={clsx(
 				className,
 				'btn-secondary group flex h-8 items-center rounded-md px-2 text-xs transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)]'
@@ -205,42 +203,60 @@ export function DemoMenuButton({
 		>
 			{children}
 			<ChevronDown
-				className="spring-bounce-0 spring-duration-150 ml-0.5 size-3.5 shrink-0 group-data-[open]:rotate-180"
+				className="spring-bounce-0 spring-duration-150 ml-0.5 size-3.5 shrink-0 group-aria-expanded:rotate-180"
 				strokeWidth={2}
 			/>
-		</MenuButton>
+		</Button>
 	)
 }
 
-export function DemoMenuItems({ className, ...props }: MenuItemsProps) {
+export function DemoMenuItems({
+	className,
+	children
+}: {
+	className?: string
+	children: React.ReactNode
+}) {
 	return (
-		<MenuItems
-			{...props}
+		<Popover
+			placement="bottom start"
+			offset={6}
 			className={clsx(
 				className,
-				'animate-pop-in absolute left-0 top-full z-10 mt-1.5 min-w-full origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
+				'animate-pop-in min-w-[var(--trigger-width)] origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
-		/>
+		>
+			<Menu className="outline-none">{children}</Menu>
+		</Popover>
 	)
 }
 
 export function DemoMenuItem({
 	className,
 	children,
-	...props
-}: MenuItemProps<'button'> & { children: React.ReactNode }) {
+	isDisabled,
+	onAction,
+	textValue
+}: {
+	className?: string
+	children: React.ReactNode
+	isDisabled?: boolean
+	onAction?: () => void
+	textValue?: string
+}) {
 	return (
 		<MenuItem
-			{...props}
-			as="button"
+			isDisabled={isDisabled}
+			onAction={onAction}
+			textValue={textValue}
 			className={clsx(
 				className,
-				props.disabled ? 'pr-2' : 'pr-4',
-				'dark:data-[focus]:bg-white/12.5 flex w-full items-center gap-2 rounded-lg py-2 pl-2 text-xs font-medium data-[disabled]:cursor-default data-[focus]:bg-black/5'
+				isDisabled ? 'pr-2' : 'pr-4',
+				'dark:data-[focused]:bg-white/12.5 flex w-full items-center gap-2 rounded-lg py-2 pl-2 text-xs font-medium data-[disabled]:cursor-default data-[focused]:bg-black/5'
 			)}
 		>
 			{children}
-			{props.disabled && <Check className="ml-auto h-4 w-4" />}
+			{isDisabled && <Check className="ml-auto h-4 w-4" />}
 		</MenuItem>
 	)
 }
@@ -248,25 +264,27 @@ export function DemoMenuItem({
 export function DemoSwitch({
 	className,
 	children,
-	...props
-}: SwitchProps & { children: React.ReactNode }) {
+	isSelected,
+	onChange
+}: {
+	className?: string
+	children: React.ReactNode
+	isSelected?: boolean
+	onChange?: (isSelected: boolean) => void
+}) {
 	return (
-		<Field className="">
-			<Label className="flex items-center gap-2 p-1">
-				<Switch
-					{...props}
-					className={clsx(
-						className,
-						'dark:hover:bg-zinc-750 p-0.75 group relative flex h-6 w-10 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out hover:bg-zinc-300 focus:outline-none data-[checked]:bg-zinc-950 data-[focus]:outline-2 data-[focus]:outline-blue-500 data-[checked]:hover:bg-zinc-700 dark:bg-zinc-800 dark:data-[checked]:bg-zinc-50 dark:data-[checked]:hover:bg-zinc-300'
-					)}
-				>
-					<span
-						aria-hidden="true"
-						className="spring-bounce-0 spring-duration-200 size-4.5 pointer-events-none inline-block rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[checked]:translate-x-4 dark:bg-zinc-950"
-					/>
-				</Switch>
-				<span className="text-xs">{children}</span>
-			</Label>
-		</Field>
+		<Switch
+			isSelected={isSelected}
+			onChange={onChange}
+			className={clsx(className, 'group flex items-center gap-2 p-1')}
+		>
+			<div className="dark:hover:bg-zinc-750 p-0.75 relative flex h-6 w-10 shrink-0 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out hover:bg-zinc-300 group-data-[selected]:bg-zinc-950 group-data-[focus-visible]:outline-2 group-data-[focus-visible]:outline-blue-500 group-data-[selected]:hover:bg-zinc-700 dark:bg-zinc-800 dark:group-data-[selected]:bg-zinc-50 dark:group-data-[selected]:hover:bg-zinc-300">
+				<span
+					aria-hidden="true"
+					className="spring-bounce-0 spring-duration-200 size-4.5 pointer-events-none inline-block rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[selected]:translate-x-4 dark:bg-zinc-950"
+				/>
+			</div>
+			<span className="text-xs">{children}</span>
+		</Switch>
 	)
 }

@@ -10,7 +10,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 		<Demo
 			{...rest}
 			title={
-				<DemoSwitch checked={tabularNums} onChange={setTabularNums}>
+				<DemoSwitch isSelected={tabularNums} onChange={setTabularNums}>
 					<code className="font-semibold">tabular-nums</code>
 				</DemoSwitch>
 			}
