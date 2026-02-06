@@ -39,7 +39,7 @@
 
 	:focus-visible,
 	[data-rac][data-focus-visible] {
-		outline: 2px solid theme(colors.blue.500);
+		@apply outline;
 	}
 }
 
@@ -49,7 +49,7 @@
 	}
 
 	.link-underline {
-		@apply ease-out-quad hover:text-primary underline decoration-zinc-300 decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current focus-visible:rounded dark:decoration-zinc-600;
+		@apply ease-out-quad hover:text-primary underline decoration-zinc-300 decoration-[1px] underline-offset-[0.3em] transition-[color,text-decoration-color] hover:decoration-current dark:decoration-zinc-600;
 	}
 
 	.btn {
@@ -75,6 +75,10 @@
 }
 
 @layer utilities {
+	.outline {
+		@apply outline-offset [:where(&)]:rounded;
+	}
+
 	.text-primary {
 		@apply text-zinc-950 dark:text-zinc-50;
 	}
@@ -122,5 +126,4 @@
 			margin: 0;
 		}
 	}
-
 }

@@ -220,7 +220,7 @@ export function DemoMenuItems({
 				'animate-pop-in min-w-[var(--trigger-width)] origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
 		>
-			<Menu className="outline-none">{children}</Menu>
+			<Menu>{children}</Menu>
 		</Popover>
 	)
 }
@@ -270,9 +270,12 @@ export function DemoSwitch({
 		<Switch
 			isSelected={isSelected}
 			onChange={onChange}
-			className={clsx(className, 'group flex items-center gap-2 p-1')}
+			className={clsx(
+				className,
+				'group flex items-center gap-2 p-1 data-[focus-visible]:outline-none'
+			)}
 		>
-			<div className="dark:group-data-[hovered]:bg-zinc-750 p-0.75 relative flex h-6 w-10 shrink-0 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out group-data-[hovered]:bg-zinc-300 group-data-[selected]:bg-zinc-950 group-data-[selected]:group-data-[hovered]:bg-zinc-700 group-data-[focus-visible]:outline-2 group-data-[focus-visible]:outline-blue-500 dark:bg-zinc-800 dark:group-data-[selected]:bg-zinc-50 dark:group-data-[selected]:group-data-[hovered]:bg-zinc-300">
+			<div className="dark:group-data-[hovered]:bg-zinc-750 p-0.75 relative flex h-6 w-10 shrink-0 rounded-full bg-zinc-200 transition-colors duration-200 ease-in-out group-data-[hovered]:bg-zinc-300 group-data-[selected]:bg-zinc-950 group-data-[selected]:group-data-[hovered]:bg-zinc-700 group-data-[focus-visible]:outline dark:bg-zinc-800 dark:group-data-[selected]:bg-zinc-50 dark:group-data-[selected]:group-data-[hovered]:bg-zinc-300">
 				<span
 					aria-hidden="true"
 					className="spring-bounce-0 spring-duration-200 size-4.5 pointer-events-none inline-block rounded-full bg-white shadow-lg ring-0 transition-transform group-data-[selected]:translate-x-4 dark:bg-zinc-950"

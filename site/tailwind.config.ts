@@ -45,6 +45,15 @@ export default {
 			boxShadow: {
 				px: '0 0 0 1px rgb(0 0 0 / 0.05)'
 			},
+			outlineWidth: {
+				DEFAULT: '2px'
+			},
+			outlineColor: {
+				DEFAULT: 'theme(colors.blue.500)'
+			},
+			outlineOffset: {
+				DEFAULT: '2px'
+			},
 			colors: {
 				accent: 'var(--accent)',
 				zinc: {
