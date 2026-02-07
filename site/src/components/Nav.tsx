@@ -152,12 +152,6 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 
 function NavLinkActive() {
 	return (
-		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			transition={{ duration: 0.15 }}
-			className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-		/>
+		<div className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none" />
 	)
 }
