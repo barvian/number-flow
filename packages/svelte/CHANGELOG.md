@@ -1,5 +1,12 @@
 # @number-flow/svelte
 
+## 0.3.11
+
+### Patch Changes
+
+- Updated dependencies [[`4a6c26e`](https://github.com/barvian/number-flow/commit/4a6c26efe13d6ffc1b84ea75accf511f63669eb9)]:
+  - number-flow@0.5.10
+
 ## 0.3.10
 
 ### Patch Changes
