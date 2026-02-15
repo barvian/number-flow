@@ -68,8 +68,10 @@ export const charHeight = 'var(--number-flow-char-height, 1em)'
 
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
-export const maskHeight = 'var(--number-flow-mask-height, 0.25em)'
-export const halfMaskHeight = `calc(${maskHeight} / 2)`
+
+// Use round() to avoid fractional pixels which fixes alignment in Safari:
+export const halfMaskHeight = `round(nearest, calc(var(--number-flow-mask-height, 0.25em) / 2), 1px)`
+export const maskHeight = `calc(${halfMaskHeight} * 2)`
 const maskWidth = 'var(--number-flow-mask-width, 0.5em)'
 const scaledMaskWidth = `calc(${maskWidth} / var(--scale-x))`
 
