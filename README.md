@@ -10,3 +10,7 @@ An animated number component for React, Vue, Svelte, and TS/JS.
 ## Documentation
 
 For full documentation, visit [number-flow.barvian.me](https://number-flow.barvian.me).
+
+## You may also like
+
+* [TextMorph](https://github.com/lochie/torph) - An animated text component by [Lochie Axon](https://x.com/lochieaxon).
