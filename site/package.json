@@ -23,8 +23,8 @@
 		"@radix-ui/react-slider": "^1.2.2",
 		"@react-aria/utils": "^3.31.0",
 		"@types/lodash": "^4.17.13",
-		"@types/react": "^18",
-		"@types/react-dom": "^18",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
 		"astro": "^5.0.5",
 		"astro-font": "^0.1.81",
 		"bits-ui": "^0.21.16",
@@ -37,9 +37,9 @@
 		"motion": "^11.14.4",
 		"nanostores": "^0.11.3",
 		"number-flow": "workspace:*",
-		"react": "^19.2.0",
+		"react": "19.3.0-canary-e8c63626-20260213",
 		"react-aria-components": "^1.15.1",
-		"react-dom": "^19.2.0",
+		"react-dom": "19.3.0-canary-e8c63626-20260213",
 		"svelte": "^5",
 		"tailwindcss": "^3.4.16",
 		"tailwindcss-spring": "^1.0.1",
@@ -59,5 +59,11 @@
 		"tw-reset": "^0.0.5",
 		"unist-util-find-after": "^5.0.0",
 		"unist-util-visit": "^5.0.0"
+	},
+	"pnpm": {
+		"overrides": {
+			"react": "19.3.0-canary-e8c63626-20260213",
+			"react-dom": "19.3.0-canary-e8c63626-20260213"
+		}
 	}
 }

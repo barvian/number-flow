@@ -8,6 +8,7 @@ import Demo, {
 } from '@/components/Demo'
 import NumberFlow, { type Trend } from '@number-flow/react'
 import useCycle from '@/hooks/useCycle'
+import { Label } from 'react-aria-components'
 
 const NUMBERS = [20, 19]
 
@@ -29,10 +30,12 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 			{...rest}
 			title={
 				<DemoMenu>
-					<DemoMenuButton className="gap-1">
-						<code className="text-muted">trend:</code>
-						<code className="font-semibold">{option}</code>
-					</DemoMenuButton>
+					<Label className="flex items-baseline ps-1">
+						<code className="text-muted text-xs">trend:</code>
+						<DemoMenuButton>
+							<code className="font-semibold">{option}</code>
+						</DemoMenuButton>
+					</Label>
 					<DemoMenuItems>
 						<DemoMenuItem
 							textValue="default"

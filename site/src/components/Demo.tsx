@@ -17,6 +17,7 @@ import {
 } from 'react-aria-components'
 import { Check, ChevronDown } from 'lucide-react'
 import AnimateHeightFragment from './AnimateHeightFragment'
+import { Freeze } from './Freeze'
 
 type TabValue = 'preview' | 'code'
 
@@ -192,7 +193,7 @@ export function DemoMenuButton({
 		<Button
 			className={clsx(
 				className,
-				'btn-secondary group flex h-8 items-center rounded-md px-2 text-xs transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)]'
+				'btn-secondary group flex h-8 items-center rounded-md pe-2 ps-2.5 text-xs transition duration-[.16s] ease-[cubic-bezier(.4,0,.2,1)]'
 			)}
 		>
 			{children}
@@ -217,10 +218,14 @@ export function DemoMenuItems({
 			offset={6}
 			className={clsx(
 				className,
-				'min-w-[var(--trigger-width)] origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] transition-[opacity,transform] duration-[.12s] ease-out data-[entering]:scale-[.96] data-[exiting]:scale-[.96] data-[entering]:opacity-0 data-[exiting]:opacity-0 dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
+				'origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] transition-[opacity,transform] duration-[.12s] ease-out data-[entering]:scale-[.96] data-[exiting]:scale-[.96] data-[entering]:opacity-0 data-[exiting]:opacity-0 dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
 		>
-			<Menu>{children}</Menu>
+			{({ isExiting }) => (
+				<Freeze frozen={isExiting}>
+					<Menu>{children}</Menu>
+				</Freeze>
+			)}
 		</Popover>
 	)
 }
@@ -245,8 +250,7 @@ export function DemoMenuItem({
 			textValue={textValue}
 			className={clsx(
 				className,
-				isDisabled ? 'pr-2' : 'pr-4',
-				'dark:data-[focused]:bg-white/12.5 flex w-full items-center gap-2 rounded-lg py-2 pl-2 text-xs font-medium data-[disabled]:cursor-default data-[focused]:bg-black/5'
+				'dark:data-[focused]:bg-white/12.5 grid w-full cursor-default grid-cols-[1fr_1rem] items-center gap-2 rounded-lg p-2 text-xs font-medium data-[focused]:bg-black/5'
 			)}
 		>
 			{children}
