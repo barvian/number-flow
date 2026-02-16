@@ -43,7 +43,7 @@ export default function FrameworkMenu({
 				placement="bottom start"
 				offset={6}
 				crossOffset={-6}
-				className="animate-pop-in min-w-32 origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-black/[8%] dark:bg-zinc-950 dark:ring-inset dark:ring-white/10"
+				className="min-w-32 origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-black/[8%] transition-[opacity,transform] duration-[.12s] ease-out data-[entering]:scale-[.96] data-[exiting]:scale-[.96] data-[entering]:opacity-0 data-[exiting]:opacity-0 dark:bg-zinc-950 dark:ring-inset dark:ring-white/10"
 			>
 				<Menu>
 					{Object.entries(FRAMEWORKS).map(([id, framework]) => {

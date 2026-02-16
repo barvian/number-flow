@@ -217,7 +217,7 @@ export function DemoMenuItems({
 			offset={6}
 			className={clsx(
 				className,
-				'animate-pop-in min-w-[var(--trigger-width)] origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
+				'min-w-[var(--trigger-width)] origin-top-left rounded-lg bg-white p-1.5 shadow-sm ring ring-inset ring-black/[8%] transition-[opacity,transform] duration-[.12s] ease-out data-[entering]:scale-[.96] data-[exiting]:scale-[.96] data-[entering]:opacity-0 data-[exiting]:opacity-0 dark:bg-zinc-950 dark:shadow-none dark:ring-white/10'
 			)}
 		>
 			<Menu>{children}</Menu>

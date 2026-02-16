@@ -68,17 +68,10 @@ export default {
 					to: {
 						transform: 'translateX(-100%)'
 					}
-				},
-				'pop-in': {
-					from: {
-						opacity: '0',
-						transform: 'scale(.96)'
-					}
 				}
 			},
 			animation: {
-				'logo-wall': 'logo-wall 60s linear infinite',
-				'pop-in': 'pop-in .11s ease'
+				'logo-wall': 'logo-wall 60s linear infinite'
 			},
 			screens: {
 				xs: '20rem',
