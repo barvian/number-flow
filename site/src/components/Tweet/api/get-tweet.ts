@@ -23,7 +23,7 @@ function getToken(id: string) {
 /**
  * Fetches a tweet from the Twitter syndication API.
  */
-export async function getTweet(id: string, fetchOptions?: RequestInit): Promise<Tweet | undefined> {
+export async function getTweet(id: string, fetchOptions?: RequestInit): Promise<Tweet> {
 	if (id.length > 40 || !TWEET_ID.test(id)) {
 		throw new Error(`Invalid tweet id: ${id}`)
 	}
@@ -58,10 +58,16 @@ export async function getTweet(id: string, fetchOptions?: RequestInit): Promise<
 	const data = isJson ? await res.json() : undefined
 
 	if (res.ok) return data
-	if (res.status === 404) return
+	if (res.status === 404) {
+		throw new TwitterApiError({
+			message: typeof data?.error === 'string' ? data.error : `Tweet ${id} not found.`,
+			status: res.status,
+			data
+		})
+	}
 
 	throw new TwitterApiError({
-		message: typeof data.error === 'string' ? data.error : 'Bad request.',
+		message: typeof data?.error === 'string' ? data.error : 'Bad request.',
 		status: res.status,
 		data
 	})
