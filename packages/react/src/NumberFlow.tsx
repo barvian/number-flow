@@ -164,6 +164,7 @@ class NumberFlowImpl extends React.Component<
 				innerRef,
 				className,
 				data,
+				nonce,
 				willChange,
 				isolate,
 				group,
@@ -181,8 +182,9 @@ class NumberFlowImpl extends React.Component<
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:
 				class={className}
+				nonce={nonce}
 				{...rest}
-				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
+				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data, { nonce }) }}
 				suppressHydrationWarning
 				digits={serialize(digits)}
 				// Make sure data is set last, everything else is updated:

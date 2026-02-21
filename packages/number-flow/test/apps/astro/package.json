@@ -6,6 +6,7 @@
 	"scripts": {
 		"dev": "astro dev --port 3039",
 		"build": "astro build",
+		"start": "astro preview --port 3039",
 		"preview": "astro preview --port 3039",
 		"astro": "astro",
 		"test": "playwright test",

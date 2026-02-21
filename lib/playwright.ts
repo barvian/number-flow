@@ -78,9 +78,9 @@ export const config = defineConfig({
 		// },
 	],
 
-	/* Run your local dev server before starting the tests */
+	/* Build and run production server before starting tests */
 	webServer: {
-		command: 'pnpm dev',
+		command: 'pnpm build && pnpm start',
 		url: 'http://localhost:3039',
 		cwd: '.',
 		reuseExistingServer: !process.env.CI

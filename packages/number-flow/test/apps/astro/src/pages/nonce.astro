@@ -1,0 +1,17 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { renderInnerHTML } from 'number-flow'
+---
+
+<Layout>
+	<number-flow nonce="test-nonce" set:html={renderInnerHTML(42, { nonce: 'test-nonce' })} />
+</Layout>
+
+<script>
+	import 'number-flow'
+
+	const flow = document.getElementsByTagName('number-flow')[0]
+	if (flow) {
+		flow.update(42)
+	}
+</script>

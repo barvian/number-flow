@@ -1,6 +1,21 @@
 import webpack from 'webpack'
+
+const nonceCsp = "style-src 'self' 'nonce-test-nonce'"
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	async headers() {
+		return [
+			{
+				source: '/nonce',
+				headers: [
+					{
+						key: 'Content-Security-Policy',
+						value: nonceCsp
+					}
+				]
+			}
+		]
+	},
 	webpack(config, context) {
 		config.plugins.push(
 			new webpack.DefinePlugin({

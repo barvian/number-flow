@@ -8,6 +8,13 @@ export default defineNuxtConfig({
 	devServer: {
 		port: 3039
 	},
+	routeRules: {
+		'/nonce': {
+			headers: {
+				'content-security-policy': "style-src 'self' 'nonce-test-nonce'"
+			}
+		}
+	},
 	modules: ['@nuxt/fonts'],
 	css: [
 		// CSS file in the project

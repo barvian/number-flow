@@ -376,6 +376,33 @@ Note that "excessive use of `will-change` will result in excessive memory use" (
 ```
 </Match>
 
+<h3>
+	<code>nonce<Type>: string</Type></code>
+</h3>
+
+Passes a [CSP nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/nonce) through to NumberFlow's inline `<style>` elements<Match><Fragment slot='vanilla' /> during SSR and hydration</Match>.
+
+<Match react>
+```jsx
+<NumberFlow value={123} nonce={myNonce} />
+```
+</Match>
+<Match vue>
+```vue
+<NumberFlow :value="123" :nonce="myNonce" />
+```
+</Match>
+<Match svelte>
+```svelte
+<NumberFlow value={123} nonce={myNonce} />
+```
+</Match>
+<Match vanilla>
+```html
+<number-flow nonce="..." />
+```
+</Match>
+
 <Match vue>
 ---
 <Heading value="Emits"/>
@@ -574,19 +601,21 @@ If a <Comp/> affects another <Comp/>'s position, you can wrap them in a <GroupCo
 </Match>
 
 <Match vanilla>
-<h3><code>renderInnerHTML<Type>: (value: Value, props: Props) => string</Type></code></h3>
+<h3><code>renderInnerHTML<Type>: (value: Value, opts?: RenderOptions) => string</Type></code></h3>
 Renders the inner HTML of a <Comp/> for SSR (server-side rendering). Here's a usage example with [Astro](https://astro.build):
 ```astro
 ---
 import { renderInnerHTML } from 'number-flow'
 ---
 <number-flow
+	nonce="..."
 	set:html={renderInnerHTML(123, {
 		// Make sure to pass in the `locales`, `format`,
 		// `numberPrefix`, and `numberSuffix`
 		// properties you're using:
 		locales: 'en-US',
-		format: { notation: 'compact' }
+		format: { notation: 'compact' },
+		nonce: '...'
 	})}
 />
 
@@ -596,11 +625,15 @@ import { renderInnerHTML } from 'number-flow'
 	const flow = document.querySelector('number-flow')
 	flow.locales = 'en-US'
 	flow.format = { notation: 'compact' }
+	flow.nonce = myNonce
 	// The first .update() call hydrates the component.
 	// Make sure to pass the same value as you did in `renderInnerHTML()`:
 	flow.update(123)
 </script>
 ```
+
+If you use `number-flow/lite`, `renderInnerHTML` also supports
+`renderInnerHTML(data, { nonce })`.
 </Match>
 
 <Match as="h3">

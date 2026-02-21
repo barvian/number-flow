@@ -39,17 +39,14 @@ const renderPart = (part: KeyedNumberPart) =>
 const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
-export const renderInnerHTML = (data: Data) =>
+export const renderInnerHTML = (data: Data, { nonce }: { nonce?: string } = {}) =>
 	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
-			><style>
+			><style${nonce ? ` nonce="${nonce}"` : ''}>
 				${styles}</style
 			><span role="img" aria-label="${data.valueAsString}"
 				>${renderSection(data.pre, 'left')}<span part="number" class="number"
-					>${renderSection(data.integer, 'integer')}${renderSection(
-						data.fraction,
-						'fraction'
-					)}</span
+					>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
 				>${renderSection(data.post, 'right')}</span
 			></template
 		><span
