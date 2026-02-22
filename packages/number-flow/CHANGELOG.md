@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.11
+
+### Patch Changes
+
+- Add CSP strategies (see [#170](https://github.com/barvian/number-flow/issues/170)) ([`a7b3b0b`](https://github.com/barvian/number-flow/commit/a7b3b0b581fc05b914ea9e1ab1441da75b30bb67))
+
 ## 0.5.10
 
 ### Patch Changes
