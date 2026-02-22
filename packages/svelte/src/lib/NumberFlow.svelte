@@ -102,8 +102,8 @@
 	__svelte_trend={trend}
 	__svelte_plugins={plugins}
 	__svelte_digits={digits}
-	nonce={nonce}
+	{nonce}
 	{data}
 >
-	{@html BROWSER ? undefined : renderInnerHTML(data, { nonce })}
+	{@html BROWSER ? undefined : renderInnerHTML(data, { nonce, elementSuffix: '-svelte' })}
 </number-flow-svelte>

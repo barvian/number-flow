@@ -4,8 +4,9 @@ import {
 } from 'number-flow/lite'
 import { onMount } from 'svelte'
 import { derived, readable } from 'svelte/store'
+import { buildStyles } from 'number-flow/csp'
 
-export { styles } from 'number-flow/csp'
+export const styles = buildStyles('-svelte')
 export type { Value, Format, Trend } from 'number-flow/lite'
 export * from 'number-flow/plugins'
 export { default as NumberFlowGroup } from './NumberFlowGroup.svelte'

@@ -39,8 +39,8 @@ const renderPart = (part: KeyedNumberPart) =>
 const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
-export const fallbackStyles = css`
-	[data-number-flow-fallback] {
+export const renderFallbackStyles = (elementSuffix = '') => css`
+	number-flow${elementSuffix} > span {
 		font-kerning: none;
 		display: inline-block;
 		line-height: ${charHeight} !important;
@@ -48,7 +48,10 @@ export const fallbackStyles = css`
 	}
 `
 
-export const renderInnerHTML = (data: Data, { nonce }: { nonce?: string } = {}) =>
+export const renderInnerHTML = (
+	data: Data,
+	{ nonce, elementSuffix }: { nonce?: string; elementSuffix?: string } = {}
+) =>
 	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
 			><style${nonce ? ` nonce="${nonce}"` : ''}>${styles}</style
@@ -57,5 +60,5 @@ export const renderInnerHTML = (data: Data, { nonce }: { nonce?: string } = {}) 
 					>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
 				>${renderSection(data.post, 'right')}</span
 			></template
-		><style${nonce ? ` nonce="${nonce}"` : ''}>${fallbackStyles}</style
-		><span data-number-flow-fallback>${data.valueAsString}</span>`
+		><style${nonce ? ` nonce="${nonce}"` : ''}>${renderFallbackStyles(elementSuffix)}</style
+		><span>${data.valueAsString}</span>`

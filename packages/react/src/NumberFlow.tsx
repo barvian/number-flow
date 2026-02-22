@@ -187,7 +187,9 @@ class NumberFlowImpl extends React.Component<
 				class={className}
 				nonce={nonce}
 				{...rest}
-				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data, { nonce }) }}
+				dangerouslySetInnerHTML={{
+					__html: BROWSER ? '' : renderInnerHTML(data, { nonce, elementSuffix: '-react' })
+				}}
 				suppressHydrationWarning
 				digits={serialize(digits)}
 				// Make sure data is set last, everything else is updated:

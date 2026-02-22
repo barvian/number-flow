@@ -2,4 +2,4 @@
 	import NumberFlow from '$lib/index.js'
 </script>
 
-<NumberFlow value={42} data-testid="flow1" />
+<NumberFlow value={42} />

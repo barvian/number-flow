@@ -3,7 +3,8 @@ import {
 	prefersReducedMotion as _prefersReducedMotion,
 	canAnimate as _canAnimate
 } from 'number-flow/lite'
-export { styles } from 'number-flow/csp'
+import { buildStyles } from 'number-flow/csp'
+export const styles = buildStyles('-react')
 export * from 'number-flow/plugins'
 export { default } from './NumberFlow'
 export * from './NumberFlow'

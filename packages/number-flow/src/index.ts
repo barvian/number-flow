@@ -2,7 +2,8 @@ import NumberFlowLite from './lite'
 import { define } from './util/dom'
 import { renderInnerHTML as defaultRenderInnerHTML } from './ssr'
 import { formatToData, type Value, type Format } from './formatter'
-export { styles } from './csp'
+import { buildStyles } from './csp'
+export const styles = buildStyles()
 export * from './lite'
 
 export const CONNECT_EVENT = 'number-flow-connect'

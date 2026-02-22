@@ -1,4 +1,5 @@
 import runtimeStyles from './styles'
-import { styles as ssrStyles, fallbackStyles as ssrFallbackStyles } from './ssr'
+import { styles as ssrStyles, renderFallbackStyles } from './ssr'
 
-export const styles = [ssrStyles, ssrFallbackStyles, runtimeStyles] as const
+export const buildStyles = (elementSuffix?: string) =>
+	[ssrStyles, renderFallbackStyles(elementSuffix), runtimeStyles] as const
