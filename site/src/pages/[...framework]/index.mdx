@@ -21,6 +21,8 @@ import Union from '@/components/Union.astro'
 import Link from '@/components/Link.astro'
 import Note from '@/components/Note.astro'
 import Group from './examples/_Group/index.astro'
+import CSP from './_CSP.astro'
+
 export { getStaticPaths } from '@/lib/framework'
 export const components = {a: Link, pre: Pre}
 
@@ -402,6 +404,14 @@ Passes a [CSP nonce](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference
 <number-flow nonce="..." />
 ```
 </Match>
+
+<details>
+<summary>Hash-based CSP instructions</summary>
+NumberFlow exports its styles as strings so you can hash them
+for your `Content-Security-Policy`. Here's an example:
+
+<CSP />
+</details>
 
 <Match vue>
 ---

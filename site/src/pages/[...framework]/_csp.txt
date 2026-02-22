@@ -1,0 +1,6 @@
+import { styles } from '[pkg]'
+import { createHash } from 'node:crypto'
+
+const headers = {
+	'Content-Security-Policy': `style-src ${styles.map((style) => `'sha256-${createHash('sha256').update(style).digest('base64')}'`).join(' ')}`
+}
