@@ -14,7 +14,7 @@ export const prerender = false
 <script>
 	import 'number-flow'
 
-	Array.from(document.getElementsByTagName('number-flow')).forEach((flow) => {
+	document.querySelectorAll('number-flow').forEach((flow) => {
 		flow.update(42)
 	})
 </script>

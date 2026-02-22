@@ -7,7 +7,7 @@ export const ServerSafeHTMLElement = BROWSER
 	? HTMLElement
 	: (class {} as unknown as typeof HTMLElement) // for types
 
-const styles = css`
+export const styles = css`
 	:host {
 		display: inline-block;
 		direction: ltr;
@@ -39,30 +39,23 @@ const renderPart = (part: KeyedNumberPart) =>
 const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
-export const fallbackStyles = `font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;`
-
-// Fallback for browsers that don't support DSD:
-const renderFallback = (valueAsString: string, nonce?: string) => {
-	if (!nonce) return html`<span style="${fallbackStyles}">${valueAsString}</span>`
-	const scope = crypto.randomUUID().replace(/-/g, '').slice(0, 8)
-	const styles = css`
-		[data-number-flow-fallback='${scope}'] {
-			${fallbackStyles}
-		}
-	`
-	return html`<style nonce="${nonce}">
-			${styles}</style
-		><span data-number-flow-fallback="${scope}">${valueAsString}</span>`
-}
+export const fallbackStyles = css`
+	[data-number-flow-fallback] {
+		font-kerning: none;
+		display: inline-block;
+		line-height: ${charHeight} !important;
+		padding: ${maskHeight} 0;
+	}
+`
 
 export const renderInnerHTML = (data: Data, { nonce }: { nonce?: string } = {}) =>
 	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
-			><style${nonce ? ` nonce="${nonce}"` : ''}>
-				${styles}</style
+			><style${nonce ? ` nonce="${nonce}"` : ''}>${styles}</style
 			><span role="img" aria-label="${data.valueAsString}"
 				>${renderSection(data.pre, 'left')}<span part="number" class="number"
 					>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
 				>${renderSection(data.post, 'right')}</span
 			></template
-		>${renderFallback(data.valueAsString, nonce)}`
+		><style${nonce ? ` nonce="${nonce}"` : ''}>${fallbackStyles}</style
+		><span data-number-flow-fallback>${data.valueAsString}</span>`

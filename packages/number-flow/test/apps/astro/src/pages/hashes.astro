@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { renderInnerHTML } from 'number-flow'
+export const prerender = false
+---
+
+<Layout>
+	<number-flow set:html={renderInnerHTML(42)} />
+</Layout>
+
+<script>
+	import 'number-flow'
+
+	const flow = document.querySelector('number-flow')
+	flow?.update(42)
+</script>

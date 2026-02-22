@@ -3,6 +3,7 @@ import {
 	prefersReducedMotion as _prefersReducedMotion,
 	canAnimate as _canAnimate
 } from 'number-flow/lite'
+export { styles } from 'number-flow/csp'
 export * from 'number-flow/plugins'
 export { default } from './NumberFlow'
 export * from './NumberFlow'

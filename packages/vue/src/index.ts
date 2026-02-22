@@ -4,6 +4,7 @@ import NumberFlowElement, {
 	define,
 	prefersReducedMotion
 } from 'number-flow/lite'
+export { styles } from 'number-flow/csp'
 
 export { default as NumberFlowGroup } from './NumberFlowGroup.vue'
 

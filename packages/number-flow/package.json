@@ -46,6 +46,11 @@
 			"import": "./dist/lite.mjs",
 			"require": "./dist/lite.js"
 		},
+		"./csp": {
+			"types": "./dist/csp.d.ts",
+			"import": "./dist/csp.mjs",
+			"require": "./dist/csp.js"
+		},
 		"./group": {
 			"types": "./dist/group.d.ts",
 			"import": "./dist/group.mjs",
