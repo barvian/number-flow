@@ -11,7 +11,7 @@ export default defineNuxtConfig({
 	routeRules: {
 		'/nonce': {
 			headers: {
-				'content-security-policy': "style-src 'self' 'nonce-test-nonce'"
+				'Content-Security-Policy': "style-src 'none' 'nonce-test-nonce'"
 			}
 		}
 	},

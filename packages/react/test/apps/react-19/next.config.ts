@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
 import webpack from 'webpack'
 
-const nonceCsp = "style-src 'self' 'nonce-test-nonce'"
+const nonceCsp = "style-src 'none' 'nonce-test-nonce'"
 
 const nextConfig: NextConfig = {
 	async headers() {

@@ -39,6 +39,22 @@ const renderPart = (part: KeyedNumberPart) =>
 const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
+export const fallbackStyles = `font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;`
+
+// Fallback for browsers that don't support DSD:
+const renderFallback = (valueAsString: string, nonce?: string) => {
+	if (!nonce) return html`<span style="${fallbackStyles}">${valueAsString}</span>`
+	const scope = crypto.randomUUID().replace(/-/g, '').slice(0, 8)
+	const styles = css`
+		[data-number-flow-fallback='${scope}'] {
+			${fallbackStyles}
+		}
+	`
+	return html`<style nonce="${nonce}">
+			${styles}</style
+		><span data-number-flow-fallback="${scope}">${valueAsString}</span>`
+}
+
 export const renderInnerHTML = (data: Data, { nonce }: { nonce?: string } = {}) =>
 	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
@@ -49,7 +65,4 @@ export const renderInnerHTML = (data: Data, { nonce }: { nonce?: string } = {}) 
 					>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
 				>${renderSection(data.post, 'right')}</span
 			></template
-		><span
-			style="font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;"
-			>${data.valueAsString}</span
-		>` // ^ fallback for browsers that don't support DSD
+		>${renderFallback(data.valueAsString, nonce)}`
