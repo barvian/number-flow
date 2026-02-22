@@ -15,6 +15,7 @@ export default defineConfig(({ mode }) => ({
 			entry: {
 				index: resolve(__dirname, 'src/index.ts'),
 				lite: resolve(__dirname, 'src/lite.ts'),
+				csp: resolve(__dirname, 'src/csp.ts'),
 				group: resolve(__dirname, 'src/group.ts'),
 				plugins: resolve(__dirname, 'src/plugins/index.ts')
 			},

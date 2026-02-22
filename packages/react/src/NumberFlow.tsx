@@ -52,7 +52,10 @@ type NumberFlowImplProps = BaseProps & {
 const formatters: Record<string, Intl.NumberFormat> = {}
 
 // Tiny workaround to support React 19 until it's released:
-const serialize = isReact19 ? (p: any) => p : JSON.stringify
+function identity<T>(v: T) {
+	return v
+}
+const serialize = isReact19 ? identity : JSON.stringify
 
 function splitProps<T extends Record<string, any>>(
 	props: T
@@ -164,6 +167,7 @@ class NumberFlowImpl extends React.Component<
 				innerRef,
 				className,
 				data,
+				nonce,
 				willChange,
 				isolate,
 				group,
@@ -181,8 +185,11 @@ class NumberFlowImpl extends React.Component<
 				data-will-change={willChange ? '' : undefined}
 				// Have to rename this:
 				class={className}
+				nonce={nonce}
 				{...rest}
-				dangerouslySetInnerHTML={{ __html: BROWSER ? '' : renderInnerHTML(data) }}
+				dangerouslySetInnerHTML={{
+					__html: BROWSER ? '' : renderInnerHTML(data, { nonce, elementSuffix: '-react' })
+				}}
 				suppressHydrationWarning
 				digits={serialize(digits)}
 				// Make sure data is set last, everything else is updated:

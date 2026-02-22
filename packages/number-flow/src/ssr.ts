@@ -7,7 +7,7 @@ export const ServerSafeHTMLElement = BROWSER
 	? HTMLElement
 	: (class {} as unknown as typeof HTMLElement) // for types
 
-const styles = css`
+export const styles = css`
 	:host {
 		display: inline-block;
 		direction: ltr;
@@ -39,20 +39,26 @@ const renderPart = (part: KeyedNumberPart) =>
 const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
-export const renderInnerHTML = (data: Data) =>
+export const renderFallbackStyles = (elementSuffix = '') => css`
+	number-flow${elementSuffix} > span {
+		font-kerning: none;
+		display: inline-block;
+		line-height: ${charHeight} !important;
+		padding: ${maskHeight} 0;
+	}
+`
+
+export const renderInnerHTML = (
+	data: Data,
+	{ nonce, elementSuffix }: { nonce?: string; elementSuffix?: string } = {}
+) =>
 	// shadowroot="open" non-standard attribute for old Chrome:
 	html`<template shadowroot="open" shadowrootmode="open"
-			><style>
-				${styles}</style
+			><style${nonce ? ` nonce="${nonce}"` : ''}>${styles}</style
 			><span role="img" aria-label="${data.valueAsString}"
 				>${renderSection(data.pre, 'left')}<span part="number" class="number"
-					>${renderSection(data.integer, 'integer')}${renderSection(
-						data.fraction,
-						'fraction'
-					)}</span
+					>${renderSection(data.integer, 'integer')}${renderSection(data.fraction, 'fraction')}</span
 				>${renderSection(data.post, 'right')}</span
 			></template
-		><span
-			style="font-kerning: none; display: inline-block; line-height: ${charHeight} !important; padding: ${maskHeight} 0;"
-			>${data.valueAsString}</span
-		>` // ^ fallback for browsers that don't support DSD
+		><style${nonce ? ` nonce="${nonce}"` : ''}>${renderFallbackStyles(elementSuffix)}</style
+		><span>${data.valueAsString}</span>`

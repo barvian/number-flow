@@ -1,4 +1,9 @@
 import tailwindcss from '@tailwindcss/vite'
+import { createHash } from 'node:crypto'
+import { styles } from '@number-flow/vue'
+
+const hash = (style: string) => `'sha256-${createHash('sha256').update(style).digest('base64')}'`
+const hashesCsp = `style-src ${styles.map(hash).join(' ')}`
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -7,6 +12,18 @@ export default defineNuxtConfig({
 	srcDir: 'src/',
 	devServer: {
 		port: 3039
+	},
+	routeRules: {
+		'/nonce': {
+			headers: {
+				'Content-Security-Policy': "style-src 'nonce-test-nonce'"
+			}
+		},
+		'/hashes': {
+			headers: {
+				'Content-Security-Policy': hashesCsp
+			}
+		}
 	},
 	modules: ['@nuxt/fonts'],
 	css: [

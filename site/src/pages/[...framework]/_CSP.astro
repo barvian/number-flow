@@ -1,0 +1,9 @@
+---
+import Code from '@/components/Code.astro'
+import { FRAMEWORKS, getFramework } from '@/lib/framework'
+import cspInstructions from './_csp.txt?raw'
+
+const { pkg } = FRAMEWORKS[getFramework(Astro.params)!]
+---
+
+<Code code={cspInstructions.replaceAll('[pkg]', pkg)} lang="ts" />

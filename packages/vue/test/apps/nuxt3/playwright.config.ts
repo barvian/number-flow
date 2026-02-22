@@ -1,11 +1,1 @@
-import { defineConfig } from '@playwright/test'
-import { config } from '../../../../../lib/playwright'
-
-// Use prod build cause it includes hydration errors but excludes random Vite stuff:
-export default defineConfig({
-	...config,
-	webServer: {
-		...config.webServer,
-		command: 'pnpm build && pnpm start'
-	}
-})
+export { config as default } from '../../../../../lib/playwright'

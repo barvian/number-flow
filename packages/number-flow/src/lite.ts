@@ -145,6 +145,7 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 
 			// Add stylesheet; don't use adoptedStylesheets because it works unreliably in Safari:
 			const style = document.createElement('style')
+			if (this.nonce) style.nonce = this.nonce
 			style.textContent = styles
 			this.shadowRoot!.appendChild(style)
 

@@ -1,7 +1,12 @@
 import { trimSlash } from './url'
+import { name as vanillaPkgName } from '/../packages/number-flow/package.json'
+import { name as reactPkgName } from '/../packages/react/package.json'
+import { name as vuePkgName } from '/../packages/vue/package.json'
+import { name as sveltePkgName } from '/../packages/svelte/package.json'
 
 export type FrameworkData = {
 	name: string | undefined
+	pkg: string
 	pkgName: string
 	componentType: string
 	sandbox: string
@@ -12,6 +17,7 @@ export type FrameworkData = {
 export const FRAMEWORKS = {
 	react: {
 		name: 'React',
+		pkg: reactPkgName,
 		pkgName: 'NumberFlow for React',
 		componentType: 'React component',
 		sandbox: 'https://codesandbox.io/p/sandbox/r47dcw',
@@ -20,6 +26,7 @@ export const FRAMEWORKS = {
 	},
 	vue: {
 		name: 'Vue',
+		pkg: vuePkgName,
 		pkgName: 'NumberFlow for Vue',
 		componentType: 'Vue component',
 		sandbox: 'https://stackblitz.com/edit/vitejs-vite-4prbhc?file=src%2FApp.vue',
@@ -28,6 +35,7 @@ export const FRAMEWORKS = {
 	},
 	svelte: {
 		name: 'Svelte',
+		pkg: sveltePkgName,
 		pkgName: 'NumberFlow for Svelte',
 		componentType: 'Svelte component',
 		sandbox: 'https://stackblitz.com/edit/vitejs-vite-5czxuc?file=src%2FApp.svelte',
@@ -36,6 +44,7 @@ export const FRAMEWORKS = {
 	},
 	vanilla: {
 		name: 'Vanilla',
+		pkg: vanillaPkgName,
 		pkgName: 'NumberFlow',
 		componentType: 'web component',
 		sandbox: 'https://stackblitz.com/edit/vitejs-vite-ec8hg3dz?file=index.html,src%2Fmain.ts',
