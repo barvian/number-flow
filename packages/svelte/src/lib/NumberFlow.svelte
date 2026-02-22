@@ -41,6 +41,7 @@
 	export let value: Value
 	export let prefix: string | undefined = undefined
 	export let suffix: string | undefined = undefined
+	export let nonce: string | undefined = undefined
 	export let willChange = false
 
 	// Define these so they can be remapped. We set them to their defaults because
@@ -62,6 +63,7 @@
 			value: Value
 			prefix?: string
 			suffix?: string
+			nonce?: string
 			willChange?: boolean
 		}
 
@@ -100,7 +102,8 @@
 	__svelte_trend={trend}
 	__svelte_plugins={plugins}
 	__svelte_digits={digits}
+	{nonce}
 	{data}
 >
-	{@html BROWSER ? undefined : renderInnerHTML(data)}
+	{@html BROWSER ? undefined : renderInnerHTML(data, { nonce, elementSuffix: '-svelte' })}
 </number-flow-svelte>

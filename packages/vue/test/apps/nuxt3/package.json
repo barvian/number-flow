@@ -7,7 +7,6 @@
 		"build": "nuxt build",
 		"start": "PORT=3039 nuxt start",
 		"generate": "nuxt generate",
-		"postinstall": "nuxt prepare",
 		"test": "playwright test",
 		"test:ui": "playwright test --ui",
 		"test:update": "playwright test --update-snapshots"

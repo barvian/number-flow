@@ -2,7 +2,8 @@ import NumberFlowLite from './lite'
 import { define } from './util/dom'
 import { renderInnerHTML as defaultRenderInnerHTML } from './ssr'
 import { formatToData, type Value, type Format } from './formatter'
-
+import { buildStyles } from './csp'
+export const styles = buildStyles()
 export * from './lite'
 
 export const CONNECT_EVENT = 'number-flow-connect'
@@ -15,17 +16,19 @@ export const renderInnerHTML = (
 		locales,
 		format,
 		numberPrefix: prefix,
-		numberSuffix: suffix
+		numberSuffix: suffix,
+		nonce
 	}: {
 		locales?: Intl.LocalesArgument
 		format?: Intl.NumberFormatOptions
 		numberPrefix?: string
 		numberSuffix?: string
+		nonce?: string
 	} = {}
 ) => {
 	const data = formatToData(value, new Intl.NumberFormat(locales, format), prefix, suffix)
 
-	return defaultRenderInnerHTML(data)
+	return defaultRenderInnerHTML(data, { nonce })
 }
 
 export default class NumberFlow extends NumberFlowLite {

@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { renderInnerHTML } from 'number-flow'
+export const prerender = false
+---
+
+<Layout>
+	<number-flow
+		nonce="test-nonce"
+		set:html={renderInnerHTML(42, { nonce: 'test-nonce' })}
+	/><number-flow nonce="test-nonce" set:html={renderInnerHTML(42, { nonce: 'test-nonce' })} />
+</Layout>
+
+<script>
+	import 'number-flow'
+
+	document.querySelectorAll('number-flow').forEach((flow) => {
+		flow.update(42)
+	})
+</script>

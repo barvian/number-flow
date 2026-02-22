@@ -16,6 +16,7 @@ type Props = Partial<NumberFlowProps> & {
 	value: Value
 	prefix?: string
 	suffix?: string
+	nonce?: string
 	willChange?: boolean
 }
 
@@ -28,6 +29,7 @@ const {
 	value,
 	prefix,
 	suffix,
+	nonce,
 	// Couldn't find docs on this, but needs wrapper function to work:
 	trend = () => NumberFlowLite.defaultProps.trend,
 	plugins = NumberFlowLite.defaultProps.plugins,
@@ -59,7 +61,7 @@ const formatter = computed(() => new Intl.NumberFormat(locales, format))
 const data = computed(() => formatToData(value, formatter.value, prefix, suffix))
 
 // Putting this in the v-html attribute ruined tree-shaking
-const html = BROWSER ? undefined : renderInnerHTML(data.value)
+const html = BROWSER ? undefined : renderInnerHTML(data.value, { nonce, elementSuffix: '-vue' })
 
 // Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
 // for better tree-shaking:
@@ -79,6 +81,7 @@ register?.(el, data)
 		:spinTiming
 		:opacityTiming
 		:respectMotionPreference
+		:nonce
 		:data-will-change="willChange ? '' : undefined"
 		:digits
 		v-html="html"
