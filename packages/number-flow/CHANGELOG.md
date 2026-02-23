@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.5.12
+
+### Patch Changes
+
+- Only animate when ownerDocument is visible (see [#165](https://github.com/barvian/number-flow/issues/165)) ([#173](https://github.com/barvian/number-flow/pull/173))
+
 ## 0.5.11
 
 ### Patch Changes
