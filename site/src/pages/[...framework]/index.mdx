@@ -635,7 +635,7 @@ import { renderInnerHTML } from 'number-flow'
 	const flow = document.querySelector('number-flow')
 	flow.locales = 'en-US'
 	flow.format = { notation: 'compact' }
-	flow.nonce = myNonce
+	
 	// The first .update() call hydrates the component.
 	// Make sure to pass the same value as you did in `renderInnerHTML()`:
 	flow.update(123)

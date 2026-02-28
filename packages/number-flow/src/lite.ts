@@ -176,7 +176,9 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 				this._animated &&
 				(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
 				// https://github.com/barvian/number-flow/issues/9
-				visible(this)
+				visible(this) &&
+				// https://github.com/barvian/number-flow/issues/165
+				this.ownerDocument.visibilityState === 'visible'
 
 			this.plugins?.forEach((p) => p.onUpdate?.(data, prev, this))
 
