@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.6.0
+
+### Minor Changes
+
+- Remove `--number-flow-char-height` CSS property in favor of `line-height` ([`e8a8904`](https://github.com/barvian/number-flow/commit/e8a890432ef7f78661fce88ce53ac8e277ba3aa6))
+
 ## 0.5.12
 
 ### Patch Changes
