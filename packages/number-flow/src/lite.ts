@@ -384,12 +384,20 @@ abstract class Section {
 	}
 
 	protected pop(chars: Map<any, Char>) {
-		// Calculate offsets for removed before popping, to avoid layout thrashing:
+		// Batch all layout offset reads before popping, to avoid layout thrashing:
+		const positions = new Map<Char, { top: number; offset: number }>()
 		chars.forEach((char) => {
-			char.el.style.top = `${char.el.offsetTop}px`
-			char.el.style[this.justify] = `${offset(char.el, this.justify)}px`
+			positions.set(char, {
+				top: char.el.offsetTop,
+				offset: offset(char.el, this.justify)
+			})
 		})
+
+		// Batch all style writes
 		chars.forEach((char) => {
+			const pos = positions.get(char)!
+			char.el.style.top = `${pos.top}px`
+			char.el.style[this.justify] = `${pos.offset}px`
 			char.el.setAttribute('inert', '')
 			char.present = false
 		})
@@ -453,6 +461,9 @@ abstract class Section {
 
 		// Make sure to pass this in before starting to animate:
 		this.children.forEach((comp) => comp.didUpdate(rect))
+
+		// Early exit if animations are disabled
+		if (!this.flow.computedAnimated) return
 
 		const offset = rect[this.justify]
 		const dx = this._prevOffset! - offset
@@ -668,6 +679,9 @@ export class Digit extends Char<KeyedDigitPart> {
 	}
 
 	didUpdate(parentRect: DOMRect) {
+		// Early exit if animations are disabled
+		if (!this.flow.computedAnimated) return
+
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const halfWidth = rect.width / 2
