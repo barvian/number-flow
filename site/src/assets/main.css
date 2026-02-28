@@ -25,7 +25,7 @@
 	number-flow-react,
 	number-flow-vue,
 	number-flow-svelte {
-		@apply font-mac-ui;
+		@apply font-mac-ui !leading-[.85];
 	}
 
 	/* Undo Tailwind preflight button cursor pointer */

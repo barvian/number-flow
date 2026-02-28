@@ -36,7 +36,6 @@ export default function PriceWithColoredTrend({ value }: Props) {
 				currency: 'USD'
 			}}
 			className="~text-3xl/4xl font-semibold"
-			style={{ '--number-flow-char-height': '0.85em' }}
 		/>
 	)
 }

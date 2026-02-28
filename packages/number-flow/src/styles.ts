@@ -64,7 +64,6 @@ export const supportsAtProperty = (() => {
 })()
 
 // Don't use CSS.registerProperty for vars needed during SSR:
-export const charHeight = 'var(--number-flow-char-height, 1em)'
 
 // Mask technique taken from:
 // https://expensive.toys/blog/blur-vignette
@@ -84,7 +83,7 @@ const styles = css`
 		white-space: nowrap;
 		isolation: isolate; /* for .number z-index */
 		/* Technically this is only needed on the .number, but applying it here makes the ::selection the same height for the whole element: */
-		line-height: ${charHeight} !important;
+		line-height: 1;
 	}
 
 	.number,

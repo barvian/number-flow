@@ -20,8 +20,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 				<NumberFlow
 					locales="en-US"
 					style={{
-						fontVariantNumeric: tabularNums ? 'tabular-nums' : undefined,
-						'--number-flow-char-height': '0.85em'
+						fontVariantNumeric: tabularNums ? 'tabular-nums' : undefined
 					}}
 					value={value}
 					className="font-semibold"

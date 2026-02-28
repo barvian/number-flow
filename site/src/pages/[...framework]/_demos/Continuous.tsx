@@ -28,7 +28,6 @@ export default function DemoHOC({
 				<NumberFlow
 					locales="en-US"
 					plugins={useContinuous ? [continuous] : undefined}
-					style={{ '--number-flow-char-height': '0.85em' }}
 					value={value}
 					className="font-semibold"
 				/>

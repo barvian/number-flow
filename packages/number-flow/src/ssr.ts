@@ -1,6 +1,6 @@
 import type { Data, KeyedNumberPart } from './formatter'
 import { css, html } from './util/string'
-import { charHeight, halfMaskHeight, maskHeight } from './styles'
+import { halfMaskHeight, maskHeight } from './styles'
 import { BROWSER } from 'esm-env'
 
 export const ServerSafeHTMLElement = BROWSER
@@ -12,7 +12,7 @@ export const styles = css`
 		display: inline-block;
 		direction: ltr;
 		white-space: nowrap;
-		line-height: ${charHeight} !important;
+		line-height: 1;
 	}
 
 	span {
@@ -40,10 +40,13 @@ const renderSection = (section: KeyedNumberPart[], part: string) =>
 	`<span part="${part}">${section.reduce((str, p) => str + renderPart(p), '')}</span>`
 
 export const renderFallbackStyles = (elementSuffix = '') => css`
+	:where(number-flow${elementSuffix}) {
+		line-height: 1;
+	}
+
 	number-flow${elementSuffix} > span {
 		font-kerning: none;
 		display: inline-block;
-		line-height: ${charHeight} !important;
 		padding: ${maskHeight} 0;
 	}
 `

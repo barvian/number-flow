@@ -21,7 +21,6 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 				<NumberFlow
 					locales="en-US"
 					isolate={isolate}
-					style={{ '--number-flow-char-height': '0.85em' }}
 					value={increased ? 1.2423 : 0.4175}
 					format={{ style: 'percent' }}
 					className="font-semibold"

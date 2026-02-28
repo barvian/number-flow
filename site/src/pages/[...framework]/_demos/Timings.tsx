@@ -27,7 +27,6 @@ export default function DemoHOC({
 				transformTiming={bouncySpring}
 				opacityTiming={opacityTiming}
 				className="~text-3xl/4xl font-semibold"
-				style={{ '--number-flow-char-height': '0.85em' }}
 			/>
 		</Demo>
 	)

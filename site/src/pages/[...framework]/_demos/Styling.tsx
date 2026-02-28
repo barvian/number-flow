@@ -19,7 +19,6 @@ export default function DemoHOC({
 				format={{ style: 'currency', currency: 'USD', trailingZeroDisplay: 'stripIfInteger' }}
 				suffix="/mo"
 				className="~text-3xl/4xl part-[suffix]:font-normal part-[suffix]:text-muted part-[suffix]:text-[0.75em] part-[suffix]:ml-[0.0625em] font-semibold"
-				style={{ '--number-flow-char-height': '0.85em' }}
 			/>
 		</Demo>
 	)

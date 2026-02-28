@@ -12,7 +12,7 @@ const ss = computed(() => seconds % 60)
 <template>
 	<NumberFlowGroup>
 		<div
-			style="font-variant-numeric: tabular-nums; --number-flow-char-height: 0.85em"
+			style="font-variant-numeric: tabular-nums"
 			class="~text-3xl/4xl flex items-baseline font-semibold"
 		>
 			<NumberFlow :trend="-1" :value="hh" :format="{ minimumIntegerDigits: 2 }" />

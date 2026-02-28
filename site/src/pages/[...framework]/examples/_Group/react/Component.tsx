@@ -9,10 +9,7 @@ type Props = {
 export default function PriceWithDiff({ value, diff }: Props) {
 	return (
 		<NumberFlowGroup>
-			<div
-				style={{ '--number-flow-char-height': '0.85em' }}
-				className="flex items-center gap-4 font-semibold"
-			>
+			<div className="flex items-center gap-4 font-semibold">
 				<NumberFlow
 					value={value}
 					locales="en-US"

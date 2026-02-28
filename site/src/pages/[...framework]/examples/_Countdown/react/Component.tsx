@@ -12,7 +12,7 @@ export default function Countdown({ seconds }: Props) {
 	return (
 		<NumberFlowGroup>
 			<div
-				style={{ fontVariantNumeric: 'tabular-nums', '--number-flow-char-height': '0.85em' }}
+				style={{ fontVariantNumeric: 'tabular-nums' }}
 				className="~text-3xl/4xl flex items-baseline font-semibold"
 			>
 				<NumberFlow trend={-1} value={hh} format={{ minimumIntegerDigits: 2 }} />

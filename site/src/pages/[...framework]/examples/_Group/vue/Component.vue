@@ -8,7 +8,7 @@ const { value, diff } = defineProps<{
 
 <template>
 	<NumberFlowGroup>
-		<div style="--number-flow-char-height: 0.85em" class="flex items-center gap-4 font-semibold">
+		<div class="flex items-center gap-4 font-semibold">
 			<NumberFlow
 				:value
 				locales="en-US"
