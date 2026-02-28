@@ -1,5 +1,12 @@
 # @number-flow/react
 
+## 0.5.15
+
+### Patch Changes
+
+- Updated dependencies [[`e8a8904`](https://github.com/barvian/number-flow/commit/e8a890432ef7f78661fce88ce53ac8e277ba3aa6)]:
+  - number-flow@0.6.0
+
 ## 0.5.14
 
 ### Patch Changes
