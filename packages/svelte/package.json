@@ -3,7 +3,7 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"version": "0.3.13",
+	"version": "0.4.0",
 	"description": "A component to transition and format numbers.",
 	"license": "MIT",
 	"homepage": "https://number-flow.barvian.me/svelte",

@@ -1,5 +1,16 @@
 # @number-flow/vue
 
+## 0.5.0
+
+### Minor Changes
+
+- Remove `--number-flow-char-height` CSS property in favor of `line-height` ([`e8a8904`](https://github.com/barvian/number-flow/commit/e8a890432ef7f78661fce88ce53ac8e277ba3aa6))
+
+### Patch Changes
+
+- Updated dependencies [[`e8a8904`](https://github.com/barvian/number-flow/commit/e8a890432ef7f78661fce88ce53ac8e277ba3aa6)]:
+  - number-flow@0.6.0
+
 ## 0.4.12
 
 ### Patch Changes
