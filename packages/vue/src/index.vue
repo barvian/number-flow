@@ -18,6 +18,7 @@ type Props = Partial<NumberFlowProps> & {
 	suffix?: string
 	nonce?: string
 	willChange?: boolean
+	transformParts?: (parts: Intl.NumberFormatPart[]) => Intl.NumberFormatPart[]
 }
 
 // This is repetitive but I couldn't get it any cleaner using `withDefaults`,
@@ -30,6 +31,7 @@ const {
 	prefix,
 	suffix,
 	nonce,
+	transformParts,
 	// Couldn't find docs on this, but needs wrapper function to work:
 	trend = () => NumberFlowLite.defaultProps.trend,
 	plugins = NumberFlowLite.defaultProps.plugins,
@@ -58,7 +60,7 @@ const emit = defineEmits<{
 // You're supposed to cache these between uses:
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
 const formatter = computed(() => new Intl.NumberFormat(locales, format))
-const data = computed(() => formatToData(value, formatter.value, prefix, suffix))
+const data = computed(() => formatToData(value, formatter.value, prefix, suffix, transformParts))
 
 // Putting this in the v-html attribute ruined tree-shaking
 const html = BROWSER ? undefined : renderInnerHTML(data.value, { nonce, elementSuffix: '-vue' })
