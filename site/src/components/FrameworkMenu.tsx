@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react'
 import * as React from 'react'
 import { Check } from 'lucide-react'
 import clsx from 'clsx/lite'
+import Freeze from './Freeze'
 
 const icons = import.meta.glob<React.FC<React.HTMLAttributes<SVGElement>>>(
 	'./icons/frameworks/*.tsx',
@@ -45,28 +46,32 @@ export default function FrameworkMenu({
 				crossOffset={-6}
 				className="min-w-32 origin-top-left rounded-xl bg-white p-1.5 shadow-sm ring ring-black/[8%] transition-[opacity,transform] duration-[.12s] ease-out data-[entering]:scale-[.96] data-[exiting]:scale-[.96] data-[entering]:opacity-0 data-[exiting]:opacity-0 dark:bg-zinc-950 dark:ring-inset dark:ring-white/10"
 			>
-				<Menu>
-					{Object.entries(FRAMEWORKS).map(([id, framework]) => {
-						const Icon = icons[`./icons/frameworks/${id}.tsx`]!
-						return (
-							<MenuItem
-								key={id}
-								id={id}
-								textValue={framework.name}
-								isDisabled={id === value}
-								className={clsx(
-									id === value ? 'pr-2' : 'pr-4',
-									'dark:data-[focused]:bg-white/12.5 text-primary flex items-center gap-1.5 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default data-[focused]:bg-black/[8%]'
-								)}
-								href={toFrameworkPath(url.pathname, id as Framework)}
-							>
-								<Icon className="size-4.5" />
-								{framework.name}
-								{id === value && <Check className="ml-auto h-4 w-4" strokeWidth={2.5} />}
-							</MenuItem>
-						)
-					})}
-				</Menu>
+				{({ isExiting }) => (
+					<Freeze frozen={isExiting}>
+						<Menu>
+							{Object.entries(FRAMEWORKS).map(([id, framework]) => {
+								const Icon = icons[`./icons/frameworks/${id}.tsx`]!
+								return (
+									<MenuItem
+										key={id}
+										id={id}
+										textValue={framework.name}
+										isDisabled={id === value}
+										className={clsx(
+											id === value ? 'pr-2' : 'pr-4',
+											'dark:data-[focused]:bg-white/12.5 text-primary flex items-center gap-1.5 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default data-[focused]:bg-black/[8%]'
+										)}
+										href={toFrameworkPath(url.pathname, id as Framework)}
+									>
+										<Icon className="size-4.5" />
+										{framework.name}
+										{id === value && <Check className="ml-auto h-4 w-4" strokeWidth={2.5} />}
+									</MenuItem>
+								)
+							})}
+						</Menu>
+					</Freeze>
+				)}
 			</Popover>
 		</MenuTrigger>
 	)
