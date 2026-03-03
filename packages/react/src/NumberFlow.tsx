@@ -212,7 +212,7 @@ const NumberFlow = React.forwardRef<NumberFlowElement, NumberFlowProps>(function
 	_ref
 ) {
 	React.useImperativeHandle(_ref, () => ref.current!, [])
-	const ref = React.useRef<NumberFlowElement>()
+	const ref = React.useRef<NumberFlowElement | undefined>(undefined)
 	const group = React.useContext(NumberFlowGroupContext)
 	group?.useRegister(ref)
 

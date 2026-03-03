@@ -1,4 +1,4 @@
-export default function Vue(props: React.HTMLAttributes<SVGElement>) {
+export default function Vue(props: React.SVGProps<SVGSVGElement>) {
 	return (
 		<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 196.32 170.02">
 			<path fill="#42b883" d="M120.83 0L98.16 39.26 75.49 0H0l98.16 170.02L196.32 0h-75.49z" />

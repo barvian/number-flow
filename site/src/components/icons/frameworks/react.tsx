@@ -1,4 +1,4 @@
-export default function React(props: React.HTMLAttributes<SVGElement>) {
+export default function React(props: React.SVGProps<SVGSVGElement>) {
 	return (
 		<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="-11.5 -10.23 23 20.46">
 			<title> React Logo </title>
