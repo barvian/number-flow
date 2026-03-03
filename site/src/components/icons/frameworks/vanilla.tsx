@@ -1,4 +1,4 @@
-export default function Web(props: React.HTMLAttributes<SVGElement>) {
+export default function Web(props: React.SVGProps<SVGSVGElement>) {
 	return (
 		<svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 630 630">
 			<rect width="630" height="630" fill="#f7df1e" />

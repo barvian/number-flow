@@ -2,6 +2,7 @@ import { motion, MotionConfig } from 'motion/react'
 import NumberFlow, { useCanAnimate } from '@number-flow/react'
 import { ArrowUp } from 'lucide-react'
 import clsx from 'clsx/lite'
+import type { CSSProperties } from 'react'
 
 const MotionNumberFlow = motion.create(NumberFlow)
 const MotionArrowUp = motion.create(ArrowUp)
@@ -44,7 +45,7 @@ export default function MotionExample({ value }: Props) {
 					value={value}
 					className="font-semibold"
 					format={{ style: 'percent', maximumFractionDigits: 2 }}
-					style={{ '--number-flow-mask-height': '0.3em' }}
+					style={{ '--number-flow-mask-height': '0.3em' } as CSSProperties}
 					// Important, see note below:
 					layout
 					layoutRoot
