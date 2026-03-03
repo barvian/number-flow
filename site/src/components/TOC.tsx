@@ -1,7 +1,7 @@
 import type { Heading } from '@/context/toc'
 import * as React from 'react'
 
-export type Props = JSX.IntrinsicElements['nav'] & {
+export type Props = React.ComponentPropsWithoutRef<'nav'> & {
 	headings: Heading[]
 }
 

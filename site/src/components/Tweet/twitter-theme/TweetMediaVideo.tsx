@@ -2,7 +2,7 @@ import * as React from 'react'
 
 const all = new Map<string, HTMLVideoElement>()
 
-export default function TweetMediaVideo(props: JSX.IntrinsicElements['video']) {
+export default function TweetMediaVideo(props: React.ComponentPropsWithoutRef<'video'>) {
 	const ref = React.useRef<HTMLVideoElement | null>(null)
 	React.useEffect(() => {
 		if (!ref.current) return

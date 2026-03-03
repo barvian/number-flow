@@ -17,7 +17,7 @@ export default function Input({ value = 0, min = -Infinity, max = Infinity, onCh
 	// Hide the caret during transitions so you can't see it shifting around:
 	const [showCaret, setShowCaret] = React.useState(true)
 
-	const handleInput: React.ChangeEventHandler<HTMLInputElement> = ({ currentTarget: el }) => {
+	const handleInput: React.InputEventHandler<HTMLInputElement> = ({ currentTarget: el }) => {
 		setAnimated(false)
 		let next = value
 		if (el.value === '') {

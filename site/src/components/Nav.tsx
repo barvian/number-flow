@@ -4,7 +4,7 @@ import { AnimatePresence, motion, MotionConfig } from 'motion/react'
 import * as React from 'react'
 import clsx from 'clsx/lite'
 
-type Props = JSX.IntrinsicElements['nav'] & {
+type Props = React.ComponentPropsWithoutRef<'nav'> & {
 	stargazers: number | string
 	repo?: string
 }

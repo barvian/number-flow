@@ -169,7 +169,7 @@ export function DemoTitle({
 	className,
 	children,
 	...rest
-}: JSX.IntrinsicElements['span'] & { children: string }) {
+}: React.ComponentPropsWithoutRef<'span'> & { children: string }) {
 	return (
 		<span {...rest} className={clsx(className, 'px-2 py-1.5 text-sm')}>
 			{children}

@@ -48,7 +48,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 
 	const ref = useRef<HTMLElement>(null)
 	const inView = useInView(ref, { once: true })
-	const timeoutRef = useRef<NodeJS.Timeout>()
+	const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 	useEffect(() => {
 		if (!inView) return
 		if (sessionStorage.getItem('hero-did-animate')) return
@@ -59,7 +59,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 			cycleFormat()
 		}, 750)
 		return () => {
-			clearTimeout(timeoutRef.current)
+			if (timeoutRef.current !== null) clearTimeout(timeoutRef.current)
 		}
 	}, [inView])
 
@@ -83,7 +83,7 @@ export default function Hero({ sandbox }: { sandbox: string }) {
 				<button
 					className="btn btn-primary"
 					onClick={() => {
-						clearTimeout(timeoutRef.current)
+						if (timeoutRef.current !== null) clearTimeout(timeoutRef.current)
 
 						cycleValue()
 						cycleLocale()

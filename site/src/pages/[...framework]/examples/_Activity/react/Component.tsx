@@ -1,6 +1,7 @@
 import NumberFlow, { continuous, type Format } from '@number-flow/react'
 import clsx from 'clsx/lite'
 import { Bookmark, ChartNoAxesColumn, Heart, Repeat, Share } from 'lucide-react'
+import type { ComponentPropsWithoutRef } from 'react'
 
 const format: Format = {
 	notation: 'compact',
@@ -8,7 +9,7 @@ const format: Format = {
 	roundingMode: 'trunc'
 }
 
-type Props = JSX.IntrinsicElements['div'] & {
+type Props = ComponentPropsWithoutRef<'div'> & {
 	likes: number
 	reposts: number
 	views: number
