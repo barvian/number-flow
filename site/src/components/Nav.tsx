@@ -80,45 +80,45 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 								<Link
 									href="/"
 									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									active={
+										<motion.div
+											layout
+											layoutId="nav-active"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+										></motion.div>
+									}
 								>
-									{({ isActive }) => (
-										<>
-											<AnimatePresence initial={false}>
-												{isActive && <NavLinkActive />}
-											</AnimatePresence>
-											<BookOpen className="size-6" absoluteStrokeWidth />
-											Docs
-										</>
-									)}
+									<BookOpen className="size-6" absoluteStrokeWidth />
+									Docs
 								</Link>
 								<Link
 									href="/examples"
 									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									active={
+										<motion.div
+											layout
+											layoutId="nav-active"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+										></motion.div>
+									}
 								>
-									{({ isActive }) => (
-										<>
-											<AnimatePresence initial={false}>
-												{isActive && <NavLinkActive />}
-											</AnimatePresence>
-											<Shapes className="size-6" absoluteStrokeWidth />
-											Examples
-										</>
-									)}
+									<Shapes className="size-6" absoluteStrokeWidth />
+									Examples
 								</Link>
 								<Link
 									href="/showcase"
 									frameworked={false}
 									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+									active={
+										<motion.div
+											layout
+											layoutId="nav-active"
+											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+										></motion.div>
+									}
 								>
-									{({ isActive }) => (
-										<>
-											<AnimatePresence initial={false}>
-												{isActive && <NavLinkActive />}
-											</AnimatePresence>
-											<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
-											Showcase
-										</>
-									)}
+									<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
+									Showcase
 								</Link>
 								<a
 									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium lowercase outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
@@ -147,11 +147,5 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 				</div>
 			</nav>
 		</MotionConfig>
-	)
-}
-
-function NavLinkActive() {
-	return (
-		<div className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none" />
 	)
 }

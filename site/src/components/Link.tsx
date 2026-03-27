@@ -7,10 +7,9 @@ import { type Framework, toFrameworkPath } from '@/lib/framework'
 import { ArrowUpRight } from 'lucide-react'
 import clsx from 'clsx/lite'
 
-export type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> & {
+export type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
 	frameworked?: boolean
 	active?: React.ReactNode
-	children?: React.ReactNode | ((renderProps: { isActive: boolean }) => React.ReactNode)
 }
 
 export default function Link({
@@ -53,7 +52,8 @@ export default function Link({
 			href={href}
 			data-framework={framework}
 		>
-			{typeof children === 'function' ? children({ isActive: active }) : children}
+			{active && activeChildren}
+			{children}
 			{isExternal && (
 				<span className="whitespace-nowrap">
 					&#8288;
