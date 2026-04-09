@@ -29,6 +29,11 @@ export type Value = Exclude<
 	bigint | undefined
 >
 
+type Counts = Partial<Record<NumberPartType, number>>
+
+const generateKey = (type: NumberPartType, counts: Counts) =>
+	`${type}:${(counts[type] = (counts[type] ?? -1) + 1)}`
+
 export function formatToData(
 	value: Value,
 	formatter: Intl.NumberFormat,
@@ -45,16 +50,15 @@ export function formatToData(
 	const _integer: Array<IntegerPart | SymbolPart> = [] // we do a second pass to key these from RTL
 	const fraction: KeyedNumberPart[] = []
 	const post: KeyedNumberPart[] = []
+	const counts: Counts = {}
 
-	const counts: Partial<Record<NumberPartType, number>> = {}
-	const generateKey = (type: NumberPartType) =>
-		`${type}:${(counts[type] = (counts[type] ?? -1) + 1)}`
-
-	let valueAsString = ''
+	let valueAsString: string[] = []
 	let seenInteger = false,
 		seenDecimal = false
+
 	for (const part of parts) {
-		valueAsString += part.value
+		const val = part.value
+		valueAsString.push(val)
 
 		// Merge plus and minus sign types (doing it this way appeases TypeScript)
 		const type: NumberPartType =
@@ -62,26 +66,26 @@ export function formatToData(
 
 		if (type === 'integer') {
 			seenInteger = true
-			_integer.push(...part.value.split('').map((d) => ({ type, value: parseInt(d) })))
+			_integer.push(...val.split('').map((d) => ({ type, value: parseInt(d) })))
 		} else if (type === 'group') {
-			_integer.push({ type, value: part.value })
+			_integer.push({ type, value: val })
 		} else if (type === 'decimal') {
 			seenDecimal = true
-			fraction.push({ type, value: part.value, key: generateKey(type) })
+			fraction.push({ type, value: val, key: generateKey(type, counts) })
 		} else if (type === 'fraction') {
 			fraction.push(
-				...part.value.split('').map((d) => ({
+				...val.split('').map((d) => ({
 					type,
 					value: parseInt(d),
-					key: generateKey(type),
+					key: generateKey(type, counts),
 					pos: -1 - counts[type]!
 				}))
 			)
 		} else {
 			;(seenInteger || seenDecimal ? post : pre).push({
 				type,
-				value: part.value,
-				key: generateKey(type)
+				value: val,
+				key: generateKey(type, counts)
 			})
 		}
 	}
@@ -90,26 +94,27 @@ export function formatToData(
 	// Key the integer parts RTL, for better layout animations
 	for (let i = _integer.length - 1; i >= 0; i--) {
 		const p = _integer[i]!
-		integer.unshift(
+		integer.push(
 			p.type === 'integer'
 				? {
 						...p,
-						key: generateKey(p.type),
+						key: generateKey(p.type, counts),
 						pos: counts[p.type]!
 					}
 				: {
 						...p,
-						key: generateKey(p.type)
+						key: generateKey(p.type, counts)
 					}
 		)
 	}
+	integer.reverse()
 
 	return {
 		pre,
 		integer,
 		fraction,
 		post,
-		valueAsString,
+		valueAsString: valueAsString.join(''),
 		value: typeof value == 'string' ? parseFloat(value) : value
 	}
 }
