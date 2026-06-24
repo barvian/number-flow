@@ -3,9 +3,10 @@ import { css, html } from './util/string'
 import { halfMaskHeight, maskHeight } from './styles'
 import { BROWSER } from 'esm-env'
 
-export const ServerSafeHTMLElement = BROWSER
-	? HTMLElement
-	: (class {} as unknown as typeof HTMLElement) // for types
+export const ServerSafeHTMLElement =
+	BROWSER && typeof HTMLElement !== 'undefined'
+		? HTMLElement
+		: (class {} as unknown as typeof HTMLElement) // for types
 
 export const styles = css`
 	:host {
