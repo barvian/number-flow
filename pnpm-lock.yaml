@@ -7,6 +7,7 @@ settings:
 overrides:
   '@types/react': ^19.2.14
   '@types/react-dom': ^19.2.3
+  node-fetch: npm:node-fetch-native@^1.6.4
 
 importers:
 
@@ -7050,15 +7051,6 @@ packages:
   node-fetch-native@1.6.7:
     resolution: {integrity: sha512-g9yhqoedzIUm0nTnTqAQvueMPVOuIY16bqgAJJC8XOOubYFNwz6IER9qs0Gq2Xd0+CecCKFjtdDTMA4u4xG06Q==}
 
-  node-fetch@2.7.0:
-    resolution: {integrity: sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==}
-    engines: {node: 4.x || >=6.0.0}
-    peerDependencies:
-      encoding: ^0.1.0
-    peerDependenciesMeta:
-      encoding:
-        optional: true
-
   node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
     engines: {node: '>= 6.13.0'}
@@ -8731,9 +8723,6 @@ packages:
     resolution: {integrity: sha512-Loo5UUvLD9ScZ6jh8beX1T6sO1w2/MpCRpEP7V280GKMVUQ0Jzar2U3UJPsrdbziLEMMhu3Ujnq//rhiFuIeag==}
     engines: {node: '>=6'}
 
-  tr46@0.0.3:
-    resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
-
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
 
@@ -9638,9 +9627,6 @@ packages:
   web-namespaces@2.0.1:
     resolution: {integrity: sha512-bKr1DkiNa2krS7qxNtdrtHAmzuYGFQLiQ13TsorsdT6ULTkPLKuu5+GsFpDlg6JFjUTwX2DyhMPG2be8uPrqsQ==}
 
-  webidl-conversions@3.0.1:
-    resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
-
   webpack-sources@3.2.3:
     resolution: {integrity: sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==}
     engines: {node: '>=10.13.0'}
@@ -9657,9 +9643,6 @@ packages:
     peerDependenciesMeta:
       webpack-cli:
         optional: true
-
-  whatwg-url@5.0.0:
-    resolution: {integrity: sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw==}
 
   which-pm-runs@1.1.0:
     resolution: {integrity: sha512-n1brCuqClxfFfq/Rb0ICg9giSZqCS+pLtccdag6C2HyufBrh3fBOiy9nb6ggRMvWOVH5GrdJskj5iGTZNxd7SA==}
@@ -10059,7 +10042,6 @@ snapshots:
     transitivePeerDependencies:
       - '@remix-run/react'
       - '@sveltejs/kit'
-      - encoding
       - next
       - react
       - rollup
@@ -10517,8 +10499,6 @@ snapshots:
       blob-to-buffer: 1.2.9
       cross-fetch: 3.1.8
       fontkit: 2.0.4
-    transitivePeerDependencies:
-      - encoding
 
   '@capsizecss/unpack@4.0.0':
     dependencies:
@@ -10608,9 +10588,7 @@ snapshots:
   '@changesets/get-github-info@0.6.0':
     dependencies:
       dataloader: 1.4.0
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
+      node-fetch: node-fetch-native@1.6.7
 
   '@changesets/get-release-plan@4.0.4':
     dependencies:
@@ -11445,12 +11423,11 @@ snapshots:
       consola: 3.3.3
       detect-libc: 2.0.3
       https-proxy-agent: 7.0.6(supports-color@9.4.0)
-      node-fetch: 2.7.0
+      node-fetch: node-fetch-native@1.6.7
       nopt: 8.0.0
       semver: 7.6.3
       tar: 7.4.3
     transitivePeerDependencies:
-      - encoding
       - supports-color
 
   '@mdx-js/mdx@3.1.0(acorn@8.14.0)':
@@ -11772,7 +11749,6 @@ snapshots:
       - '@planetscale/database'
       - '@upstash/redis'
       - '@vercel/kv'
-      - encoding
       - idb-keyval
       - ioredis
       - magicast
@@ -13199,11 +13175,10 @@ snapshots:
       js-levenshtein: 1.1.6
       js-yaml: 4.1.0
       minimatch: 5.1.6
-      node-fetch: 2.7.0
+      node-fetch: node-fetch-native@1.6.7
       pluralize: 8.0.0
       yaml-ast-parser: 0.0.43
     transitivePeerDependencies:
-      - encoding
       - supports-color
 
   '@rolldown/pluginutils@1.0.0-beta.27': {}
@@ -13717,8 +13692,6 @@ snapshots:
     dependencies:
       '@changesets/get-github-info': 0.6.0
       dotenv: 16.4.5
-    transitivePeerDependencies:
-      - encoding
 
   '@swc/core-darwin-arm64@1.10.7':
     optional: true
@@ -14095,7 +14068,6 @@ snapshots:
       picomatch: 4.0.2
       resolve-from: 5.0.0
     transitivePeerDependencies:
-      - encoding
       - rollup
       - supports-color
 
@@ -14114,7 +14086,6 @@ snapshots:
       picomatch: 4.0.2
       resolve-from: 5.0.0
     transitivePeerDependencies:
-      - encoding
       - rollup
       - supports-color
 
@@ -15455,9 +15426,7 @@ snapshots:
 
   cross-fetch@3.1.8:
     dependencies:
-      node-fetch: 2.7.0
-    transitivePeerDependencies:
-      - encoding
+      node-fetch: node-fetch-native@1.6.7
 
   cross-spawn@5.1.0:
     dependencies:
@@ -16155,7 +16124,6 @@ snapshots:
       ufo: 1.5.4
       unplugin: 1.14.1(webpack-sources@3.2.3)
     transitivePeerDependencies:
-      - encoding
       - webpack-sources
 
   fontkit@2.0.4:
@@ -17951,7 +17919,6 @@ snapshots:
       - aws4fetch
       - better-sqlite3
       - drizzle-orm
-      - encoding
       - idb-keyval
       - mysql2
       - rolldown
@@ -17979,10 +17946,6 @@ snapshots:
   node-fetch-native@1.6.6: {}
 
   node-fetch-native@1.6.7: {}
-
-  node-fetch@2.7.0:
-    dependencies:
-      whatwg-url: 5.0.0
 
   node-forge@1.3.1: {}
 
@@ -18123,7 +18086,6 @@ snapshots:
       - bufferutil
       - db0
       - drizzle-orm
-      - encoding
       - eslint
       - idb-keyval
       - ioredis
@@ -18260,8 +18222,6 @@ snapshots:
       supports-color: 9.4.0
       typescript: 5.7.2
       yargs-parser: 21.1.1
-    transitivePeerDependencies:
-      - encoding
 
   ora@8.1.1:
     dependencies:
@@ -20092,8 +20052,6 @@ snapshots:
       universalify: 0.2.0
       url-parse: 1.5.10
 
-  tr46@0.0.3: {}
-
   trim-lines@3.0.1: {}
 
   trough@2.2.0: {}
@@ -20948,8 +20906,6 @@ snapshots:
 
   web-namespaces@2.0.1: {}
 
-  webidl-conversions@3.0.1: {}
-
   webpack-sources@3.2.3: {}
 
   webpack-virtual-modules@0.6.2: {}
@@ -20983,11 +20939,6 @@ snapshots:
       - '@swc/core'
       - esbuild
       - uglify-js
-
-  whatwg-url@5.0.0:
-    dependencies:
-      tr46: 0.0.3
-      webidl-conversions: 3.0.1
 
   which-pm-runs@1.1.0: {}
 
