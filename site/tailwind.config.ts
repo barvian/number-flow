@@ -71,7 +71,7 @@ export default {
 				}
 			},
 			animation: {
-				'logo-wall': 'logo-wall 50s linear infinite'
+				'logo-wall': 'logo-wall 55s linear infinite'
 			},
 			screens: {
 				xs: '20rem',
