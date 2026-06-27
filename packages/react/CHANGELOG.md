@@ -1,5 +1,14 @@
 # @number-flow/react
 
+## 0.6.1
+
+### Patch Changes
+
+- Guard DOM globals in browser (see [#188](https://github.com/barvian/number-flow/issues/188)) ([`a73a383`](https://github.com/barvian/number-flow/commit/a73a38374191c73884a019fe9e6447920c81ab36))
+
+- Updated dependencies [[`a73a383`](https://github.com/barvian/number-flow/commit/a73a38374191c73884a019fe9e6447920c81ab36)]:
+  - number-flow@0.6.1
+
 ## 0.6.0
 
 ### Minor Changes
