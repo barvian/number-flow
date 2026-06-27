@@ -33,7 +33,7 @@ export default function DemoHOC({ ...rest }: Omit<DemoProps, 'children' | 'code'
 						<code className="text-muted">trend:</code>
 						<code className="font-semibold">{option}</code>
 					</DemoMenuButton>
-					<DemoMenuItems className="min-w-[20rem]">
+					<DemoMenuItems className="min-w-[10rem]">
 						<DemoMenuItem
 							textValue="default"
 							onAction={() => setOption('default')}
