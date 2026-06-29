@@ -1,7 +1,7 @@
 import * as React from 'react'
 // import { atom, useAtom } from 'jotai'
 import { clsx } from 'clsx/lite'
-import { inView, motion, MotionConfig } from 'motion/react'
+import { AnimatePresence, inView, motion, MotionConfig } from 'motion/react'
 import { useId } from 'react'
 import {
 	MenuTrigger,
@@ -18,6 +18,7 @@ import {
 import { Check, ChevronDown } from 'lucide-react'
 import AnimateHeightFragment from './AnimateHeightFragment'
 import Freeze from './Freeze'
+import { easeOut } from 'motion'
 
 type TabValue = 'preview' | 'code'
 
@@ -89,34 +90,63 @@ export default function Demo({
 				onSelectionChange={(key) => setActive(key as TabValue)}
 			>
 				{code && (
-					<MotionConfig transition={{ layout: { type: 'spring', duration: 0.25, bounce: 0 } }}>
+					<MotionConfig
+						transition={{
+							opacity: { ease: easeOut, duration: 0.15 },
+							scale: { visualDuration: 0.15, type: 'spring', bounce: 0 }
+						}}
+					>
 						<TabList className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
 							<Tab
 								id="preview"
 								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-colors duration-150 ease-out"
 							>
-								{active === 'preview' && (
-									<motion.div
-										className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
-										style={{ borderRadius: 999 }}
-										layout
-										layoutId={`${id}active`}
-									></motion.div>
-								)}
+								<AnimatePresence initial={false}>
+									{active === 'preview' && (
+										<motion.div
+											className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
+											style={{ borderRadius: 999 }}
+											initial={{
+												opacity: 0,
+												scale: 0.9
+											}}
+											animate={{
+												opacity: 1,
+												scale: 1
+											}}
+											exit={{
+												opacity: 0,
+												scale: 0.9
+											}}
+										></motion.div>
+									)}
+								</AnimatePresence>
 								Preview
 							</Tab>
 							<Tab
 								id="code"
 								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-colors duration-150 ease-out"
 							>
-								{active === 'code' && (
-									<motion.div
-										className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
-										style={{ borderRadius: 999 }}
-										layout
-										layoutId={`${id}active`}
-									></motion.div>
-								)}
+								<AnimatePresence initial={false}>
+									{active === 'code' && (
+										<motion.div
+											className="prefers-dark:!bg-white/15 absolute inset-0 -z-10 size-full bg-white shadow-sm dark:bg-white/25"
+											style={{ borderRadius: 999 }}
+											initial={{
+												opacity: 0,
+												scale: 0.9
+											}}
+											animate={{
+												opacity: 1,
+												scale: 1
+											}}
+											exit={{
+												opacity: 0,
+												scale: 0.9
+											}}
+										></motion.div>
+									)}
+								</AnimatePresence>
 								Code
 							</Tab>
 						</TabList>
