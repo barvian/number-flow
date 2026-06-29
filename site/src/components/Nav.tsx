@@ -1,6 +1,6 @@
 import Link from '@/components/Link'
 import { BookOpen, Shapes, GalleryVerticalEnd } from 'lucide-react'
-import { motion, MotionConfig } from 'motion/react'
+import { AnimatePresence, easeOut, motion, MotionConfig } from 'motion/react'
 import * as React from 'react'
 import clsx from 'clsx/lite'
 
@@ -54,7 +54,12 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 	// }, [])
 
 	return (
-		<MotionConfig transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0 } }}>
+		<MotionConfig
+			transition={{
+				opacity: { ease: easeOut, duration: 0.15 },
+				scale: { visualDuration: 0.15, type: 'spring', bounce: 0 }
+			}}
+		>
 			<nav
 				{...props}
 				className={clsx(
@@ -77,49 +82,18 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 							// }}
 						>
 							<div className="isolate grid grid-cols-[repeat(5,5.6875em)]">
-								<Link
-									href="/"
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-									active={
-										<motion.div
-											layout
-											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-										></motion.div>
-									}
-								>
+								<NavItem href="/">
 									<BookOpen className="size-6" absoluteStrokeWidth />
 									Docs
-								</Link>
-								<Link
-									href="/examples"
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-									active={
-										<motion.div
-											layout
-											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-										></motion.div>
-									}
-								>
+								</NavItem>
+								<NavItem href="/examples">
 									<Shapes className="size-6" absoluteStrokeWidth />
 									Examples
-								</Link>
-								<Link
-									href="/showcase"
-									frameworked={false}
-									className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
-									active={
-										<motion.div
-											layout
-											layoutId="nav-active"
-											className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
-										></motion.div>
-									}
-								>
+								</NavItem>
+								<NavItem href="/showcase" frameworked={false}>
 									<GalleryVerticalEnd className="size-6 -scale-y-100" absoluteStrokeWidth />
 									Showcase
-								</Link>
+								</NavItem>
 								<a
 									className="text-muted hover:text-primary data-[active]:text-primary flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium lowercase outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
 									href={repo}
@@ -147,5 +121,48 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 				</div>
 			</nav>
 		</MotionConfig>
+	)
+}
+
+function NavItem({
+	href,
+	children,
+	frameworked
+}: {
+	href: string
+	children: React.ReactNode
+	frameworked?: boolean
+}) {
+	return (
+		<Link
+			href={href}
+			frameworked={frameworked}
+			className="text-muted hover:text-primary data-[active]:text-primary relative flex flex-col items-center gap-1.5 rounded-2xl px-4 pb-1.5 pt-2.5 text-xs font-medium outline-none transition-[color] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500"
+		>
+			{({ isActive }) => (
+				<>
+					<AnimatePresence initial={false}>
+						{isActive && (
+							<motion.div
+								initial={{
+									opacity: 0,
+									scale: 0.8
+								}}
+								animate={{
+									opacity: 1,
+									scale: 1
+								}}
+								exit={{
+									opacity: 0,
+									scale: 0.8
+								}}
+								className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+							/>
+						)}
+					</AnimatePresence>
+					{children}
+				</>
+			)}
+		</Link>
 	)
 }

@@ -7,9 +7,9 @@ import { type Framework, toFrameworkPath } from '@/lib/framework'
 import { ArrowUpRight } from 'lucide-react'
 import clsx from 'clsx/lite'
 
-export type Props = AnchorHTMLAttributes<HTMLAnchorElement> & {
+export type Props = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'children'> & {
 	frameworked?: boolean
-	active?: React.ReactNode
+	children?: React.ReactNode | ((renderProps: { isActive: boolean }) => React.ReactNode)
 }
 
 export default function Link({
@@ -18,7 +18,6 @@ export default function Link({
 	children,
 	target,
 	frameworked = true,
-	active: activeChildren,
 	...props
 }: Props) {
 	const pageFramework = useStore($pageFramework)
@@ -52,12 +51,11 @@ export default function Link({
 			href={href}
 			data-framework={framework}
 		>
-			{active && activeChildren}
-			{children}
+			{typeof children === 'function' ? children({ isActive: active }) : children}
 			{isExternal && (
 				<span className="whitespace-nowrap">
 					&#8288;
-					<ArrowUpRight className="group-hover/link:text-primary text-muted ml-[.125em] inline-block size-[1em] align-[-0.2em] no-underline transition ease-out-quad group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
+					<ArrowUpRight className="group-hover/link:text-primary text-muted ease-out-quad ml-[.125em] inline-block size-[1em] align-[-0.2em] no-underline transition group-hover/link:-translate-y-px group-hover/link:translate-x-px" />
 				</span>
 			)}
 		</a>
