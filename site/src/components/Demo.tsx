@@ -81,10 +81,9 @@ export default function Demo({
 			<Tabs
 				ref={ref}
 				className={clsx(
-					active === 'code' && 'dark',
 					rootClassName,
 					'Demo text-primary not-prose border-faint relative isolate overflow-clip rounded-lg border',
-					active === 'code' && 'bg-zinc-950 dark:bg-zinc-900'
+					active === 'code' && 'bg-zinc-50 dark:bg-zinc-900'
 				)} // reset text color if inside prose
 				selectedKey={active}
 				onSelectionChange={(key) => setActive(key as TabValue)}
@@ -94,7 +93,7 @@ export default function Demo({
 						<TabList className="bg-zinc-150/90 absolute right-3 top-3 z-10 flex gap-1 rounded-full p-1 backdrop-blur-lg dark:bg-black/60">
 							<Tab
 								id="preview"
-								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600"
+								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-colors duration-150 ease-out"
 							>
 								{active === 'preview' && (
 									<motion.div
@@ -108,7 +107,7 @@ export default function Demo({
 							</Tab>
 							<Tab
 								id="code"
-								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600"
+								className="dark:text-muted data-[hovered]:text-primary aria-selected:text-primary relative cursor-default rounded-full px-2 py-1 text-xs/4 font-medium text-zinc-600 transition-colors duration-150 ease-out"
 							>
 								{active === 'code' && (
 									<motion.div

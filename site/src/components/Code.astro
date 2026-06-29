@@ -23,5 +23,8 @@ if (firstLine) code.unshift(firstLine)
 	code={code.join('\n')}
 	{inline}
 	class:list={[!inline && styles.code]}
-	theme={theme as any}
+	themes={{
+		light: 'github-light',
+		dark: theme as any
+	}}
 />
