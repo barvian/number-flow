@@ -54,12 +54,7 @@ export default function Nav({ stargazers, className, repo, ...props }: Props) {
 	// }, [])
 
 	return (
-		<MotionConfig
-			transition={{
-				opacity: { ease: easeOut, duration: 0.15 },
-				scale: { visualDuration: 0.15, type: 'spring', bounce: 0 }
-			}}
-		>
+		<MotionConfig transition={{ layout: { duration: 0.35, type: 'spring', bounce: 0 } }}>
 			<nav
 				{...props}
 				className={clsx(
@@ -144,18 +139,8 @@ function NavItem({
 					<AnimatePresence initial={false}>
 						{isActive && (
 							<motion.div
-								initial={{
-									opacity: 0,
-									scale: 0.8
-								}}
-								animate={{
-									opacity: 1,
-									scale: 1
-								}}
-								exit={{
-									opacity: 0,
-									scale: 0.8
-								}}
+								layout
+								layoutId="nav-active"
 								className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
 							/>
 						)}
