@@ -2,7 +2,8 @@ import { defineConfig, envField } from 'astro/config'
 import pkg from '/../packages/number-flow/package.json'
 import mdx from '@astrojs/mdx'
 import vercel from '@astrojs/vercel'
-import highlighterTheme from './highlighter-theme.json'
+import blackout from './blackout.json'
+import whiteout from './whiteout.json'
 import react from '@astrojs/react'
 import vue from '@astrojs/vue'
 import svelte from '@astrojs/svelte'
@@ -13,9 +14,10 @@ export default defineConfig({
 	markdown: {
 		shikiConfig: {
 			themes: {
-				light: 'github-light',
 				// @ts-ignore
-				dark: highlighterTheme
+				light: whiteout,
+				// @ts-ignore
+				dark: blackout
 			}
 		}
 	},

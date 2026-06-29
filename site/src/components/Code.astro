@@ -1,7 +1,8 @@
 ---
 import styles from './code.module.css'
 import { Code as AstroCode } from 'astro:components'
-import theme from '/highlighter-theme.json'
+import blackout from '/blackout.json'
+import whiteout from '/whiteout.json'
 import type { ComponentProps } from 'astro/types'
 
 export type Props = ComponentProps<typeof AstroCode> & {
@@ -24,7 +25,7 @@ if (firstLine) code.unshift(firstLine)
 	{inline}
 	class:list={[!inline && styles.code]}
 	themes={{
-		light: 'github-light',
-		dark: theme as any
+		light: whiteout as any,
+		dark: blackout as any
 	}}
 />
