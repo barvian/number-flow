@@ -250,7 +250,7 @@ export function DemoMenuItem({
 			className={clsx(
 				className,
 				isDisabled ? 'pr-2' : 'pr-4',
-				'dark:data-[focused]:bg-white/12.5 flex w-full items-center gap-2 rounded-lg py-2 pl-2 text-xs font-medium data-[disabled]:cursor-default data-[focused]:bg-black/5'
+				'dark:data-[focused]:bg-white/12.5 flex w-full items-center gap-2 rounded-lg py-2 pl-2 text-xs font-medium data-[disabled]:cursor-default data-[focused]:bg-zinc-100'
 			)}
 		>
 			{children}

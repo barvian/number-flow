@@ -59,7 +59,7 @@ export default function FrameworkMenu({
 										isDisabled={id === value}
 										className={clsx(
 											id === value ? 'pr-2' : 'pr-4',
-											'dark:data-[focused]:bg-white/12.5 text-primary flex items-center gap-1.5 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default data-[focused]:bg-black/[8%]'
+											'dark:data-[focused]:bg-white/12.5 text-primary flex items-center gap-1.5 rounded-lg py-2 pl-2 text-sm font-medium data-[disabled]:cursor-default data-[focused]:bg-zinc-100'
 										)}
 										href={toFrameworkPath(url.pathname, id as Framework)}
 									>
