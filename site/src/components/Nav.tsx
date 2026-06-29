@@ -141,7 +141,7 @@ function NavItem({
 							<motion.div
 								layout
 								layoutId="nav-active"
-								className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-lg dark:shadow-none"
+								className="dark:bg-white/12.5 absolute inset-0 -z-10 size-full rounded-[inherit] bg-white shadow-sm dark:shadow-none"
 							/>
 						)}
 					</AnimatePresence>
