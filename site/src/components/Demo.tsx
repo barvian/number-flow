@@ -54,7 +54,7 @@ export default function Demo({
 	const [knowsToClick, setKnowsToClick] = React.useState(false)
 	const [active, setActive] = React.useState(defaultValue)
 
-	const id = useId()
+	// const id = useId()
 
 	function handleClick() {
 		setKnowsToClick(true)
