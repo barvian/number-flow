@@ -2,7 +2,7 @@ import * as React from 'react'
 // import { atom, useAtom } from 'jotai'
 import { clsx } from 'clsx/lite'
 import { AnimatePresence, inView, motion, MotionConfig } from 'motion/react'
-import { useId } from 'react'
+// import { useId } from 'react'
 import {
 	MenuTrigger,
 	Button,
@@ -54,7 +54,7 @@ export default function Demo({
 	const [knowsToClick, setKnowsToClick] = React.useState(false)
 	const [active, setActive] = React.useState(defaultValue)
 
-	const id = useId()
+	// const id = useId()
 
 	function handleClick() {
 		setKnowsToClick(true)
