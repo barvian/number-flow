@@ -33,11 +33,14 @@ export function formatToData(
 	value: Value,
 	formatter: Intl.NumberFormat,
 	prefix?: string,
-	suffix?: string
+	suffix?: string,
+	transformParts?: (parts: Intl.NumberFormatPart[]) => Intl.NumberFormatPart[]
 ) {
 	const parts: Array<
 		Omit<Intl.NumberFormatPart, 'type'> & { type: Intl.NumberFormatPartTypes | 'prefix' | 'suffix' }
-	> = formatter.formatToParts(value)
+	> = transformParts
+		? transformParts(formatter.formatToParts(value))
+		: formatter.formatToParts(value)
 	if (prefix) parts.unshift({ type: 'prefix', value: prefix })
 	if (suffix) parts.push({ type: 'suffix', value: suffix })
 
