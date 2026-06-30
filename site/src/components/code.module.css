@@ -12,6 +12,10 @@
 	min-width: 100%;
 }
 
+.code :global(span) {
+	@apply dark:!text-[--shiki-dark];
+}
+
 .code :global(.line) {
 	@apply inline-block px-5;
 }
