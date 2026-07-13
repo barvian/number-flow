@@ -4,18 +4,21 @@ import { renderInnerHTML } from 'number-flow'
 ---
 
 <Layout>
-	{/* Intentionally no <number-flow-group>: updating any number of flows in the
-	same task should batch reads/writes without one. */}
-	<number-flow
-		id="flow1"
-		data-testid="flow1"
-		set:html={renderInnerHTML(42)}
-	/><number-flow id="flow2" data-testid="flow2" set:html={renderInnerHTML(42)} />
+	{/* The group batches its members' reads and writes, no matter how many of
+	them update in the same task: */}
+	<number-flow-group>
+		<number-flow
+			id="flow1"
+			data-testid="flow1"
+			set:html={renderInnerHTML(42)}
+		/><number-flow id="flow2" data-testid="flow2" set:html={renderInnerHTML(42)} />
+	</number-flow-group>
 	<button id="change"> Change </button>
 </Layout>
 
 <script>
 	import 'number-flow'
+	import 'number-flow/group'
 
 	const [flow1, flow2] = document.getElementsByTagName('number-flow')
 

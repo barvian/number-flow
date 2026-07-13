@@ -1,4 +1,5 @@
 import { createElement, offset, visible, type HTMLProps, type Justify } from './util/dom'
+import * as frame from './util/frame'
 import { forEach } from './util/iterable'
 import {
 	type KeyedDigitPart,
@@ -116,11 +117,6 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 	/**
 	 * @internal
 	 */
-	batched = false
-
-	/**
-	 * @internal
-	 */
 	set data(data: Data | undefined) {
 		if (data == null) {
 			return
@@ -168,27 +164,17 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 			const prev = this._data!
 			this._data = data
 
-			// Compute trend
+			// Compute trend synchronously, because plugins can read it during onUpdate:
 			;(this as Mutable).computedTrend =
 				typeof this.trend === 'function' ? this.trend(prev.value, value) : this.trend
-			;(this as Mutable).computedAnimated =
-				canAnimate &&
-				this._animated &&
-				(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
-				// https://github.com/barvian/number-flow/issues/9
-				visible(this) &&
-				// https://github.com/barvian/number-flow/issues/165
-				this.ownerDocument.visibilityState === 'visible'
 
 			this.plugins?.forEach((p) => p.onUpdate?.(data, prev, this))
 
-			if (!this.batched) this.willUpdate()
-
-			this._pre!.update(pre)
-			this._num!.update({ integer, fraction })
-			this._post!.update(post)
-
-			if (!this.batched) this.didUpdate()
+			// Queue everything else into the shared frame. Whoever began the
+			// batch applies it: the vanilla element and group at the end of the
+			// task, framework wrappers after their commit via didUpdate():
+			this.willUpdate()
+			frame.update(this._updateSections)
 		}
 
 		try {
@@ -199,23 +185,62 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		}
 	}
 
+	// Whether this flow has measured for, and queued, its next transition:
+	private _queued = false
+
 	/**
-	 * @internal
+	 * @internal Measures the flow and queues its transition into the shared
+	 * frame, joining every other flow updated in the same task. Called
+	 * automatically when data changes; call it earlier to measure before
+	 * other DOM changes (e.g. a framework's commit), or manually to
+	 * transition a flow whose value isn't changing.
 	 */
 	willUpdate() {
-		// Not super safe to check animated here, b/c the prop may not have been updated yet:
+		if (!this.created || this._queued) return
+		this._queued = true
+
+		// Read synchronously: the first willUpdate in a task sees clean layout
+		// (every flow's writes are queued behind it), and later calls dedupe
+		// via _queued, so reads never interleave with writes.
+		// visible() is a layout read, so it has to happen here, before any writes:
+		// https://github.com/barvian/number-flow/issues/9
+		;(this as Mutable).computedAnimated =
+			canAnimate &&
+			this._animated &&
+			(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
+			visible(this) &&
+			// https://github.com/barvian/number-flow/issues/165
+			this.ownerDocument.visibilityState === 'visible'
+
 		this._pre!.willUpdate()
 		this._num!.willUpdate()
 		this._post!.willUpdate()
+
+		frame.measureAnimations(this._measureAnimations)
+	}
+
+	/**
+	 * @internal Applies any queued updates synchronously. Pairs with
+	 * willUpdate(), which batches them.
+	 */
+	didUpdate() {
+		frame.flush()
+	}
+
+	// Writes the current data to the DOM:
+	private _updateSections = () => {
+		const { pre, integer, fraction, post } = this._data!
+		this._pre!.update(pre)
+		this._num!.update({ integer, fraction })
+		this._post!.update(post)
 	}
 
 	private _abortAnimationsFinish?: AbortController
 
-	/**
-	 * @internal
-	 */
-	didUpdate() {
-		// Safe to call this here because we know the animated prop is up-to-date
+	// Layout reads for the FLIP animations. Each measurement queues its writes
+	// into the frame's animate step:
+	private _measureAnimations = () => {
+		this._queued = false
 		if (!this.computedAnimated) return
 
 		// If we're already animating, cancel the previous animationsfinish event:
@@ -227,14 +252,17 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		this._num!.didUpdate()
 		this._post!.didUpdate()
 
-		const controller = new AbortController()
-		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
-			if (!controller.signal.aborted) {
-				this.dispatchEvent(new Event('animationsfinish'))
-				this._abortAnimationsFinish = undefined
-			}
+		// Scheduled last, so it runs after every animation above has started:
+		frame.animate(() => {
+			const controller = new AbortController()
+			Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
+				if (!controller.signal.aborted) {
+					this.dispatchEvent(new Event('animationsfinish'))
+					this._abortAnimationsFinish = undefined
+				}
+			})
+			this._abortAnimationsFinish = controller
 		})
-		this._abortAnimationsFinish = controller
 	}
 }
 
@@ -297,7 +325,8 @@ class Num {
 	didUpdate() {
 		const rect = this.el.getBoundingClientRect()
 
-		// Do this before starting to animate:
+		// Do this before scheduling our own writes, so the children's
+		// animations start first:
 		this._integer.didUpdate()
 		this._fraction.didUpdate()
 
@@ -307,18 +336,21 @@ class Num {
 		// We convert scale to width delta in px to better handle interruptions and keep them in
 		// sync with translations:
 		const dWidth = this._prevWidth! - width
-		this.el.style.setProperty('--width', String(width))
 
-		this.el.animate(
-			{
-				[dxVar]: [`${dx}px`, '0px'],
-				[widthDeltaVar]: [dWidth, 0]
-			},
-			{
-				...this.flow.transformTiming,
-				composite: 'accumulate'
-			}
-		)
+		frame.animate(() => {
+			this.el.style.setProperty('--width', String(width))
+
+			this.el.animate(
+				{
+					[dxVar]: [`${dx}px`, '0px'],
+					[widthDeltaVar]: [dWidth, 0]
+				},
+				{
+					...this.flow.transformTiming,
+					composite: 'accumulate'
+				}
+			)
+		})
 	}
 }
 
@@ -383,18 +415,8 @@ abstract class Section {
 		char.el.style[this.justify] = ''
 	}
 
-	protected pop(chars: Map<any, Char>) {
-		// Calculate offsets for removed before popping, to avoid layout thrashing:
-		chars.forEach((char) => {
-			char.el.style.top = `${char.el.offsetTop}px`
-			char.el.style[this.justify] = `${offset(char.el, this.justify)}px`
-		})
-		chars.forEach((char) => {
-			char.el.setAttribute('inert', '')
-			char.present = false
-		})
-	}
-
+	// Add new parts (starting digits at zero) and reclaim updated ones,
+	// queueing their measurements and value updates into the shared frame:
 	protected addNewAndUpdateExisting(parts: KeyedNumberPart[]) {
 		const added = new Map<KeyedNumberPart, Char>()
 		const updated = new Map<KeyedNumberPart, Char>()
@@ -422,20 +444,24 @@ abstract class Section {
 			{ reverse }
 		)
 
-		if (this.flow.computedAnimated) {
-			const rect = this.el.getBoundingClientRect() // this should only cause a layout if there were added children (?)
+		frame.measureChars(() => {
+			if (!this.flow.computedAnimated || !added.size) return
+			const rect = this.el.getBoundingClientRect()
 			added.forEach((comp) => {
 				comp.willUpdate(rect)
 			})
-		}
-		// Update added children to their initial value (we start them at 0)
-		added.forEach((comp, part) => {
-			comp.update(part.value)
 		})
 
-		// Update any updated children
-		updated.forEach((comp, part) => {
-			comp.update(part.value)
+		frame.updateChars(() => {
+			// Update added children to their initial value (we start them at 0)
+			added.forEach((comp, part) => {
+				comp.update(part.value)
+			})
+
+			// Update any updated children
+			updated.forEach((comp, part) => {
+				comp.update(part.value)
+			})
 		})
 	}
 
@@ -451,24 +477,26 @@ abstract class Section {
 	didUpdate() {
 		const rect = this.el.getBoundingClientRect()
 
-		// Make sure to pass this in before starting to animate:
+		// Do this before scheduling our own write, so the children's
+		// animations start first:
 		this.children.forEach((comp) => comp.didUpdate(rect))
 
-		const offset = rect[this.justify]
-		const dx = this._prevOffset! - offset
-
-		// Technically checking for children could get weird during multiple interruptions
-		// but probably still worth it;
-		if (dx && this.children.size)
-			this.el.animate(
-				{
-					transform: [`translateX(${dx}px)`, 'none']
-				},
-				{
-					...this.flow.transformTiming,
-					composite: 'accumulate'
-				}
-			)
+		const dx = this._prevOffset! - rect[this.justify]
+		if (dx)
+			frame.animate(() => {
+				// Technically checking for children could get weird during multiple interruptions
+				// but probably still worth it;
+				if (!this.children.size) return
+				this.el.animate(
+					{
+						transform: [`translateX(${dx}px)`, 'none']
+					},
+					{
+						...this.flow.transformTiming,
+						composite: 'accumulate'
+					}
+				)
+			})
 	}
 }
 
@@ -487,29 +515,65 @@ class NumberSection extends Section {
 
 		this.addNewAndUpdateExisting(parts)
 
-		// Set all removed digits to 0, for mathematical correctness:
+		// Set all removed digits to 0, for mathematical correctness.
+		// They get popped out again below:
 		removed.forEach((comp) => {
 			if (comp instanceof Digit) comp.update(0)
 		})
 
-		// Then end with them popped out again:
-		this.pop(removed)
+		// Unlike symbols, digits pop at offsets that account for the new
+		// layout, so they have to be measured after the additions above:
+		let popRects: Map<Char, readonly [top: number, offset: number]> | undefined
+		frame.measureChars(() => {
+			if (!this.flow.computedAnimated || !removed.size) return
+			popRects = new Map()
+			removed.forEach((char) => {
+				popRects!.set(char, [char.el.offsetTop, offset(char.el, this.justify)])
+			})
+		})
+		frame.updateChars(() => {
+			removed.forEach((char) => {
+				const popRect = popRects?.get(char)
+				if (popRect) {
+					char.el.style.top = `${popRect[0]}px`
+					char.el.style[this.justify] = `${popRect[1]}px`
+				}
+				char.el.setAttribute('inert', '')
+				char.present = false
+			})
+		})
 	}
 }
 
 class SymbolSection extends Section {
-	update(parts: KeyedNumberPart[]) {
-		const removed = new Map<NumberPartKey, Char>()
+	// Symbols get popped at their pre-update offsets, before any additions
+	// shift them (unlike digits, whose pops account for the new layout).
+	// Those offsets have to be read here, during willUpdate, because update()
+	// is a write-only phase:
+	private _prevPops?: Map<Char, readonly [top: number, offset: number]>
 
+	override willUpdate() {
+		super.willUpdate()
+		const pops = (this._prevPops = new Map<Char, readonly [number, number]>())
+		this.children.forEach((comp) => {
+			pops.set(comp, [comp.el.offsetTop, offset(comp.el, this.justify)])
+		})
+	}
+
+	update(parts: KeyedNumberPart[]) {
+		// Pop removed children before any additions, using the offsets read
+		// during willUpdate, so they freeze at their pre-update positions:
 		this.children.forEach((comp, key) => {
-			// Keep track of removed children:
 			if (!parts.find((p) => p.key === key)) {
-				removed.set(key, comp)
+				const pop = this._prevPops?.get(comp)
+				if (pop) {
+					comp.el.style.top = `${pop[0]}px`
+					comp.el.style[this.justify] = `${pop[1]}px`
+				}
+				comp.el.setAttribute('inert', '')
+				comp.present = false
 			}
 		})
-
-		// Pop them, before any additions
-		this.pop(removed)
 
 		this.addNewAndUpdateExisting(parts)
 	}
@@ -674,32 +738,34 @@ export class Digit extends Char<KeyedDigitPart> {
 		const center = this.section.justify === 'left' ? offset + halfWidth : offset - halfWidth
 		const dx = this._prevCenter! - center
 
-		if (dx)
+		frame.animate(() => {
+			if (dx)
+				this.el.animate(
+					{
+						transform: [`translateX(${dx}px)`, 'none']
+					},
+					{
+						...this.flow.transformTiming,
+						composite: 'accumulate'
+					}
+				)
+
+			const delta = this.getDelta()
+			if (!delta) return
+
+			this.el.classList.add('is-spinning')
 			this.el.animate(
 				{
-					transform: [`translateX(${dx}px)`, 'none']
+					[deltaVar]: [-delta, 0]
 				},
 				{
-					...this.flow.transformTiming,
+					...(this.flow.spinTiming ?? this.flow.transformTiming),
 					composite: 'accumulate'
 				}
 			)
-
-		const delta = this.getDelta()
-		if (!delta) return
-
-		this.el.classList.add('is-spinning')
-		this.el.animate(
-			{
-				[deltaVar]: [-delta, 0]
-			},
-			{
-				...(this.flow.spinTiming ?? this.flow.transformTiming),
-				composite: 'accumulate'
-			}
-		)
-		// Hoisting the callback out prevents duplicates:
-		this.flow.addEventListener('animationsfinish', this._onAnimationsFinish, { once: true })
+			// Hoisting the callback out prevents duplicates:
+			this.flow.addEventListener('animationsfinish', this._onAnimationsFinish, { once: true })
+		})
 	}
 
 	getDelta() {
@@ -810,13 +876,14 @@ class Sym extends Char<KeyedSymbolPart> {
 		const rect = this.el.getBoundingClientRect()
 		const offset = rect[this.section.justify] - parentRect[this.section.justify]
 		const dx = this._prevOffset! - offset
-
 		if (dx)
-			this.el.animate(
-				{
-					transform: [`translateX(${dx}px)`, 'none']
-				},
-				{ ...this.flow.transformTiming, composite: 'accumulate' }
-			)
+			frame.animate(() => {
+				this.el.animate(
+					{
+						transform: [`translateX(${dx}px)`, 'none']
+					},
+					{ ...this.flow.transformTiming, composite: 'accumulate' }
+				)
+			})
 	}
 }

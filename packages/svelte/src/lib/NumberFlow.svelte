@@ -2,9 +2,6 @@
 	import NumberFlowLite, { define, type Data } from 'number-flow/lite'
 	// Svelte only supports setters, but Svelte 4 didn't pick up inherited ones:
 	export class NumberFlowElement extends NumberFlowLite {
-		set __svelte_batched(batched: boolean) {
-			this.batched = batched
-		}
 		override set data(data: Data | undefined) {
 			super.data = data
 		}
@@ -32,6 +29,7 @@
 		type Props as NumberFlowProps
 	} from 'number-flow/lite'
 	import type { HTMLAttributes } from 'svelte/elements'
+	import { afterUpdate } from 'svelte'
 	import { writable } from 'svelte/store'
 	import { getGroupContext } from './group.js'
 	import { BROWSER } from 'esm-env'
@@ -85,6 +83,21 @@
 	// for better tree-shaking:
 	const group = getGroupContext()
 	group?.register?.(elStore)
+
+	// Batch with Svelte's update cycle: measure before the DOM updates
+	// (skipping the initial data), including the group's other flows, then
+	// apply after the cycle completes:
+	let prevData: Data | undefined
+	$: {
+		if (prevData && prevData !== data) {
+			el?.willUpdate()
+			group?.willUpdate()
+		}
+		prevData = data
+	}
+	afterUpdate(() => {
+		el?.didUpdate()
+	})
 </script>
 
 <number-flow-svelte
@@ -93,7 +106,6 @@
 	data-will-change={willChange ? '' : undefined}
 	on:animationsstart
 	on:animationsfinish
-	__svelte_batched={Boolean(group)}
 	__svelte_transformtiming={transformTiming}
 	__svelte_spintiming={spinTiming}
 	__svelte_opacitytiming={opacityTiming}

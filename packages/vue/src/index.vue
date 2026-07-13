@@ -6,7 +6,7 @@ import NumberFlowLite, {
 	formatToData,
 	type Props as NumberFlowProps
 } from 'number-flow/lite'
-import { computed, inject, ref } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { key as groupKey } from './group'
 import { BROWSER } from 'esm-env'
 
@@ -63,6 +63,19 @@ const data = computed(() => formatToData(value, formatter.value, prefix, suffix)
 // Putting this in the v-html attribute ruined tree-shaking
 const html = BROWSER ? undefined : renderInnerHTML(data.value, { nonce, elementSuffix: '-vue' })
 
+// Batch with Vue's update cycle: measure before any component patches, then
+// apply after they've all been patched:
+watch(data, () => {
+	el.value?.willUpdate()
+})
+watch(
+	data,
+	() => {
+		el.value?.didUpdate()
+	},
+	{ flush: 'post' }
+)
+
 // Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
 // for better tree-shaking:
 const register = inject(groupKey, undefined)
@@ -73,7 +86,6 @@ register?.(el, data)
 	<number-flow-vue
 		ref="el"
 		v-bind="$attrs"
-		:batched="Boolean(register)"
 		:trend
 		:plugins
 		:animated

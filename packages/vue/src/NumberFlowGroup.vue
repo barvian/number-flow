@@ -1,31 +1,20 @@
 <script lang="ts" setup>
 import type NumberFlowLite from 'number-flow/lite'
 import { key, type RegisterWithGroup } from './group'
-import { provide, watch, type Ref, nextTick, onUnmounted } from 'vue'
+import { provide, watch, type Ref, onUnmounted } from 'vue'
 
 const flows = new Set<Ref<NumberFlowLite | undefined>>()
-let updating = false
 
 const registerWithGroup: RegisterWithGroup = (el, parts) => {
 	flows.add(el)
 
-	watch(
-		parts,
-		async () => {
-			if (updating) return
-			updating = true
-			flows.forEach(async (flow) => {
-				if (!flow.value || !flow.value.created) return
-				flow.value.willUpdate()
-				await nextTick()
-				// Optional in case the element was removed after tick:
-				flow.value?.didUpdate()
-			})
-			await nextTick()
-			updating = false
-		}
-		// { flush: 'pre' } // default
-	)
+	// When any flow's data changes, transition all of them together. The
+	// shared frame dedupes and batches every flow's reads and writes:
+	watch(parts, () => {
+		flows.forEach((flow) => {
+			flow.value?.willUpdate()
+		})
+	})
 
 	onUnmounted(() => {
 		flows.delete(el)

@@ -103,7 +103,6 @@ class NumberFlowImpl extends React.Component<
 	updateProperties(prevProps?: Readonly<NumberFlowImplProps>) {
 		if (!this.el) return
 
-		this.el.batched = !this.props.isolate
 		const [nonData] = splitProps(this.props)
 		Object.entries(nonData).forEach(([k, v]) => {
 			// @ts-ignore
@@ -133,14 +132,14 @@ class NumberFlowImpl extends React.Component<
 	override getSnapshotBeforeUpdate(prevProps: Readonly<NumberFlowImplProps>) {
 		this.updateProperties(prevProps)
 		if (prevProps.data !== this.props.data) {
-			if (this.props.group) {
-				this.props.group.willUpdate()
-				return () => this.props.group?.didUpdate()
-			}
-			if (!this.props.isolate) {
-				this.el?.willUpdate()
-				return () => this.el?.didUpdate()
-			}
+			// Measure before React mutates the DOM, so the flow(s) transition
+			// any surrounding layout changes from this commit. Isolated flows
+			// measure when their data is set during the commit instead:
+			if (this.props.group) this.props.group.willUpdate()
+			else if (!this.props.isolate) this.el?.willUpdate()
+			// Apply the batch after the commit, so updates complete
+			// synchronously within e.g. flushSync:
+			return () => this.el?.didUpdate()
 		}
 		return null
 	}
@@ -236,15 +235,12 @@ export default NumberFlow
 type GroupContext = {
 	useRegister: (ref: React.MutableRefObject<NumberFlowElement | undefined>) => void
 	willUpdate: () => void
-	didUpdate: () => void
 }
 
 const NumberFlowGroupContext = React.createContext<GroupContext | undefined>(undefined)
 
 export function NumberFlowGroup({ children }: { children: React.ReactNode }) {
 	const flows = React.useRef(new Set<React.MutableRefObject<NumberFlowElement | undefined>>())
-	const updating = React.useRef(false)
-	const pending = React.useRef(new WeakMap<NumberFlowElement, boolean>())
 	const value = React.useMemo<GroupContext>(
 		() => ({
 			useRegister(ref) {
@@ -255,24 +251,12 @@ export function NumberFlowGroup({ children }: { children: React.ReactNode }) {
 					}
 				}, [])
 			},
+			// Transition every flow in the group together; the shared frame
+			// dedupes and batches all of their reads and writes:
 			willUpdate() {
-				if (updating.current) return
-				updating.current = true
 				flows.current.forEach((ref) => {
-					const f = ref.current
-					if (!f || !f.created) return
-					f.willUpdate()
-					pending.current.set(f, true)
+					ref.current?.willUpdate()
 				})
-			},
-			didUpdate() {
-				flows.current.forEach((ref) => {
-					const f = ref.current
-					if (!f || !pending.current.get(f)) return
-					f.didUpdate()
-					pending.current.delete(f)
-				})
-				updating.current = false
 			}
 		}),
 		[]

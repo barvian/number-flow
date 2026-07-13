@@ -1,4 +1,5 @@
 import NumberFlowLite from './lite'
+import { flush } from './util/frame'
 import { define } from './util/dom'
 import { renderInnerHTML as defaultRenderInnerHTML } from './ssr'
 import { formatToData, type Value, type Format } from './formatter'
@@ -32,16 +33,8 @@ export const renderInnerHTML = (
 }
 
 export default class NumberFlow extends NumberFlowLite {
-	/**
-	 * @internal for grouping
-	 */
-	connected = false
 	connectedCallback() {
-		this.connected = true
 		this.dispatchEvent(new Event(CONNECT_EVENT, { bubbles: true }))
-	}
-	disconnectedCallback() {
-		this.connected = false
 	}
 
 	format?: Format
@@ -76,10 +69,18 @@ export default class NumberFlow extends NumberFlowLite {
 			this._value = value
 		}
 
-		// For group, has to be before setting data:
-		this.dispatchEvent(new Event(UPDATE_EVENT, { bubbles: true }))
+		// Creation (i.e. the first update) is synchronous and doesn't batch
+		// with other flows, so skip the group and frame for it:
+		const created = this.created
+
+		// For group; has to be before setting data:
+		if (created) this.dispatchEvent(new Event(UPDATE_EVENT, { bubbles: true }))
 
 		this.data = formatToData(this._value!, this._formatter!, this.numberPrefix, this.numberSuffix)
+
+		// Apply at the end of the task, so any other flows' updates can join
+		// the batch (a no-op if e.g. a group already applied it):
+		if (created) queueMicrotask(flush)
 	}
 }
 

@@ -6,7 +6,7 @@ let groupKey = Symbol('group')
 
 export type RegisterWithGroup = (el: Readable<NumberFlowLite | undefined>) => void
 
-export type GroupContext = { register: RegisterWithGroup }
+export type GroupContext = { register: RegisterWithGroup; willUpdate: () => void }
 
 export function setGroupContext(ctx: GroupContext) {
 	setContext(groupKey, ctx)

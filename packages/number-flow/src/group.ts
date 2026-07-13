@@ -5,12 +5,13 @@ import NumberFlow from '.'
 
 export default class NumberFlowGroup extends ServerSafeHTMLElement {
 	private _mutationObserver?: MutationObserver
+	private _flows = new Set<NumberFlow>()
 
 	connectedCallback() {
 		// The descendants are probably already connected, so query the DOM first.
 		// Note: this won't work with a custom-defined element, if that ever exists:
 		this.querySelectorAll<NumberFlow>('number-flow').forEach((flow) => {
-			this._addDescendant(flow)
+			this._flows.add(flow)
 		})
 
 		this.addEventListener(CONNECT_EVENT, this._onDescendantConnected)
@@ -21,7 +22,7 @@ export default class NumberFlowGroup extends ServerSafeHTMLElement {
 			mutations.forEach((mutation) => {
 				mutation.removedNodes.forEach((node) => {
 					if (node instanceof NumberFlow) {
-						this._removeDescendant(node)
+						this._flows.delete(node)
 					}
 				})
 			})
@@ -29,34 +30,19 @@ export default class NumberFlowGroup extends ServerSafeHTMLElement {
 		this._mutationObserver.observe(this, { childList: true, subtree: true })
 	}
 
-	private _flows = new Set<NumberFlow>()
-
-	private _addDescendant = (flow: NumberFlow) => {
-		flow.batched = true
-		this._flows.add(flow)
-	}
-	private _removeDescendant = (flow: NumberFlow) => {
-		flow.batched = false
-		this._flows.delete(flow)
-	}
-
 	private _onDescendantConnected = (event: Event) => {
-		this._addDescendant(event.target as NumberFlow)
+		this._flows.add(event.target as NumberFlow)
 	}
 
-	private _updating = false
+	// When any descendant updates, transition all of them together. willUpdate
+	// batches every member's reads and writes into the shared frame (deduped),
+	// which gets applied at the end of the task, after every member's update
+	// has joined it:
 	private _onDescendantUpdate = () => {
-		if (this._updating) return
-		this._updating = true
-		this._flows.forEach((flow) => {
-			if (!flow.created) return
-			flow.willUpdate()
-			queueMicrotask(() => {
-				if (flow.connected) flow.didUpdate()
-			})
-		})
+		const flows = [...this._flows].filter((flow) => flow.created)
+		flows.forEach((flow) => flow.willUpdate())
 		queueMicrotask(() => {
-			this._updating = false
+			flows.forEach((flow) => flow.didUpdate())
 		})
 	}
 
