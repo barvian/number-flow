@@ -1,0 +1,66 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { renderInnerHTML } from 'number-flow'
+---
+
+<Layout>
+	<button id="cycle"> Cycle and pause </button>
+	<div>
+		Text node <number-flow
+			set:html={renderInnerHTML(431.1, { format: { minimumFractionDigits: 2 } })}
+		/>
+	</div>
+</Layout>
+
+<script>
+	import 'number-flow'
+	import type { Format } from 'number-flow'
+
+	// Cycles through formats that add, remove, then re-add symbols
+	// (accounting parens, currency, signs):
+	const CYCLE: [number, Format][] = [
+		[431.1, { minimumFractionDigits: 2 }],
+		[
+			-3243.6,
+			{ style: 'currency', currency: 'USD', currencySign: 'accounting', signDisplay: 'always' }
+		],
+		// Swaps the parens/currency for a minus sign (and back), so symbols
+		// get added and removed in the same section simultaneously:
+		[-3243.5, {}],
+		[
+			-3243.6,
+			{ style: 'currency', currency: 'USD', currencySign: 'accounting', signDisplay: 'always' }
+		]
+	]
+
+	// Per-click pause times: pause the pops late (so mispositioned exiting
+	// symbols would have visibly drifted), then the reclaims early (so
+	// they'd render at the drifted positions):
+	const PAUSES = [900, 900, 450]
+
+	const flow = document.getElementsByTagName('number-flow')[0]
+	let i = 0
+	if (flow) {
+		// Linear timings so mid-animation states stay clearly visible when paused:
+		flow.transformTiming = { duration: 900, easing: 'linear' }
+		flow.opacityTiming = { duration: 900, easing: 'linear' }
+		flow.format = CYCLE[0]![1]
+		flow.update(CYCLE[0]![0])
+	}
+
+	document.getElementById('cycle')?.addEventListener('click', () => {
+		if (!flow) return
+		i = (i + 1) % CYCLE.length
+		const [value, format] = CYCLE[i]!
+		flow.format = format
+		flow.update(value)
+		queueMicrotask(() => {
+			flow.shadowRoot?.getAnimations().forEach((a) => {
+				// Leave previously-paused rounds where they are:
+				if (a.playState === 'paused') return
+				a.pause()
+				a.currentTime = PAUSES[(i - 1) % PAUSES.length]!
+			})
+		})
+	})
+</script>
