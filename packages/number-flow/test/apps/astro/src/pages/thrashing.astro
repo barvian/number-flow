@@ -4,35 +4,40 @@ import { renderInnerHTML } from 'number-flow'
 ---
 
 <Layout>
-	<number-flow-group>
-		<number-flow
-			id="flow1"
-			data-testid="flow1"
-			set:html={renderInnerHTML(42)}
-		/><number-flow id="flow2" data-testid="flow2" set:html={renderInnerHTML(42)} />
-	</number-flow-group>
+	{/* Intentionally no <number-flow-group>: updating any number of flows in the
+	same task should batch reads/writes without one. */}
+	<number-flow
+		id="flow1"
+		data-testid="flow1"
+		set:html={renderInnerHTML(42)}
+	/><number-flow id="flow2" data-testid="flow2" set:html={renderInnerHTML(42)} />
+	<button id="change"> Change </button>
 </Layout>
 
 <script>
 	import 'number-flow'
-	import 'number-flow/group'
 
 	const [flow1, flow2] = document.getElementsByTagName('number-flow')
 
 	if (flow1 && flow2) {
 		flow1.update(42)
 		flow2.update(42)
-
-		window.addEventListener('load', () => {
-			setTimeout(() => {
-				flow1.format = { style: 'currency', currency: 'USD' }
-				flow1.numberSuffix = '/mo'
-				flow2.format = { style: 'currency', currency: 'USD' }
-				flow2.numberSuffix = '/mo'
-
-				flow1.update(1250.50)
-				flow2.update(1250.50)
-			}, 3000)
-		})
 	}
+
+	const change = () => {
+		if (!flow1 || !flow2) return
+		flow1.format = { style: 'currency', currency: 'USD' }
+		flow1.numberSuffix = '/mo'
+		flow2.format = { style: 'currency', currency: 'USD' }
+		flow2.numberSuffix = '/mo'
+
+		flow1.update(1250.5)
+		flow2.update(1250.5)
+	}
+
+	// Exposed for the reflow test:
+	// @ts-expect-error window typing
+	window.change = change
+
+	document.getElementById('change')?.addEventListener('click', change)
 </script>
