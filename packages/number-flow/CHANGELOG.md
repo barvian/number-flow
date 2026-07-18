@@ -1,5 +1,11 @@
 # number-flow
 
+## 0.6.2
+
+### Patch Changes
+
+- Avoid forced reflows from redundant layout measurement: skip identity-equal `data` re-sets (React 19 double-sets `data` on mount) and skip the `willUpdate` measurement pass when animations can't run ([#196](https://github.com/barvian/number-flow/pull/196))
+
 ## 0.6.1
 
 ### Patch Changes
