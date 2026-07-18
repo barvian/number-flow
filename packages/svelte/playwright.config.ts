@@ -4,6 +4,7 @@ import { config } from '../../lib/playwright'
 // Use prod build cause it includes hydration errors but excludes random Vite stuff:
 export default defineConfig({
 	...config,
+	metadata: { framework: 'svelte' },
 	webServer: {
 		...config.webServer,
 		command: 'pnpm build:site && pnpm preview'
