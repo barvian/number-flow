@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { renderInnerHTML } from 'number-flow'
+---
+
+<Layout>
+	<div>
+		<number-flow id="flow1" data-testid="flow1" set:html={renderInnerHTML(42)} />
+	</div>
+	<button id="change"> Change and pause </button>
+</Layout>
+
+<script>
+	import 'number-flow'
+
+	const [flow] = document.getElementsByTagName('number-flow')
+	const changeBtn = document.getElementById('change')
+
+	if (flow) {
+		flow.transformTiming = { easing: 'linear', duration: 500 }
+		flow.spinTiming = { easing: 'linear', duration: 800 }
+		flow.opacityTiming = { easing: 'linear', duration: 500 }
+		// Start with animations disabled:
+		flow.animated = false
+		flow.update(42)
+	}
+
+	changeBtn?.addEventListener('click', () => {
+		if (!flow) return
+		// Change the value and enable animations in the same update:
+		flow.animated = true
+		flow.update(152)
+		queueMicrotask(() => {
+			;(flow.shadowRoot?.getAnimations() ?? []).forEach((a) => {
+				a.pause()
+				a.currentTime = 300
+			})
+		})
+	})
+</script>
