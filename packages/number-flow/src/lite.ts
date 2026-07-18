@@ -126,6 +126,15 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 			return
 		}
 
+		// Skip identity-equal re-sets. React 19 sets the `data` property during
+		// its commit, then the React wrapper's componentDidMount sets the same
+		// object again; without this check the second set takes the update path
+		// below and measures every section and digit, forcing a synchronous
+		// reflow per mounted element (barvian/number-flow#195):
+		if (data === this._data) {
+			return
+		}
+
 		const { pre, integer, fraction, post, value } = data
 
 		// Initialize if needed
@@ -199,11 +208,27 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		}
 	}
 
+	private _preUpdated = false
+
 	/**
 	 * @internal
 	 */
 	willUpdate() {
-		// Not super safe to check animated here, b/c the prop may not have been updated yet:
+		// Skip the measurement pass when animations can't run: it reads layout
+		// (a forced reflow) for every section and digit, and didUpdate — its only
+		// consumer — would discard the measurements anyway
+		// (barvian/number-flow#195). Only cheap checks here; `visible(this)`
+		// itself reads layout so it stays in `set data`. didUpdate also checks
+		// `_preUpdated`, so a prop that changes between the two passes degrades
+		// to skipping that animation rather than animating from missing
+		// measurements:
+		this._preUpdated =
+			canAnimate &&
+			this._animated &&
+			(!this.respectMotionPreference || !prefersReducedMotion?.matches) &&
+			this.ownerDocument.visibilityState === 'visible'
+		if (!this._preUpdated) return
+
 		this._pre!.willUpdate()
 		this._num!.willUpdate()
 		this._post!.willUpdate()
@@ -215,8 +240,9 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 	 * @internal
 	 */
 	didUpdate() {
-		// Safe to call this here because we know the animated prop is up-to-date
-		if (!this.computedAnimated) return
+		// Safe to call this here because we know the animated prop is up-to-date.
+		// Also make sure willUpdate didn't skip its measurement pass:
+		if (!this.computedAnimated || !this._preUpdated) return
 
 		// If we're already animating, cancel the previous animationsfinish event:
 		if (this._abortAnimationsFinish) this._abortAnimationsFinish.abort()
