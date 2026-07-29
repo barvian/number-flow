@@ -1,4 +1,8 @@
-import { BROWSER } from 'esm-env'
+/**
+ * @internal Used by framework wrappers to distinguish a DOM runtime from
+ * worker-style runtimes that may still resolve browser export conditions.
+ */
+export const canUseDOM = typeof document !== 'undefined' && typeof HTMLElement !== 'undefined'
 
 type ExcludeReadonly<T> = {
 	-readonly [K in keyof T as T[K] extends Readonly<any> ? never : K]: T[K]
@@ -40,8 +44,7 @@ export const define = (name: string, constructor: CustomElementConstructor) => {
 	// Opt for the simpler check, the constructor check breaks in Next.js force-static,
 	// Svelte REPL, and Webpack Module Federation:
 	if (
-		BROWSER &&
-		typeof HTMLElement !== 'undefined' &&
+		canUseDOM &&
 		typeof customElements !== 'undefined' &&
 		!customElements.get(name) /* !== constructor*/
 	)

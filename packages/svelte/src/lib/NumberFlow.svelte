@@ -29,12 +29,12 @@
 		type Format,
 		renderInnerHTML,
 		formatToData,
+		canUseDOM,
 		type Props as NumberFlowProps
 	} from 'number-flow/lite'
 	import type { HTMLAttributes } from 'svelte/elements'
 	import { writable } from 'svelte/store'
 	import { getGroupContext } from './group.js'
-	import { BROWSER } from 'esm-env'
 
 	export let locales: Intl.LocalesArgument = undefined
 	export let format: Format | undefined = undefined
@@ -105,5 +105,5 @@
 	{nonce}
 	{data}
 >
-	{@html BROWSER ? undefined : renderInnerHTML(data, { nonce, elementSuffix: '-svelte' })}
+	{@html canUseDOM ? undefined : renderInnerHTML(data, { nonce, elementSuffix: '-svelte' })}
 </number-flow-svelte>

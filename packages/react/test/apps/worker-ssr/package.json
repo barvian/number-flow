@@ -1,0 +1,14 @@
+{
+	"name": "react-worker-ssr",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"test": "node --conditions=browser test.mjs"
+	},
+	"dependencies": {
+		"@number-flow/react": "workspace:^",
+		"react": "18.3.1",
+		"react-dom": "18.3.1"
+	}
+}

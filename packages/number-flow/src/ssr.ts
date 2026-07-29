@@ -1,12 +1,11 @@
 import type { Data, KeyedNumberPart } from './formatter'
 import { css, html } from './util/string'
 import { halfMaskHeight, maskHeight } from './styles'
-import { BROWSER } from 'esm-env'
+import { canUseDOM } from './util/dom'
 
-export const ServerSafeHTMLElement =
-	BROWSER && typeof HTMLElement !== 'undefined'
-		? HTMLElement
-		: (class {} as unknown as typeof HTMLElement) // for types
+export const ServerSafeHTMLElement = canUseDOM
+	? HTMLElement
+	: (class {} as unknown as typeof HTMLElement) // for types
 
 export const styles = css`
 	:host {

@@ -53,7 +53,6 @@
 		}
 	},
 	"dependencies": {
-		"esm-env": "^1.1.4",
 		"number-flow": "workspace:*"
 	},
 	"peerDependencies": {

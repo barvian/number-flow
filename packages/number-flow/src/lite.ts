@@ -21,7 +21,7 @@ import styles, {
 import type { Mutable as MakeMutable } from './util/types'
 import type { Plugin } from './plugins'
 
-export { define } from './util/dom'
+export { canUseDOM, define } from './util/dom'
 export { prefersReducedMotion } from './styles'
 export { renderInnerHTML } from './ssr'
 export * from './plugins'
