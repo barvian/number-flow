@@ -1,0 +1,64 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /site
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /packages/number-flow
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /packages/vue
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /packages/react
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /packages/svelte
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      all-dependencies:
+        patterns:
+          - "*"
