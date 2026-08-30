@@ -31,6 +31,9 @@ const handleFinish = () => console.log('finish')
 				id="flow1"
 				data-testid="flow1"
 				ref="flow1"
+				translate="no"
+				draggable="false"
+				spellcheck="false"
 				:value
 				:format="{ style: 'currency', currency: 'USD' }"
 				locales="zh-CN"
