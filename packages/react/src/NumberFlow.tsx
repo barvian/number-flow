@@ -13,9 +13,9 @@ import NumberFlowLite, {
 	type Data,
 	prefersReducedMotion as _prefersReducedMotion,
 	canAnimate as _canAnimate,
+	canUseDOM,
 	define
 } from 'number-flow/lite'
-import { BROWSER } from 'esm-env'
 
 const REACT_MAJOR = parseInt(React.version.match(/^(\d+)\./)?.[1]!)
 const isReact19 = REACT_MAJOR >= 19
@@ -188,7 +188,7 @@ class NumberFlowImpl extends React.Component<
 				nonce={nonce}
 				{...rest}
 				dangerouslySetInnerHTML={{
-					__html: BROWSER ? '' : renderInnerHTML(data, { nonce, elementSuffix: '-react' })
+					__html: canUseDOM ? '' : renderInnerHTML(data, { nonce, elementSuffix: '-react' })
 				}}
 				suppressHydrationWarning
 				digits={serialize(digits)}

@@ -4,11 +4,11 @@ import NumberFlowLite, {
 	type Format,
 	renderInnerHTML,
 	formatToData,
+	canUseDOM,
 	type Props as NumberFlowProps
 } from 'number-flow/lite'
 import { computed, inject, ref } from 'vue'
 import { key as groupKey } from './group'
-import { BROWSER } from 'esm-env'
 
 type Props = Partial<NumberFlowProps> & {
 	locales?: Intl.LocalesArgument
@@ -61,7 +61,7 @@ const formatter = computed(() => new Intl.NumberFormat(locales, format))
 const data = computed(() => formatToData(value, formatter.value, prefix, suffix))
 
 // Putting this in the v-html attribute ruined tree-shaking
-const html = BROWSER ? undefined : renderInnerHTML(data.value, { nonce, elementSuffix: '-vue' })
+const html = canUseDOM ? undefined : renderInnerHTML(data.value, { nonce, elementSuffix: '-vue' })
 
 // Handle grouping. Keep as much logic in NumberFlowGroup.vue as possible
 // for better tree-shaking:

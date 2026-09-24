@@ -1,8 +1,8 @@
-import { BROWSER } from 'esm-env'
 import { css } from './util/string'
+import { canUseDOM } from './util/dom'
 
 export const supportsLinear =
-	BROWSER &&
+	canUseDOM &&
 	(() => {
 		try {
 			// We can't use CSS.supports because it sometimes gives
@@ -15,10 +15,10 @@ export const supportsLinear =
 	})()
 
 export const supportsMod =
-	BROWSER && typeof CSS !== 'undefined' && CSS.supports && CSS.supports('line-height', 'mod(1,1)')
+	canUseDOM && typeof CSS !== 'undefined' && CSS.supports && CSS.supports('line-height', 'mod(1,1)')
 
 export const prefersReducedMotion =
-	BROWSER && typeof matchMedia !== 'undefined'
+	canUseDOM && typeof matchMedia !== 'undefined'
 		? matchMedia('(prefers-reduced-motion: reduce)')
 		: null
 
@@ -28,40 +28,42 @@ export const widthDeltaVar = '--_number-flow-d-width'
 export const dxVar = '--_number-flow-dx'
 export const deltaVar = '--_number-flow-d'
 
-export const supportsAtProperty = (() => {
-	try {
-		CSS.registerProperty({
-			name: opacityDeltaVar,
-			syntax: '<number>',
-			inherits: false,
-			initialValue: '0'
-		})
+export const supportsAtProperty =
+	canUseDOM &&
+	(() => {
+		try {
+			CSS.registerProperty({
+				name: opacityDeltaVar,
+				syntax: '<number>',
+				inherits: false,
+				initialValue: '0'
+			})
 
-		CSS.registerProperty({
-			name: dxVar,
-			syntax: '<length>',
-			inherits: true,
-			initialValue: '0px'
-		})
+			CSS.registerProperty({
+				name: dxVar,
+				syntax: '<length>',
+				inherits: true,
+				initialValue: '0px'
+			})
 
-		CSS.registerProperty({
-			name: widthDeltaVar,
-			syntax: '<number>',
-			inherits: false,
-			initialValue: '0'
-		})
+			CSS.registerProperty({
+				name: widthDeltaVar,
+				syntax: '<number>',
+				inherits: false,
+				initialValue: '0'
+			})
 
-		CSS.registerProperty({
-			name: deltaVar,
-			syntax: '<number>',
-			inherits: true,
-			initialValue: '0'
-		})
-		return true
-	} catch {
-		return false
-	}
-})()
+			CSS.registerProperty({
+				name: deltaVar,
+				syntax: '<number>',
+				inherits: true,
+				initialValue: '0'
+			})
+			return true
+		} catch {
+			return false
+		}
+	})()
 
 // Don't use CSS.registerProperty for vars needed during SSR:
 

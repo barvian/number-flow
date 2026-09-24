@@ -42,10 +42,6 @@ importers:
         version: 5.6.2
 
   packages/number-flow:
-    dependencies:
-      esm-env:
-        specifier: ^1.1.4
-        version: 1.1.4
     devDependencies:
       '@rollup/plugin-typescript':
         specifier: ^12.1.0
@@ -104,9 +100,6 @@ importers:
 
   packages/react:
     dependencies:
-      esm-env:
-        specifier: ^1.1.4
-        version: 1.1.4
       number-flow:
         specifier: workspace:*
         version: link:../number-flow
@@ -216,11 +209,20 @@ importers:
         specifier: ^5.96.1
         version: 5.96.1
 
+  packages/react/test/apps/worker-ssr:
+    dependencies:
+      '@number-flow/react':
+        specifier: workspace:^
+        version: link:../../..
+      react:
+        specifier: 18.3.1
+        version: 18.3.1
+      react-dom:
+        specifier: 18.3.1
+        version: 18.3.1(react@18.3.1)
+
   packages/svelte:
     dependencies:
-      esm-env:
-        specifier: ^1.1.4
-        version: 1.1.4
       number-flow:
         specifier: workspace:*
         version: link:../number-flow
@@ -264,9 +266,6 @@ importers:
 
   packages/vue:
     dependencies:
-      esm-env:
-        specifier: ^1.1.4
-        version: 1.1.4
       number-flow:
         specifier: workspace:*
         version: link:../number-flow
