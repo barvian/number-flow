@@ -29,6 +29,9 @@
 			bind:el={el1}
 			id="flow1"
 			data-testid="flow1"
+			translate="no"
+			draggable="false"
+			spellcheck="false"
 			{value}
 			format={{ style: 'currency', currency: 'USD' }}
 			locales="zh-CN"

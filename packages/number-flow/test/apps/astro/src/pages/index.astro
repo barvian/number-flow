@@ -10,6 +10,9 @@ import { renderInnerHTML } from 'number-flow'
 			<number-flow
 				id="flow1"
 				data-testid="flow1"
+				translate="no"
+				draggable="false"
+				spellcheck="false"
 				set:html={renderInnerHTML(42, {
 					format: { style: 'currency', currency: 'USD' },
 					locales: 'zh-CN',

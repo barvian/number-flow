@@ -8,6 +8,8 @@ import NumberFlowLite, {
 	type Value,
 	type Format,
 	type Props,
+	type YesNoAttr,
+	type TrueFalseAttr,
 	renderInnerHTML,
 	formatToData,
 	type Data,
@@ -32,13 +34,33 @@ export class NumberFlowElement extends NumberFlowLite {
 
 define('number-flow-react', NumberFlowElement)
 
-type BaseProps = React.HTMLAttributes<NumberFlowElement> &
+type BaseProps = Omit<
+	React.HTMLAttributes<NumberFlowElement>,
+	'translate' | 'draggable' | 'spellCheck'
+> &
 	Partial<Props> & {
 		isolate?: boolean
 		willChange?: boolean
 		onAnimationsStart?: (e: CustomEvent<undefined>) => void
 		onAnimationsFinish?: (e: CustomEvent<undefined>) => void
+		// HTML uses "yes"/"no" and "true"/"false"; React 19 also accepts booleans.
+		// Accept both so translate="no" is valid and is not coerced to "yes".
+		translate?: YesNoAttr
+		draggable?: TrueFalseAttr
+		spellCheck?: TrueFalseAttr
 	}
+
+function coerceYesNoAttr(value: unknown): 'yes' | 'no' | undefined {
+	if (value === false || value === 'no') return 'no'
+	if (value === true || value === 'yes' || value === '') return 'yes'
+	return undefined
+}
+
+function coerceTrueFalseAttr(value: unknown): 'true' | 'false' | undefined {
+	if (value === false || value === 'false') return 'false'
+	if (value === true || value === 'true') return 'true'
+	return undefined
+}
 
 type NumberFlowImplProps = BaseProps & {
 	innerRef: React.MutableRefObject<NumberFlowElement | undefined>
@@ -174,6 +196,9 @@ class NumberFlowImpl extends React.Component<
 				digits,
 				onAnimationsStart,
 				onAnimationsFinish,
+				translate,
+				draggable,
+				spellCheck,
 				...rest
 			}
 		] = splitProps(this.props)
@@ -187,6 +212,11 @@ class NumberFlowImpl extends React.Component<
 				class={className}
 				nonce={nonce}
 				{...rest}
+				// React 19 sets matching props as properties; boolean false removes
+				// the attribute. Pass the HTML keywords so they survive either path.
+				translate={coerceYesNoAttr(translate)}
+				draggable={coerceTrueFalseAttr(draggable)}
+				spellCheck={coerceTrueFalseAttr(spellCheck)}
 				dangerouslySetInnerHTML={{
 					__html: BROWSER ? '' : renderInnerHTML(data, { nonce, elementSuffix: '-react' })
 				}}

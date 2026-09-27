@@ -1,3 +1,4 @@
+import { BROWSER } from 'esm-env'
 import { createElement, offset, visible, type HTMLProps, type Justify } from './util/dom'
 import { forEach } from './util/iterable'
 import {
@@ -35,6 +36,9 @@ export type Trend = number | ((oldValue: number, value: number) => number)
 
 export type DigitOptions = { max?: number }
 export type Digits = Record<number, DigitOptions>
+
+export type YesNoAttr = boolean | 'yes' | 'no'
+export type TrueFalseAttr = boolean | 'true' | 'false'
 
 export interface Props {
 	transformTiming: EffectTiming
@@ -97,6 +101,27 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		this._animated = val
 		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
 		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
+	}
+
+	// Frameworks that assign matching props as properties (React 19, Vue) coerce
+	// HTML keywords like "no"/"false" to true. Honor the content-attribute values.
+	override get translate(): boolean {
+		return BROWSER ? super.translate : true
+	}
+	override set translate(value: YesNoAttr) {
+		if (BROWSER) super.translate = value !== false && value !== 'no'
+	}
+	override get draggable(): boolean {
+		return BROWSER ? super.draggable : false
+	}
+	override set draggable(value: TrueFalseAttr) {
+		if (BROWSER) super.draggable = value !== false && value !== 'false'
+	}
+	override get spellcheck(): boolean {
+		return BROWSER ? super.spellcheck : false
+	}
+	override set spellcheck(value: TrueFalseAttr) {
+		if (BROWSER) super.spellcheck = value !== false && value !== 'false'
 	}
 
 	readonly created: boolean = false

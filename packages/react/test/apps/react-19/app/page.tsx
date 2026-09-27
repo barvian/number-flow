@@ -17,6 +17,9 @@ export default function Page() {
 						id="flow1"
 						data-testid="flow1"
 						ref={ref1}
+						translate="no"
+						draggable="false"
+						spellCheck="false"
 						value={value}
 						format={{ style: 'currency', currency: 'USD' }}
 						locales="zh-CN"
