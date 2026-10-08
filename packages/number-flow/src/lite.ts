@@ -36,6 +36,8 @@ export type Trend = number | ((oldValue: number, value: number) => number)
 export type DigitOptions = { max?: number }
 export type Digits = Record<number, DigitOptions>
 
+const getAnimations = (root: ShadowRoot | null): Animation[] => root?.getAnimations?.() ?? []
+
 export interface Props {
 	transformTiming: EffectTiming
 	spinTiming: EffectTiming | undefined
@@ -96,7 +98,7 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		if (this.animated === val) return
 		this._animated = val
 		// Finish any in-flight animations (instead of cancel, which won't trigger their finish events):
-		this.shadowRoot?.getAnimations().forEach((a) => a.finish())
+		getAnimations(this.shadowRoot).forEach((a) => a.finish())
 	}
 
 	readonly created: boolean = false
@@ -254,7 +256,7 @@ export default class NumberFlowLite extends ServerSafeHTMLElement implements Pro
 		this._post!.didUpdate()
 
 		const controller = new AbortController()
-		Promise.all(this.shadowRoot!.getAnimations().map((a) => a.finished)).then(() => {
+		Promise.all(getAnimations(this.shadowRoot).map((a) => a.finished)).then(() => {
 			if (!controller.signal.aborted) {
 				this.dispatchEvent(new Event('animationsfinish'))
 				this._abortAnimationsFinish = undefined
